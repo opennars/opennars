@@ -20,7 +20,10 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * A Statement about an Inheritance copula.
+ * A Statement about an Inheritance copula as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Implication extends Statement {
     private int temporalOrder = TemporalRules.ORDER_NONE;

@@ -22,7 +22,10 @@ import org.opennars.operator.Operator;
 import java.util.Arrays;
 
 /**
- * A Statement about an Inheritance relation.
+ * A Statement about an Inheritance relation as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Inheritance extends Statement {
 

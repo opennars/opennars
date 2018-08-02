@@ -31,19 +31,28 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Used to read and parse the XML configuration file
+ *
+ * @author Robert Wünsche
+ */
 public class ConfigReader {
 
     public static List<Plugin> loadParamsFromFileAndReturnPlugins(boolean loadFromResources, final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         List<Plugin> ret = new ArrayList<Plugin>();
         File file = null;
-        if(loadFromResources) {
+
+        if (loadFromResources) {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             try {
                 file = new File(classloader.getResource(filepath).toURI());
@@ -52,8 +61,24 @@ public class ConfigReader {
             }
         }
         else {
-            file = new File(filepath);
+            File classPath = null;
+
+            try {
+                classPath = new File(ConfigReader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            } catch (URISyntaxException e) {
+            }
+
+            // we need to walk two levels down ("./target/classes")
+            File absolutePathOfRoot = null;
+            try {
+                absolutePathOfRoot = new File(new File(classPath.getParent()).getParent());
+            }
+            catch (NullPointerException e) {}
+
+            // walk to convert it to absolute path
+            file = new File(absolutePathOfRoot, filepath);
         }
+
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);

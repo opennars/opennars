@@ -19,11 +19,15 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * An extension image.
+ * An extension image as defined in the NARS-theory
+ *
  * <p>
  * B --&gt; (/,P,A,_)) iff (*,A,B) --$gt; P
  * <p>
  * Internally, it is actually (/,A,P)_1, with an index.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class ImageExt extends Image {
 

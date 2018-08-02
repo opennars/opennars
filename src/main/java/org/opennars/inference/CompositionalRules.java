@@ -31,6 +31,9 @@ import static org.opennars.language.Terms.reduceComponents;
  * <p>
  * New compound terms are introduced only in forward inference, while
  * decompositional rules are also used in backward inference
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class CompositionalRules {
 

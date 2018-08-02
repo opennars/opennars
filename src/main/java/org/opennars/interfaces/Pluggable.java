@@ -21,6 +21,8 @@ import java.util.List;
 
 /**
  * Implementation can have plugins
+ *
+ * @author Robert Wünsche
  */
 public interface Pluggable {
     /**

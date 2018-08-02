@@ -35,7 +35,7 @@ import org.opennars.language.Variables;
 /**
  * Default implementation for question processing
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class DefaultProcessQuestion implements ProcessQuestion {
     public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
@@ -99,7 +99,7 @@ public class DefaultProcessQuestion implements ProcessQuestion {
             }
         }
     }
-
+    
     public void processWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {

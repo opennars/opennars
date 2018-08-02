@@ -44,7 +44,7 @@ import org.opennars.plugin.mental.InternalExperience;
 
 /**
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class ProcessAnticipation {
 
@@ -85,8 +85,6 @@ public class ProcessAnticipation {
     /**
      * Process outdated anticipations within the concept,
      * these which are outdated generate negative feedback
-     * <p>
-     * called only in GeneralInferenceControl on concept selection
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
      */
@@ -119,8 +117,6 @@ public class ProcessAnticipation {
     
     /**
      * Whether a processed judgement task satisfies the anticipation withon concept
-     * <p>
-     * called in processJudgment only
      * 
      * @param task The judgement task be checked
      * @param concept The concept that is processed
@@ -140,17 +136,15 @@ public class ProcessAnticipation {
     
     /**
      * Fire predictictive inference based on beliefs that are known to the concept's neighbours
-     * <p>
-     * called in processTask only
      * 
-     * @param task The judgement task
-     * @param concept The concept that is processed
-     * @param nal The derivation context
-     * @param time The timable
-     * @param taskl The tasklink
+     * @param judgementTask judgement task
+     * @param concept concept that is processed
+     * @param nal derivation context
+     * @param time used to retrieve current time
+     * @param tasklink coresponding tasklink
      */
-    public static void firePredictions(final Task task, final Concept concept, final DerivationContext nal, Timable time, TaskLink taskl) {
-        if(!task.sentence.isEternal() && task.isInput() && task.sentence.isJudgment()) {
+    public static void firePredictions(final Task judgementTask, final Concept concept, final DerivationContext nal, Timable time, TaskLink tasklink) {
+        if(!judgementTask.sentence.isEternal() && judgementTask.isInput() && judgementTask.sentence.isJudgment()) {
             for(TermLink tl : concept.termLinks) {
                 Term term = tl.getTarget();
                 Concept tc = nal.memory.concept(term);
@@ -168,12 +162,12 @@ public class ProcessAnticipation {
                         if(CompoundTerm.replaceIntervals(concept.getTerm()).equals(CompoundTerm.replaceIntervals(component))) {
                             //trigger inference of the task with the belief
                             DerivationContext cont = new DerivationContext(nal.memory, nal.narParameters, time);
-                            cont.setCurrentTask(task); //a
+                            cont.setCurrentTask(judgementTask); //a
                             cont.setCurrentBeliefLink(tl); // a =/> b
-                            cont.setCurrentTaskLink(taskl); // a
+                            cont.setCurrentTaskLink(tasklink); // a
                             cont.setCurrentConcept(concept); //a
                             cont.setCurrentTerm(concept.getTerm()); //a
-                            RuleTables.reason(taskl, tl, cont); //generate b
+                            RuleTables.reason(tasklink, tl, cont); //generate b
                         }
                     }
                 }

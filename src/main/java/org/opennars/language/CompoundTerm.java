@@ -29,6 +29,12 @@ import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 
+/**
+ * Compound term as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     /**

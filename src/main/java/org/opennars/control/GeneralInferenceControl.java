@@ -29,7 +29,14 @@ import org.opennars.io.events.Events;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
-/** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
+/**
+ * Concept reasoning context
+ *
+ * a concept is "fired" or activated by applying the reasoner
+ *
+ * @author Patrick Hammer
+ *
+ */
 public class GeneralInferenceControl {
     
     public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Timable time) {

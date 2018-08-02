@@ -18,6 +18,8 @@ import org.opennars.io.events.EventEmitter;
 
 /**
  * Implementation can observe events
+ *
+ * @author Robert Wünsche
  */
 public interface Eventable {
     void on(final Class c, final EventEmitter.EventObserver o);

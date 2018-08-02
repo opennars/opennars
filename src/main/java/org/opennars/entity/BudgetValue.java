@@ -24,16 +24,19 @@ import static org.opennars.inference.UtilityFunctions.*;
 import org.opennars.main.Parameters;
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class BudgetValue implements Cloneable, Serializable {
 
-    /** The character that marks the two ends of a budget value */
+    /** character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
-    /** The character that separates the factors in a budget value */
+    /** character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
    
     
-    /** The relative share of time resource to be allocated */
+    /** relative share of time resource to be allocated */
     private float priority;
     
     /**
@@ -44,7 +47,7 @@ public class BudgetValue implements Cloneable, Serializable {
      */
     private float durability;
     
-    /** The overall (context-independent) evaluation */
+    /** overall (context-independent) evaluation */
     private float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */

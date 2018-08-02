@@ -88,13 +88,11 @@ public class DefaultProcessJudgment implements ProcessJudgment {
      * <br>
      * The purpose is to start a new operation frame which makes the operation concept 
      * interpret current events as preconditions and future events as postconditions to the invoked operation.
-     * <p>
-     * called in processJudgment only
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
      */
-    private static void handleOperationFeedback(Task task, DerivationContext nal) {
+    public static void handleOperationFeedback(Task task, DerivationContext nal) {
         if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
             final Operation op = (Operation) task.sentence.term;
             final Operator o = (Operator) op.getPredicate();
@@ -109,14 +107,12 @@ public class DefaultProcessJudgment implements ProcessJudgment {
     /**
      * Check whether the task is an executable hypothesis of the form
      * &lt;(&amp;/,a,op()) =/&gt; b&gt;.
-     * <p>
-     * called in processJudgment only
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
      * @return Whether task is an executable precondition
      */
-    private static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
+    protected static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
         final Term term = task.getTerm();
         if(!task.sentence.isEternal() ||
            !(term instanceof Implication) ||
@@ -146,14 +142,12 @@ public class DefaultProcessJudgment implements ProcessJudgment {
     
     /**
      * Add &lt;(&amp;/,a,op()) =/&gt; b&gt; beliefs to preconditions in concept b
-     * <p>
-     * called in processJudgment only
-     * 
+     *
      * @param task The potential implication task
      * @param nal The derivation context
      * @param concept The concept of the task
      */
-    private static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
+    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
         final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
         // we do not add the target, instead the strongest belief in the target concept
 

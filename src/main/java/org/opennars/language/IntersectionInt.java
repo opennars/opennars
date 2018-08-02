@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.NavigableSet;
 
 /**
- * A compound term whose intension is the intersection of the extensions of its term
+ * A compound term whose intension is the intersection of the extensions of its term as defined in the NARS-theory
+ *
+ * @author Patrick Hammer
  */
 public class IntersectionInt extends CompoundTerm {
 

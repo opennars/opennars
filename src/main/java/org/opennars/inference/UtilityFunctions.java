@@ -20,6 +20,9 @@ import org.opennars.main.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class UtilityFunctions {
     

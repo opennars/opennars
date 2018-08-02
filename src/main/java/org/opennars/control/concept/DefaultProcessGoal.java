@@ -49,7 +49,7 @@ import org.opennars.plugin.mental.InternalExperience;
 
 /**
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class DefaultProcessGoal implements ProcessGoal {
     public void processTask(final Concept concept, final DerivationContext nal, final Task task) {

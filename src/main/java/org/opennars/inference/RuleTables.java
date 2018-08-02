@@ -30,6 +30,9 @@ import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduc
  * Table of inference rules, indexed by the TermLinks for the task and the
  * belief. Used in indirective processing of a task, to dispatch inference cases
  * to the relevant inference rules.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class RuleTables {
     

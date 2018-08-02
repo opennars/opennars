@@ -41,6 +41,9 @@ import org.opennars.main.Nar;
 import org.opennars.main.Shell;
 import org.xml.sax.SAXException;
 
+/**
+ * @author Patrick Hammer
+ */
 public class NarNode implements EventObserver  {
     
     /* An extra event for received tasks*/
@@ -252,7 +255,16 @@ public class NarNode implements EventObserver  {
             System.exit(0);
         }
         int nar1port = Integer.parseInt(args[2]);
-        NarNode nar1 = new NarNode(new Nar(),nar1port);
+
+        // HACK< we need a factory for Reasoner! >
+        boolean loadFromResources = false;
+        Nar nar = new Nar(
+            java.util.UUID.randomUUID().getLeastSignificantBits(),
+            loadFromResources,
+            "./config/mvpConfig.xml" // default
+        );
+
+        NarNode nar1 = new NarNode(nar, nar1port);
         List<TargetNar> redirections = new ArrayList<TargetNar>();
         for(int i=3; i<args.length; i+=5) {
             Term T = args[i+3].equals("null") ? null : new Term(args[i+3]);

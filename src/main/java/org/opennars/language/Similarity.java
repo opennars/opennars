@@ -17,7 +17,10 @@ package org.opennars.language;
 import org.opennars.io.Symbols.NativeOperator;
 
 /**
- * A Statement about a Similarity relation.
+ * A Statement about a Similarity relation as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Similarity extends Statement {
 
