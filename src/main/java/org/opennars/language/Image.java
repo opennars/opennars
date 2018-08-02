@@ -24,8 +24,8 @@ import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
+ * Generalization of Images as defined in the NARS-theory
  *
- * @author me
  */
 abstract public class Image extends CompoundTerm {
     /** The index of relation in the component list */

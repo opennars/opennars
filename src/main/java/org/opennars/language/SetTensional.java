@@ -21,6 +21,8 @@ import java.nio.CharBuffer;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
+ *
+ * @author Patrick Hammer
  */
 abstract public class SetTensional extends CompoundTerm {
     /**

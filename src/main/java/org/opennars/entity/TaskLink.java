@@ -29,6 +29,9 @@ import java.util.Iterator;
  * linked from multiple Concepts, with different BudgetValue.
  * 
  * TaskLinks are unique according to the Task they reference
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 

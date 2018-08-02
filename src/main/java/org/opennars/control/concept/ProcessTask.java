@@ -21,6 +21,12 @@ import org.opennars.entity.*;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 
+/**
+ * Encapsulates the dispatching task processing
+ *
+ * @author Patrick Hammer
+ *
+ */
 public class ProcessTask {
     /**
      * Directly process a new task within a concept. 
@@ -32,13 +38,11 @@ public class ProcessTask {
      * increase quality of beliefs if they turned out to be useful.
      * After the re-priorization is done, a tasklink is finally constructed.
      * For input events the concept is set observable too. 
-        
-     * <p>
-     * called in Memory.localInference only, for both derived and input tasks
      *
      * @param task The task to be processed
      * @return whether it was processed
      */
+    // called in Memory.localInference only, for both derived and input tasks
     public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task, Timable time) {
         synchronized(concept) {
             concept.observable |= task.isInput();

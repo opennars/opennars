@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- * A disjunction of Statements.
+ * A disjunction of Statements as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Disjunction extends CompoundTerm {
 

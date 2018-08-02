@@ -20,6 +20,8 @@ import org.opennars.entity.Task;
  * Implementation can consume tasks
  *
  * R is result type
+ *
+ * @author Robert Wünsche
  */
 public interface TaskConsumer<R> {
     /**

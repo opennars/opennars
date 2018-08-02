@@ -32,6 +32,9 @@ import java.util.Objects;
  * The index value(s) indicates the location of the component in the compound.
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class TermLink extends Item<TermLink> implements TLink<Term>, Serializable {
     

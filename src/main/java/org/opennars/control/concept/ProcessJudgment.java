@@ -50,8 +50,6 @@ public class ProcessJudgment {
      * the will become the top entries in the belief table.
      * Additionally, judgements can themselves be the solution to existing questions
      * and goals, which is also processed here.
-     * <p>
-     * called only by ConceptProcessing.processTask
      * 
      * @param task The judgment task to be accepted
      * @param concept The concept of the judment task
@@ -100,9 +98,7 @@ public class ProcessJudgment {
      * Handle the feedback of the operation that was processed as a judgment.
      * <br>
      * The purpose is to start a new operation frame which makes the operation concept 
-     * interpret current events as preconditions and future events as postconditions to the invoked operation.
-     * <p>
-     * called in processJudgment only
+     * interpret current events as preconditions and future events as post-conditions to the invoked operation.
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
@@ -122,8 +118,6 @@ public class ProcessJudgment {
     /**
      * Check whether the task is an executable hypothesis of the form
      * &lt;(&amp;/,a,op()) =/&gt; b&gt;.
-     * <p>
-     * called in processJudgment only
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
@@ -159,8 +153,6 @@ public class ProcessJudgment {
     
     /**
      * Add &lt;(&amp;/,a,op()) =/&gt; b&gt; beliefs to preconditions in concept b
-     * <p>
-     * called in processJudgment only
      * 
      * @param task The potential implication task
      * @param nal The derivation context

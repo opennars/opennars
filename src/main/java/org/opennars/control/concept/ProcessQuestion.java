@@ -32,7 +32,7 @@ import org.opennars.language.Variables;
 
 /**
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class ProcessQuestion {
     /**
@@ -77,13 +77,12 @@ public class ProcessQuestion {
     
     /**
      * Recognize an existing belief task as solution to the what question task, which contains a query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
+     *
      * @param concept The concept which potentially outdated anticipations should be processed
      * @param ques The belief task
      * @param nal The derivation context
      */
+    // called only in GeneralInferenceControl.insertTaskLink on concept selection
     public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
@@ -113,13 +112,12 @@ public class ProcessQuestion {
     
     /**
      * Recognize an added belief task as solution to what questions, those that contain query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
+     *
      * @param concept The concept which potentially outdated anticipations should be processed
      * @param t The belief task
      * @param nal The derivation context
      */
+    // called only in GeneralInferenceControl.insertTaskLink on concept selection
     public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {

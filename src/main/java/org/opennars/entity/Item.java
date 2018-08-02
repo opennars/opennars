@@ -24,6 +24,9 @@ import java.util.Comparator;
  * to participate in the resource competition of the system.
  * <p>
  * It has a key and a budget. Cannot be cloned
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public abstract class Item<K> implements Serializable {
 

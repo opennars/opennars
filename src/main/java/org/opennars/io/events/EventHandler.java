@@ -17,7 +17,6 @@ package org.opennars.io.events;
 import org.opennars.main.Nar;
 
 /**
- *
  */
 public abstract class EventHandler implements EventEmitter.EventObserver {
     protected final EventEmitter source;

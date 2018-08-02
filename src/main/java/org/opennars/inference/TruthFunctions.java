@@ -20,7 +20,11 @@ import static java.lang.Math.abs;
 import org.opennars.main.Parameters;
 
 /**
- * All truth-value (and desire-value) functions used in inference rules 
+ * All truth-value (and desire-value) functions used in inference rules
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ * @author Robert Wünsche
  */
 public final class TruthFunctions extends UtilityFunctions {
     public enum EnumType {

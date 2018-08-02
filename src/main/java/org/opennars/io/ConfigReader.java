@@ -41,6 +41,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Used to read and parse the XML configuration file
+ *
+ * @author Robert Wünsche
+ */
 public class ConfigReader {
 
     public static List<Plugin> loadParamsFromFileAndReturnPlugins(boolean loadFromResources, final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {

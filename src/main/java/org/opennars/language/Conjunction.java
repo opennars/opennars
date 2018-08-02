@@ -23,7 +23,10 @@ import java.util.*;
 import static java.lang.System.arraycopy;
 
 /**
- * Conjunction of statements
+ * Conjunction of statements as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Conjunction extends CompoundTerm {
 

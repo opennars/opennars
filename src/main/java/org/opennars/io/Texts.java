@@ -22,6 +22,8 @@ import java.util.Map;
 
 /**
  * Utilities for process Text &amp; String input/output, ex: encoding/escaping and decoding/unescaping Terms
+ *
+ * @author Patrick Hammer
  */
 public class Texts {
     //TODO find more appropriate symbol mapping

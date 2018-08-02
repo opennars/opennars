@@ -16,6 +16,8 @@ package org.opennars.interfaces;
 
 /**
  * Something which can consume files
+ *
+ * @author Robert Wünsche
  */
 public interface InputFileConsumer {
     /**

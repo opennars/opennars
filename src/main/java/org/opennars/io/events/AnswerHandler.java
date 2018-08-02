@@ -26,15 +26,15 @@ import org.opennars.main.Nar;
 
 /**
  *
- * @author me
  */
 public abstract class AnswerHandler implements EventObserver {
     
     private Task question;
     private Nar nar;
     
-    final static Class[] events = new Class[] { Answer.class
- };
+    final static Class[] events = new Class[] {
+        Answer.class
+    };
     
     public void start(final Task question, final Nar n) {
         this.nar = n;

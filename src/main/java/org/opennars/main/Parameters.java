@@ -16,6 +16,12 @@ package org.opennars.main;
 
 import java.io.Serializable;
 
+/**
+ * Reasoner local settings and deriver options
+ *
+ * @author Patrick Hammer
+ */
+// TODO< rename this after MVP0 to "ReasonerArguments" >
 public class Parameters implements Serializable {
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public volatile int NOVELTY_HORIZON = 100000;
