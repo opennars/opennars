@@ -23,7 +23,6 @@ import org.opennars.io.Symbols;
  * 
  * @author Pei Wang
  * @author Patrick Hammer
- * @author Seth
  */
 public class Interval extends Term {
     

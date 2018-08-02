@@ -63,7 +63,6 @@ import org.opennars.plugin.mental.InternalExperience;
  *
  * @author Pei Wang
  * @author Patrick Hammer
- * @author Seth
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
     public Parameters narParameters = new Parameters();

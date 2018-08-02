@@ -21,7 +21,6 @@ import org.opennars.storage.Memory;
 /**
  * Output Channel: Implements this and Nar.addOutput(..) to receive output signals on various channels
  *
- * @author Seth
  */
 public abstract class OutputHandler extends EventHandler {
     

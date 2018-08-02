@@ -26,7 +26,6 @@ import java.util.List;
 
 /** empty event classes for use with EventEmitter
  *
- * @author Seth
  */
 public class Events {
 

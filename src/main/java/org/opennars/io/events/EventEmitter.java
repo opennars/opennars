@@ -19,7 +19,6 @@ import java.util.*;
 
 /**
  *
- * @author Seth
  */
 // Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
 // TODO separate this into a single-thread and multithread implementation

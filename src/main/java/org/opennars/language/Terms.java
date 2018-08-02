@@ -26,7 +26,6 @@ import java.util.*;
  * Static utility class for static methods related to Terms
  *
  * @author Patrick Hammer
- * @author Seth
  */
 public class Terms {
 

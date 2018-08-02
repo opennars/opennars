@@ -26,7 +26,6 @@ import java.util.Arrays;
 /**
  * To read and write experience as Task streams
  *
- * @author Seth
  */
 public class TextOutputHandler extends OutputHandler implements Serializable {
 

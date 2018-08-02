@@ -26,7 +26,6 @@ import org.opennars.main.Nar;
 
 /**
  *
- * @author Seth
  */
 public abstract class AnswerHandler implements EventObserver {
     
