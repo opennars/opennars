@@ -24,13 +24,6 @@ import java.io.Serializable;
  * Used to implement the (internal) question processing
  */
 public interface ProcessQuestion extends Process, Serializable {
-    /*
-     * To answer a question by existing beliefs
-     *
-     * @param task The task to be processed
-     */
-    //void processTask(final Concept concept, final DerivationContext nal, final Task task);
-
     /**
      * Recognize an existing belief task as solution to the what question task, which contains a query variable
      * <p>
