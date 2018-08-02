@@ -45,14 +45,14 @@ public class ProcessTask {
             final char type = task.sentence.punctuation;
             switch (type) {
                 case Symbols.JUDGMENT_MARK:
-                    nal.narParameters.processJudgment.processTask(concept, nal, task);
+                    processJudgment(concept, nal, task);
                     break;
                 case Symbols.GOAL_MARK:
-                    nal.narParameters.processGoal.processTask(concept, nal, task);
+                    processGoal(concept, nal, task);
                     break;
                 case Symbols.QUESTION_MARK:
                 case Symbols.QUEST_MARK:
-                    nal.narParameters.processQuestion.processTask(concept, nal, task);
+                    processQuestion(concept, nal, task);
                     break;
                 default:
                     return false;
@@ -64,5 +64,17 @@ public class ProcessTask {
             }
         }
         return true;
-    }     
+    }
+
+    private static void processQuestion(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processQuestion.processTask(concept, nal, task);
+    }
+
+    private static void processGoal(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processGoal.processTask(concept, nal, task);
+    }
+
+    private static void processJudgment(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processJudgment.processTask(concept, nal, task);
+    }
 }
