@@ -236,8 +236,17 @@ public class NarNode implements EventObserver  {
         iStream.close();
         return msg;
     }
-    
-    
+
+    /**
+     * logging
+     *
+     */
+    static void log(String message) {
+        // l for log
+        System.out.println("[l]: " + message);
+    }
+
+
     /**
      * An example with one NarNode sending a task to another NarNode
      * 
@@ -256,6 +265,9 @@ public class NarNode implements EventObserver  {
         }
         int nar1port = Integer.parseInt(args[2]);
 
+
+        log("creating Reasoner...");
+
         // HACK< we need a factory for Reasoner! >
         boolean loadFromResources = false;
         Nar nar = new Nar(
@@ -264,7 +276,12 @@ public class NarNode implements EventObserver  {
             "./config/mvpConfig.xml" // default
         );
 
+
+        log("creating NarNode...");
+
         NarNode nar1 = new NarNode(nar, nar1port);
+
+
         List<TargetNar> redirections = new ArrayList<TargetNar>();
         for(int i=3; i<args.length; i+=5) {
             Term T = args[i+3].equals("null") ? null : new Term(args[i+3]);
@@ -273,6 +290,11 @@ public class NarNode implements EventObserver  {
         for(TargetNar target : redirections) {
             nar1.addRedirectionTo(target);
         }
+        
+        log("running Shell...");
+
         new Shell(nar1.nar).run(new String[]{args[0], args[1]});
     }
+
+
 }
