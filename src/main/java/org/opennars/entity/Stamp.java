@@ -31,10 +31,13 @@ import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Tense.*;
 import org.opennars.main.Parameters;
 
+/**
+ * Stamps are used to keep track of done derivations
+ */
 public class Stamp implements Cloneable, Serializable {
     
     /**
-     * Element of the evidental base of stamp
+     * Element of the evidential base of stamp
      */
     public static class BaseEntry implements Comparable, Serializable { 
         public final long narId; //the NAR in which the input evidence was added
@@ -47,7 +50,7 @@ public class Stamp implements Cloneable, Serializable {
         }
         
         /**
-         * The evidental base entry
+         * The evidential base entry
          * 
          * @param narId The id of the NAR the input evidence was obtained from
          * @param inputId The nar-specific input id of the input
@@ -89,24 +92,31 @@ public class Stamp implements Cloneable, Serializable {
         }
     }
     
-    /*serial numbers. not to be modified after Stamp constructor has initialized it*/
+    /** serial numbers. not to be modified after Stamp constructor has initialized it*/
     public BaseEntry[] evidentialBase;
-    /* evidentialBase baseLength*/
+
+    /** the length of @see evidentialBase */
     public int baseLength;
-    /*creation time of the stamp*/
+
+    /** creation time of the stamp */
     private long creationTime;
-    /* estimated occurrence time of the event*/
+
+    /** estimated occurrence time of the event */
     private long occurrenceTime;
-    /*default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
+
+    /** default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
     public static final long ETERNAL = Integer.MIN_VALUE;
-    /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/    
+
+    /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/
     private BaseEntry[] evidentialSet = null;
-    /*Tense of the item*/
+
+    /** Tense of the item*/
     private Tense tense;
-    /*True when its a neg confirmation task that was already checked:*/
+
+    /** is it a neg confirmation task that was already checked*/
     public boolean alreadyAnticipatedNegConfirmation = false;
     
-    /** caches  */
+    /** caches */
     CharSequence name = null;
     
     /**
@@ -368,9 +378,9 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     /**
-     * The hash code of Stamp
+     * hash code of Stamp
      *
-     * @return The hash code
+     * @return hash code
      */
     public final int evidentialHash() {
         if (evidentialSet==null)
@@ -389,7 +399,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Get the occurrenceTime of the truth-value
      *
-     * @return The occurrence time
+     * @return occurrence time
      */
     public long getOccurrenceTime() {
         return occurrenceTime;
@@ -414,7 +424,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Get the occurrenceTime of the truth-value
      *
-     * @return The occurrence time
+     * @return occurrence time
      */
     public String getOccurrenceTimeString() {
         if (isEternal()) {
@@ -482,7 +492,7 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     /**
-     * @return the creationTime
+     * @return time of creation
      */
     public long getCreationTime() {
         return creationTime;
