@@ -21,6 +21,8 @@ import org.opennars.io.events.AnswerHandler;
 
 /**
  * Implementations implement a full Non-axiomatic-reasoner
+ *
+ * @author Robert Wünsche
  */
 public interface Reasoner extends
     SensoryChannelConsumer,
