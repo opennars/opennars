@@ -148,8 +148,9 @@ public class NarNode implements EventObserver  {
     
     /**
      * Send Narsese that contains the optional mustContainTerm
-     * 
-     * @param t
+     *
+     * @param input
+     * @param target
      * @throws IOException 
      */
     public static void sendNarsese(String input, TargetNar target) throws IOException {
