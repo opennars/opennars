@@ -21,6 +21,12 @@ import org.opennars.entity.*;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 
+/**
+ * Encapsulates the dispatching task processing
+ *
+ * @author Patrick Hammer
+ *
+ */
 public class ProcessTask {
     /**
      * Directly process a new task within a concept. 
