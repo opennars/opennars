@@ -24,7 +24,9 @@ import java.util.*;
 
 /**
  * Static utility class for static methods related to Terms
- * @author me
+ *
+ * @author Patrick Hammer
+ * @author Seth
  */
 public class Terms {
 

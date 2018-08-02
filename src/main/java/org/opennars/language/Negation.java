@@ -17,7 +17,10 @@ package org.opennars.language;
 import org.opennars.io.Symbols.NativeOperator;
 
 /**
- * A negation of a statement.
+ * A negation of a statement as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Negation extends CompoundTerm {
 

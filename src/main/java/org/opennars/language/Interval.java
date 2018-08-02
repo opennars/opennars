@@ -21,7 +21,9 @@ import org.opennars.io.Symbols;
  * in base D=duration ( @see Param.java ).  The actual printed value is +1 more than the stored
  * magnitude, so for example, it will have name() "+1" if magnitude=0, and "+2" if magnitude=1.
  * 
- * @author peiwang / SeH
+ * @author Pei Wang
+ * @author Patrick Hammer
+ * @author Seth
  */
 public class Interval extends Term {
     

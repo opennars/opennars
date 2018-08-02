@@ -25,8 +25,11 @@ import static org.opennars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 
 /**
- * A statement is a compound term, consisting of a subject, a predicate, and a
+ * A statement is a compound term as defined in the NARS-theory, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public abstract class Statement extends CompoundTerm {
     
