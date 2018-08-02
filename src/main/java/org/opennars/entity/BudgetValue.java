@@ -24,6 +24,9 @@ import static org.opennars.inference.UtilityFunctions.*;
 import org.opennars.main.Parameters;
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class BudgetValue implements Cloneable, Serializable {
 
