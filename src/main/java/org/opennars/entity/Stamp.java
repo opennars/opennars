@@ -33,6 +33,9 @@ import org.opennars.main.Parameters;
 
 /**
  * Stamps are used to keep track of done derivations
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Stamp implements Cloneable, Serializable {
     
