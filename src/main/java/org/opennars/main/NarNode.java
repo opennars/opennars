@@ -258,7 +258,7 @@ public class NarNode implements EventObserver  {
         Nar nar = new Nar(
             java.util.UUID.randomUUID().getLeastSignificantBits(),
             loadFromResources,
-            "./src/main/resources/config/mvpConfig.xml" // default
+            "./config/mvpConfig.xml" // default
         );
 
         NarNode nar1 = new NarNode(nar, nar1port);
