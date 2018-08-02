@@ -43,6 +43,11 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
+/**
+ * Default implementation of judgment processing
+ *
+ * @author Patrick Hammer
+ */
 public class DefaultProcessJudgment implements ProcessJudgment {
     public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);

@@ -48,6 +48,7 @@ import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
 
 /**
+ * Default implementation of goal processing
  *
  * @author Patrick Hammer
  */
