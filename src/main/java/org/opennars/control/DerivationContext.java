@@ -33,6 +33,8 @@ import org.opennars.entity.Stamp.BaseEntry;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
+ *
+ * @author Patrick Hammer
  */
 public class DerivationContext {
     public boolean evidentalOverlap = false;

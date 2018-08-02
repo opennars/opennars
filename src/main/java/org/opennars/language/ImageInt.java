@@ -19,11 +19,15 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * An intension image.
+ * An intension image as defined in the NARS-theory
+ *
  * <p>
  * (\,P,A,_)) --&gt; B iff P --&gt; (*,A,B)
  * <p>
  * Internally, it is actually (\,A,P)_1, with an index.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class ImageInt extends Image {
 

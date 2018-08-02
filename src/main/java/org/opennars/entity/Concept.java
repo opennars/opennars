@@ -37,6 +37,14 @@ import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
 import static org.opennars.inference.BudgetFunctions.rankBelief;
 import static org.opennars.inference.UtilityFunctions.or;
 
+/**
+ * Concept as defined by the NARS-theory
+ *
+ * Concepts are used to keep track of interrelated sentences
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public class Concept extends Item<Term> implements Serializable {
 
     

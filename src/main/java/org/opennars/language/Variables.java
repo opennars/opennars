@@ -25,6 +25,8 @@ import java.util.Set;
 
 /**
  * Static utility class for static methods related to Variables
+ *
+ * @author Patrick Hammer
  */
 public class Variables {
     

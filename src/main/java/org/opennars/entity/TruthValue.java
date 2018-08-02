@@ -21,7 +21,10 @@ import org.opennars.language.Term;
 import java.io.Serializable;
 import org.opennars.main.Parameters;
 
-
+/**
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
 
 

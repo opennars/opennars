@@ -21,7 +21,9 @@ import org.opennars.io.events.OutputHandler.OUT;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * @author Patrick Hammer
+ */
 public class Symbols {
 
     /* sentence type and delimitors */

@@ -22,7 +22,10 @@ import java.util.TreeSet;
 import static org.opennars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**
- * A compound term whose extension is the difference of the extensions of its term
+ * A compound term whose extension is the difference of the extensions of its term as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class DifferenceExt extends CompoundTerm {
 

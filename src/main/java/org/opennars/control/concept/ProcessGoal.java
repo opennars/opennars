@@ -48,7 +48,7 @@ import org.opennars.plugin.mental.InternalExperience;
 
 /**
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class ProcessGoal {
     /**

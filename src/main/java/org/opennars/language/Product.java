@@ -19,7 +19,10 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.List;
 
 /**
- * A Product is a sequence of 1 or more terms.
+ * A Product is a sequence of 1 or more terms as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Product extends CompoundTerm {
     

@@ -60,6 +60,9 @@ import org.opennars.plugin.mental.InternalExperience;
  * memory operations.  It executesa series sof cycles in two possible modes:
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
     public Parameters narParameters = new Parameters();

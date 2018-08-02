@@ -18,6 +18,8 @@ import org.opennars.plugin.perception.SensoryChannel;
 
 /**
  * Implementations have sensory channels
+ *
+ * @author Robert Wünsche
  */
 public interface SensoryChannelConsumer {
     /**

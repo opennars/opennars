@@ -23,6 +23,9 @@ import org.opennars.main.Parameters;
 
 /**
  * Budget functions for resources allocation
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class BudgetFunctions extends UtilityFunctions {
 

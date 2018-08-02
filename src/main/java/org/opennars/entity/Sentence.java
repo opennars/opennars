@@ -29,7 +29,12 @@ import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 /**
+ * Sentence as defined by the NARS-theory
+ *
  * A Sentence is used as the premises and conclusions of all inference rules.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Sentence<T extends Term> implements Cloneable, Serializable {
 

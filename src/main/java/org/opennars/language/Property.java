@@ -17,6 +17,8 @@ package org.opennars.language;
 /**
  * A Statement about a Property relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
+ *
+ * @author Patrick Hammer
  */
 public abstract class Property /*would extend "Statement" if it were its own type */ {
     

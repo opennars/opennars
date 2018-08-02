@@ -15,7 +15,9 @@
 package org.opennars.interfaces;
 
 /**
+ * Used to dispatch the deferred retrieval of time
  *
+ * @author Robert Wünsche
  */
 public interface Timable {
     /**

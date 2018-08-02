@@ -20,7 +20,10 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * A Statement about an Equivalence relation.
+ * A Statement about an Equivalence relation as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Equivalence extends Statement {
 

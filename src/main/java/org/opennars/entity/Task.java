@@ -26,6 +26,9 @@ import java.io.Serializable;
  * A task references its parent and an optional causal factor (usually an Operation instance).  These are implemented as WeakReference to allow forgetting via the
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 

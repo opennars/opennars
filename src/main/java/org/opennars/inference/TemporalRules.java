@@ -25,7 +25,8 @@ import java.util.*;
 
 /**
  *
- * @author peiwang
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class TemporalRules {
 

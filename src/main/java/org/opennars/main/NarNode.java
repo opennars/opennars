@@ -41,6 +41,9 @@ import org.opennars.main.Nar;
 import org.opennars.main.Shell;
 import org.xml.sax.SAXException;
 
+/**
+ * @author Patrick Hammer
+ */
 public class NarNode implements EventObserver  {
     
     /* An extra event for received tasks*/
