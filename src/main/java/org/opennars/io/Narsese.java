@@ -39,6 +39,8 @@ import static org.opennars.operator.Operation.make;
  * Utility methods for working and reacting to Narsese input.
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
+ *
+ * @author Patrick Hammer
  */
 public class Narsese implements Serializable {
     

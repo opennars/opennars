@@ -24,7 +24,10 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import java.util.Arrays;
 import java.util.List;
 
-/** empty event classes for use with EventEmitter */
+/** empty event classes for use with EventEmitter
+ *
+ * @author Seth
+ */
 public class Events {
 
 
