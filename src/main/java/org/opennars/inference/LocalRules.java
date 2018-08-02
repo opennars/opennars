@@ -40,6 +40,9 @@ import org.opennars.main.Parameters;
  *   satisfy: between a Sentence and a Question/Goal; <br>
  *   merge: between items of the same type and stamp; <br>
  *   conversion: between different inheritance relations.<br>
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class LocalRules {
 

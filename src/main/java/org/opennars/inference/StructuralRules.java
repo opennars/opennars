@@ -28,6 +28,9 @@ import java.util.List;
 /**
  * Single-premise inference rules involving compound terms. Input are one
  * sentence (the premise) and one TermLink (indicating a component)
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class StructuralRules {
 
@@ -690,9 +693,10 @@ public final class StructuralRules {
         }
     }
     
-    /* --------------- Group sequence left and right --------------- */
     /**
      * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,(#,A,B),C,D,E), (#,A,B,C,(#,D,E))
+     *
+     * Group sequence left and right
      *
      * Works for all conjunctions
      *
@@ -700,6 +704,9 @@ public final class StructuralRules {
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
+     *
+     * @author Patrick Hammer
+     * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
         if(!(compound instanceof Conjunction)) {
@@ -746,6 +753,8 @@ public final class StructuralRules {
      * @param inclusiveStartIndex The start index (inclusive)
      * @param inclusiveEndIndex The end index (inclusive)
      * @param nal The derivation context
+     *
+     * @author Robert Wünsche
      */
     private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
         int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
