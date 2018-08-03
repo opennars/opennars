@@ -375,15 +375,15 @@ public final class CompositionalRules {
 
         final boolean renamemeCondition1 = index == 0 ? term12 instanceof ImageExt : term21 instanceof ImageInt;
         if (renamemeCondition1) {
-            final Term renameMeA = index == 0 ? term12 : term11;
-            final Term renameMeB = index == 0 ? term22 : term21;
+            final Term rightSideInvertedForLeft = index == 0 ? term12 : term11;
+            final Term rightSideInvertedForRight = index == 0 ? term22 : term21;
 
             boolean firstIsImage = index != 0 || term22 instanceof ImageExt;
             boolean secondIsSameImage = index == 0 || term11 instanceof ImageInt;
 
             commonTerm = index == 0 ?
-                findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage) :
-                findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
+                findCommonTermPredicate(rightSideInvertedForLeft, rightSideInvertedForRight, commonTerm, firstIsImage, secondIsSameImage) :
+                findCommonSubject(rightSideInvertedForLeft, rightSideInvertedForRight, commonTerm, firstIsImage, secondIsSameImage);
 
             if (commonTerm != null) {
                 subs.put(commonTerm, varInd2);
@@ -400,8 +400,8 @@ public final class CompositionalRules {
         }
 
         {
-            final Term renameMeA = index == 0 ? term12 : term11;
-            final Term renameMeB = index == 0 ? term22 : term21;
+            final Term rightSideInvertedForLeft = index == 0 ? term12 : term11;
+            final Term rightSideInvertedForRight = index == 0 ? term22 : term21;
 
             if (commonTerm==null) {
                 if (index == 0) {
