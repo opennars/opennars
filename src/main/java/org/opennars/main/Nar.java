@@ -111,7 +111,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
         ret.sensoryChannels = new HashMap<>();
-        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.loadedFromResources, ret.usedConfigFilePath, ret, ret.narParameters);
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
         for(Plugin p : pluginsToAdd) {
             ret.addPlugin(p);
         }
@@ -171,30 +171,18 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(narId, true, DEFAULTCONFIG_FILEPATH);
-    }
-    
-    /** constructs the NAR and loads a config from the filepath
-     *
-     * @param narId inter NARS id of this NARS instance
-     * @param configFilePath (relative) path of the XML encoded config file
-     */
-    public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
-            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(narId, false, configFilePath);
+        this(narId, DEFAULTCONFIG_FILEPATH);
     }
 
     public String usedConfigFilePath = "";
-    public boolean loadedFromResources = false;
     /** constructs the NAR and loads a config from the filepath
      *
      * @param narId inter NARS id of this NARS instance
-     * @param loadFromResources
-     * @param configFilePath (relative) path of the XML encoded config file
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
      */
-    public Nar(long narId, boolean loadFromResources, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
+    public Nar(long narId, String relativeConfigFilePath) throws IOException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
-        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(loadFromResources, configFilePath, this, this.narParameters);
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         final Memory m = new Memory(this.narParameters,
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
@@ -202,8 +190,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                 new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
-        this.usedConfigFilePath = configFilePath;
-        this.loadedFromResources = loadFromResources;
+        this.usedConfigFilePath = relativeConfigFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);
         }
@@ -214,7 +201,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * Assigns a random id to the instance
      */
     public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(java.util.UUID.randomUUID().getLeastSignificantBits(), true, DEFAULTCONFIG_FILEPATH);
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), DEFAULTCONFIG_FILEPATH);
     }
 
     /**
