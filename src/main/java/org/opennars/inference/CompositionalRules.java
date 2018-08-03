@@ -428,13 +428,13 @@ public final class CompositionalRules {
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
         Term content = Implication.make(state1, state2);
-        if (content == null) {
-            return;
-        }
 
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
-        if ((truthT == null) || (truthB == null)) {
+        if (content == null) {
+            return;
+        }
+        else if ((truthT == null) || (truthB == null)) {
             if(MiscFlags.DEBUG) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
@@ -444,10 +444,12 @@ public final class CompositionalRules {
         TruthValue truth = induction(truthT, truthB, nal.narParameters);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+
         content = Implication.make(state2, state1);
         truth = induction(truthB, truthT, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+
         content = Equivalence.make(state1, state2);
         truth = comparison(truthT, truthB, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -462,12 +464,10 @@ public final class CompositionalRules {
             state2 = Inheritance.make(term21dependent, varDep);
         }
         
-        if ((state1==null) || (state2 == null)) {
+        if ((state1==null) || (state2 == null) || state1.cloneDeep().equals(state2.cloneDeep())) {
             return;
         }
-        if(state1.cloneDeep().equals(state2.cloneDeep())) {
-            return;
-        }
+
         content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
