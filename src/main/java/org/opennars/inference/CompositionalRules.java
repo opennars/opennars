@@ -446,7 +446,7 @@ public final class CompositionalRules {
         truth = induction(truthB, truthT, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
-        
+
         content = Equivalence.make(state1, state2);
         truth = comparison(truthT, truthB, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -461,12 +461,10 @@ public final class CompositionalRules {
             state2 = Inheritance.make(term21dependent, varDep);
         }
         
-        if ((state1==null) || (state2 == null)) {
+        if ((state1==null) || (state2 == null) || state1.cloneDeep().equals(state2.cloneDeep())) {
             return;
         }
-        if(state1.cloneDeep().equals(state2.cloneDeep())) {
-            return;
-        }
+
         content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
