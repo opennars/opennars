@@ -380,14 +380,18 @@ public final class CompositionalRules {
         if (renamemeCondition1) {
             boolean firstIsImage = index == 0 ? term22 instanceof ImageExt : true;
             boolean secondIsSameImage = index == 0 ? true : term11 instanceof ImageInt;
+
+            commonTerm = index == 0 ?
+                findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage) :
+                findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
         }
 
         if (index == 0) {
             if (renamemeCondition1) {
-                boolean firstIsImage = term22 instanceof ImageExt;
-                boolean secondIsSameImage = true;
+                //boolean firstIsImage = term22 instanceof ImageExt;
+                //boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
+                // commonTerm = findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -409,10 +413,10 @@ public final class CompositionalRules {
             }
         } else {
             if (renamemeCondition1) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term11 instanceof ImageInt;
+                //boolean firstIsImage = true;
+                //boolean secondIsSameImage = term11 instanceof ImageInt;
 
-                commonTerm = findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
+                //commonTerm = findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
