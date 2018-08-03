@@ -14,6 +14,7 @@
  */
 package org.opennars.io;
 
+import com.google.common.io.Resources;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Parameters;
 import org.opennars.main.MiscFlags;
@@ -28,11 +29,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -67,22 +71,54 @@ public class ConfigReader {
         // walk to convert it to absolute path
         file = new File(absolutePathOfRoot, filepath);
 
-        //if this failed, then load from resources
+        InputStream stream = null;
+
+        // if this failed, then load from resources
         if(!file.exists()) {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            file = null;
+
+            URL n = Resources.getResource("config/defaultConfig.xml");
+            /*
             try {
-                file = new File(classloader.getResource(filepath).toURI());
+                file = new File(n.toURI());
             } catch (URISyntaxException ex) {
                 Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("Loading config " + file.getName() +" from resources");
+            */
+
+            /*
+            try {
+            System.out.println(n.toURI().toString());
+            } catch (URISyntaxException ex) {
+                //    Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+
+
+
+            ClassLoader classloader = ConfigReader.class.getClassLoader();
+            try {
+                System.out.println(n.toURI().toString());
+
+                URLConnection connection = n.openConnection();
+                stream = connection.getInputStream();
+
+                //file = new File(classloader.getResource(filepath).toURI()); // commented because it is old way
+                //stream = classloader.getResourceAsStream(n.toURI().toString());
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            System.out.println(stream != null);
+
+            System.out.println("Loading config " + "config/defaultConfig.xml" +" from resources");
         } else {
             System.out.println("Loading config " + file.getName() +" from file");
         }
         
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        final Document document = documentBuilder.parse(file);
+        final Document document = stream != null ? documentBuilder.parse(stream) : documentBuilder.parse(file);
         final NodeList config = document.getElementsByTagName("config").item(0).getChildNodes();
 
         for (int iterationConfigIdx = 0; iterationConfigIdx < config.getLength(); iterationConfigIdx++) {
