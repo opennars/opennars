@@ -394,7 +394,6 @@ public final class CompositionalRules {
         if (index == 0) {
             if (renamemeCondition1) {
                 if (commonTerm != null) {
-                    //subs.put(commonTerm, varInd2);
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
                     term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
                 }
@@ -414,7 +413,6 @@ public final class CompositionalRules {
         } else {
             if (renamemeCondition1) {
                 if (commonTerm != null) {
-                    //subs.put(commonTerm, varInd2);
                     term21 = ((CompoundTerm) term21).applySubstitute(subs);
                     term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
                 }
