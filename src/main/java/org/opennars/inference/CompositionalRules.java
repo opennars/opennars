@@ -403,16 +403,36 @@ public final class CompositionalRules {
             final Term renameMeA = index == 0 ? term12 : term11;
             final Term renameMeB = index == 0 ? term22 : term21;
 
-            
+            if (commonTerm==null) {
+                if (index == 0) {
+                    if (commonTerm == null && term22 instanceof ImageExt) {
+                        boolean firstIsImage = term12 instanceof ImageExt;
+                        boolean secondIsSameImage = true;
+
+                        commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
+
+
+                    }
+                }
+                else {
+                    if (commonTerm == null && term11 instanceof ImageInt) {
+                        boolean firstIsImage = true;
+                        boolean secondIsSameImage = term21 instanceof ImageInt;
+
+                        commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
+
+                    }
+                }
+            }
         }
 
 
         if (index == 0) {
             if (commonTerm==null && term22 instanceof ImageExt) {
-                boolean firstIsImage = term12 instanceof ImageExt;
-                boolean secondIsSameImage = true;
+                boolean firstIsImage = term12 instanceof ImageExt;////
+                boolean secondIsSameImage = true;////
 
-                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);////
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -422,10 +442,10 @@ public final class CompositionalRules {
             }
         } else {
             if (commonTerm==null && term11 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term21 instanceof ImageInt;
+                boolean firstIsImage = true;////
+                boolean secondIsSameImage = term21 instanceof ImageInt;////
 
-                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);////
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
