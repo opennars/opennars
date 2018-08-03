@@ -374,10 +374,10 @@ public final class CompositionalRules {
         // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
 
         final boolean renamemeCondition1 = index == 0 ? term12 instanceof ImageExt : term21 instanceof ImageInt;
-        final Term renameMeA = index == 0 ? term12 : term11;
-        final Term renameMeB = index == 0 ? term22 : term21;
-
         if (renamemeCondition1) {
+            final Term renameMeA = index == 0 ? term12 : term11;
+            final Term renameMeB = index == 0 ? term22 : term21;
+
             boolean firstIsImage = index == 0 ? term22 instanceof ImageExt : true;
             boolean secondIsSameImage = index == 0 ? true : term11 instanceof ImageInt;
 
