@@ -48,37 +48,38 @@ import java.util.logging.Logger;
  */
 public class ConfigReader {
 
-    public static List<Plugin> loadParamsFromFileAndReturnPlugins(boolean loadFromResources, final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static List<Plugin> loadParamsFromFileAndReturnPlugins(final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        
+        System.out.println("Got relative path for loading the config: " + filepath);
         List<Plugin> ret = new ArrayList<Plugin>();
         File file = null;
+        File classPath = null;
 
-        if (loadFromResources) {
+        try {
+            classPath = new File(ConfigReader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {}
+        // we need to walk two levels down ("./target/classes")
+        File absolutePathOfRoot = null;
+        try {
+            absolutePathOfRoot = new File(new File(classPath.getParent()).getParent());
+        }
+        catch (NullPointerException e) {}
+        // walk to convert it to absolute path
+        file = new File(absolutePathOfRoot, filepath);
+
+        //if this failed, then load from resources
+        if(!file.exists()) {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             try {
                 file = new File(classloader.getResource(filepath).toURI());
             } catch (URISyntaxException ex) {
                 Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
             }
+            System.out.println("Loading config " + file.getName() +" from resources");
+        } else {
+            System.out.println("Loading config " + file.getName() +" from file");
         }
-        else {
-            File classPath = null;
-
-            try {
-                classPath = new File(ConfigReader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            } catch (URISyntaxException e) {
-            }
-
-            // we need to walk two levels down ("./target/classes")
-            File absolutePathOfRoot = null;
-            try {
-                absolutePathOfRoot = new File(new File(classPath.getParent()).getParent());
-            }
-            catch (NullPointerException e) {}
-
-            // walk to convert it to absolute path
-            file = new File(absolutePathOfRoot, filepath);
-        }
-
+        
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);

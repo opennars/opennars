@@ -268,14 +268,7 @@ public class NarNode implements EventObserver  {
 
         log("creating Reasoner...");
 
-        // HACK< we need a factory for Reasoner! >
-        boolean loadFromResources = false;
-        Nar nar = new Nar(
-            java.util.UUID.randomUUID().getLeastSignificantBits(),
-            loadFromResources,
-            "./config/mvpConfig.xml" // default
-        );
-
+        Nar nar = new Nar();
 
         log("creating NarNode...");
 
