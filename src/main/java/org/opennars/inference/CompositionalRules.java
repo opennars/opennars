@@ -373,25 +373,62 @@ public final class CompositionalRules {
 
         // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
 
-        if (index == 0) {
-            if (term12 instanceof ImageExt) {
-                boolean firstIsImage = term22 instanceof ImageExt;
-                boolean secondIsSameImage = true;
+        final boolean renamemeCondition1 = index == 0 ? term12 instanceof ImageExt : term21 instanceof ImageInt;
+        if (renamemeCondition1) {
+            final Term rightSideInvertedForLeft = index == 0 ? term12 : term11;
+            final Term rightSideInvertedForRight = index == 0 ? term22 : term21;
 
-                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
+            boolean firstIsImage = index != 0 || term22 instanceof ImageExt;
+            boolean secondIsSameImage = index == 0 || term11 instanceof ImageInt;
 
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
+            commonTerm = index == 0 ?
+                findCommonTermPredicate(rightSideInvertedForLeft, rightSideInvertedForRight, commonTerm, firstIsImage, secondIsSameImage) :
+                findCommonSubject(rightSideInvertedForLeft, rightSideInvertedForRight, commonTerm, firstIsImage, secondIsSameImage);
+
+            if (commonTerm != null) {
+                subs.put(commonTerm, varInd2);
+
+                if (index == 0) {
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
                     term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
                 }
+                else {
+                    term21 = ((CompoundTerm) term21).applySubstitute(subs);
+                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
+                }
             }
-            if (commonTerm==null && term22 instanceof ImageExt) {
-                boolean firstIsImage = term12 instanceof ImageExt;
-                boolean secondIsSameImage = true;
+        }
 
-                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
-                
+        {
+            final Term rightSideInvertedForLeft = index == 0 ? term12 : term11;
+            final Term rightSideInvertedForRight = index == 0 ? term22 : term21;
+
+            if (commonTerm==null) {
+                if (index == 0) {
+                    if (commonTerm == null && term22 instanceof ImageExt) {
+                        boolean firstIsImage = term12 instanceof ImageExt;
+                        boolean secondIsSameImage = true;
+
+                        commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
+
+
+                    }
+                }
+                else {
+                    if (commonTerm == null && term11 instanceof ImageInt) {
+                        boolean firstIsImage = true;
+                        boolean secondIsSameImage = term21 instanceof ImageInt;
+
+                        commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
+
+                    }
+                }
+            }
+        }
+
+
+        if (index == 0) {
+            if (term22 instanceof ImageExt) {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term22 = ((CompoundTerm) term22).applySubstitute(subs);
@@ -399,24 +436,7 @@ public final class CompositionalRules {
                 }
             }
         } else {
-            if (term21 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term11 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
-                }
-            }
-            if (commonTerm==null && term11 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term21 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
-                
+            if (term11 instanceof ImageInt) {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term11 = ((CompoundTerm) term11).applySubstitute(subs);
