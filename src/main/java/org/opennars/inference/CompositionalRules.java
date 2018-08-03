@@ -441,10 +441,12 @@ public final class CompositionalRules {
         TruthValue truth = induction(truthT, truthB, nal.narParameters);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+
         content = Implication.make(state2, state1);
         truth = induction(truthB, truthT, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+        
         content = Equivalence.make(state1, state2);
         truth = comparison(truthT, truthB, nal.narParameters);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
