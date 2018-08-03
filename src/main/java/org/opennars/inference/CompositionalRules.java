@@ -387,24 +387,24 @@ public final class CompositionalRules {
 
             if (commonTerm != null) {
                 subs.put(commonTerm, varInd2);
-            }
 
 
-            if (index == 0) {
+                if (index == 0) {
 
                     if (commonTerm != null) {
                         term12 = ((CompoundTerm) term12).applySubstitute(subs);
                         term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
                     }
 
-            }
-            else {
+                }
+                else {
 
                     if (commonTerm != null) {
                         term21 = ((CompoundTerm) term21).applySubstitute(subs);
                         term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
                     }
 
+                }
             }
         }
 
