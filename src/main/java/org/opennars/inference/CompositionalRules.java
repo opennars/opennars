@@ -428,13 +428,10 @@ public final class CompositionalRules {
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
         Term content = Implication.make(state1, state2);
-        if (content == null) {
-            return;
-        }
 
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
-        if ((truthT == null) || (truthB == null)) {
+        if ((content == null) || (truthT == null) || (truthB == null)) {
             if(MiscFlags.DEBUG) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
