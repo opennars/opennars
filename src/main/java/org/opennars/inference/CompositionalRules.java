@@ -386,18 +386,9 @@ public final class CompositionalRules {
                 findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
         }
 
-        if (index == 0) {
-            if (renamemeCondition1) {
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                }
-            }
-        }
-        if (index == 1) {
-            if (renamemeCondition1) {
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                }
+        if (renamemeCondition1) {
+            if (commonTerm != null) {
+                subs.put(commonTerm, varInd2);
             }
         }
 
