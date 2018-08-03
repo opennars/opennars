@@ -377,6 +377,11 @@ public final class CompositionalRules {
         final Term renameMeA = index == 0 ? term12 : term11;
         final Term renameMeB = index == 0 ? term22 : term21;
 
+        {
+            boolean firstIsImage = index == 0 ? term22 instanceof ImageExt : true;
+            boolean secondIsSameImage = index == 0 ? true : term11 instanceof ImageInt;
+        }
+
         if (index == 0) {
             if (renamemeCondition1) {
                 boolean firstIsImage = term22 instanceof ImageExt;
