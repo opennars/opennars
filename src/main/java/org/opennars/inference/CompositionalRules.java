@@ -388,11 +388,6 @@ public final class CompositionalRules {
 
         if (index == 0) {
             if (renamemeCondition1) {
-                //boolean firstIsImage = term22 instanceof ImageExt;
-                //boolean secondIsSameImage = true;
-
-                // commonTerm = findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
-
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
@@ -413,11 +408,6 @@ public final class CompositionalRules {
             }
         } else {
             if (renamemeCondition1) {
-                //boolean firstIsImage = true;
-                //boolean secondIsSameImage = term11 instanceof ImageInt;
-
-                //commonTerm = findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
-                
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term21 = ((CompoundTerm) term21).applySubstitute(subs);
