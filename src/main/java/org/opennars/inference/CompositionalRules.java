@@ -374,13 +374,15 @@ public final class CompositionalRules {
         // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
 
         final boolean renamemeCondition1 = index == 0 ? term12 instanceof ImageExt : term21 instanceof ImageInt;
+        final Term renameMeA = index == 0 ? term12 : term11;
+        final Term renameMeB = index == 0 ? term22 : term21;
 
         if (index == 0) {
             if (renamemeCondition1) {
                 boolean firstIsImage = term22 instanceof ImageExt;
                 boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -405,7 +407,7 @@ public final class CompositionalRules {
                 boolean firstIsImage = true;
                 boolean secondIsSameImage = term11 instanceof ImageInt;
 
-                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
