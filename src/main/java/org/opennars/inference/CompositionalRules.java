@@ -384,9 +384,7 @@ public final class CompositionalRules {
             commonTerm = index == 0 ?
                 findCommonTermPredicate(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage) :
                 findCommonSubject(renameMeA, renameMeB, commonTerm, firstIsImage, secondIsSameImage);
-        }
 
-        if (renamemeCondition1) {
             if (commonTerm != null) {
                 subs.put(commonTerm, varInd2);
             }
