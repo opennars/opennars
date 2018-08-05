@@ -1,4 +1,0 @@
-<(\,REPRESENT,_,CAT) --> cat>. %1.00;0.90%
-<(\,(\,REPRESENT,_,<(*,CAT,FISH) --> FOOD>),_,eat,fish) --> cat>.
-5
-''outputMustContain('<<(\,REPRESENT,_,$1) --> $2> ==> <(\,(\,REPRESENT,_,<(*,$1,FISH) --> FOOD>),_,eat,fish) --> $2>>. %1.00;0.45%')

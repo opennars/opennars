@@ -1,4 +1,0 @@
-<A --> B>!
-<A --> B>@
-
-''outputMustContain('<A --> B>! %1.00;0.90%')

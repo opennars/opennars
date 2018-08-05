@@ -1,9 +1,0 @@
-'********** set definition
-
-'Smart thing is a type of bright thing. 
-<[smart] --> [bright]>. 
-
-1
-
-'Bright thing is similar to smart thing. 
-''outputMustContain('<[bright] <-> [smart]>. %1.00;0.90%')
