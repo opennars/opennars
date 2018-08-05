@@ -1,9 +1,0 @@
-'********** compound decomposition, one premise
-
-'Boys and girls are youth.
-<(|, boy, girl) --> youth>. %0.90% 
-
-32
-
-'Boys are youth.
-''outputMustContain('<boy --> youth>. %0.90;0.73%')

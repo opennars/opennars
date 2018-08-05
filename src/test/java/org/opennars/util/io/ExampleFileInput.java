@@ -68,7 +68,7 @@ public class ExampleFileInput {
 
             File folder = null;
             try {
-                folder = new File(ExampleFileInput.class.getResource(dir).toURI());
+                folder = new File(Nar.class.getResource(dir).toURI());
             } catch (final URISyntaxException e) {
                 throw new IllegalStateException("Could not resolve path to nal tests in reosources.", e);
             }
