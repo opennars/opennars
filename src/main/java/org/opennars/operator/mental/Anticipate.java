@@ -32,7 +32,6 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;
 
 import java.util.*;
@@ -44,8 +43,7 @@ public class Anticipate extends Operator implements EventObserver {
 
     public final Map<Prediction,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
-    final Set<Term> newTasks = new LinkedHashSet();
-    DerivationContext nal;
+    private transient Set<Term> newTasks = new LinkedHashSet();
  
     private TruthValue expiredTruth = null;
     private BudgetValue expiredBudget = null;
@@ -74,14 +72,16 @@ public class Anticipate extends Operator implements EventObserver {
         return true;
     }
 
-    public void updateAnticipations() {
+    public void updateAnticipations(DerivationContext nal) {
 
         if (anticipations.isEmpty()) return;
 
         final long now=nal.time.time();
                 
         //share stamps created by tasks in this cycle
-        
+        if(newTasks == null) {
+            newTasks = new LinkedHashSet();
+        }
         boolean hasNewTasks = !newTasks.isEmpty();
         
         final Iterator<Map.Entry<Prediction, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
@@ -124,11 +124,14 @@ public class Anticipate extends Operator implements EventObserver {
                 boolean remove = false;
                 
                 if (didntHappen) {
-                    deriveDidntHappen(aTerm,aTime);
+                    deriveDidntHappen(aTerm,aTime,nal);
                     remove = true;
                 }
 
                 if (maybeHappened) {
+                    if(newTasks == null) {
+                        newTasks = new LinkedHashSet();
+                    }
                     if (newTasks.remove(aTerm)) {
                         //in case it happened, temporal induction will do the rest, else deriveDidntHappen occurred
                         if(!remove) {
@@ -149,22 +152,30 @@ public class Anticipate extends Operator implements EventObserver {
             }
         }       
     
+        if(newTasks == null) {
+            newTasks = new LinkedHashSet();
+        }
         newTasks.clear();        
     }
     
+    private transient DerivationContext nal; //don't serialize, it will be re-set after deserialization
     @Override
     public void event(final Class event, final Object[] args) {
         if (event == Events.InduceSucceedingEvent.class || event == Events.TaskDerive.class) {            
             final Task newEvent = (Task)args[0];
-            this.nal= (DerivationContext)args[1];
+            DerivationContext nal= (DerivationContext)args[1];
+            this.nal = nal;
             
-            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > this.nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
+            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
+                if(newTasks == null) {
+                    newTasks = new LinkedHashSet();
+                }
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
 
-        if (nal!=null && event == CycleEnd.class) {            
-            updateAnticipations();
+        if (this.nal!=null && event == CycleEnd.class) {            
+            updateAnticipations(this.nal);
         }
     }
     
@@ -238,7 +249,7 @@ public class Anticipate extends Operator implements EventObserver {
         }
     }
 
-    protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime) {
+    protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime, DerivationContext nal) {
 
         final TruthValue truth = expiredTruth;
         final BudgetValue budget = expiredBudget;

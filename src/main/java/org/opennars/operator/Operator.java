@@ -47,11 +47,8 @@ public abstract class Operator extends Term implements Plugin {
             throw new IllegalStateException("Operator name needs ^ prefix");
     }
 
-    public Nar nar;
-    
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
-        this.nar = n;
         this.executionConfidence = n.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
         return true;
     }        

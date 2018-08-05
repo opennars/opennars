@@ -53,7 +53,7 @@ public class Consider extends Operator {
         
         final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         
-        final DerivationContext cont = new DerivationContext(memory, nar.narParameters, time);
+        final DerivationContext cont = new DerivationContext(memory, memory.narParameters, time);
         cont.setCurrentConcept(concept);
         GeneralInferenceControl.fireConcept(cont, 1);
         
