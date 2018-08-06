@@ -31,6 +31,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.conceptprocessing.ProcessGoal;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Conjunction;
@@ -47,19 +48,12 @@ import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
 
 /**
+ * Default implementation of goal processing
  *
  * @author Patrick Hammer
  */
-public class ProcessGoal {
-    /**
-     * To accept a new goal, and check for revisions and realization, then
-     * decide whether to actively pursue it, potentially executing in case of an operation goal
-     *
-     * @param concept The concept of the goal
-     * @param nal The derivation context
-     * @param task The goal task to be processed
-     */
-    protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
+public class DefaultProcessGoal implements ProcessGoal {
+    public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
         final Task oldGoalT = concept.selectCandidate(task, concept.desires, nal.time); // revise with the existing desire values
         Sentence oldGoal = null;
@@ -164,7 +158,7 @@ public class ProcessGoal {
      * @param concept The concept of the current goal
      * @param oldGoalT The best goal in the goal table
      */
-    protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
+    private static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
@@ -196,7 +190,7 @@ public class ProcessGoal {
      * @param task the task for which the question should be processed
      * @param nal The derivation context
      */    
-    public static void questionFromGoal(final Task task, final DerivationContext nal) {
+    private static void questionFromGoal(final Task task, final DerivationContext nal) {
         if(nal.narParameters.QUESTION_GENERATION_ON_DECISION_MAKING || nal.narParameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
             final List<Term> qu= new ArrayList<>();
@@ -254,7 +248,7 @@ public class ProcessGoal {
     * @param projectedGoal The current goal
     * @param task The goal task
     */
-    protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
+    private static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
         ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal);
         executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task);
     }
@@ -348,7 +342,7 @@ public class ProcessGoal {
      * @param nal The derivation concept
      * @param t The operation goal task
      */
-    public static boolean executeOperation(final DerivationContext nal, final Task t) {        
+    private static boolean executeOperation(final DerivationContext nal, final Task t) {
         final Term content = t.getTerm();
         if(!(nal.memory.allowExecution) || !(content instanceof Operation)) {
             return false;

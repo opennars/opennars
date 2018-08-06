@@ -49,14 +49,14 @@ public class ProcessTask {
             final char type = task.sentence.punctuation;
             switch (type) {
                 case Symbols.JUDGMENT_MARK:
-                    ProcessJudgment.processJudgment(concept, nal, task);
+                    processJudgment(concept, nal, task);
                     break;
                 case Symbols.GOAL_MARK:
-                    ProcessGoal.processGoal(concept, nal, task);
+                    processGoal(concept, nal, task);
                     break;
                 case Symbols.QUESTION_MARK:
                 case Symbols.QUEST_MARK:
-                    ProcessQuestion.processQuestion(concept, nal, task);
+                    processQuestion(concept, nal, task);
                     break;
                 default:
                     return false;
@@ -68,5 +68,46 @@ public class ProcessTask {
             }
         }
         return true;
-    }     
+    }
+
+    /**
+     * To answer a question by existing beliefs
+     *
+     * @param concept The concept of the goal
+     * @param nal The derivation context
+     * @param task The goal task to be processed
+     */
+    private static void processQuestion(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processQuestion.processTask(concept, nal, task);
+    }
+
+    /**
+     * To accept a new goal, and check for revisions and realization, then
+     * decide whether to actively pursue it, potentially executing in case of an operation goal
+     *
+     * @param concept The concept of the goal
+     * @param nal The derivation context
+     * @param task The goal task to be processed
+     */
+    private static void processGoal(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processGoal.processTask(concept, nal, task);
+    }
+
+    /**
+     * To accept a new judgment as belief, and check for revisions and solutions.
+     * Revisions will be processed as judgment tasks by themselves.
+     * Due to their higher confidence, summarizing more evidence,
+     * the will become the top entries in the belief table.
+     * Additionally, judgements can themselves be the solution to existing questions
+     * and goals, which is also processed here.
+     * <p>
+     * called only by ConceptProcessing.processTask
+     *
+     * @param task The judgment task to be accepted
+     * @param concept The concept of the judment task
+     * @param nal The derivation context
+     */
+    private static void processJudgment(Concept concept, DerivationContext nal, Task task) {
+        nal.narParameters.processJudgment.processTask(concept, nal, task);
+    }
 }

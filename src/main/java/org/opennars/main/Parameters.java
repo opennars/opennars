@@ -14,7 +14,15 @@
  */
 package org.opennars.main;
 
+import org.opennars.control.concept.DefaultProcessGoal;
+import org.opennars.control.concept.DefaultProcessJudgment;
+import org.opennars.control.concept.DefaultProcessQuestion;
+import org.opennars.interfaces.conceptprocessing.ProcessGoal;
+import org.opennars.interfaces.conceptprocessing.ProcessJudgment;
+import org.opennars.interfaces.conceptprocessing.ProcessQuestion;
+
 import java.io.Serializable;
+
 
 /**
  * Reasoner local settings and deriver options
@@ -270,4 +278,8 @@ public class Parameters implements Serializable {
     
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
+
+    public transient ProcessQuestion processQuestion = new DefaultProcessQuestion();
+    public transient ProcessJudgment processJudgment = new DefaultProcessJudgment();
+    public transient ProcessGoal processGoal = new DefaultProcessGoal();
 }

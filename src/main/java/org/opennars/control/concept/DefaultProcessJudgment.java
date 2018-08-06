@@ -28,6 +28,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.conceptprocessing.ProcessJudgment;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
@@ -42,20 +43,13 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
-public class ProcessJudgment {
-    /**
-     * To accept a new judgment as belief, and check for revisions and solutions.
-     * Revisions will be processed as judgment tasks by themselves.
-     * Due to their higher confidence, summarizing more evidence,
-     * the will become the top entries in the belief table.
-     * Additionally, judgements can themselves be the solution to existing questions
-     * and goals, which is also processed here.
-     * 
-     * @param task The judgment task to be accepted
-     * @param concept The concept of the judment task
-     * @param nal The derivation context
-     */
-    public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
+/**
+ * Default implementation of judgment processing
+ *
+ * @author Patrick Hammer
+ */
+public class DefaultProcessJudgment implements ProcessJudgment {
+    public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
@@ -98,7 +92,7 @@ public class ProcessJudgment {
      * Handle the feedback of the operation that was processed as a judgment.
      * <br>
      * The purpose is to start a new operation frame which makes the operation concept 
-     * interpret current events as preconditions and future events as post-conditions to the invoked operation.
+     * interpret current events as preconditions and future events as postconditions to the invoked operation.
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
@@ -153,7 +147,7 @@ public class ProcessJudgment {
     
     /**
      * Add &lt;(&amp;/,a,op()) =/&gt; b&gt; beliefs to preconditions in concept b
-     * 
+     *
      * @param task The potential implication task
      * @param nal The derivation context
      * @param concept The concept of the task
