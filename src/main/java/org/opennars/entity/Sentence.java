@@ -144,7 +144,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     truth.setConfidence(0.0f); //TODO:
             } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (MiscFlags.DEBUG)
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_INVALID_SENTENCES)
                     throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
 
@@ -154,7 +154,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (MiscFlags.DEBUG)
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_INVALID_SENTENCES)
                     throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
             }
 
