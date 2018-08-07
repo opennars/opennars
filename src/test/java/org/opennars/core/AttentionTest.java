@@ -55,7 +55,8 @@ public class AttentionTest {
         final Set<Concept> uniqueconcepts = new HashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            final Concept s = n.memory.concepts.peekNext();
+            final Concept s = n.memory.concepts.takeNext();
+            n.memory.concepts.putIn(s);
             uniqueconcepts.add(s);
         }
 

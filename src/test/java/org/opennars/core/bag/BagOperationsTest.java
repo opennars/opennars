@@ -82,6 +82,23 @@ public class BagOperationsTest {
         this.narParameters = nar.narParameters;
         testBagSequence(new LevelBag(2, 2, nar.narParameters));    
     }
+
+    public static float getMinPriority(Bag<Concept,Term> bag) {
+        float min = 1.0f;
+        for (final Item e : bag) {
+            final float p = e.getPriority();
+            if (p < min) min = p;
+        }
+        return min;            
+    }
+    public static float getMaxPriority(Bag<Concept,Term> bag) {
+        float max = 0.0f;
+        for (final Item e : bag) {
+            final float p = e.getPriority();
+            if (p > max) max = p;
+        }
+        return max;
+    }
     
     public static void testBagSequence(final Bag b) {
 
@@ -98,8 +115,8 @@ public class BagOperationsTest {
         
         b.putIn(makeConcept("c", 0.2f));
         assertEquals(2, b.size());
-        assertEquals(0.1f, b.getMinPriority(),0.001f);
-        assertEquals(0.2f, b.getMaxPriority(),0.001f);
+        assertEquals(0.1f, getMinPriority(b),0.001f);
+        assertEquals(0.2f, getMaxPriority(b),0.001f);
         
         //if (b instanceof GearBag()) return;
         
@@ -108,8 +125,8 @@ public class BagOperationsTest {
         
         
         assertEquals(2, b.size());
-        assertEquals(0.2f, b.getMinPriority(),0.001f);
-        assertEquals(0.4f, b.getMaxPriority(),0.001f);
+        assertEquals(0.2f, getMinPriority(b),0.001f);
+        assertEquals(0.4f, getMaxPriority(b),0.001f);
         
         
         final Item tb = b.take(new Term("b"));

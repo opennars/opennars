@@ -228,7 +228,7 @@ public class NarNode implements EventObserver  {
      * @throws ClassNotFoundException 
      */
     private Object receiveObject() throws IOException, ClassNotFoundException {
-        byte[] recBytes = new byte[1000000];
+        byte[] recBytes = new byte[65535];
         DatagramPacket packet = new DatagramPacket(recBytes, recBytes.length);
         receiveSocket.receive(packet);
         ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(recBytes));

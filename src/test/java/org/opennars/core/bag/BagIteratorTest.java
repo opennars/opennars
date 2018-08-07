@@ -46,6 +46,16 @@ public class BagIteratorTest {
         assertTrue(count==b.size());
     }
     
+    public int numEmptyLevels(LevelBag bag) {
+        int empty = 0;
+        for (int i = 0; i < bag.level.length; i++) {
+            if (bag.level[i].isEmpty()) {
+                empty++;
+            }
+        }
+        return empty;
+    }
+    
     public void testBagIterator(final Bag<NullItem,CharSequence> b) {
         
         b.putIn(new NullItem(0.1f));
@@ -57,7 +67,7 @@ public class BagIteratorTest {
         b.putIn(new NullItem(0.7f));
         b.putIn(new NullItem(0.8f));
 
-        assert !(b instanceof LevelBag) || (((LevelBag) b).numEmptyLevels() < L);
+        assert !(b instanceof LevelBag) || (numEmptyLevels((LevelBag) b) < L);
         
         testIterator(b);
         

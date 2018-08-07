@@ -94,7 +94,7 @@ public class RuleTables {
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
-            if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return
+            if (LocalRules.match(task, belief, beliefConcept, nal)) { //new tasks resulted from the match, so return
                 return;
             }
         }
