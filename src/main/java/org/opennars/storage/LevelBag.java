@@ -72,7 +72,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
      * maximum number of items to be taken out at current level
      */
     int currentCounter;
-    final boolean[] levelEmpty;
+    public final boolean[] levelEmpty;
     
     
     public LevelBag(final int levels, final int capacity, Parameters narParameters) {
@@ -100,6 +100,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         //Deque<E> items;
         final LinkedHashSet<E> items;
                 
+        /**
+         * Construct a new bag level
+         * 
+         * @param level the index within bag
+         * @param numElements the size of the level
+         */
         public Level(final int level, final int numElements) {
             super();
             items = new LinkedHashSet(numElements);
@@ -111,16 +117,22 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             return items.iterator();
         }
         
-        public int size() { return items.size(); }
+        /**
+         * Size
+         * 
+         * @return the size of the level
+         */
+        public int size() { 
+            return items.size(); 
+        }
         
-        
-        void levelIsEmpty(final boolean e) {
+        void setLevelEmpty(final boolean e) {
             levelEmpty[thisLevel] = e;
         }
         
         public void clear() {
             items.clear();
-            levelIsEmpty(true);
+            setLevelEmpty(true);
         }
 
        public boolean add(final E e) {
@@ -128,7 +140,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
                throw new IllegalStateException("Bag requires non-null items");
            
             if (items.add(e)) {
-                levelIsEmpty(false);
+                setLevelEmpty(false);
                 return true;
             }
             return false;
@@ -136,7 +148,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
 
         public boolean remove(final E o) {
             if (items.remove(o)) {
-                levelIsEmpty(items.isEmpty());
+                setLevelEmpty(items.isEmpty());
                 return true;
             }
             return false;
@@ -146,7 +158,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             final E e = items.iterator().next();
             items.remove(e);
             if (e!=null) {
-                levelIsEmpty(items.isEmpty());
+                setLevelEmpty(items.isEmpty());
             }
             return e;
         }
@@ -159,10 +171,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             return items.iterator();
             //return items.descendingIterator();
         }
-    }
-    
-    private Level<E> newLevel(final int l) {
-        return new Level(l, 1 + capacity / levels);
     }
     
     @Override
@@ -205,11 +213,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         }
         return t;
     }
-    
-    @Override
-    public Set<K> keySet() {
-        return nameTable.keySet();
-    }
 
     /**
      * Get the average priority of Items
@@ -219,7 +222,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     @Override
     public float getAveragePriority() {
         if (size() == 0) {
-            return 0.01f;
+            return 0.0f;
         }
         return Math.min(mass / size(), 1.0f);
     }
@@ -255,25 +258,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
-            currentCounter = getNonEmptyLevelSize(currentLevel);
+            currentCounter = this.level[currentLevel].size();
         }
-    }
-
-    @Override
-    public E peekNext() {
-        if (size() == 0) 
-            return null; // empty bag                  
-        final E e = takeNext();
-        putIn(e);
-        return e;        
-    }
-    
-    public E peekNextWithoutAffectingBagOrder() {    
-        if (size() == 0) return null; // empty bag                
-        if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
-            nextNonEmptyLevel();
-        }
-        return level[currentLevel].peekFirst();        
     }
     
     @Override
@@ -290,13 +276,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         currentCounter--;        
         return selected;
-    }
-
-    public int getNonEmptyLevelSize(final int level) {
-        return this.level[level].size();
-    }
-    public int getLevelSize(final int level) {
-        return (levelEmpty[level]) ? 0 : this.level[level].size();
     }
 
     @Override public E take(final K name) {
@@ -367,17 +346,13 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
                 oldItem = takeOutFirst(outLevel);
             }
         }
-        ensureLevelExists(inLevel);
+        if (this.level[inLevel] == null) {
+            this.level[inLevel] = new Level(inLevel, inLevel + capacity / levels);
+        }
         level[inLevel].add(newItem);        // FIFO
         nameTable.put(newItem.name(), newItem);        
         addMass(newItem);
         return oldItem;
-    }
-
-    protected final void ensureLevelExists(final int level) {
-        if (this.level[level] == null) {
-            this.level[level] = newLevel(level);
-        }
     }
 
     /**
@@ -443,37 +418,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     }
 
     @Override
-    public float getMass() {
-        return mass;
-    }
-
-    public float getAverageItemsPerLevel() {
-        return capacity / levels;
-    }
-
-    public float getMaxItemsPerLevel() {
-        int max = getLevelSize(0);
-        for (int i = 1; i < levels; i++) {
-            final int s = getLevelSize(i);
-            if (s > max) {
-                max = s;
-            }
-        }
-        return max;
-    }
-
-    public float getMinItemsPerLevel() {
-        int min = getLevelSize(0);
-        for (int i = 1; i < levels; i++) {
-            final int s = getLevelSize(i);
-            if (s < min) {
-                min = s;
-            }
-        }
-        return min;
-    }
-
-    @Override
     public int getCapacity() {
         return capacity;
     }
@@ -483,11 +427,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             return Collections.emptyList();
         }
         return level[i];
-    }
-
-    @Override
-    public Collection<E> values() {
-        return nameTable.values();
     }
 
     @Override
@@ -537,15 +476,5 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
                 return e;
             }
         };
-    }
-
-    public int numEmptyLevels() {
-        int empty = 0;
-        for (int i = 0; i < level.length; i++) {
-            if (levelEmpty[i]) {
-                empty++;
-            }
-        }
-        return empty;
     }
 }

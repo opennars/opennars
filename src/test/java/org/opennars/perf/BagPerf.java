@@ -31,6 +31,8 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.entity.Concept;
+import org.opennars.language.Term;
 import org.opennars.main.Parameters;
 
 /**
@@ -71,14 +73,38 @@ public class BagPerf {
     int randomAccesses;
     final double insertRatio = 0.9;
     
+    public int getLevelSize(LevelBag lb, final int level) {
+        return (lb.levelEmpty[level]) ? 0 : lb.level[level].size();
+    }
 
     
-    public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
+    public float getMaxItemsPerLevel(LevelBag b) {
+        int max = getLevelSize(b,0);
+        for (int i = 1; i < b.levels; i++) {
+            final int s = getLevelSize(b,i);
+            if (s > max) {
+                max = s;
+            }
+        }
+        return max;
+    }
+
+    public float getMinItemsPerLevel(LevelBag b) {
+        int min = getLevelSize(b,0);
+        for (int i = 1; i < b.levels; i++) {
+            final int s = getLevelSize(b,i);
+            if (s < min) {
+                min = s;
+            }
+        }
+        return min;
+    }
+    
+    public float totalPriority, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
     public void testBag(final boolean List, final int levels, final int capacity, final float forgetRate) {
         
         totalPriority = 0;
-        totalMass = 0;
         totalMaxItemsPerLevel = totalMinItemsPerLevel = 0;
         
         final Performance p = new Performance((List ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
@@ -122,10 +148,9 @@ public class BagPerf {
                 randomBagIO(b, randomAccesses, insertRatio);
                 
                 if (!warmup) {                    
-                    totalPriority += b.getAveragePriority();
-                    totalMass += b.getMass();                    
-                    totalMinItemsPerLevel += b.getMinItemsPerLevel();
-                    totalMaxItemsPerLevel += b.getMaxItemsPerLevel();
+                    totalPriority += b.getAveragePriority();                
+                    totalMinItemsPerLevel += getMinItemsPerLevel(b);
+                    totalMaxItemsPerLevel += getMaxItemsPerLevel(b);
                 }
             }
             
@@ -139,7 +164,6 @@ public class BagPerf {
         //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
-        System.out.print(totalMass/repeats/levels + ",");
         System.out.println();
     }
             
