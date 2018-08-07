@@ -49,7 +49,7 @@ public class BagIteratorTest {
     public int numEmptyLevels(LevelBag bag) {
         int empty = 0;
         for (int i = 0; i < bag.level.length; i++) {
-            if (bag.levelEmpty[i]) {
+            if (bag.level[i].isEmpty()) {
                 empty++;
             }
         }

@@ -74,7 +74,7 @@ public class BagPerf {
     final double insertRatio = 0.9;
     
     public int getLevelSize(LevelBag lb, final int level) {
-        return (lb.levelEmpty[level]) ? 0 : lb.level[level].size();
+        return (lb.level[level] == null) ? 0 : lb.level[level].size();
     }
 
     
