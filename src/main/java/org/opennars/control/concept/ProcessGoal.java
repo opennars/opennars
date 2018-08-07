@@ -93,7 +93,7 @@ public class ProcessGoal {
             final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
             if (projectedGoal!=null) {
                 nal.setCurrentBelief(projectedGoal);
-                final boolean wasRevised = revision(task.sentence, projectedGoal, false, nal);
+                final boolean wasRevised = revision(task.sentence, projectedGoal, concept, false, nal);
                 if (wasRevised) {
                     /* It was revised, so there is a new task for which this method will be called
                      * with higher/lower desire.

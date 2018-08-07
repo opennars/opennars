@@ -54,12 +54,12 @@ public class LocalRules {
      * @param belief The belief
      */
     // called in RuleTables.reason
-    public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
+    public static boolean match(final Task task, final Sentence belief, Concept beliefConcept, final DerivationContext nal) {
         final Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
             if (revisible(sentence, belief, nal.narParameters)) {
-                return revision(sentence, belief, true, nal);
+                return revision(sentence, belief, beliefConcept, true, nal);
             }
         } else {
             if (matchingOrder(sentence, belief)) {
@@ -99,12 +99,14 @@ public class LocalRules {
     /**
      * Belief revision
      *
+     * Summarizes the evidence of two beliefs with same content.
+     * called from processGoal and processJudgment and LocalRules.match
+     * 
      * @param newBelief The new belief in task
      * @param oldBelief The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
      */
-    // called from Concept.reviseTable and match
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final Concept beliefConcept, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) { 
             return false;
         }
@@ -112,43 +114,7 @@ public class LocalRules {
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         final TruthValue newTruth = newBelief.truth.clone();
         final TruthValue oldTruth = oldBelief.truth;
-        boolean useNewBeliefTerm = false;
-        
-        if(newBelief.getTerm().hasInterval()) {
-            final Term cterm = replaceIntervals(oldBelief.getTerm()); //oldBelief since concept <a --> b> might not exist
-            final Concept c = nal.memory.concept(cterm);              //and localRules.match might have task <a --> b> from concept b
-            final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
-            if(c.recent_intervals.size() == 0) {
-                for(final Long l : ivalOld) {
-                    c.recent_intervals.add((float) l);
-                }
-            }
-            final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
-            for(int i=0;i<ivalNew.size();i++) {
-                final float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
-                c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
-            }
-            long AbsDiffSumNew = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSumNew += Math.abs(ivalNew.get(i) - c.recent_intervals.get(i));
-            }
-            long AbsDiffSumOld = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSumOld += Math.abs(ivalOld.get(i) - c.recent_intervals.get(i));
-            }
-            long AbsDiffSum = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
-            }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
-                                                            //we won't count more confidence than
-                                                            //when the second premise would have been shifted
-                                                            //to the necessary time in the first place
-                                                            //to build the hypothesis newBelief encodes
-            newTruth.setConfidence(newTruth.getConfidence()*a);
-            useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
-        }
+        boolean useNewBeliefTerm = intervalProjection(newBelief, nal, oldBelief, beliefConcept, newTruth);
         
         final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
@@ -158,6 +124,63 @@ public class LocalRules {
         }
         
         return false;
+    }
+
+    /**
+     * Interval projection
+     * 
+     * Decides to use whether to use old or new term dependent on which one is more usual,
+     * also discounting the truth confidence according to the interval difference.
+     * called by Revision
+     * 
+     * @param newBelief
+     * @param nal
+     * @param oldBelief
+     * @param beliefConcept
+     * @param newTruth
+     * @return 
+     */
+    private static boolean intervalProjection(final Sentence newBelief, final DerivationContext nal, final Sentence oldBelief, final Concept beliefConcept, final TruthValue newTruth) {
+        boolean useNewBeliefTerm = false;
+        if(newBelief.getTerm().hasInterval()) {
+            final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
+            final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
+            long AbsDiffSumNew = 0;
+            long AbsDiffSumOld = 0;
+            List<Float> recent_ivals = beliefConcept.recent_intervals;
+            synchronized(recent_ivals){
+                if(recent_ivals.isEmpty()) {
+                    for(final Long l : ivalOld) {
+                        recent_ivals.add((float) l);
+                    }
+                }
+                for(int i=0;i<ivalNew.size();i++) {
+                    final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
+                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                    recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
+                }
+                
+                for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
+                }
+                
+                for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
+                }
+            }
+            long AbsDiffSum = 0;
+            for(int i=0;i<ivalNew.size();i++) {
+                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
+            }
+            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
+            //we won't count more confidence than
+            //when the second premise would have been shifted
+            //to the necessary time in the first place
+            //to build the hypothesis newBelief encodes
+            newTruth.setConfidence(newTruth.getConfidence()*a);
+            useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
+        }
+        return useNewBeliefTerm;
     }
 
 

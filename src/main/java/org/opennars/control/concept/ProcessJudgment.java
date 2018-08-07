@@ -73,7 +73,7 @@ public class ProcessJudgment {
                 final Sentence projectedBelief = oldBelief.projection(nal.time.time(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
+                    revision(judg, projectedBelief, concept, false, nal);
                 }
             }
         }
