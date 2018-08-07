@@ -33,7 +33,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     /**
      * Get the max. amount of items the Bag can store
-     * @return The capacity 
+     * @return capacity 
      */
     abstract public int getCapacity();
 
