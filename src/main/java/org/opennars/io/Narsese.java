@@ -340,7 +340,7 @@ public class Narsese implements Serializable {
                     }
             }
         }
-        else if (MiscFlags.FUNCTIONAL_OPERATIONAL_FORMAT) {
+        else {
             
             //parse functional operation:
             //  function()

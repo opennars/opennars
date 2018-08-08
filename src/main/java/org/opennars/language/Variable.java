@@ -121,25 +121,24 @@ public class Variable extends Term {
     
 
     @Override public boolean equals(final Object that) {
-        if (that == this) return true;
-        if (!(that instanceof Variable)) return false;
-        final Variable v = (Variable)that;
-
-        if(!super.equals(that))
+        if (that == this) {
+            return true;
+        }
+        if (!(that instanceof Variable)) { 
             return false;
-
-                
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            return equalsTerm(that);
         }
-        else {
-            if (!name().equals(v.name())) return false;
-            if ((getScope() == this && v.getScope()!=v) ||
-                (getScope() != this && v.getScope() == v)) {
-                return false;
-            }
-            return (v.getScope().name().equals(getScope().name()));
+        if(!super.equals(that)) {
+            return false;
         }
+        final Variable v = (Variable)that;
+        if (!name().equals(v.name())) {
+            return false;
+        }
+        if ((getScope() == this && v.getScope() != v) ||
+            (getScope() != this && v.getScope() == v)) {
+            return false;
+        }
+        return (v.getScope().name().equals(getScope().name()));
     }
     
     public boolean equalsTerm(final Object that) {
@@ -184,31 +183,28 @@ public class Variable extends Term {
 
     @Override
     public int compareTo(final AbstractTerm that) {
-        if(this == that)
+        if(this == that) {
             return 0;
+        }
         final int superCmp = super.compareTo(that);
-        if(superCmp != 0)
+        if(superCmp != 0) {
             return superCmp;
-
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            throw new UnsupportedOperationException("not implemented!");
+        }
+        if(!(that instanceof Variable)) {
+            return 0;
         }
 
-        if(!(that instanceof Variable))
-            return 0;
-
         final Variable thatVar = (Variable) that;
-
         final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name));
-        if( nameCmp != 0 )
+        if( nameCmp != 0 ) {
             return nameCmp;
-
-        if(this.getScope() == this && thatVar.getScope() != thatVar)
+        }
+        if(this.getScope() == this && thatVar.getScope() != thatVar) {
             return 1;
-
-        if(this.getScope() != this && thatVar.getScope() == thatVar)
+        }
+        if(this.getScope() != this && thatVar.getScope() == thatVar) {
             return -1;
-
+        }
         return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
     }
 

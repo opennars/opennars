@@ -133,11 +133,6 @@ public class Variables {
             return true;
         }
         
-        
-        /*if (termsEqual) {
-            return true;
-        }*/
-        
         final Term t;
         //variable "renaming" to variable of same type is always valid
         if(term1 instanceof Variable && term2 instanceof Variable) {
@@ -215,8 +210,7 @@ public class Variables {
             final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if(
-                (areBothConjuctions && !isSameOrderAndSameSpatial) ||
+            if((areBothConjuctions && !isSameOrderAndSameSpatial) ||
                 ((areBothEquivalence || areBothImplication) && !isSameOrder)
             ) {
                 return false;
@@ -231,7 +225,6 @@ public class Variables {
             final Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                final Set<Integer> alreadyMatched = new HashSet<>();
                 //ok attempt unification
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;

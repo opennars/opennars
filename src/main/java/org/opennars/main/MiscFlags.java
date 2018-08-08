@@ -34,21 +34,13 @@ public class MiscFlags {
     /** Whether the system should continue after an input error, not recommended as it should be handled from outside*/
     public static boolean INPUT_ERRORS_CONTINUE = false;
     
-
     /** use this for advanced error checking, at the expense of lower performance.*/
     public static boolean DEBUG = false;
+    /** for thorough bag debugging (slow), requires DEBUG=true */
+    public static final boolean DEBUG_BAG = false;
+    /* for thorough sentence debugging (slow), requires DEBUG=true */
+    public static final boolean DEBUG_INVALID_SENTENCES = false;
+    
     /** Set to true by the test system, leave false */
     public static boolean TEST = false;
-
-    /** for thorough bag debugging (slow) */
-    public static final boolean DEBUG_BAG = false;
-    
-    /* for thorough sentence debugging (slow) */
-    public static final boolean DEBUG_INVALID_SENTENCES = true;
-    
-    /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
-    public static final boolean TERM_ELEMENT_EQUIVALENCY = false; //TODO check potential, if can't work, remove
-    
-    /** enables the parsing of functional input format for operation terms: function(a,b,...) */
-    public static boolean FUNCTIONAL_OPERATIONAL_FORMAT = true;
 }
