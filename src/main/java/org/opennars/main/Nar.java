@@ -158,10 +158,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     protected transient List<PluginState> plugins = new ArrayList<>(); //was CopyOnWriteArrayList
 
     /** Flag for running continuously  */
-    private boolean running = false;
+    private transient boolean running = false;
     /** used by stop() to signal that a running loop should be interrupted */
-    private boolean stopped = false;
-    private boolean threadYield;
+    private transient boolean stopped = false;
+    private transient boolean threadYield;
 
     public static final String DEFAULTCONFIG_FILEPATH = "./config/defaultConfig.xml";
     
@@ -196,12 +196,21 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
     }
     
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
+     */
+    public Nar(String relativeConfigFilePath) throws IOException, InstantiationException, InvocationTargetException, 
+            NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), relativeConfigFilePath);
+    }
+    
     /** constructs the NAR and loads a config from the default filepath
      *
      * Assigns a random id to the instance
      */
     public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(java.util.UUID.randomUUID().getLeastSignificantBits(), DEFAULTCONFIG_FILEPATH);
+        this(DEFAULTCONFIG_FILEPATH);
     }
 
     /**
@@ -231,7 +240,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return false;
     }
     
-    private boolean addCommand(final String text) {
+    private boolean addCommand(final String text) throws IOException {
         if(text.startsWith("**")) {
             this.reset();
             return true;
@@ -250,13 +259,26 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         else
         if(text.startsWith("*threads=")) {
-            final Integer value = Integer.valueOf(text.split("*threads=")[1]);
+            final Integer value = Integer.valueOf(text.split("threads=")[1]);
             narParameters.THREADS_AMOUNT = value;
             return true;
         }
         else
+        if(text.startsWith("*save=")) {
+            final String filename = text.split("save=")[1];
+            boolean wasRunning = this.isRunning();
+            if(wasRunning) {
+                this.stop();
+            }
+            this.SaveToFile(filename);
+            if(wasRunning) {
+                this.start(this.minCyclePeriodMS);
+            }
+            return true;
+        }
+        else
         if(text.startsWith("*speed=")) {
-            final Integer value = Integer.valueOf(text.split("*speed")[1]);
+            final Integer value = Integer.valueOf(text.split("speed=")[1]);
             this.minCyclePeriodMS = value;
             return true;
         }
@@ -281,10 +303,15 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             return;
         }
         //Ignore any input that is just a comment
-        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
+        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0) {
             return;
-        if(addCommand(text)) {
-            return;
+        }
+        try {
+            if(addCommand(text)) {
+                return;
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException("I/O command failed: " + text, ex);
         }
         Task task = null;
         try {

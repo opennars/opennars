@@ -12,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
- */
 package org.opennars.core;
 
 import org.junit.Before;
