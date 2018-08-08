@@ -39,7 +39,7 @@ public class MiscFlags {
     /** for thorough bag debugging (slow), requires DEBUG=true */
     public static final boolean DEBUG_BAG = false;
     /* for thorough sentence debugging (slow), requires DEBUG=true */
-    public static final boolean DEBUG_INVALID_SENTENCES = false;
+    public static final boolean DEBUG_SENTENCES = false;
     
     /** Set to true by the test system, leave false */
     public static boolean TEST = false;
