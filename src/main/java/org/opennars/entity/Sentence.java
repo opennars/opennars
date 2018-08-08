@@ -160,11 +160,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             if (MiscFlags.DEBUG && MiscFlags.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 if (!Term.valid(_content)) {
-                    truth.setConfidence(0.0f);
-                    if (MiscFlags.DEBUG) {
-                        System.err.println("Invalid Sentence term: " + _content);
-                        Thread.dumpStack();
-                    }
+                    final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered " + _content);
+                    ntc.printStackTrace();
+                    throw ntc;
                 }
             }
         }
@@ -498,7 +496,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         
-        if(MiscFlags.TEST_RUNNING) {
+        if(MiscFlags.TEST) {
             timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
         }
         
