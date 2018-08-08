@@ -133,7 +133,6 @@ public class Variables {
             return true;
         }
         
-        final Term t;
         //variable "renaming" to variable of same type is always valid
         if(term1 instanceof Variable && term2 instanceof Variable) {
             final Variable v1 = (Variable) term1;
@@ -156,12 +155,6 @@ public class Variables {
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             int mapIdx = term1VarUnifyAllowed ? 0 : 1;
             Variable termAAsVariable = (Variable)termA;
-
-            t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
-
-            if (t != null) {
-                return findSubstitute(type, t, termB, map);
-            }
 
             if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
 
