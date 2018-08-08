@@ -46,19 +46,6 @@ abstract public class Image extends CompoundTerm {
     }
     
     @Override
-    public int hashCode() {
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY)
-            return hash;        
-        else
-            return super.hashCode();
-    }
-
-    @Override
-    public boolean equals2(final CompoundTerm other) {
-        return relationIndex == ((Image)other).relationIndex;           
-    }
-    
-    @Override
     public int compareTo(final AbstractTerm that) {
         if (that instanceof Image) {
             final int r = relationIndex - ((Image)that).relationIndex;

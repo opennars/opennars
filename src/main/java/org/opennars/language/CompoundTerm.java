@@ -740,43 +740,15 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     @Override
     public int hashCode() {
-        if (!MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            return name().hashCode();
-        }
-        else {
-            return hash;
-        }
+        return name().hashCode();
     }
 
     @Override
     public int compareTo(final AbstractTerm that) {
-        if (that==this) return 0;
-        
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            if (that instanceof CompoundTerm) {
-                final CompoundTerm t = (CompoundTerm)that;
-
-                final int h = Integer.compare(hashCode(), t.hashCode());
-                if (h != 0) return h;
-
-                final int o = operator().compareTo(t.operator());
-                if (o != 0) return o;
-
-                //same operator
-                final int c = Integer.compare(getComplexity(), t.getComplexity());
-                if (c!=0) return c;
-
-                //should almost never reach here, the hashcode above will handle > 99% of comparisons
-                if (!equals(that)) {
-                    return Integer.compare(System.identityHashCode(this), System.identityHashCode(that));
-                }
-                return 0;
-            }
-            else
-                return super.compareTo(that);
+        if (that==this) { 
+            return 0;
         }
-        return
-                super.compareTo(that);
+        return super.compareTo(that);
     }
     
     @Override
@@ -784,49 +756,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (that==this) return true;                
         if (!(that instanceof Term))
             return false;
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY)
-            return equalsByTerm(that);
         return name().equals(((Term)that).name());
-    }
-    
-    public boolean equalsByTerm(final Object that) {
-        if (!(that instanceof CompoundTerm)) return false;
-
-        final CompoundTerm t = (CompoundTerm)that;        
-
-        if (operator() != t.operator())
-            return false;
-
-        if (getComplexity()!= t.getComplexity())
-            return false;
-
-        if (getTemporalOrder() != t.getTemporalOrder())
-            return false;
-        
-        if(getIsSpatial() != t.getIsSpatial())
-            return false;
-
-        if (!equals2(t))
-            return false;
-
-        if (term.length!=t.term.length)
-            return false;
-
-        for (int i = 0; i < term.length; i++) {            
-            if (!term[i].equals(t.term[i]))
-                return false;
-        }
-
-        return true;        
-    }
-    
-    
-    
-    
-    /** additional equality checks, in subclasses*/
-    public boolean equals2(final CompoundTerm other) {
-        return true;
-    }
+    }   
 
     public void setNormalized(final boolean b) {
         this.normalized = b;

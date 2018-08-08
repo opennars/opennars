@@ -279,7 +279,6 @@ public class TermTest {
     @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final Nar n = new Nar();
-        MiscFlags.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         final Narsese p = new Narsese(n);
 
         final Term x = p.parseTerm("wonder(a,b)");
