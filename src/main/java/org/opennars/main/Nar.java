@@ -286,11 +286,17 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         if(addCommand(text)) {
             return;
         }
-        final Task task;
+        Task task = null;
         try {
             task = narsese.parseTask(text);
         } catch (final InvalidInputException e) {
-            throw new IllegalStateException("Invalid input: " + text, e);
+            if(MiscFlags.SHOW_INPUT_ERRORS) {
+                emit(ERR.class, e);
+            }
+            if(!MiscFlags.INPUT_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Invalid input: " + text, e);
+            }
+            return;
         }
         //check if it should go to a sensory channel instead:
         final Term t = task.getTerm();
@@ -529,7 +535,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             if(MiscFlags.SHOW_REASONING_ERRORS) {
                 emit(ERR.class, e);
             }
-            throw e;
+            if(!MiscFlags.REASONING_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Reasoning error:\n", e);
+            }
         }
     }
 

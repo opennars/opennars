@@ -28,6 +28,8 @@ import org.opennars.storage.Memory;
 
 import java.util.Arrays;
 import java.util.List;
+import org.opennars.io.events.OutputHandler.ERR;
+import org.opennars.main.MiscFlags;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -76,7 +78,18 @@ public abstract class Operator extends Term implements Plugin {
     * @return true if successful, false if an error occurred
     */
     public final boolean call(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
-        final List<Task> feedback = execute(operation, args, memory, time);
+        List<Task> feedback = null;
+        try {
+            feedback = execute(operation, args, memory, time);
+        }
+        catch(Exception ex) {//peripherie, maybe used incorrectly, failure is unavoidable
+            if(MiscFlags.SHOW_EXECUTION_ERRORS) {
+                memory.event.emit(ERR.class, ex);
+            }
+            if(!MiscFlags.EXECUTION_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Execution error:\n", ex);
+            }
+        }
 
         if(feedback == null || feedback.isEmpty()) { //null operator case
             memory.executedTask(time, operation, new TruthValue(1f,executionConfidence, memory.narParameters));
