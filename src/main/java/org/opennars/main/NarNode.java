@@ -127,7 +127,6 @@ public class NarNode implements EventObserver  {
      * @throws IOException 
      */
     private void sendTask(Task t) throws IOException {
-        String wat = t.toString();
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
         ObjectOutput oo = new ObjectOutputStream(bStream); 
         oo.writeObject(t);
@@ -259,26 +258,22 @@ public class NarNode implements EventObserver  {
     public static void main(String[] args) throws SocketException, UnknownHostException, IOException, 
             InterruptedException, InstantiationException, InvocationTargetException, ParserConfigurationException, 
             NoSuchMethodException, SAXException, ClassNotFoundException, IllegalAccessException, ParseException {
-        if((args.length-3) % 5 != 0) { //args length check, it has to be 3+5*k, with k in N0
-            System.out.println("expected arguments: file cycles listenPort targetIP1 targetPort1 prioThres1 mustContainTerm1 sendInput1 ... targetIPN targetPortN prioThresN mustContainTermN sendInputN");
-            System.out.println("Here, since file and cycles are not always used, they can be null too, example: null null 64001 127.0.0.1 64002 0.5 null True");
+        if((args.length-5) % 5 != 0 || args.length < 5) { //args length check, it has to be 5+5*k, with k in N0
+            System.out.println("expected arguments: narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull listenPort targetIP1 targetPort1 prioThres1 mustContainTermOrNull1 sendInput1 ... targetIPN targetPortN prioThresN mustContainTermOrNullN sendInputN");
+            System.out.println("Here, OrNull means they can be null too, example: null null 64001 127.0.0.1 64002 0.5 null True");
             System.exit(0);
         }
-        int nar1port = Integer.parseInt(args[2]);
-
+        int nar1port = Integer.parseInt(args[4]);
 
         log("creating Reasoner...");
-
-        Nar nar = new Nar();
-
+        Nar nar = Shell.createNar(args);
+        
         log("creating NarNode...");
-
         NarNode nar1 = new NarNode(nar, nar1port);
 
-
         List<TargetNar> redirections = new ArrayList<TargetNar>();
-        for(int i=3; i<args.length; i+=5) {
-            Term T = args[i+3].equals("null") ? null : new Term(args[i+3]);
+        for(int i=5; i<args.length; i+=5) {
+            Term T = args[i+3].toLowerCase().equals("null") ? null : new Term(args[i+3]);
             redirections.add(new TargetNar(args[i], Integer.parseInt(args[i+1]), Float.parseFloat(args[i+2]), T, Boolean.parseBoolean(args[i+4])));
         }
         for(TargetNar target : redirections) {
@@ -287,7 +282,7 @@ public class NarNode implements EventObserver  {
         
         log("running Shell...");
 
-        new Shell(nar1.nar).run(new String[]{args[0], args[1]});
+        new Shell(nar1.nar).run(new String[]{args[0], args[1], args[2], args[3]});
     }
 
 

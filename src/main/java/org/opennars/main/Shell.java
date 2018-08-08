@@ -21,8 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Run Reasoner inside a command line application for batch processing
@@ -33,14 +31,55 @@ public class Shell {
 
     private final Nar nar;
     private PrintStream out = System.out;
+    
+    public static Nar createNar(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
+            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        Nar nar = new Nar();
+        Integer id = null;
+        if(!args[1].toLowerCase().equals("null")) {
+            id = Integer.parseInt(args[1]);
+        }
+        
+        if(args[0].toLowerCase().equals("null")) {
+            if(id == null) {
+                nar = new Nar();
+            } else {
+                nar = new Nar(id);
+            }
+        } else if(args[0].endsWith(".xml")) {
+            if(id == null) {
+                nar = new Nar(args[0]);
+            } else {
+                nar = new Nar(id, args[0]);
+            }
+        }
+        else {
+            if(id != null) {
+                System.out.println("Identity of loaded nar can not be changed, set idOrNull to null if Nar from file should be used!");
+                System.exit(1);
+            }
+            nar = Nar.LoadFromFile(args[0]);
+        }
+        return nar;
+    }
 
     /**
      * The entry point of the standalone application.
      *
      * @param args command line arguments
      */
-    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        final Shell nars = new Shell(new Nar());
+    public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
+            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        if(args.length == 0) { //in that case just run the instance
+            args = new String[] { "null", "null", "null", "null"};
+        }
+        if(args.length != 4) { //args length check
+            System.out.println("expected arguments: none, or: narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull");
+            System.out.println("Here, OrNull means they can be null too, example: null null 64001 127.0.0.1 64002 0.5 null True");
+            System.exit(0);
+        }
+        Nar nar = Shell.createNar(args);
+        final Shell nars = new Shell(nar);
         nars.run(args);
     }
 
@@ -94,16 +133,16 @@ public class Shell {
         output.setErrorStackTrace(true);
         final InputThread it;
 
-        final boolean hasInputFile = args.length > 0 && !args[0].equals("null");
-        final boolean hasNumberOfSteps = args.length > 1 && !args[1].equals("null");
+        final boolean hasInputFile = !args[2].toLowerCase().equals("null");
+        final boolean hasNumberOfSteps = !args[3].toLowerCase().equals("null");
 
         if (hasInputFile) {
-            nar.addInputFile(args[0]);
+            nar.addInputFile(args[2]);
         }
         it = new InputThread(System.in, nar);
         it.start();
 
-        final int numberOfSteps = hasNumberOfSteps ? Integer.parseInt(args[1]) : -1;
+        final int numberOfSteps = hasNumberOfSteps ? Integer.parseInt(args[3]) : -1;
 
         if (hasNumberOfSteps) {
             nar.cycles(numberOfSteps);
