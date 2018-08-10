@@ -209,7 +209,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
             buffer.append(signal.toString());
         }
         
-        return Texts.unescape(buffer).toString();
+        return buffer.toString();
         
     }
     
@@ -273,7 +273,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
             buffer.append(signal.toString());
         }
         
-        return Texts.unescape(buffer);
+        return buffer.toString();
         
     }
 }

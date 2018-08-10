@@ -116,7 +116,7 @@ public class Narsese implements Serializable {
      * @return An experienced task
      */    
     public Task parseTask(final String s) throws InvalidInputException {
-        final StringBuilder buffer = new StringBuilder(Texts.escape(s));
+        final StringBuilder buffer = new StringBuilder(s);
         
         final String budgetString = getBudgetString(buffer);
         final String truthString = getTruthString(buffer);

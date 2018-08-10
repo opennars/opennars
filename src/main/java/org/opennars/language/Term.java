@@ -321,7 +321,7 @@ public class Term implements AbstractTerm, Serializable {
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Term text(final String t) {
-        return Term.get(Texts.escape('"' + t + '"').toString());
+        return Term.get("\"" + t + "\"");
     }
 
 

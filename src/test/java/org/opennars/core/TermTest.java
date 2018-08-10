@@ -203,36 +203,6 @@ public class TermTest {
        assertEquals(true, n.memory.concepts.iterator().hasNext());
 
     }    
-    
-    @Test
-    public void testEscaping() {        
-        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
-        
-//        Nar n = new Default().build();
-//        n.addInput("<a --> \"b c\">.");
-//        n.step(1);
-//        n.finish(1);
-//        
-//        Term t = new Term("\\\"b_c\\\"");
-//        System.out.println(t);
-//        System.out.println(n.memory.getConcepts());
-//        System.out.println(n.memory.conceptProcessor.getConcepts());
-//        
-//        
-//        assertTrue(n.memory.concept(new Term("a"))!=null);
-//        assertTrue(n.memory.concept(t)!=null);
-
-    }
-    
-    protected void bidiEscape(final String... tests) {
-        for (String s : tests) {
-            s = '"' + s + '"';
-            final String escaped = Texts.escape(s).toString();
-            final String unescaped = Texts.unescape(escaped).toString();
-            //System.out.println(s + " " + escaped + " " + unescaped);
-            assertEquals(s, unescaped);
-        }
-    }
 
     @Test(expected = Narsese.InvalidInputException.class)
     public void testInvalidInputThrowsException() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {

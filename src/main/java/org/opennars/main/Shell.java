@@ -69,7 +69,10 @@ public class Shell {
      * @param args command line arguments
      */
     public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
-            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException, InterruptedException {
+        if(args.length > 4) {
+            NarNode.main(args);
+        }
         if(args.length == 0) { //in that case just run the instance
             args = new String[] { "null", "null", "null", "null"};
         }

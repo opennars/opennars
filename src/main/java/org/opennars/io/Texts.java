@@ -17,112 +17,13 @@ package org.opennars.io;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utilities for process Text &amp; String input/output, ex: encoding/escaping and decoding/unescaping Terms
  *
- * @author Patrick Hammer
+ *
  */
 public class Texts {
-    //TODO find more appropriate symbol mapping
-    //TODO escape any mapped characters if they appear in input during encoding
-    //http://www.ssec.wisc.edu/~tomw/java/unicode.html
-    
-    public final static Map<Character,Character> escapeMap = new HashMap(256);
-    public final static Map<Character,Character> escapeMapReverse = new HashMap(256);
-    static {
-        final char[][] escapings = new char[][] {
-            {':', '\u25B8'},
-            {' ', '\u2581'},
-            {'%', '\u25B9'}, 
-            {'#', '\u25BA'}, 
-            {'&', '\u25BB'}, 
-            {'?', '\u25FF'}, 
-            {'/', '\u279A'}, 
-            {'=', '\u25BD'}, 
-            {';', '\u25BE'}, 
-            {'-', '\u25BF'},   
-            {'.', '\u00B8'},
-            {'<', '\u25B4'},
-            {'>', '\u25B5'},
-            {'[', '\u25B6'},
-            {']', '\u25B7'},
-            {'$', '\u25B3'}
-        };
-        
-        for (final char[] pair : escapings) {
-            final Character existing = escapeMap.put(pair[0], pair[1]);
-            if (existing!=null) {
-                System.err.println("escapeMap has duplicate key: " + pair[0] + " can not apply to both " + existing + " and " + pair[1] );
-                //--System.exit(1);
-            }
-        }
-
-        //generate reverse mapping
-        for (final Map.Entry<Character, Character> e : escapeMap.entrySet())
-            escapeMapReverse.put(e.getValue(), e.getKey());
-    }
-    
-
-    protected static StringBuilder escape(final CharSequence s, final boolean unescape, final boolean useQuotes) {
-        final StringBuilder b = new StringBuilder(s.length());
-        
-        
-        final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
-        
-        boolean inQuotes = !useQuotes;
-        char lastChar = 0;
-        
-        for (int i = 0; i < s.length(); i++) {
-            final char c = s.charAt(i);
-            
-            
-            if (c == Symbols.QUOTE) {
-                b.append(Symbols.QUOTE);
-                
-                if (useQuotes) {
-                    if (lastChar != '\\')
-                        inQuotes = !inQuotes;
-                }
-                
-                continue;
-            }
-            
-            if (!inQuotes) {
-                b.append(c);
-                continue;
-            }
-            
-            Character d = map.get(c);
-            if (d == null)
-                d = c;
-            b.append(d);
-
-            if (unescape)
-                lastChar = d;
-            else
-                lastChar = c;
-        }
-        return b;
-    }
-
-    /** returns an escaped representation for input.  ranges that begin and end with Symbols.QUOTE are escaped, otherwise the string is not modified.
-     */    
-    public static StringBuilder escape(final CharSequence s) {
-        return escape(s, false, true);
-    }
-
-    /** returns an unescaped represntation of input */
-    public static StringBuilder unescape(final CharSequence s) {
-        return escape(s, true, true);
-    }       
-
-    /** escapeLiteral does not involve quotes. this can be used to escape characters directly.*/
-    public static StringBuilder escapeLiteral(final CharSequence s) {
-        return escape(s, false, false);
-    }   
 
     /** Half-way between a String and a Rope; concatenates a list of strings into an immutable CharSequence which is either:
      *  If a component is null, it is ignored.
