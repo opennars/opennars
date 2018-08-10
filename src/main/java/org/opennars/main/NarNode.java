@@ -260,7 +260,7 @@ public class NarNode implements EventObserver  {
             NoSuchMethodException, SAXException, ClassNotFoundException, IllegalAccessException, ParseException {
         if((args.length-5) % 5 != 0 || args.length < 5) { //args length check, it has to be 5+5*k, with k in N0
             System.out.println("expected arguments: narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull listenPort targetIP1 targetPort1 prioThres1 mustContainTermOrNull1 sendInput1 ... targetIPN targetPortN prioThresN mustContainTermOrNullN sendInputN");
-            System.out.println("Here, OrNull means they can be null too, example: null null 64001 127.0.0.1 64002 0.5 null True");
+            System.out.println("Here, OrNull means they can be null too, example: null null null null 64001 127.0.0.1 64002 0.5 null True");
             System.exit(0);
         }
         int nar1port = Integer.parseInt(args[4]);
