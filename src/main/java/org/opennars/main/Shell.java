@@ -21,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import org.opennars.language.Term;
 
 /**
  * Run Reasoner inside a command line application for batch processing
@@ -62,6 +63,23 @@ public class Shell {
         }
         return nar;
     }
+    
+    public static void argInfo() {
+        System.out.println("expected arguments: none, or: narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull");
+        System.out.println("or for UDP networking support:");
+        //args length check, it has to be 5+5*k, with k in N0
+        System.out.println("narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull listenPort targetIP1 targetPort1 prioThres1 mustContainTermOrNull1 sendInput1 ... targetIPN targetPortN prioThresN mustContainTermOrNullN sendInputN");
+        System.out.println("Here, OrNull means they can be null too, example: null null null null 64001 127.0.0.1 64002 0.5 null True");
+    }
+    
+    /**
+     * logging
+     *
+     */
+    static void log(String message) {
+        // l for log
+        System.out.println("[l]: " + message);
+    }
 
     /**
      * The entry point of the standalone application.
@@ -70,20 +88,29 @@ public class Shell {
      */
     public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException, InterruptedException {
-        if(args.length > 4) {
-            NarNode.main(args);
-        }
         if(args.length == 0) { //in that case just run the instance
             args = new String[] { "null", "null", "null", "null"};
         }
-        if(args.length != 4) { //args length check
-            System.out.println("expected arguments: none, or: narOrConfigFileOrNull idOrNull nalFileOrNull cyclesToRunOrNull");
-            System.out.println("Here, OrNull means they can be null too, example: null null 64001 127.0.0.1 64002 0.5 null True");
+        if(args.length != 4 && ((args.length-5) % 5 != 0 || args.length < 5)) { //args length check
+            argInfo();
             System.exit(0);
         }
+        
+        log("creating Nar...");
         Nar nar = Shell.createNar(args);
-        final Shell nars = new Shell(nar);
-        nars.run(args);
+        
+        if(args.length > 4) {
+            log("attaching NarNode networking features to Nar...");
+            int nar1port = Integer.parseInt(args[4]);
+            NarNode nar1 = new NarNode(nar, nar1port);
+            for(int i=5; i<args.length; i+=5) {
+                Term T = args[i+3].toLowerCase().equals("null") ? null : new Term(args[i+3]);
+                nar1.addRedirectionTo(args[i], Integer.parseInt(args[i+1]), Float.parseFloat(args[i+2]), T, Boolean.parseBoolean(args[i+4]));
+            }
+        }
+        
+        log("attaching Shell to Nar...");
+        new Shell(nar).run(args);
     }
 
     public Shell(final Nar n) {
