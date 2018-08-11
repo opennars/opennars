@@ -72,39 +72,15 @@ public class ConfigReader {
         file = new File(absolutePathOfRoot, filepath);
 
         InputStream stream = null;
-
         // if this failed, then load from resources
         if(!file.exists()) {
             file = null;
-
             URL n = Resources.getResource("config/defaultConfig.xml");
-            /*
-            try {
-                file = new File(n.toURI());
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-
-            /*
-            try {
-            System.out.println(n.toURI().toString());
-            } catch (URISyntaxException ex) {
-                //    Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-
-
-
-            ClassLoader classloader = ConfigReader.class.getClassLoader();
             try {
                 System.out.println(n.toURI().toString());
 
                 URLConnection connection = n.openConnection();
                 stream = connection.getInputStream();
-
-                //file = new File(classloader.getResource(filepath).toURI()); // commented because it is old way
-                //stream = classloader.getResourceAsStream(n.toURI().toString());
             } catch (URISyntaxException ex) {
                 Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
             }
