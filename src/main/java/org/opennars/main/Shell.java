@@ -35,7 +35,7 @@ public class Shell {
     
     public static Nar createNar(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        Nar nar = new Nar();
+        Nar nar = null;
         Integer id = null;
         if(!args[1].toLowerCase().equals("null")) {
             id = Integer.parseInt(args[1]);
