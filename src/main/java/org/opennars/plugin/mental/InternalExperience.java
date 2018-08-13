@@ -225,6 +225,9 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
     }
     
     public static void InternalExperienceFromTask(final Memory memory, final Task task, final boolean full, final Timable time) {
+        if(memory.internalExperience == null) {
+            return;
+        }
         if(!memory.internalExperience.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             InternalExperienceFromTaskInternal(memory, task, full, time);
         }
