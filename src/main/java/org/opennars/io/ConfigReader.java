@@ -56,37 +56,16 @@ public class ConfigReader {
         
         System.out.println("Got relative path for loading the config: " + filepath);
         List<Plugin> ret = new ArrayList<Plugin>();
-        File file = null;
-        File classPath = null;
-
-        try {
-            classPath = new File(ConfigReader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        } catch (URISyntaxException e) {}
-        // we need to walk two levels down ("./target/classes")
-        File absolutePathOfRoot = null;
-        try {
-            absolutePathOfRoot = new File(new File(classPath.getParent()).getParent());
-        }
-        catch (NullPointerException e) {}
-        // walk to convert it to absolute path
-        file = new File(absolutePathOfRoot, filepath);
+        File file = new File(filepath);
 
         InputStream stream = null;
         // if this failed, then load from resources
         if(!file.exists()) {
             file = null;
             URL n = Resources.getResource("config/defaultConfig.xml");
-            try {
-                System.out.println(n.toURI().toString());
-
-                URLConnection connection = n.openConnection();
-                stream = connection.getInputStream();
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            System.out.println(stream != null);
-
+            //System.out.println(n.toURI().toString());
+            URLConnection connection = n.openConnection();
+            stream = connection.getInputStream();
             System.out.println("Loading config " + "config/defaultConfig.xml" +" from resources");
         } else {
             System.out.println("Loading config " + file.getName() +" from file");
