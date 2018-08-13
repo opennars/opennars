@@ -172,6 +172,40 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                <!-- Configures the created archive -->
+                    <archive>
+                    <!-- Configures the content of the created manifest -->
+                        <manifest>
+                        <!-- Adds the classpath to the created manifest -->
+                            <addClasspath>true</addClasspath>
+                            <!--
+                            Specifies that all dependencies of our application are found
+                            from the lib directory.
+                            -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- Configures the main class of the application -->
+                            <mainClass>org.opennars.main.Shell</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
