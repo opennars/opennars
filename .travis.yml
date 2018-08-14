@@ -34,6 +34,6 @@ deploy:
     script: .travis/deploy.sh
     skip_cleanup: true
     on:
-      repo: opennars/opennar
+      repo: opennars/opennars
       tags: true
       jdk: oraclejdk8
