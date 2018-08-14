@@ -32,6 +32,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Narsese;
 import org.opennars.io.Symbols;
+import org.opennars.io.Texts;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
@@ -228,27 +229,29 @@ public class VisionChannel extends SensoryChannel  {
                     int oldFocusY = lastSpace.py;
                     int newFocusX = newSpace.px;
                     int newFocusY = newSpace.py;
-                    Operator selectedX = null;
-                    Operator selectedY = null;
-                    if(newFocusX > oldFocusX) {
-                        selectedX = newSpace.ops.get("right");
+                    float dx = 0, dy = 0;
+                    String minusX = "";
+                    String minusY = "";
+                    if(newFocusX >= oldFocusX) {
+                        dx = newFocusX - oldFocusX;
                     } else {
-                        selectedX = newSpace.ops.get("left");
+                        minusX = "-";
+                        dx = oldFocusX - newFocusX;
                     }
-                    if(newFocusY > oldFocusY) {
-                        selectedY = newSpace.ops.get("up");
+                    if(newFocusY >= oldFocusY) {
+                        dy = newFocusY - oldFocusY;
                     } else {
-                        selectedY = newSpace.ops.get("down");
+                        minusY = "-";
+                        dy = oldFocusY - newFocusY;
                     }
+                    float xParam = dx / (float) this.width;
+                    float yParam = dy / (float) this.height;
                     try {
                         //timing to make sure procedure learning observes the operation after the last prototype
                         this.nar.cycles(this.nar.narParameters.DURATION);
-                        Task taskX = new Narsese(this.nar).parseTask("("+selectedX.name()+",{SELF}). :|:");
-                        Task taskY = new Narsese(this.nar).parseTask("("+selectedY.name()+",{SELF}). :|:");
+                        Task taskX = new Narsese(this.nar).parseTask("(^move,{SELF},"+minusX+Texts.n1(xParam)+","+minusY+Texts.n1(yParam)+"). :|:");
                         taskX.setElemOfSequenceBuffer(true);
-                        taskY.setElemOfSequenceBuffer(true);
-                        this.results.add(taskX);
-                        this.results.add(taskY);                  
+                        this.results.add(taskX);               
                         this.step_finished(time);
                         //timing to make sure procedure learning observes the operation before the new prototype
                         this.nar.cycles(this.nar.narParameters.DURATION);

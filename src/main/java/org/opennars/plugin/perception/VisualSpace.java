@@ -23,7 +23,6 @@
  */
 package org.opennars.plugin.perception;
 
-import java.util.HashMap;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
@@ -34,9 +33,6 @@ import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -52,12 +48,9 @@ public class VisualSpace implements ImaginationSpace {
     public int py = 0;
     
     //those are the same for each instance:
-    static final NullOperator right = new NullOperator("^right");
-    static final NullOperator left = new NullOperator("^left");
-    static final NullOperator up = new NullOperator("^up");
-    static final NullOperator down = new NullOperator("^down");
-    final HashMap<String,Operator> ops = new HashMap<String,Operator>();
-    final Nar nar;
+    public static final NullOperator move = new NullOperator("^move");
+    public static final NullOperator zoom = new NullOperator("^zoom");
+    private final Nar nar;
     
     public VisualSpace(final Nar nar, final float[][] source, final int py, final int px, final int height, final int width) {
         this.nar = nar;
@@ -76,14 +69,8 @@ public class VisualSpace implements ImaginationSpace {
             int relIndexX = 0; 
             System.arraycopy(source[relIndexY + i], relIndexX + 0, cropped[i], 0, width);
         }
-        nar.addPlugin(right);
-        nar.addPlugin(left);
-        nar.addPlugin(up);
-        nar.addPlugin(down);
-        ops.put("right",right);
-        ops.put("left",left);
-        ops.put("up",up);
-        ops.put("down",down);
+        nar.addPlugin(move);
+        nar.addPlugin(zoom);
     }
 
     @Override
@@ -164,7 +151,7 @@ public class VisualSpace implements ImaginationSpace {
     
     public boolean IsOperationInSpace(final Operation oper) {
         final Operator op = (Operator) oper.getPredicate();
-        return ops.values().contains(op);
+        return op.equals(move) || op.equals(zoom);
     }
     
     //Needs to be resolved:
