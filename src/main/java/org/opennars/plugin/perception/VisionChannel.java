@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.plugin.perception;
 
@@ -23,6 +32,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Narsese;
 import org.opennars.io.Symbols;
+import org.opennars.io.Texts;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
@@ -219,27 +229,29 @@ public class VisionChannel extends SensoryChannel  {
                     int oldFocusY = lastSpace.py;
                     int newFocusX = newSpace.px;
                     int newFocusY = newSpace.py;
-                    Operator selectedX = null;
-                    Operator selectedY = null;
-                    if(newFocusX > oldFocusX) {
-                        selectedX = newSpace.ops.get("right");
+                    float dx = 0, dy = 0;
+                    String minusX = "";
+                    String minusY = "";
+                    if(newFocusX >= oldFocusX) {
+                        dx = newFocusX - oldFocusX;
                     } else {
-                        selectedX = newSpace.ops.get("left");
+                        minusX = "-";
+                        dx = oldFocusX - newFocusX;
                     }
-                    if(newFocusY > oldFocusY) {
-                        selectedY = newSpace.ops.get("up");
+                    if(newFocusY >= oldFocusY) {
+                        dy = newFocusY - oldFocusY;
                     } else {
-                        selectedY = newSpace.ops.get("down");
+                        minusY = "-";
+                        dy = oldFocusY - newFocusY;
                     }
+                    float xParam = dx / (float) this.width;
+                    float yParam = dy / (float) this.height;
                     try {
                         //timing to make sure procedure learning observes the operation after the last prototype
                         this.nar.cycles(this.nar.narParameters.DURATION);
-                        Task taskX = new Narsese(this.nar).parseTask("("+selectedX.name()+",{SELF}). :|:");
-                        Task taskY = new Narsese(this.nar).parseTask("("+selectedY.name()+",{SELF}). :|:");
+                        Task taskX = new Narsese(this.nar).parseTask("(^move,{SELF},"+minusX+Texts.n1(xParam)+","+minusY+Texts.n1(yParam)+"). :|:");
                         taskX.setElemOfSequenceBuffer(true);
-                        taskY.setElemOfSequenceBuffer(true);
-                        this.results.add(taskX);
-                        this.results.add(taskY);                  
+                        this.results.add(taskX);               
                         this.step_finished(time);
                         //timing to make sure procedure learning observes the operation before the new prototype
                         this.nar.cycles(this.nar.narParameters.DURATION);

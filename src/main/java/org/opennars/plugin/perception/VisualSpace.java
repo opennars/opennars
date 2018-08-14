@@ -1,20 +1,28 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.plugin.perception;
 
-import java.util.HashMap;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
@@ -25,9 +33,6 @@ import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -43,12 +48,9 @@ public class VisualSpace implements ImaginationSpace {
     public int py = 0;
     
     //those are the same for each instance:
-    static final NullOperator right = new NullOperator("^right");
-    static final NullOperator left = new NullOperator("^left");
-    static final NullOperator up = new NullOperator("^up");
-    static final NullOperator down = new NullOperator("^down");
-    final HashMap<String,Operator> ops = new HashMap<String,Operator>();
-    final Nar nar;
+    public static final NullOperator move = new NullOperator("^move");
+    public static final NullOperator zoom = new NullOperator("^zoom");
+    private final Nar nar;
     
     public VisualSpace(final Nar nar, final float[][] source, final int py, final int px, final int height, final int width) {
         this.nar = nar;
@@ -67,14 +69,8 @@ public class VisualSpace implements ImaginationSpace {
             int relIndexX = 0; 
             System.arraycopy(source[relIndexY + i], relIndexX + 0, cropped[i], 0, width);
         }
-        nar.addPlugin(right);
-        nar.addPlugin(left);
-        nar.addPlugin(up);
-        nar.addPlugin(down);
-        ops.put("right",right);
-        ops.put("left",left);
-        ops.put("up",up);
-        ops.put("down",down);
+        nar.addPlugin(move);
+        nar.addPlugin(zoom);
     }
 
     @Override
@@ -155,7 +151,7 @@ public class VisualSpace implements ImaginationSpace {
     
     public boolean IsOperationInSpace(final Operation oper) {
         final Operator op = (Operator) oper.getPredicate();
-        return ops.values().contains(op);
+        return op.equals(move) || op.equals(zoom);
     }
     
     //Needs to be resolved:
