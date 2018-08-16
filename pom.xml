@@ -18,7 +18,7 @@
     </prerequisites>
 
     <name>OpenNARS</name>
-    <description>A reasoning engine.</description>
+    <description>A Non-Axiomatic Reasoning engine</description>
     <url>http://OpenNARS.org</url>
 
     <licenses>
