@@ -46,13 +46,24 @@
     </issueManagement>
 
     <developers>
+		<developer>
+            <id>peiwang</id>
+            <name>Pei Wang</name>
+            <email>pei.wang@gmail.com</email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
+            <roles>
+                <role>Project Owner</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
         <developer>
-            <id>JeffreyPhillipsFreeman</id>
-            <name>Jeffrey Phillips Freeman</name>
-            <email>Jeffrey.Freeman@Syncleus.com</email>
-            <url>http://JeffreyFreeman.me</url>
-            <organization>Syncleus</organization>
-            <organizationUrl>http://syncleus.com</organizationUrl>
+            <id>patham9</id>
+            <name>Patrick Hammer</name>
+            <email>patham9@gmail.com</email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
             <roles>
                 <role>Project Owner</role>
                 <role>Developer</role>
@@ -70,6 +81,48 @@
                 <role>Developer</role>
             </roles>
             <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>GMPow2</id>
+            <name>Robert Wuensche</name>
+            <email></email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
+            <roles>
+                <role>Project Owner</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>JeffreyPhillipsFreeman</id>
+            <name>Jeffrey Phillips Freeman</name>
+            <email>Jeffrey.Freeman@Syncleus.com</email>
+            <url>http://JeffreyFreeman.me</url>
+            <organization>Syncleus</organization>
+            <organizationUrl>http://syncleus.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>jim</id>
+            <name>Jim Northrup</name>
+            <email>jim@cydesign.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>TreverShick</id>
+            <name>Trever Shick</name>
+            <url>http://trevershick.github.io</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
         </developer>
     </developers>
 
