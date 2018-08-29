@@ -56,6 +56,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.language.SetInt;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.plugin.mental.InternalExperience;
 
@@ -336,25 +337,35 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         //check if it should go to a sensory channel instead:
         final Term t = task.getTerm();
-        if(t != null && t instanceof Inheritance) {
-            final Term predicate = ((Inheritance) t).getPredicate();
+        if(t != null) {
+            Term predicate = null;
+            if(t instanceof Inheritance) {
+                predicate = ((Inheritance) t).getPredicate();
+            } else {
+                predicate = SetInt.make(new Term("OBSERVED"));
+            }
             if(this.sensoryChannels.containsKey(predicate)) {
-                final Inheritance inh = (Inheritance) task.sentence.term;
-                final SetExt subj = (SetExt) inh.getSubject();
-                //map to pei's -1 to 1 indexing schema
-                if(subj.term[0].term_indices == null) {
-                    final String variable = subj.toString().split("\\[")[0];
-                    final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
-                    final double height = Double.parseDouble(vals[0]);
-                    final double width = Double.parseDouble(vals[1]);
-                    final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
-                    final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
-                    final String ev = task.sentence.isEternal() ? " " : " :|: ";
-                    final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
-                                      task.sentence.punctuation + ev + task.sentence.truth.toString();
-                    //this.emit(OutputHandler.IN.class, task); too expensive to print each input task :)
-                    this.addInput(newInput);
-                    return;
+                //Transform to channel-specific coordinate if available.
+                int channelWidth = this.sensoryChannels.get(predicate).width;
+                int channelHeight = this.sensoryChannels.get(predicate).height;
+                if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) && 
+                        (((Inheritance )t).getSubject() instanceof SetExt)) {
+                    final SetExt subj = (SetExt) ((Inheritance) t).getSubject();
+                    //map to pei's -1 to 1 indexing schema
+                    if(subj.term[0].term_indices == null) {
+                        final String variable = subj.toString().split("\\[")[0];
+                        final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
+                        final double height = Double.parseDouble(vals[0]);
+                        final double width = Double.parseDouble(vals[1]);
+                        final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
+                        final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
+                        final String ev = task.sentence.isEternal() ? " " : " :|: ";
+                        final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
+                                          task.sentence.punctuation + ev + task.sentence.truth.toString();
+                        //this.emit(OutputHandler.IN.class, task); too expensive to print each input task, consider vision :)
+                        this.addInput(newInput);
+                        return;
+                    }
                 }
                 this.sensoryChannels.get(predicate).addInput(task, this);
                 return;
