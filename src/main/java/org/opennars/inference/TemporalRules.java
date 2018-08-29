@@ -217,18 +217,17 @@ public class TemporalRules {
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
             final Map<Term,Term> app = new HashMap<>();
-            if(statement2.getSubject() instanceof Conjunction) {
-                Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
-                int k = 0;
-                for(Term t : termCounts.keySet()) {
-                    if(!t.hasVar() && termCounts.getOrDefault(t, 0) > 1) {
-                        //ok it appeared as subject or predicate but appears in the Conjunction more than once
-                        //=> introduce a dependent variable for it!
-                        String varType = statement2.getPredicate().containsTermRecursively(t) ? "$" : "#";
-                        Variable introVar = new Variable(varType + k);
-                        app.put(t, introVar);
-                        k++;
-                    }
+            Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
+            int k = 0;
+            for(Term t : termCounts.keySet()) {
+                if(!t.hasVar() && termCounts.getOrDefault(t, 0) > 1) {
+                    //ok it appeared as subject or predicate but appears in the Conjunction more than once
+                    //=> introduce a dependent variable for it!
+                    String varType = (statement2.getPredicate().containsTermRecursively(t) &&
+                                      statement2.getSubject().containsTermRecursively(t)) ? "$" : "#";
+                    Variable introVar = new Variable(varType + k);
+                    app.put(t, introVar);
+                    k++;
                 }
             }
             if(app.size() > 0) {
