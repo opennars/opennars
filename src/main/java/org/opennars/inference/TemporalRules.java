@@ -157,80 +157,6 @@ public class TemporalRules {
         
         Term t11=null;
         Term t22=null;
-        
-        if (!deriveSequenceOnly && termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
-            
-            final Statement ss1 = (Statement) t1;
-            final Statement ss2 = (Statement) t2;
-
-            final Variable var1 = new Variable("$0");
-            final Variable var2 = new Variable("$1");
-            
-            if(ss2.containsTermRecursively(ss1.getSubject())) {
-                final Map<Term,Term> subs=new HashMap();
-                subs.put(ss1.getSubject(), var1);
-                if(ss2.containsTermRecursively(ss1.getPredicate())) {
-                    subs.put(ss1.getPredicate(), var2);
-                }
-                t11=ss1.applySubstitute(subs);
-                t22=ss2.applySubstitute(subs);
-            }
-            
-            if(ss1.containsTermRecursively(ss2.getSubject())) {
-                final Map<Term,Term> subs=new HashMap();
-                subs.put(ss2.getSubject(), var1);
-                if(ss1.containsTermRecursively(ss2.getPredicate())) {
-                    subs.put(ss2.getPredicate(), var2);
-                }
-                t11=ss1.applySubstitute(subs);
-                t22=ss2.applySubstitute(subs);
-            }
-            
-            //allow also temporal induction on operator arguments:
-            if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
-                if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    final Term comp=ss1.getSubject();
-                    final Term ss2_term = ss2.getSubject();
-                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-                    
-                    if(ss2_term instanceof Product) {
-                        final Product ss2_prod=(Product) ss2_term;
-                        
-                        if(applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
-                            
-                            final Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
-                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            final Operation op=(Operation) Operation.make(
-                                    new Product(ars), 
-                                    ss2.getPredicate()
-                            );
-                            t22 = op;
-                        }
-                    }
-                }
-                if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    final Term comp=ss2.getSubject();
-                    final Term ss1_term = ss1.getSubject();
-                    
-                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-                    
-                    if(ss1_term instanceof Product) {
-                        final Product ss1_prod=(Product) ss1_term;
-                                               
-                        if(applicableVariableType && Terms.contains(ss1_prod.term, comp)) { //only if there is one and it isnt a variable already
-                            
-                            final Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
-                            t22 = Statement.make(ss2, var1, ss2.getPredicate());
-                            final Operation op=(Operation) Operation.make(
-                                    new Product(ars), 
-                                    ss1.getPredicate()
-                            );
-                            t11 = op;
-                        }
-                    }
-                }
-            }
-        }
 
         final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
@@ -288,36 +214,29 @@ public class TemporalRules {
                 break;
         }
         
-        //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
-        //TODO: rethink this for 1.6.3
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if(!deriveSequenceOnly && statement2!=null) { //there is no general form
-            //ok then it may be the (&/ =/> case which 
-            //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-            final Statement st=statement2;
-            if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                final Term precon= st.getSubject();
-                final Inheritance consequence=(Inheritance) st.getPredicate();
-                final Term pred=consequence.getPredicate();
-                final Term sub=consequence.getSubject();
-                //look if subject is contained in precon:
-                final boolean SubsSub=precon.containsTermRecursively(sub);
-                final boolean SubsPred=precon.containsTermRecursively(pred);
-                final Variable v1=new Variable("$91");
-                final Variable v2=new Variable("$92");
-                final Map<Term,Term> app= new HashMap<>();
-                if(SubsSub || SubsPred) {
-                    if(SubsSub)
-                        app.put(sub, v1);
-                    if(SubsPred)
-                        app.put(pred,v2);
-                    final Term res= statement2.applySubstitute(app);
-                    if(res!=null) { //ok we applied it, all we have to do now is to use it
-                        t22=((Statement)res).getSubject();
-                        t11=((Statement)res).getPredicate();
-                    }
+        if(!deriveSequenceOnly && statement2!=null) {
+            final Map<Term,Term> app = new HashMap<>();
+            Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
+            int k = 0;
+            for(Term t : termCounts.keySet()) {
+                if(!t.hasVar() && termCounts.getOrDefault(t, 0) > 1) {
+                    //ok it appeared as subject or predicate but appears in the Conjunction more than once
+                    //=> introduce a dependent variable for it!
+                    String varType = (statement2.getPredicate().containsTermRecursively(t) &&
+                                      statement2.getSubject().containsTermRecursively(t)) ? "$" : "#";
+                    Variable introVar = new Variable(varType + k);
+                    app.put(t, introVar);
+                    k++;
                 }
-             }
+            }
+            if(app.size() > 0) {
+                final Term res = statement2.applySubstitute(app);
+                if(res!=null) { //ok we applied it, all we have to do now is to use it
+                    t11=((Statement)res).getPredicate();
+                    t22=((Statement)res).getSubject();
+                }
+            }
         }
         
         final List<Task> derivations= new ArrayList<>();

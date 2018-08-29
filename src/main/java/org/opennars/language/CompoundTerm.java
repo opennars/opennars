@@ -596,6 +596,23 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     /**
+     * Recursively count how often the terms are contained
+     *
+     * @param map The count map that will be created to count how often each term occurs
+     * @return The counts of the terms
+     */
+    public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
+        if(map == null) {
+            map = new HashMap<Term, Integer>();
+        }
+        map.put(this, map.getOrDefault(this, 0) + 1);
+        for (final Term term : term) {            
+            term.countTermRecursively(map);
+        }
+        return map;
+    }
+
+    /**
      * Check whether the compound contains all term of another term, or
  that term as a whole
      *
