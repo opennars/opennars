@@ -312,20 +312,6 @@ public class Term implements AbstractTerm, Serializable {
         }
         return equals(target);
     }
-    
-    /**
-     * Recursively count how often the terms are contained
-     *
-     * @param map The count map that will be created to count how often each term occurs
-     * @return The counts of the terms
-     */
-    public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
-        if(map == null) {
-            map = new HashMap<Term, Integer>();
-        }
-        map.put(this, map.getOrDefault(this, 0) + 1);
-        return map;
-    }
 
     /** whether this contains a term in its components. */
     public boolean containsTerm(final Term target) {
