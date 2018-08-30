@@ -62,6 +62,9 @@ public class Inheritance extends Statement {
     }
 
     @Override public Inheritance clone(final Term[] t) {
+        if(t == null) {
+            return null;
+        }
         if (t.length!=2)
             throw new IllegalArgumentException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
                 

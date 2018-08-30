@@ -60,6 +60,9 @@ public class Disjunction extends CompoundTerm {
 
     @Override
     public Term clone(final Term[] x) {
+        if(x == null) {
+            return null;
+        }
         return make(x);
     }
     

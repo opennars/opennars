@@ -59,6 +59,9 @@ public class SetExt extends SetTensional {
     }
     
     @Override public SetExt clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         return make(replaced);
     }
     

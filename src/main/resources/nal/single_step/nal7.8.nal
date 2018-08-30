@@ -10,6 +10,6 @@
 
 200
 //revision on events
-''outputMustContain('<John --> (/,hold,_,key_101)>. :!0: %0.52;0.95%')
+''outputMustContain('<John --> (/,hold,_,key_101)>. :!0: %0.55;0.94%')
 //but also looking at it as separate:
 ''outputMustContain('<John --> (/,hold,_,key_101)>. :!6: %0.00;0.90%')

@@ -197,6 +197,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             System.out.println("cloneDeep resulted in different class: " + c + " from " + this);
         if (isNormalized())
             ((CompoundTerm)c).setNormalized(true);
+        if(!(c instanceof CompoundTerm)) {
+            return null;
+        }
         return (CompoundTerm)c;
     }
     
@@ -511,8 +514,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /** forced deep clone of terms */
     public Term[] cloneTermsDeep() {
         final Term[] l = new Term[term.length];
-        for (int i = 0; i < l.length; i++) 
+        for (int i = 0; i < l.length; i++) {
             l[i] = term[i].cloneDeep();
+            if(l[i] == null) {
+                return null;
+            }
+        }
         return l;        
     }    
     public Term[] cloneVariableTermsDeep() {
@@ -610,6 +617,27 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             term.countTermRecursively(map);
         }
         return map;
+    }
+    
+    /**
+     * Add all the components of term t into components recursively
+     * 
+     * @param t The term
+     * @param components The components
+     * @return 
+     */
+    public static Set<Term> addComponentsRecursively(Term t, Set<Term> components) {
+        if(components == null) {
+            components = new HashSet<Term>();
+        }
+        components.add(t);
+        if(t instanceof CompoundTerm) {
+            CompoundTerm cTerm = (CompoundTerm) t;
+            for(Term component : cTerm) {
+                addComponentsRecursively(component, components);
+            }
+        }
+        return components;
     }
 
     /**

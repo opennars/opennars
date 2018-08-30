@@ -60,6 +60,9 @@ public class Negation extends CompoundTerm {
 
     @Override
     public Term clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         if (replaced.length!=1)
             return null;
         return make(replaced[0]);

@@ -70,6 +70,9 @@ public class Conjunction extends CompoundTerm {
     }
 
     @Override public Term clone(final Term[] t) {
+        if(t == null) {
+            return null;
+        }
         return make(t, temporalOrder, isSpatial);
     }
 
@@ -234,7 +237,7 @@ public class Conjunction extends CompoundTerm {
     final public static Term make(final Term[] argList, final int temporalOrder, final boolean spatial) {
         if (MiscFlags.DEBUG) {  Terms.verifyNonNull(argList);}
         
-        if (argList.length == 0) {
+        if (argList == null || argList.length == 0) {
             return null;
         }                         // special case: single component
         if (argList.length == 1) {
@@ -258,7 +261,7 @@ public class Conjunction extends CompoundTerm {
             final ConvRectangle rect = UpdateConvRectangle(flattened);
             for (final Term t : flattened) {
                 if(!(t instanceof Interval)) { //intervals only for seqs
-                    if(t.term_indices == null || rect.term_indices == null) {
+                    if(t.term_indices == null || rect == null || rect.term_indices == null) {
                         set.add(t);
                     } 
                     else 

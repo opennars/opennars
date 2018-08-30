@@ -58,6 +58,9 @@ public class Similarity extends Statement {
     }
     
     @Override public Similarity clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         if (replaced.length!=2)
             return null;
         return make(replaced[0], replaced[1]);
