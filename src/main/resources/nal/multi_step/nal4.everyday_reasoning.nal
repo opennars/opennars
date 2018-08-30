@@ -7,4 +7,4 @@
 //cats like blue?
 <(*,cat,[blue]) --> likes>?
 10000
-''outputMustContain('<(*,cat,[blue]) --> likes>. %1.00;0.23%')
+''outputMustContain('<(*,cat,[blue]) --> likes>. %1.00;0.36%')
