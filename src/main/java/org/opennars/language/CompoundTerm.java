@@ -611,6 +611,27 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return map;
     }
+    
+    /**
+     * Add all the components of term t into components recursively
+     * 
+     * @param t The term
+     * @param components The components
+     * @return 
+     */
+    public static Set<Term> addComponentsRecursively(Term t, Set<Term> components) {
+        if(components == null) {
+            components = new HashSet<Term>();
+        }
+        components.add(t);
+        if(t instanceof CompoundTerm) {
+            CompoundTerm cTerm = (CompoundTerm) t;
+            for(Term component : cTerm) {
+                addComponentsRecursively(component, components);
+            }
+        }
+        return components;
+    }
 
     /**
      * Check whether the compound contains all term of another term, or

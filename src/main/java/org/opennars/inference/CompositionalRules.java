@@ -30,7 +30,9 @@ import org.opennars.language.*;
 import org.opennars.main.MiscFlags;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
@@ -352,135 +354,50 @@ public final class CompositionalRules {
         if (!(taskContent instanceof Inheritance)) {
             return;
         }
-
-        final Variable varInd1 = new Variable("$varInd1");
-        final Variable varInd2 = new Variable("$varInd2");
         
-        Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
-
-        Term term11 = index == 0 ? varInd1 : taskContent.getSubject();
-        Term term21 = index == 0 ? varInd1 : beliefContent.getSubject();
-        Term term12 = index == 0 ? taskContent.getPredicate() : varInd1;
-        Term term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
-
-        if (index == 0) {
-            term12dependent=term12;
-            term22dependent=term22;
-        } else {
-            term11dependent=term11;
-            term21dependent=term21;
-        }
-
-        Term commonTerm = null;
-        final Map<Term, Term> subs = new HashMap<>();
-
-        // comment to firstIsImage and secondIsSameImage:
-        // Because if we have <{a} --> P> and <{a} --> C>
-        // then we want to introduce (&&,<{#1} -- P>,<{#1} --> C>).
-        // so we have to indeed check that
-        // they are equal set types (not seeing [a] and {a} as same)
-
-        // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
-
-        if (index == 0) {
-            if (term12 instanceof ImageExt) {
-                boolean firstIsImage = term22 instanceof ImageExt;
-                boolean secondIsSameImage = true;
-
-                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
-
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
-                }
-            }
-            if (commonTerm==null && term22 instanceof ImageExt) {
-                boolean firstIsImage = term12 instanceof ImageExt;
-                boolean secondIsSameImage = true;
-
-                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    term12 = applySubstituteIfCompoundTerm(varInd2, term12, subs);
-                }
-            }
-        } else {
-            if (term21 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term11 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
-                }
-            }
-            if (commonTerm==null && term11 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term21 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    term21 = applySubstituteIfCompoundTerm(varInd2, term21, subs);
-                }
-            }
-        }
-
+        Term term11 = taskContent.getSubject();
+        Term term21 = beliefContent.getSubject();
+        Term term12 = taskContent.getPredicate();
+        Term term22 = beliefContent.getPredicate();
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Term content = Implication.make(state1, state2);
-
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
-        if (content == null) {
-            return;
-        }
-        else if ((truthT == null) || (truthB == null)) {
+        if ((truthT == null) || (truthB == null)) {
             if(MiscFlags.DEBUG) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
             return;
         }
+        for(boolean subjectIntroduction : new boolean[]{true, false}) {
+            Term content = CompositionalRules.introduceVariables(Implication.make(state1, state2),subjectIntroduction);
+            if(content != null) {
+                TruthValue truth = induction(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth, budget, false, false);
+            }
 
-        TruthValue truth = induction(truthT, truthB, nal.narParameters);
-        BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
+            content = CompositionalRules.introduceVariables(Implication.make(state2, state1), subjectIntroduction);
+            if(content != null) {
+                TruthValue truth = induction(truthB, truthT, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth, budget, false, false);
+            }
 
-        content = Implication.make(state2, state1);
-        truth = induction(truthB, truthT, nal.narParameters);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
+            content = CompositionalRules.introduceVariables(Equivalence.make(state1, state2), subjectIntroduction);
+            if(content != null) {
+                TruthValue truth = comparison(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth, budget, false, false);
+            }
 
-        content = Equivalence.make(state1, state2);
-        truth = comparison(truthT, truthB, nal.narParameters);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
-
-        final Variable varDep = new Variable("#varDep");
-        if (index == 0) {
-            state1 = Inheritance.make(varDep, term12dependent);
-            state2 = Inheritance.make(varDep, term22dependent);
-        } else {
-            state1 = Inheritance.make(term11dependent, varDep);
-            state2 = Inheritance.make(term21dependent, varDep);
+            content = CompositionalRules.introduceVariables(Conjunction.make(state1, state2), subjectIntroduction);
+            if(content != null) {
+                TruthValue truth = intersection(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth, budget, false, false);
+            }
         }
-        
-        if ((state1==null) || (state2 == null) || state1.cloneDeep().equals(state2.cloneDeep())) {
-            return;
-        }
-
-        content = Conjunction.make(state1, state2);
-        truth = intersection(truthT, truthB, nal.narParameters);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
     }
 
     private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
@@ -846,34 +763,122 @@ public final class CompositionalRules {
         CompoundTerm T = (CompoundTerm) T1;
         CompoundTerm T2 = (CompoundTerm) content;
         
-        
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
             //CompoundTerm result = T;
             if (component.equals(content)) {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
-            final Variable depIndVar1 = new Variable("#depIndVar1");
-            final Variable depIndVar2 = new Variable("#depIndVar2");
 
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
-                zw = (CompoundTerm) zw.setComponent(1, depIndVar1, nal.mem());
-                T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, nal.mem());
                 final Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
-                zw = (CompoundTerm) zw.setComponent(0, depIndVar2, nal.mem());
-                T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, nal.mem());
                 final Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             }
+            
             final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
-            final BudgetValue budget = BudgetFunctions.compoundForward(truth, T, nal);
-            nal.doublePremiseTask(T, truth, budget, false, false);
+            Term cont = introduceVariables(T, true);
+            if(cont != null) {
+                final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
+                nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
+            }
+            cont = introduceVariables(T, false);
+            if(cont != null) {
+                final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
+                nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
+            }
         }
+    }
+    
+    /**
+     * Introduction of variables that appear either within subjects or within predicates and more than once
+     * 
+     * @param implicationEquivalenceOrJunction
+     * @param subject
+     * @return 
+     */
+    public static Term introduceVariables(final Term implicationEquivalenceOrJunction, boolean subject) {
+        final Map<Term,Term> app = new HashMap<>();
+        Set<Term> candidates = new HashSet<>();
+        if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
+            addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getSubject(),   subject);
+            addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getPredicate(), subject);
+        }
+        if(implicationEquivalenceOrJunction instanceof Conjunction || implicationEquivalenceOrJunction instanceof Disjunction) {
+            addVariableCandidates(candidates, implicationEquivalenceOrJunction, subject);
+        }
+        Map<Term,Integer> termCounts = implicationEquivalenceOrJunction.countTermRecursively(null);
+        int k = 0;
+        for(Term t : candidates) {
+            if(termCounts.getOrDefault(t, 0) > 1) {
+                //ok it appeared as subject or predicate but appears in the Conjunction more than once
+                //=> introduce a dependent variable for it!
+                String varType = "#";
+                if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
+                    Statement imp = (Statement) implicationEquivalenceOrJunction;
+                    if(imp.getSubject().containsTermRecursively(t) && imp.getPredicate().containsTermRecursively(t)) {
+                        varType = "$";
+                    }
+                }
+                Variable introVar = new Variable(varType + k);
+                app.put(t, introVar);
+                k++;
+            }
+        }
+        if(app.size() > 0 && (implicationEquivalenceOrJunction instanceof Conjunction ||
+                              implicationEquivalenceOrJunction instanceof Disjunction ||
+                              implicationEquivalenceOrJunction instanceof Equivalence ||
+                              implicationEquivalenceOrJunction instanceof Implication)) {
+            return ((CompoundTerm)implicationEquivalenceOrJunction).applySubstitute(app);
+        }
+        return null;
+    }
+
+    /**
+     * Add the variable candidates that appear as subjects and predicates
+     * 
+     * @param candidates
+     * @param side
+     * @param subject
+     * @return 
+     */
+    public static Set<Term> addVariableCandidates(Set<Term> candidates, final Term side, boolean subject) {
+        boolean junction = (side instanceof Conjunction || side instanceof Disjunction);
+        int n = junction ? ((CompoundTerm) side).size() : 1;
+        for(int i=0; i<n; i++) {
+            //we found an Inheritance
+            Term t = null;
+            if(i<n) {
+                if(junction) {
+                    t = ((CompoundTerm) side).term[i];
+                } else {
+                    t = side;
+                }
+            }
+            if(t instanceof Inheritance || t instanceof Similarity) {
+                Inheritance inh = (Inheritance) t;
+                Term subjT = inh.getSubject();
+                Term predT = inh.getPredicate();
+                if(subject && !subjT.hasVar()) {
+                    Set<Term> ret = CompoundTerm.addComponentsRecursively(subjT, null);
+                    for(Term ct : ret) {
+                        candidates.add(ct);
+                    }
+                }
+                if(!subject && !predT.hasVar()) {
+                    Set<Term> ret = CompoundTerm.addComponentsRecursively(predT, null);
+                    for(Term ct : ret) {
+                        candidates.add(ct);
+                    }
+                }
+            }
+        }
+        return candidates;
     }
 }

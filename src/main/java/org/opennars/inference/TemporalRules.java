@@ -155,9 +155,6 @@ public class TemporalRules {
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
-        Term t11=null;
-        Term t22=null;
-
         final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
@@ -165,19 +162,11 @@ public class TemporalRules {
         Interval interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
-            
             interval = new Interval(Math.abs(timeDiff));
-            
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
-                if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
-                }
             } else {
                 t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
-                if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
-                }
             }
         }
         final int order = order(timeDiff, durationCycles);
@@ -214,60 +203,21 @@ public class TemporalRules {
                 break;
         }
         
+        Term t11=null;
+        Term t22=null;
+        Term t33=null;
+        Term t44=null;
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
-            final Map<Term,Term> app = new HashMap<>();
-            if(statement2.getSubject() instanceof Conjunction) {
-                Conjunction conj = ((Conjunction) statement2.getSubject());
-                int n = conj.size();
-                Set<Term> candidates = new HashSet<Term>();
-                HashMap<Term, String> varType = new HashMap<Term, String>();
-                for(int i=0; i<n+1; i++) {
-                    //we found an Inheritance
-                    Term t = null;
-                    boolean independent = false;
-                    if(i<n) {
-                        t = conj.term[i];
-                    } else {
-                        t = statement2.getPredicate();
-                        independent = true;
-                    }
-                    if(t instanceof Inheritance || t instanceof Similarity) {
-                        Inheritance inh = (Inheritance) t;
-                        Term subjT = inh.getSubject();
-                        Term predT = inh.getPredicate();
-                        if(!subjT.hasVar()) {
-                            candidates.add(subjT);
-                            if(independent) {
-                                varType.put(subjT, "$");
-                            }
-                        }
-                        if(!predT.hasVar()) {
-                            candidates.add(predT);
-                            if(independent) {
-                                varType.put(predT, "$");
-                            }
-                        }
-                    }
-                }
-                Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
-                int k = 0;
-                for(Term t : candidates) {
-                    if(termCounts.getOrDefault(t, 0) > 1) {
-                        //ok it appeared as subject or predicate but appears in the Conjunction more than once
-                        //=> introduce a dependent variable for it!
-                        Variable introVar = new Variable(varType.getOrDefault(t, "#") + k);
-                        app.put(t, introVar);
-                        k++;
-                    }
-                }
+            Term res = CompositionalRules.introduceVariables(statement2, true);
+            if(res!=null) { //ok we applied it, all we have to do now is to use it
+                t11=((Statement)res).getPredicate();
+                t22=((Statement)res).getSubject();
             }
-            if(app.size() > 0) {
-                final Term res = statement2.applySubstitute(app);
-                if(res!=null) { //ok we applied it, all we have to do now is to use it
-                    t11=((Statement)res).getPredicate();
-                    t22=((Statement)res).getSubject();
-                }
+            res = CompositionalRules.introduceVariables(statement2, false);
+            if(res!=null) { //ok we applied it, all we have to do now is to use it
+                t33=((Statement)res).getPredicate();
+                t44=((Statement)res).getSubject();
             }
         }
         
@@ -277,6 +227,14 @@ public class TemporalRules {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
+                appendConclusion(nal, truth1, budget1, statement11, derivations);
+                appendConclusion(nal, truth2, budget2, statement22, derivations);
+                appendConclusion(nal, truth3, budget3, statement33, derivations);
+            }
+            if (t33!=null && t44!=null) {
+                final Statement statement11 = Implication.make(t33, t44, order);
+                final Statement statement22 = Implication.make(t44, t33, reverseOrder(order));
+                final Statement statement33 = Equivalence.make(t33, t44, order);
                 appendConclusion(nal, truth1, budget1, statement11, derivations);
                 appendConclusion(nal, truth2, budget2, statement22, derivations);
                 appendConclusion(nal, truth3, budget3, statement33, derivations);
