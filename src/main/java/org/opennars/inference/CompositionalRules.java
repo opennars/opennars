@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import java.util.ArrayList;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -31,6 +32,7 @@ import org.opennars.main.MiscFlags;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -370,32 +372,32 @@ public final class CompositionalRules {
             return;
         }
         for(boolean subjectIntroduction : new boolean[]{true, false}) {
-            Term content = CompositionalRules.introduceVariables(Implication.make(state1, state2),subjectIntroduction);
-            if(content != null) {
+            Set<Term> contents = CompositionalRules.introduceVariables(Implication.make(state1, state2),subjectIntroduction);
+            for(Term content : contents) {
                 TruthValue truth = induction(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.doublePremiseTask(content, truth, budget, false, false);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            content = CompositionalRules.introduceVariables(Implication.make(state2, state1), subjectIntroduction);
-            if(content != null) {
+            contents = CompositionalRules.introduceVariables(Implication.make(state2, state1), subjectIntroduction);
+             for(Term content : contents) {
                 TruthValue truth = induction(truthB, truthT, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.doublePremiseTask(content, truth, budget, false, false);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            content = CompositionalRules.introduceVariables(Equivalence.make(state1, state2), subjectIntroduction);
-            if(content != null) {
+            contents = CompositionalRules.introduceVariables(Equivalence.make(state1, state2), subjectIntroduction);
+             for(Term content : contents) {
                 TruthValue truth = comparison(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.doublePremiseTask(content, truth, budget, false, false);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            content = CompositionalRules.introduceVariables(Conjunction.make(state1, state2), subjectIntroduction);
-            if(content != null) {
+            contents = CompositionalRules.introduceVariables(Conjunction.make(state1, state2), subjectIntroduction);
+            for(Term content : contents) {
                 TruthValue truth = intersection(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.doublePremiseTask(content, truth, budget, false, false);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
         }
     }
@@ -786,17 +788,44 @@ public final class CompositionalRules {
                 return;
             }
             final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
-            Term cont = introduceVariables(T, true);
-            if(cont != null) {
+            Set<Term> conts = introduceVariables(T, true);
+            for(Term cont : conts) {
                 final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
                 nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
             }
-            cont = introduceVariables(T, false);
-            if(cont != null) {
+            conts = introduceVariables(T, false);
+            for(Term cont : conts) {
                 final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
                 nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
             }
         }
+    }
+    
+    
+    /**
+     * The power set, from João Silva, https://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
+     * 
+     * @param <T>
+     * @param originalSet
+     * @return 
+     */
+    public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+        Set<Set<T>> sets = new HashSet<Set<T>>();
+        if (originalSet.isEmpty()) {
+            sets.add(new HashSet<T>());
+            return sets;
+        }
+        List<T> list = new ArrayList<T>(originalSet);
+        T head = list.get(0);
+        Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+        for (Set<T> set : powerSet(rest)) {
+            Set<T> newSet = new HashSet<T>();
+            newSet.add(head);
+            newSet.addAll(set);
+            sets.add(newSet);
+            sets.add(set);
+        }       
+        return sets;
     }
     
     /**
@@ -806,7 +835,15 @@ public final class CompositionalRules {
      * @param subject
      * @return 
      */
-    public static Term introduceVariables(final Term implicationEquivalenceOrJunction, boolean subject) {
+    public static Set<Term> introduceVariables(Term implicationEquivalenceOrJunction, boolean subject) {
+        HashSet<Term> result = new HashSet<Term>();
+        boolean validForIntroduction =  implicationEquivalenceOrJunction instanceof Conjunction ||
+                                implicationEquivalenceOrJunction instanceof Disjunction ||
+                                implicationEquivalenceOrJunction instanceof Equivalence ||
+                                implicationEquivalenceOrJunction instanceof Implication;
+        if(!validForIntroduction) {
+            return result;
+        }
         final Map<Term,Term> app = new HashMap<>();
         Set<Term> candidates = new HashSet<>();
         if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
@@ -834,13 +871,18 @@ public final class CompositionalRules {
                 k++;
             }
         }
-        if(app.size() > 0 && (implicationEquivalenceOrJunction instanceof Conjunction ||
-                              implicationEquivalenceOrJunction instanceof Disjunction ||
-                              implicationEquivalenceOrJunction instanceof Equivalence ||
-                              implicationEquivalenceOrJunction instanceof Implication)) {
-            return ((CompoundTerm)implicationEquivalenceOrJunction).applySubstitute(app);
+        
+        Set<Set<Term>> powerset = powerSet(app.keySet());
+        for(Set<Term> combo : powerset) {
+            Map<Term,Term> mapping = new HashMap<Term,Term>();
+            for(Term vIntro : combo) {
+                mapping.put(vIntro, app.get(vIntro));
+            }
+            if(mapping.size() > 0) {
+                result.add(((CompoundTerm)implicationEquivalenceOrJunction).applySubstitute(mapping));
+            }
         }
-        return null;
+        return result;
     }
 
     /**
@@ -851,7 +893,7 @@ public final class CompositionalRules {
      * @param subject
      * @return 
      */
-    public static Set<Term> addVariableCandidates(Set<Term> candidates, final Term side, boolean subject) {
+    public static Set<Term> addVariableCandidates(Set<Term> candidates, Term side, boolean subject) {
         boolean junction = (side instanceof Conjunction || side instanceof Disjunction);
         int n = junction ? ((CompoundTerm) side).size() : 1;
         for(int i=0; i<n; i++) {
