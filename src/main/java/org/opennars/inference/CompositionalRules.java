@@ -417,114 +417,46 @@ public final class CompositionalRules {
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
             return false;
         }
-        
-        final Term subject1 = premise1.getSubject();
-        final Term subject2 = premise2.getSubject();
-        final Term predicate1 = premise1.getPredicate();
-        final Term predicate2 = premise2.getPredicate();
-        final Term commonTerm1;
-        final Term commonTerm2;
-        if (subject1.equals(subject2)) {
-            commonTerm1 = subject1;
-            commonTerm2 = secondCommonTerm(predicate1, predicate2, 0);
-        } else if (predicate1.equals(predicate2)) {
-            commonTerm1 = predicate1;
-            commonTerm2 = secondCommonTerm(subject1, subject2, 0);
-        } else {
-            return false;
-        }
-        
         final Sentence belief = nal.getCurrentBelief();
-        final Map<Term, Term> substitute = new HashMap<>();
         
         boolean b1 = false, b2 = false;
         
         {
-            final Variable varDep2 = new Variable("#varDep2");
-
-
             Term content = Conjunction.make(premise1, oldCompound);
-
-            if (!(content instanceof CompoundTerm))
-                return false;           
-
-            substitute.put(commonTerm1, varDep2);
-
-            content = ((CompoundTerm)content).applySubstitute(substitute);
-
-            final TruthValue truth = intersection(taskSentence.truth, belief.truth, nal.narParameters);
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b1 = (nal.doublePremiseTask(content, truth, budget, false, false))!=null;
+            if (!(content instanceof CompoundTerm)) {
+                return false;  
+            }
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(content, subjectIntro);
+                for(Term cont : conts) {
+                    final TruthValue truth = intersection(taskSentence.truth, belief.truth, nal.narParameters);
+                    final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                    b1 |= (nal.doublePremiseTask(cont, truth, budget, false, false))!=null;
+                }
+            }
         }
 
-        substitute.clear();
-
         {
-            final Variable varInd1 = new Variable("$varInd1");
-            final Variable varInd2 = new Variable("$varInd2");
-
-            substitute.put(commonTerm1, varInd1);
-
-            if (commonTerm2 != null) {
-                substitute.put(commonTerm2, varInd2);
-            }
-
-
             Term content = Implication.make(premise1, oldCompound);
-
             if ((content == null) || (!(content instanceof CompoundTerm))) {
                 return false;
             }
-
-            content = ((CompoundTerm)content).applySubstituteToCompound(substitute);
-
-            final TruthValue truth;
-            
-            if (premise1.equals(taskSentence.term)) {
-                truth = induction(belief.truth, taskSentence.truth, nal.narParameters);
-            } else {
-                truth = induction(taskSentence.truth, belief.truth, nal.narParameters);
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(content, subjectIntro);
+                for(Term cont : conts) {
+                    final TruthValue truth;
+                    if (premise1.equals(taskSentence.term)) {
+                        truth = induction(belief.truth, taskSentence.truth, nal.narParameters);
+                    } else {
+                        truth = induction(taskSentence.truth, belief.truth, nal.narParameters);
+                    }
+                    final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                    b2 |= nal.doublePremiseTask(cont, truth, budget, false, false)!=null;
+                }
             }
-
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b2 = nal.doublePremiseTask(content, truth, budget, false, false)!=null;
         }
         
         return b1 || b2;
-    }
-
-    /**
-     * Introduce a second independent variable into two terms with a common
-     * component
-     *
-     * @param term1 The first term
-     * @param term2 The second term
-     * @param index The index of the terms in their statement
-     */
-    private static Term secondCommonTerm(final Term term1, final Term term2, final int index) {
-        Term commonTerm = null;
-        if (index == 0) {
-            if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
-                commonTerm = ((ImageExt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageExt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
-                        commonTerm = null;
-                    }
-                }
-            }
-        } else if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
-            commonTerm = ((ImageInt) term1).getTheOtherComponent();
-            if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
-                    commonTerm = null;
-                }
-            }
-        }
-        return commonTerm;
     }
 
     /*
@@ -743,15 +675,12 @@ public final class CompositionalRules {
                 return;
             }
             final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
-            Set<Term> conts = introduceVariables(T, true);
-            for(Term cont : conts) {
-                final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
-                nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
-            }
-            conts = introduceVariables(T, false);
-            for(Term cont : conts) {
-                final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
-                nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(T, subjectIntro);
+                for(Term cont : conts) {
+                    final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
+                    nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
+                }
             }
         }
     }
@@ -793,9 +722,9 @@ public final class CompositionalRules {
     public static Set<Term> introduceVariables(Term implicationEquivalenceOrJunction, boolean subject) {
         HashSet<Term> result = new HashSet<Term>();
         boolean validForIntroduction =  implicationEquivalenceOrJunction instanceof Conjunction ||
-                                implicationEquivalenceOrJunction instanceof Disjunction ||
-                                implicationEquivalenceOrJunction instanceof Equivalence ||
-                                implicationEquivalenceOrJunction instanceof Implication;
+                                        implicationEquivalenceOrJunction instanceof Disjunction ||
+                                        implicationEquivalenceOrJunction instanceof Equivalence ||
+                                        implicationEquivalenceOrJunction instanceof Implication;
         if(!validForIntroduction) {
             return result;
         }
@@ -821,7 +750,7 @@ public final class CompositionalRules {
                         varType = "$";
                     }
                 }
-                Variable introVar = new Variable(varType + k);
+                Variable introVar = new Variable(varType + "ind" + k);
                 app.put(t, introVar);
                 k++;
             }

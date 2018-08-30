@@ -205,19 +205,14 @@ public class TemporalRules {
         
         List<Term> t11s = new ArrayList<>();
         List<Term> t22s = new ArrayList<>();
-        List<Term> t33s = new ArrayList<>();
-        List<Term> t44s = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
-            Set<Term> ress = CompositionalRules.introduceVariables(statement2, true);
-            for(Term res : ress) { //ok we applied it, all we have to do now is to use it
-                t11s.add(((Statement)res).getPredicate());
-                t22s.add(((Statement)res).getSubject());
-            }
-            ress = CompositionalRules.introduceVariables(statement2, false);
-            for(Term res : ress) { //ok we applied it, all we have to do now is to use it
-                t33s.add(((Statement)res).getPredicate());
-                t44s.add(((Statement)res).getSubject());
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> ress = CompositionalRules.introduceVariables(statement2, subjectIntro);
+                for(Term res : ress) { //ok we applied it, all we have to do now is to use it
+                    t11s.add(((Statement)res).getPredicate());
+                    t22s.add(((Statement)res).getSubject());
+                }
             }
         }
         
@@ -229,16 +224,6 @@ public class TemporalRules {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendConclusion(nal, truth1.clone(), budget1.clone(), statement11, derivations);
-                appendConclusion(nal, truth2.clone(), budget2.clone(), statement22, derivations);
-                appendConclusion(nal, truth3.clone(), budget3.clone(), statement33, derivations);
-            }
-            for(int i=0; i<t33s.size(); i++) {
-                Term t33 = t33s.get(i);
-                Term t44 = t44s.get(i);
-                final Statement statement11 = Implication.make(t33, t44, order);
-                final Statement statement22 = Implication.make(t44, t33, reverseOrder(order));
-                final Statement statement33 = Equivalence.make(t33, t44, order);
                 appendConclusion(nal, truth1.clone(), budget1.clone(), statement11, derivations);
                 appendConclusion(nal, truth2.clone(), budget2.clone(), statement22, derivations);
                 appendConclusion(nal, truth3.clone(), budget3.clone(), statement33, derivations);
