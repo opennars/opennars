@@ -868,17 +868,29 @@ public final class CompositionalRules {
                 Inheritance inh = (Inheritance) t;
                 Term subjT = inh.getSubject();
                 Term predT = inh.getPredicate();
-                if(subject && !subjT.hasVar()) {
+                boolean addSubject = subject || subjT instanceof ImageInt; //also allow for images due to equivalence transform
+                Set<Term> removals = new HashSet<Term>();
+                if(addSubject && !subjT.hasVar()) {
                     Set<Term> ret = CompoundTerm.addComponentsRecursively(subjT, null);
                     for(Term ct : ret) {
+                        if(ct instanceof Image) {
+                            removals.add(((Image) ct).term[((Image) ct).relationIndex]);
+                        }
                         candidates.add(ct);
                     }
                 }
-                if(!subject && !predT.hasVar()) {
+                boolean addPredicate = !subject || predT instanceof ImageExt; //also allow for images due to equivalence transform
+                if(addPredicate && !predT.hasVar()) {
                     Set<Term> ret = CompoundTerm.addComponentsRecursively(predT, null);
                     for(Term ct : ret) {
+                        if(ct instanceof Image) {
+                            removals.add(((Image) ct).term[((Image) ct).relationIndex]);
+                        }
                         candidates.add(ct);
                     }
+                }
+                for(Term remove : removals) { //but do not introduce variables for image relation, only if they appear as product
+                    candidates.remove(remove);
                 }
             }
         }
