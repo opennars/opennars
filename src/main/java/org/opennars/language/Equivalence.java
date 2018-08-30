@@ -61,7 +61,10 @@ public class Equivalence extends Statement {
         return new Equivalence(term, temporalOrder);
     }
     
-    @Override public Equivalence clone(final Term[] t) {        
+    @Override public Equivalence clone(final Term[] t) {  
+        if(t == null) {
+            return null;
+        }
         if (t.length!=2)
             throw new IllegalStateException("Equivalence requires 2 components: " + Arrays.toString(t));
         

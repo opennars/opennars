@@ -63,6 +63,9 @@ public class ImageInt extends Image {
 
     @Override
     public Term clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         if (replaced.length != term.length)
             throw new IllegalStateException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         

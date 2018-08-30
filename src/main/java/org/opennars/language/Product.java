@@ -64,6 +64,9 @@ public class Product extends CompoundTerm {
 
     @Override
     public CompoundTerm clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         return new Product(replaced);
     }
 

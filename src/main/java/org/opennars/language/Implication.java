@@ -65,7 +65,10 @@ public class Implication extends Statement {
         return new Implication(term, getTemporalOrder());
     }
     
-    @Override public Implication clone(final Term[] t) {        
+    @Override public Implication clone(final Term[] t) {   
+        if(t == null) {
+            return null;
+        }
         if (t.length!=2)
             throw new IllegalStateException("Implication requires 2 components: " + Arrays.toString(t));
         

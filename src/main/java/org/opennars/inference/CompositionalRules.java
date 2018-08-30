@@ -782,6 +782,9 @@ public final class CompositionalRules {
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             }
             
+            if(T == null) {
+                return;
+            }
             final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
             Term cont = introduceVariables(T, true);
             if(cont != null) {

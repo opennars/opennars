@@ -59,6 +59,9 @@ public class SetInt extends SetTensional {
     }
 
     @Override public SetInt clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         return make(replaced);
     }
 

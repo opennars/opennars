@@ -25,7 +25,6 @@ package org.opennars.language;
 
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
 
 import java.util.Objects;
 
