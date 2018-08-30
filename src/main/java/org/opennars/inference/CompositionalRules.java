@@ -402,51 +402,6 @@ public final class CompositionalRules {
         }
     }
 
-    private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
-        return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
-    }
-
-    private static Term findCommonSubject(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
-        Term resultCommonTerm = commonTerm;
-
-        if (tested.containsTermRecursively(containedTest)) {
-            resultCommonTerm = containedTest;
-        }
-
-        if(secondIsSameImage && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(containedTest, tested, firstIsImage);
-        }
-        return resultCommonTerm;
-    }
-
-    private static Term findCommonTermPredicate(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
-        Term resultCommonTerm = commonTerm;
-
-        if (tested.containsTermRecursively(containedTest)) {
-            resultCommonTerm = containedTest;
-        }
-
-        if(secondIsSameImage && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(tested, containedTest, firstIsImage);
-        }
-        return resultCommonTerm;
-    }
-
-    private static Term retCommonTerm(Term term12, Term term22, boolean firstIsImage) {
-        Term commonTerm;
-        commonTerm = ((Image) term12).getTheOtherComponent();
-        if(!(term22.containsTermRecursively(commonTerm))) {
-            commonTerm=null;
-        }
-        if (firstIsImage && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
-            commonTerm = ((Image) term22).getTheOtherComponent();
-            if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
-                commonTerm = null;
-            }
-        }
-        return commonTerm;
-    }
-
     /**
      * {&lt;M --&gt; S&gt;, &lt;C ==&gt; &lt;M --&gt; P&gt;&gt;} |- &lt;(&amp;&amp;, &lt;#x --&gt; S&gt;, C) ==&gt; &lt;#x --&gt; P&gt;&gt;
      * <br>
