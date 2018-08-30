@@ -217,17 +217,49 @@ public class TemporalRules {
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
             final Map<Term,Term> app = new HashMap<>();
-            Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
-            int k = 0;
-            for(Term t : termCounts.keySet()) {
-                if(!t.hasVar() && termCounts.getOrDefault(t, 0) > 1) {
-                    //ok it appeared as subject or predicate but appears in the Conjunction more than once
-                    //=> introduce a dependent variable for it!
-                    String varType = (statement2.getPredicate().containsTermRecursively(t) &&
-                                      statement2.getSubject().containsTermRecursively(t)) ? "$" : "#";
-                    Variable introVar = new Variable(varType + k);
-                    app.put(t, introVar);
-                    k++;
+            if(statement2.getSubject() instanceof Conjunction) {
+                Conjunction conj = ((Conjunction) statement2.getSubject());
+                int n = conj.size();
+                Set<Term> candidates = new HashSet<Term>();
+                HashMap<Term, String> varType = new HashMap<Term, String>();
+                for(int i=0; i<n+1; i++) {
+                    //we found an Inheritance
+                    Term t = null;
+                    boolean independent = false;
+                    if(i<n) {
+                        t = conj.term[i];
+                    } else {
+                        t = statement2.getPredicate();
+                        independent = true;
+                    }
+                    if(t instanceof Inheritance || t instanceof Similarity) {
+                        Inheritance inh = (Inheritance) t;
+                        Term subjT = inh.getSubject();
+                        Term predT = inh.getPredicate();
+                        if(!subjT.hasVar()) {
+                            candidates.add(subjT);
+                            if(independent) {
+                                varType.put(subjT, "$");
+                            }
+                        }
+                        if(!predT.hasVar()) {
+                            candidates.add(predT);
+                            if(independent) {
+                                varType.put(predT, "$");
+                            }
+                        }
+                    }
+                }
+                Map<Term,Integer> termCounts = statement2.countTermRecursively(null);
+                int k = 0;
+                for(Term t : candidates) {
+                    if(termCounts.getOrDefault(t, 0) > 1) {
+                        //ok it appeared as subject or predicate but appears in the Conjunction more than once
+                        //=> introduce a dependent variable for it!
+                        Variable introVar = new Variable(varType.getOrDefault(t, "#") + k);
+                        app.put(t, introVar);
+                        k++;
+                    }
                 }
             }
             if(app.size() > 0) {
