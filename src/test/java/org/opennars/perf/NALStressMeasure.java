@@ -15,6 +15,7 @@
 package org.opennars.perf;
 
 import org.opennars.core.NALTest;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Nar;
 import org.xml.sax.SAXException;
 
@@ -29,12 +30,7 @@ import java.util.Collection;
  *  useful for examining with a profiler.
  */
 public class NALStressMeasure  {
-    
-    public static void perfNAL(final String path, final int extraCycles, final int repeats, final int warmups) {
-        //perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
-    }
-    
-    public static double perfNAL(final Nar n, final String path, final int extraCycles, final int repeats, final int warmups, final boolean gc) {
+    public static double perfNAL(final Reasoner n, final String path, final int extraCycles, final int repeats, final int warmups, final boolean gc) {
         
         final String example = NALTest.getExample(path);
         
@@ -87,7 +83,7 @@ public class NALStressMeasure  {
                    
     }
     
-    public static void test(final Nar n) {
+    public static void test(final Reasoner n) {
         final int repeats = 1;
         final int warmups = 0;
         final int extraCycles = 5000;
@@ -102,11 +98,7 @@ public class NALStressMeasure  {
     }
     
     public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-       
-        final Nar nd = new Nar();
+        final Reasoner nd = new Nar();
         test(nd);
-        
-        
     }
-
 }

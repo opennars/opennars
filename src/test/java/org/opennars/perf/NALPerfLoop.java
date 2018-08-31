@@ -15,6 +15,7 @@
 package org.opennars.perf;
 
 import org.opennars.core.NALTest;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Nar;
 import org.opennars.main.MiscFlags;
 import org.xml.sax.SAXException;
@@ -36,18 +37,11 @@ public class NALPerfLoop {
        
         final int repeats = 2;
         final int warmups = 1;
-        final int maxConcepts = 2000;
         final int extraCycles = 2048;
         final int randomExtraCycles = 512;
           
-        final Nar n = new Nar();
-        //Nar n = new Nar( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
-        //Nar n = new Nar(new Curve());
-        
-        //Nar n = new Discretinuous().setConceptBagSize(maxConcepts).build();
+        final Reasoner n = new Nar();
 
-        //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
-        
         final Collection c = NALTest.params();
         while (true) {
             for (final Object o : c) {
