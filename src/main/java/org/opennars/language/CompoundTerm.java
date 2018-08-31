@@ -608,6 +608,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @param map The count map that will be created to count how often each term occurs
      * @return The counts of the terms
      */
+    @Override
     public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
         if(map == null) {
             map = new HashMap<Term, Integer>();
