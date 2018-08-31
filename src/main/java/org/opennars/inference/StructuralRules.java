@@ -376,6 +376,9 @@ public final class StructuralRules {
         if (!(compT instanceof CompoundTerm))
             return;
         final CompoundTerm comp = (CompoundTerm)compT;
+        if(comp.size() <= index) { //make sure it points into the compound
+            return;
+        }
         
         if (comp instanceof Product) {
             if (side == 0) {

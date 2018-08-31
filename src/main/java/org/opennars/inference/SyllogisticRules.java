@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import java.util.HashMap;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -662,7 +663,7 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1);
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new HashMap<Term,Term>());
         }
     }
 

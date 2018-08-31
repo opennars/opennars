@@ -23,6 +23,7 @@
  */
 package org.opennars.control.concept;
 
+import java.util.Map;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
@@ -52,7 +53,8 @@ import org.opennars.plugin.mental.InternalExperience;
  */
 public class ProcessAnticipation {
 
-    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, final long mintime, final long maxtime, final float priority) {
+    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
+            final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
@@ -64,7 +66,8 @@ public class ProcessAnticipation {
             new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
-        final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+        Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
+        final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
                 c.negConfirmation = t;
@@ -81,7 +84,7 @@ public class ProcessAnticipation {
                         }
                     }
                 }
-                nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+                nal.memory.emit(OutputHandler.ANTICIPATE.class,specificAnticipationTerm); //disappoint/confirm printed anyway
             }
         }
     }

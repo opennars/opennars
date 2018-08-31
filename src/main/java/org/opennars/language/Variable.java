@@ -24,9 +24,9 @@
 package org.opennars.language;
 
 import org.opennars.io.Texts;
-import org.opennars.main.MiscFlags;
-
 import java.nio.CharBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.opennars.io.Symbols.*;
 
@@ -312,5 +312,13 @@ public class Variable extends Term {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);
         return cb.compact().toString();
+    }
+    
+    @Override
+    public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
+        if(map == null) {
+            map = new HashMap<Term, Integer>();
+        }
+        return map; //don't count vars
     }
 }
