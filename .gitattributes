@@ -1,4 +1,10 @@
-* eol=lf
-*.bat eol=crlf
-*.sh eol=lf
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+* text eol=lf
+
+*.java text eol=lf
+
+*.bat text eol=crlf
+*.sh text  eol=lf
 .git* export-ignore
