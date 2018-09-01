@@ -33,6 +33,7 @@ import org.opennars.entity.Task;
 
 import static com.google.common.collect.Iterables.tryFind;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static org.opennars.inference.LocalRules.revisible;
@@ -45,6 +46,7 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
+import org.opennars.language.Negation;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -167,10 +169,14 @@ public class ProcessJudgment {
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept alternativeTarget) {
         Set<Term> targets = new HashSet<Term>();
         if(alternativeTarget == null) { 
-            //add to all components
-            Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);
-            for(Term r : ret.keySet()) {
-                targets.add(r);
+            //add to all components, unless it is an negation
+            if(((Implication)task.getTerm()).getPredicate() instanceof Negation) {
+                targets.add(((Implication)task.getTerm()).getPredicate());
+            } else {
+                Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);
+                for(Term r : ret.keySet()) {
+                    targets.add(r);
+                }
             }
         } else {
             targets.add(alternativeTarget.getTerm());
@@ -195,17 +201,19 @@ public class ProcessJudgment {
             }
             // we do not add the target, instead the strongest belief in the target concept
             synchronized(target_concept) {       
+                List<Task> table = strongest_target.get().sentence.term.hasVar() ?  target_concept.general_executable_preconditions : 
+                                                                                    target_concept.executable_preconditions;
                 //at first we have to remove the last one with same content from table
                 int i_delete = -1;
-                for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
-                    if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
+                for(int i=0; i < table.size(); i++) {
+                    if(CompoundTerm.replaceIntervals(table.get(i).getTerm()).equals(
                             CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
                         i_delete = i; //even these with same term but different intervals are removed here
                         break;
                     }
                 }
                 if(i_delete != -1) {
-                    target_concept.executable_preconditions.remove(i_delete);
+                    table.remove(i_delete);
                 }
                 final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
                 for (int i = 0; i<prec.length-2; i++) {
@@ -214,7 +222,7 @@ public class ProcessJudgment {
                     }
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                target_concept.addToTable(strongest_target.get(), true, target_concept.executable_preconditions, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+                target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
             }
         }
     }
