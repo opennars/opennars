@@ -169,8 +169,8 @@ public class ProcessJudgment {
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept alternativeTarget) {
         Set<Term> targets = new HashSet<Term>();
         if(alternativeTarget == null) { 
-            //add to all components, unless it is an negation
-            if(((Implication)task.getTerm()).getPredicate() instanceof Negation) {
+            //add to all components, unless it doesn't have vars
+            if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
                 targets.add(((Implication)task.getTerm()).getPredicate());
             } else {
                 Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);

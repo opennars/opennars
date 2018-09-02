@@ -37,6 +37,7 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Stamp.BaseEntry;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
+import org.opennars.inference.LocalRules;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
@@ -138,7 +139,7 @@ public class ProcessGoal {
             return;
         } 
 
-        double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+        double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet
         if (beliefT != null) {
             final Sentence belief = beliefT.sentence;
             final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
@@ -292,7 +293,7 @@ public class ProcessGoal {
             ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, table);
             //4. And executing it, also forming an expectation about the result
             if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
-                return; //don't try the other table as a solution was already found
+                return; //don't try the other table as a specific solution was already used
             }
         }
     }
@@ -329,16 +330,21 @@ public class ProcessGoal {
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new HashMap<>();
-                    if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time() &&
-                            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                    if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
+                        boolean preconditionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(precondition), 
-                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>()) &&
-                            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>());
+                        boolean conclusionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
-                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>())) {
-                        newesttime = p.sentence.getOccurenceTime();
-                        bestsofar = p; //we use the newest for now
-                        subsBest = subs;
+                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>());
+                        if(preconditionMatches && conclusionMatches){
+                            newesttime = p.sentence.getOccurenceTime();
+                            //Apply interval penalty for interval differences in the precondition
+                            Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
+                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, preconc, pNew.sentence.truth);
+                            bestsofar = pNew;
+                            subsBest = subs;
+                        }
                     }
                 }
             }
