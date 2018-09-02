@@ -43,7 +43,7 @@ import org.opennars.storage.Memory;
  * A Sentence is used as the premises and conclusions of all inference rules.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Sentence<T extends Term> implements Cloneable, Serializable {
 

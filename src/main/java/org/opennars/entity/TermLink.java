@@ -43,7 +43,7 @@ import java.util.Objects;
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class TermLink extends Item<TermLink> implements TLink<Term>, Serializable {
     

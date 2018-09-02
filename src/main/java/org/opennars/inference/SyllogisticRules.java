@@ -40,7 +40,7 @@ import static org.opennars.language.Terms.reduceComponents;
  * Syllogisms: Inference rules based on the transitivity of the relation.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public final class SyllogisticRules {
 

@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Symbols {
 

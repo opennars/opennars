@@ -35,7 +35,7 @@ import java.util.Comparator;
  * It has a key and a budget. Cannot be cloned
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public abstract class Item<K> implements Serializable {
 

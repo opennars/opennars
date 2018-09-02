@@ -32,7 +32,7 @@ import org.opennars.main.Parameters;
 
 /**
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
 

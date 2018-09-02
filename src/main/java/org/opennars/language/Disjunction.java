@@ -33,7 +33,7 @@ import java.util.List;
  * A disjunction of Statements as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Disjunction extends CompoundTerm {
 

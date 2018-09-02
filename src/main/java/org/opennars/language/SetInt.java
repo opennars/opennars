@@ -34,7 +34,7 @@ import static org.opennars.io.Symbols.NativeOperator.SET_INT_OPENER;
  * An intensionally defined set, which contains one or more instances defining the Term.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class SetInt extends SetTensional {
 

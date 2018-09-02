@@ -34,7 +34,7 @@ import java.util.NavigableSet;
 /**
  * A compound term whose extension is the intersection of the extensions of its term as defined in the NARS-theory
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class IntersectionExt extends CompoundTerm {
 

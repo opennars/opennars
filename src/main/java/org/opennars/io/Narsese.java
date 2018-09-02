@@ -49,7 +49,7 @@ import static org.opennars.operator.Operation.make;
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Narsese implements Serializable {
     

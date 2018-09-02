@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Static utility class for static methods related to Terms
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Terms {
 

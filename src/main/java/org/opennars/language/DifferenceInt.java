@@ -33,7 +33,7 @@ import java.util.TreeSet;
  * A compound term whose extension is the difference of the intensions of its term as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class DifferenceInt extends CompoundTerm {
 

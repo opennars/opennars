@@ -39,7 +39,7 @@ import java.util.List;
  * sentence (the premise) and one TermLink (indicating a component)
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public final class StructuralRules {
 
@@ -717,7 +717,7 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      *
-     * @author Patrick Hammer
+     * @author OpenNARS authors
      * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {

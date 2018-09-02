@@ -72,7 +72,7 @@ import org.opennars.plugin.mental.InternalExperience;
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
     public Parameters narParameters = new Parameters();
