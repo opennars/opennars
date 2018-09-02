@@ -37,6 +37,7 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Stamp.BaseEntry;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
+import org.opennars.inference.LocalRules;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
@@ -138,7 +139,7 @@ public class ProcessGoal {
             return;
         } 
 
-        double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+        double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet
         if (beliefT != null) {
             final Sentence belief = beliefT.sentence;
             final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
@@ -269,7 +270,7 @@ public class ProcessGoal {
     * @param task The goal task
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        //1. pull up variable based preconditions from component concepts
+        //1. if there is no solution known yet, pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
@@ -278,7 +279,7 @@ public class ProcessGoal {
             }
             //pull variable based preconditions from component concepts
             synchronized(get_concept) {
-                for(Task precon : get_concept.executable_preconditions) {
+                for(Task precon : get_concept.general_executable_preconditions) {
                     //check whether the conclusion matches
                     if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new HashMap<>(), new HashMap<>())) {
                         ProcessJudgment.addToTargetConceptsPreconditions(precon, nal, concept); //it matches, so add to this concept!
@@ -286,15 +287,29 @@ public class ProcessGoal {
                 }
             }
         }
-        //2. Apply choice rule, using the highest truth expectation solution
-        ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal);
-        //3. And executing it, also forming an expectation about the result
-        executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task);
+        //2. For the more specific hypotheses first and then the general
+        for(List<Task> table : new List[] {concept.executable_preconditions, concept.general_executable_preconditions}) {
+            //3. Apply choice rule, using the highest truth expectation solution
+            ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, table);
+            //4. And executing it, also forming an expectation about the result
+            if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
+                return; //don't try the other table as a specific solution was already used
+            }
+        }
     }
        
-    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal) {
+    /**
+     * Search for the best precondition that best matches recent events, and is most successful in leading to goal fulfilment
+     * 
+     * @param nal
+     * @param concept
+     * @param projectedGoal
+     * @param generalPreconditions
+     * @return 
+     */
+    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions) {
         ExecutablePrecondition result = new ExecutablePrecondition();
-        for(final Task t: concept.executable_preconditions) {
+        for(final Task t: execPreconditions) {
             final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
@@ -315,16 +330,21 @@ public class ProcessGoal {
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new HashMap<>();
-                    if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time() &&
-                            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                    if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
+                        boolean preconditionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(precondition), 
-                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>()) &&
-                            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>());
+                        boolean conclusionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
-                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>())) {
-                        newesttime = p.sentence.getOccurenceTime();
-                        bestsofar = p; //we use the newest for now
-                        subsBest = subs;
+                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>());
+                        if(preconditionMatches && conclusionMatches){
+                            newesttime = p.sentence.getOccurenceTime();
+                            //Apply interval penalty for interval differences in the precondition
+                            Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
+                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, preconc, pNew.sentence.truth);
+                            bestsofar = pNew;
+                            subsBest = subs;
+                        }
                     }
                 }
             }
@@ -363,7 +383,16 @@ public class ProcessGoal {
         return result;
     }
     
-    private static void executePrecondition(final DerivationContext nal, ExecutablePrecondition meta, final Concept concept, final Sentence projectedGoal, final Task task) {
+    /**
+     * Execute the operation suggested by the most applicable precondition
+     * 
+     * @param nal
+     * @param meta
+     * @param concept
+     * @param projectedGoal
+     * @param task 
+     */
+    private static boolean executePrecondition(final DerivationContext nal, ExecutablePrecondition meta, final Concept concept, final Sentence projectedGoal, final Task task) {
         if(meta.bestop != null && meta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
             final Sentence createdSentence = new Sentence(
                 meta.bestop,
@@ -377,11 +406,13 @@ public class ProcessGoal {
             if(!task.sentence.stamp.evidenceIsCyclic()) {
                 if(!executeOperation(nal, t)) { //this task is just used as dummy
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                    return;
+                    return false;
                 }
                 ProcessAnticipation.anticipate(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2, meta.substitution);
+                return true;
             }
         }
+        return false;
     }
     
     /**

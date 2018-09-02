@@ -123,7 +123,7 @@ public class LocalRules {
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         final TruthValue newTruth = newBelief.truth.clone();
         final TruthValue oldTruth = oldBelief.truth;
-        boolean useNewBeliefTerm = intervalProjection(newBelief, nal, oldBelief, beliefConcept, newTruth);
+        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept, newTruth);
         
         final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
@@ -142,18 +142,18 @@ public class LocalRules {
      * also discounting the truth confidence according to the interval difference.
      * called by Revision
      * 
-     * @param newBelief
      * @param nal
-     * @param oldBelief
+     * @param newBeliefTerm
+     * @param oldBeliefTerm
      * @param beliefConcept
      * @param newTruth
      * @return 
      */
-    private static boolean intervalProjection(final Sentence newBelief, final DerivationContext nal, final Sentence oldBelief, final Concept beliefConcept, final TruthValue newTruth) {
+    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final Concept beliefConcept, final TruthValue newTruth) {
         boolean useNewBeliefTerm = false;
-        if(newBelief.getTerm().hasInterval()) {
-            final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
-            final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
+        if(newBeliefTerm.hasInterval()) {    
+            final List<Long> ivalOld = extractIntervals(nal.memory, oldBeliefTerm);
+            final List<Long> ivalNew = extractIntervals(nal.memory, newBeliefTerm);
             long AbsDiffSumNew = 0;
             long AbsDiffSumOld = 0;
             List<Float> recent_ivals = beliefConcept.recent_intervals;
@@ -165,7 +165,7 @@ public class LocalRules {
                 }
                 for(int i=0;i<ivalNew.size();i++) {
                     final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
                     recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
                 }
                 

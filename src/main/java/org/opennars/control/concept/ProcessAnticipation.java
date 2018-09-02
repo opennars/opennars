@@ -113,12 +113,12 @@ public class ProcessAnticipation {
             }
         }
         if(cancelled) {
-            concept.memory.emit(OutputHandler.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
+            concept.memory.emit(OutputHandler.CONFIRM.class,concept.getTerm());
             concept.negConfirmation = null; //confirmed
             return;
         }        
         concept.memory.inputTask(time, concept.negConfirmation, false);
-        concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
+        concept.memory.emit(OutputHandler.DISAPPOINT.class,concept.getTerm());
         concept.negConfirmation = null;
     }
     
