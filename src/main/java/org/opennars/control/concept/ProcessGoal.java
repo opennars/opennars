@@ -301,10 +301,10 @@ public class ProcessGoal {
     /**
      * Search for the best precondition that best matches recent events, and is most successful in leading to goal fulfilment
      * 
-     * @param nal
-     * @param concept
-     * @param projectedGoal
-     * @param generalPreconditions
+     * @param nal The derivation context
+     * @param concept The goal concept
+     * @param projectedGoal The goal projected to the current time
+     * @param execPreconditions The procedural hypotheses with the executable preconditions
      * @return 
      */
     private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions) {
@@ -386,18 +386,18 @@ public class ProcessGoal {
     /**
      * Execute the operation suggested by the most applicable precondition
      * 
-     * @param nal
-     * @param meta
-     * @param concept
-     * @param projectedGoal
-     * @param task 
+     * @param nal The derivation context
+     * @param precon The procedural hypothesis leading to goal
+     * @param concept The concept of the goal
+     * @param projectedGoal The goal projected to the current time
+     * @param task The goal task
      */
-    private static boolean executePrecondition(final DerivationContext nal, ExecutablePrecondition meta, final Concept concept, final Sentence projectedGoal, final Task task) {
-        if(meta.bestop != null && meta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
+    private static boolean executePrecondition(final DerivationContext nal, ExecutablePrecondition precon, final Concept concept, final Sentence projectedGoal, final Task task) {
+        if(precon.bestop != null && precon.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
             final Sentence createdSentence = new Sentence(
-                meta.bestop,
+                precon.bestop,
                 Symbols.JUDGMENT_MARK,
-                meta.bestop_truth,
+                precon.bestop_truth,
                 projectedGoal.stamp);
             final Task t = new Task(createdSentence,
                                     new BudgetValue(1.0f,1.0f,1.0f, nal.narParameters),
@@ -408,7 +408,7 @@ public class ProcessGoal {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return false;
                 }
-                ProcessAnticipation.anticipate(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2, meta.substitution);
+                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
                 return true;
             }
         }
