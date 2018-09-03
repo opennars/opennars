@@ -35,7 +35,7 @@ import java.util.*;
 /**
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class TemporalRules {
 

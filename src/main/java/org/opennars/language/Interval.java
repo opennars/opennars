@@ -31,7 +31,7 @@ import org.opennars.io.Symbols;
  * magnitude, so for example, it will have name() "+1" if magnitude=0, and "+2" if magnitude=1.
  * 
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Interval extends Term {
     

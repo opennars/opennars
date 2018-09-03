@@ -46,7 +46,7 @@ import static org.opennars.language.Terms.reduceComponents;
  * decompositional rules are also used in backward inference
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public final class CompositionalRules {
 

@@ -40,7 +40,7 @@ import java.util.Set;
 
 /**
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class TemporalInferenceControl {
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {

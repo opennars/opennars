@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * Reasoner local settings and deriver options
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 // TODO< rename this after MVP0 to "ReasonerArguments" >
 public class Parameters implements Serializable {

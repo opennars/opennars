@@ -52,7 +52,7 @@ import static org.opennars.inference.UtilityFunctions.or;
  * Concepts are used to keep track of interrelated sentences
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Concept extends Item<Term> implements Serializable {
 

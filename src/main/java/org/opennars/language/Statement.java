@@ -38,7 +38,7 @@ import static org.opennars.io.Symbols.NativeOperator.STATEMENT_OPENER;
  * relation symbol in between. It can be of either first-order or higher-order.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public abstract class Statement extends CompoundTerm {
     

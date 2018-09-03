@@ -25,7 +25,7 @@ package org.opennars.entity;
 
 /**
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public interface TLink<T> {
 

@@ -36,7 +36,7 @@ import java.util.Arrays;
  * Internally, it is actually (/,A,P)_1, with an index.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class ImageExt extends Image {
 

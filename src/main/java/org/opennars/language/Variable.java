@@ -34,7 +34,7 @@ import static org.opennars.io.Symbols.*;
  * A variable term, which does not correspond to a concept
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Variable extends Term {
     /** caches the type character for faster lookup than charAt(0) */

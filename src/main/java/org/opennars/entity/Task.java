@@ -37,7 +37,7 @@ import java.io.Serializable;
  * violating the assumption of insufficient resources (AIKR).
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 

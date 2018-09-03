@@ -51,7 +51,7 @@ import org.opennars.main.Parameters;
  *   conversion: between different inheritance relations.<br>
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class LocalRules {
 

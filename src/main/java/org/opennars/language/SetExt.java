@@ -34,7 +34,7 @@ import static org.opennars.io.Symbols.NativeOperator.SET_EXT_OPENER;
  * An extensionally defined set, which contains one or more instances as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class SetExt extends SetTensional {
 

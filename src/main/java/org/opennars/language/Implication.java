@@ -32,7 +32,7 @@ import java.util.Arrays;
  * A Statement about an Inheritance copula as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Implication extends Statement {
     private int temporalOrder = TemporalRules.ORDER_NONE;

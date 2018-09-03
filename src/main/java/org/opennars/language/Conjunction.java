@@ -35,7 +35,7 @@ import static java.lang.System.arraycopy;
  * Conjunction of statements as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Conjunction extends CompoundTerm {
 

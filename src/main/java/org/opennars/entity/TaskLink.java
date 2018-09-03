@@ -40,7 +40,7 @@ import java.util.Iterator;
  * TaskLinks are unique according to the Task they reference
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 

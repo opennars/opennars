@@ -29,7 +29,7 @@ import org.opennars.io.Symbols.NativeOperator;
  * A Statement about a Similarity relation as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Similarity extends Statement {
 

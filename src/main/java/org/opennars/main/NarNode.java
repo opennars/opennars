@@ -51,7 +51,7 @@ import org.opennars.main.Shell;
 import org.xml.sax.SAXException;
 
 /**
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class NarNode implements EventObserver  {
     

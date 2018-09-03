@@ -46,7 +46,7 @@ import java.util.*;
  * exists. Multiple objects may represent the same Term.
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Term implements AbstractTerm, Serializable {
     public ImaginationSpace imagination;

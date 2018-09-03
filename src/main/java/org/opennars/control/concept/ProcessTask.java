@@ -32,7 +32,7 @@ import org.opennars.io.Symbols;
 /**
  * Encapsulates the dispatching task processing
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  *
  */
 public class ProcessTask {

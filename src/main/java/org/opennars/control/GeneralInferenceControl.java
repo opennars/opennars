@@ -39,7 +39,7 @@ import org.opennars.storage.Memory;
  *
  * a concept is "fired" or activated by applying the reasoner
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  *
  */
 public class GeneralInferenceControl {

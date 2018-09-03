@@ -41,7 +41,7 @@ import org.opennars.language.Variables;
 
 /**
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class ProcessQuestion {
     /**

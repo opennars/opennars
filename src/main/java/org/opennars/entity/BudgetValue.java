@@ -35,7 +35,7 @@ import org.opennars.main.Parameters;
  * A triple of priority (current), durability (decay), and quality (long-term average).
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class BudgetValue implements Cloneable, Serializable {
 

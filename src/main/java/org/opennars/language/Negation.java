@@ -29,7 +29,7 @@ import org.opennars.io.Symbols.NativeOperator;
  * A negation of a statement as defined in the NARS-theory
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public class Negation extends CompoundTerm {
 

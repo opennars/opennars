@@ -27,7 +27,7 @@ package org.opennars.language;
  * A Statement about an InstanceProperty relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
  *
- * @author Patrick Hammer
+ * @author OpenNARS authors
  */
 public abstract class InstanceProperty /*extends Statement*/ {
     

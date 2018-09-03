@@ -32,7 +32,7 @@ import org.opennars.main.Parameters;
  * All truth-value (and desire-value) functions used in inference rules
  *
  * @author Pei Wang
- * @author Patrick Hammer
+ * @author OpenNARS authors
  * @author Robert Wünsche
  */
 public final class TruthFunctions extends UtilityFunctions {
