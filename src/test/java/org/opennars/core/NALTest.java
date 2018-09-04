@@ -64,7 +64,6 @@ public class NALTest  {
     static public final boolean showReport = true;
     static public final boolean requireSuccess = true;
     static public final int similarsToSave = 5;
-    private static final boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
     protected static final Map<String, String> examples = new HashMap(); //path -> script data
     public static final Map<String, Boolean> tests = new HashMap();
     public static final Map<String, Double> scores = new HashMap();
@@ -110,15 +109,6 @@ public class NALTest  {
 
         tests.clear();
         scores.clear();
-        
-        if (waitForEnterKeyOnStart) {
-            System.out.println("When ready, press enter");
-            try {
-                System.in.read();
-            } catch (final IOException ex) {
-                throw new IllegalStateException("Could not read user input.", ex);
-            }
-        }
 
         final Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
               
