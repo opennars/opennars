@@ -59,7 +59,6 @@ public class NALTest  {
 
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public boolean showOutput = false;
-    static public boolean saveSimilar = true;
     static public  boolean showSuccess = false;
     static public final boolean showFail = true;
     static public final boolean showReport = true;
@@ -88,9 +87,6 @@ public class NALTest  {
     
     public Nar newNAR() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         return new Nar();
-        //return Nar.build(Default.fromJSON("nal/build/pei1.fast.nar"));
-        //return new ContinuousBagNARBuilder().build();
-        //return new DiscretinuousBagNARBuilder().build();
     }
     
     
@@ -123,9 +119,7 @@ public class NALTest  {
                 throw new IllegalStateException("Could not read user input.", ex);
             }
         }
-        
-        //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        
+
         final Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
               
         
@@ -184,12 +178,8 @@ public class NALTest  {
     
     protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
-        
-        final List<OutputCondition> expects = new ArrayList();
-        
-        Nar n = null;
-        final boolean error = false;
-        n = newNAR();
+
+        Nar n = newNAR();
         final String example = getExample(path);
 
         if (showOutput) {
@@ -198,7 +188,7 @@ public class NALTest  {
         }
 
         final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-        expects.addAll(extractedExpects);
+        final List<OutputCondition> expects = new ArrayList<>(extractedExpects);
 
         if (showOutput)
             new TextOutputHandler(n, System.out);
@@ -209,7 +199,7 @@ public class NALTest  {
         System.err.flush();
         System.out.flush();
         
-        boolean success = expects.size() > 0 && (!error);
+        boolean success = expects.size() > 0;
         for (final OutputCondition e: expects) {
             if (!e.succeeded) success = false;
         }
@@ -241,8 +231,7 @@ public class NALTest  {
                 System.err.println("  " + e);
             }
         }
-        
-        //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
+
         if (requireSuccess)
             assertTrue(path, success);
         
