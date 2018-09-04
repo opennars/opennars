@@ -389,17 +389,17 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                         }
                         String[] spl = line.replace("IN:", "").split("\\{");
                         int creationTime = Integer.parseInt(spl[spl.length-1].split(" :")[0].split("\\|")[0]);
-                        while(nar.time() < creationTime) {
-                            nar.cycles(1);
+                        while(this.time() < creationTime) {
+                            this.cycles(1);
                         }
                         String lineReconstructed = ""; //the line but without the stamp info at the end
                         for(int i=0; i<spl.length-1; i++) {
                             lineReconstructed += spl[i] + "{";
                         }
                         lineReconstructed = lineReconstructed.substring(0, lineReconstructed.length()-1);
-                        nar.addInput(lineReconstructed.trim());
+                        this.addInput(lineReconstructed.trim());
                     } else {
-                        nar.addInput(line);
+                        this.addInput(line);
                     }
                 }
             }
