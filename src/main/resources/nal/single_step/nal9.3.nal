@@ -1,0 +1,3 @@
+(^want,{SELF},<a --> b>). %1.00;0.90%
+10
+''outputMustContain('<a --> b>! %1.00;0.81%')
