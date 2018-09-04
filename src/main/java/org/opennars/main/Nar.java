@@ -381,6 +381,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             String line;
             while ((line = br.readLine()) != null) {
                 if(!line.isEmpty()) {
+                    //Loading experience file lines, or else just normal input lines
                     if(line.matches("([A-Za-z])+:(.*)")) {
                         //Extract creation time:
                         if(!line.startsWith("IN:")) {
