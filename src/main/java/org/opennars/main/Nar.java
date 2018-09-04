@@ -227,6 +227,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * Reset the system with an empty memory and reset clock. Called locally.
      */
     public void reset() {
+        cycle = (long) 0;
         memory.reset();
     }
 
@@ -380,12 +381,31 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             String line;
             while ((line = br.readLine()) != null) {
                 if(!line.isEmpty()) {
-                    this.addInput(line);
+                    //Loading experience file lines, or else just normal input lines
+                    if(line.matches("([A-Za-z])+:(.*)")) {
+                        //Extract creation time:
+                        if(!line.startsWith("IN:")) {
+                            continue; //ignore
+                        }
+                        String[] spl = line.replace("IN:", "").split("\\{");
+                        int creationTime = Integer.parseInt(spl[spl.length-1].split(" :")[0].split("\\|")[0]);
+                        while(this.time() < creationTime) {
+                            this.cycles(1);
+                        }
+                        String lineReconstructed = ""; //the line but without the stamp info at the end
+                        for(int i=0; i<spl.length-1; i++) {
+                            lineReconstructed += spl[i] + "{";
+                        }
+                        lineReconstructed = lineReconstructed.substring(0, lineReconstructed.length()-1);
+                        this.addInput(lineReconstructed.trim());
+                    } else {
+                        this.addInput(line);
+                    }
                 }
             }
-        } catch (final IOException ex) {
+        } catch (final Exception ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
-            throw new IllegalStateException("Could not open specified file", ex);
+            throw new IllegalStateException("Loading experience file failed ", ex);
         }
     }
 
