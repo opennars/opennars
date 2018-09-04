@@ -171,11 +171,7 @@ public class NALTest  {
         this.scriptPath = scriptPath;
         
     }
-    
-    public double run() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        return testNAL(scriptPath);
-    }
-    
+
     protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
 
