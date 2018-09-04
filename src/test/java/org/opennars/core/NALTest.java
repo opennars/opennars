@@ -49,14 +49,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NALTest  {
-        
-
-    static {
-        Memory.randomNumber.setSeed(1);
-        MiscFlags.DEBUG = false;
-        MiscFlags.TEST = true;
-    }
-
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public boolean showOutput = false;
     static public  boolean showSuccess = false;
@@ -64,9 +56,9 @@ public class NALTest  {
     static public final boolean showReport = true;
     static public final boolean requireSuccess = true;
     static public final int similarsToSave = 5;
-    protected static final Map<String, String> examples = new HashMap(); //path -> script data
-    public static final Map<String, Boolean> tests = new HashMap();
-    public static final Map<String, Double> scores = new HashMap();
+    protected static final Map<String, String> examples = new HashMap<>(); //path -> script data
+    public static final Map<String, Boolean> tests = new HashMap<>();
+    public static final Map<String, Double> scores = new HashMap<>();
     final String scriptPath;
     
     public static String getExample(final String path) {
@@ -152,10 +144,7 @@ public class NALTest  {
         }
         return totalScore;
     }
-    
-    public static void main(final String[] args) {
-        runTests(NALTest.class);
-    }
+
 
     public NALTest(final String scriptPath) {
         this.scriptPath = scriptPath;
@@ -165,7 +154,6 @@ public class NALTest  {
     public double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
 
-        Nar n = newNAR();
         final String example = getExample(path);
 
         if (showOutput) {
@@ -173,8 +161,11 @@ public class NALTest  {
             System.out.println();
         }
 
+        Nar n = newNAR();
+
         final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
         final List<OutputCondition> expects = new ArrayList<>(extractedExpects);
+
 
         if (showOutput) {
             new TextOutputHandler(n, System.out);
@@ -190,7 +181,9 @@ public class NALTest  {
 
         boolean success = expects.size() > 0;
         for (final OutputCondition e: expects) {
-            if (!e.succeeded) success = false;
+            if (!e.succeeded) {
+                success = false;
+            }
         }
 
         double score = Double.POSITIVE_INFINITY;
@@ -198,9 +191,10 @@ public class NALTest  {
             long lastSuccess = -1;
             for (final OutputCondition e: expects) {
                 if (e.getTrueTime()!=-1) {
-                    if (lastSuccess < e.getTrueTime())
+                    if (lastSuccess < e.getTrueTime()) {
                         lastSuccess = e.getTrueTime();
-                }                
+                    }
+                }
             }
             if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
@@ -221,14 +215,25 @@ public class NALTest  {
             }
         }
 
-        if (requireSuccess)
+        if (requireSuccess) {
             assertTrue(path, success);
-        
+        }
+
         return score;  
     }
     
     @Test
     public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
+    }
+
+    public static void main(final String[] args) {
+        runTests(NALTest.class);
+    }
+
+    static {
+        Memory.randomNumber.setSeed(1);
+        MiscFlags.DEBUG = false;
+        MiscFlags.TEST = true;
     }
 }
