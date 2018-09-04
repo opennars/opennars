@@ -381,12 +381,30 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             String line;
             while ((line = br.readLine()) != null) {
                 if(!line.isEmpty()) {
-                    this.addInput(line);
+                    if(line.matches("([A-Za-z])+:(.*)")) {
+                        //Extract creation time:
+                        if(!line.startsWith("IN:")) {
+                            continue; //ignore
+                        }
+                        String[] spl = line.replace("IN:", "").split("\\{");
+                        int creationTime = Integer.parseInt(spl[spl.length-1].split(" :")[0].split("\\|")[0]);
+                        while(nar.time() < creationTime) {
+                            nar.cycles(1);
+                        }
+                        String lineReconstructed = ""; //the line but without the stamp info at the end
+                        for(int i=0; i<spl.length-1; i++) {
+                            lineReconstructed += spl[i] + "{";
+                        }
+                        lineReconstructed = lineReconstructed.substring(0, lineReconstructed.length()-1);
+                        nar.addInput(lineReconstructed.trim());
+                    } else {
+                        nar.addInput(line);
+                    }
                 }
             }
-        } catch (final IOException ex) {
+        } catch (final Exception ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
-            throw new IllegalStateException("Could not open specified file", ex);
+            throw new IllegalStateException("Loading experience file failed ", ex);
         }
     }
 
