@@ -162,7 +162,7 @@ public class NALTest  {
         
     }
 
-    protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    public double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
 
         Nar n = newNAR();
@@ -187,7 +187,7 @@ public class NALTest  {
             System.err.flush();
             System.out.flush();
         }
-        
+
         boolean success = expects.size() > 0;
         for (final OutputCondition e: expects) {
             if (!e.succeeded) success = false;
