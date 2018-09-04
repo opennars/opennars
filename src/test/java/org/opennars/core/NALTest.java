@@ -176,14 +176,17 @@ public class NALTest  {
         final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
         final List<OutputCondition> expects = new ArrayList<>(extractedExpects);
 
-        if (showOutput)
+        if (showOutput) {
             new TextOutputHandler(n, System.out);
+        }
 
         n.addInputFile(path);
         n.cycles(minCycles);
-      
-        System.err.flush();
-        System.out.flush();
+
+        if (showOutput) {
+            System.err.flush();
+            System.out.flush();
+        }
         
         boolean success = expects.size() > 0;
         for (final OutputCondition e: expects) {
