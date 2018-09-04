@@ -315,6 +315,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         //Ignore any input that is just a comment
         if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0) {
+            emit(org.opennars.io.events.OutputHandler.ECHO.class, text);
             return;
         }
         try {
