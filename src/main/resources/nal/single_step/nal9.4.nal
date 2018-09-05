@@ -1,0 +1,7 @@
+//making it observable:
+<b --> B>.
+//ok start:
+<a --> A>. :|:
+<(&/,<a --> A>,+10) =/> <b --> B>>.
+10
+''outputMustContain('(^anticipate,{SELF},<b --> B>). :!9: %1.00;0.90%')

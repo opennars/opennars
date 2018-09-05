@@ -267,6 +267,8 @@ public class Parameters implements Serializable {
     /** Sequence bag forget durations **/
     public volatile float EVENT_FORGET_DURATIONS = 4.0f;
     
+    /** Maximum attempted combinations in variable introduction.**/
+    public volatile int VARIABLE_INTRODUCTION_COMBINATIONS_MAX = 8;
     
     /** Default threads amount at startup */
     public volatile int THREADS_AMOUNT = 1;
