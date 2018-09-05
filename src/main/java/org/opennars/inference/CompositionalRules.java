@@ -39,6 +39,7 @@ import java.util.Set;
 
 import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
+import org.opennars.storage.Memory;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -761,7 +762,7 @@ public final class CompositionalRules {
         for(Term t : app.keySet()) {
             shuffledVariables.add(t);
         }
-        Collections.shuffle(shuffledVariables);
+        Collections.shuffle(shuffledVariables, Memory.randomNumber);
         HashSet<Term> selected = new HashSet<Term>();
         int i = 1;
         for(Term t : shuffledVariables) {
