@@ -70,7 +70,8 @@ public abstract class Feel extends Operator {
             content,
             Symbols.JUDGMENT_MARK,
             truth,
-            stamp);
+            stamp,
+            memory.narParameters);
 
         final float quality = BudgetFunctions.truthToQuality(truth);
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, quality, memory.narParameters);

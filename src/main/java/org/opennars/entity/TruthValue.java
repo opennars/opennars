@@ -93,7 +93,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     public TruthValue(final float f, final float c, final boolean isAnalytic, Parameters narParameters) {
         this.narParameters = narParameters;
         setFrequency(f);                
-        setConfidence(c);        
+        setConfidence(c, narParameters.TRUTH_EPSILON);
         setAnalytic(isAnalytic);
     }
 
@@ -133,9 +133,9 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         this.frequency = f;
         return this;
     }
-    
-    public TruthValue setConfidence(final float c) {
-        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
+
+    public TruthValue setConfidence(final float c, final float truthEpsilon) {
+        float max_confidence = 1.0f - truthEpsilon;
         this.confidence = (c < max_confidence) ? c : max_confidence;
         return this;
     }
@@ -286,9 +286,9 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         }
     }
 
-    public TruthValue set(final float frequency, final float confidence) {
+    public TruthValue set(final float frequency, final float confidence, final float truthEpsilon) {
         setFrequency(frequency);
-        setConfidence(confidence);
+        setConfidence(confidence, truthEpsilon);
         return this;
     }
 }

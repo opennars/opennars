@@ -186,7 +186,7 @@ public class LocalRules {
             //when the second premise would have been shifted
             //to the necessary time in the first place
             //to build the hypothesis newBelief encodes
-            newTruth.setConfidence(newTruth.getConfidence()*a);
+            newTruth.setConfidence(newTruth.getConfidence()*a, nal.narParameters.TRUTH_EPSILON);
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         return useNewBeliefTerm;

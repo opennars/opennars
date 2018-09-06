@@ -167,7 +167,8 @@ public class VisionChannel extends SensoryChannel  {
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
                                                    defaultOutputConfidence, nar.narParameters), 
-                                                   stamp);
+                                                   stamp,
+                                                   nar.narParameters);
 
         final BudgetValue budgetForNewTask = new BudgetValue(nar.narParameters.DEFAULT_JUDGMENT_PRIORITY,
             nar.narParameters.DEFAULT_JUDGMENT_DURABILITY,
@@ -269,7 +270,8 @@ public class VisionChannel extends SensoryChannel  {
                 Sentence bestSentence = new Sentence(best.task.getTerm(),
                                                      best.task.sentence.punctuation,
                                                      bestTruth,
-                                                     stamp.clone());
+                                                     stamp.clone(),
+                                                     nar.narParameters);
                 final Task bestTask = new Task(bestSentence, best.task.budget.clone(), Task.EnumType.INPUT);
                 bestTask.setElemOfSequenceBuffer(true);
                 this.results.add(bestTask);//feeds results into "upper" sensory channels:

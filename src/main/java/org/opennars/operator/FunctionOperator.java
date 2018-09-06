@@ -121,7 +121,8 @@ public abstract class FunctionOperator extends Operator {
             final Sentence s = new Sentence(operation,
                                       Symbols.JUDGMENT_MARK,
                                       new TruthValue(1.0f, confidence, m.narParameters),
-                                      new Stamp(time, m));
+                                      new Stamp(time, m),
+                                      m.narParameters);
 
             final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,
                 m.narParameters.DEFAULT_FEEDBACK_DURABILITY,

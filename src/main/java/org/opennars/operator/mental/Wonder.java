@@ -61,7 +61,8 @@ public class Wonder extends Operator {
             content,
             Symbols.QUESTION_MARK,
             null,
-            new Stamp(time, memory));
+            new Stamp(time, memory),
+            memory.narParameters);
 
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUESTION_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);
 

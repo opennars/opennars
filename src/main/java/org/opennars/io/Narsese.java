@@ -55,7 +55,7 @@ public class Narsese implements Serializable {
     
     public final Memory memory;
 
-                
+
     /**
      * All kinds of invalid addInput lines
      */
@@ -145,7 +145,8 @@ public class Narsese implements Serializable {
             content,
             punc,
             truth,
-            stamp);
+            stamp,
+            memory.narParameters);
 
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
