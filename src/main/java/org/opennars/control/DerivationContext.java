@@ -165,7 +165,8 @@ public class DerivationContext {
             newContent,
             getCurrentTask().sentence.punctuation,
             newTruth,
-            derived_stamp);
+            derived_stamp,
+            narParameters);
 
         final Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
@@ -203,7 +204,8 @@ public class DerivationContext {
                 newContent,
                 getCurrentTask().sentence.punctuation,
                 newTruth,
-                derive_stamp);
+                derive_stamp,
+                narParameters);
 
             newSentence.producedByTemporalInduction=temporalInduction;
             Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
@@ -225,7 +227,8 @@ public class DerivationContext {
                     newContent,
                     getCurrentTask().sentence.punctuation,
                     truthEt,
-                    st);
+                    st,
+                    narParameters);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
                 newTask = new Task(newSentence, newBudget, getCurrentBelief());
@@ -289,7 +292,8 @@ public class DerivationContext {
             newContent,
             punctuation,
             newTruth,
-            derive_stamp);
+            derive_stamp,
+            narParameters);
 
         final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         if (newTask!=null) {

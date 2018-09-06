@@ -27,6 +27,7 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 import java.util.*;
@@ -363,8 +364,9 @@ public class Terms {
      * @param componentLinks The list of TermLink templates built so far
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
+     * @param reasonerParameters
      */
-    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm term) {
+    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm term, final Parameters reasonerParameters) {
         
         final boolean tEquivalence = (term instanceof Equivalence);
         final boolean tImplication = (term instanceof Implication);
@@ -375,14 +377,15 @@ public class Terms {
                 t1,
                 Symbols.TERM_NORMALIZING_WORKAROUND_MARK,
                 null,
-                null).term;
+                null,
+                reasonerParameters).term;
             
             
             if (!(t1 instanceof Variable)) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
             if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
-                prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
+                prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1, reasonerParameters);
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
                 final int ct1Size = ct1.size(); //cache because this loop is critical
@@ -395,7 +398,8 @@ public class Terms {
                         t2,
                         Symbols.TERM_NORMALIZING_WORKAROUND_MARK,
                         null,
-                        null).term;
+                        null,
+                        reasonerParameters).term;
 
                     if (!t2.hasVar()) {
                         if (t1ProductOrImage) {
@@ -419,7 +423,8 @@ public class Terms {
                                 t3,
                                 Symbols.TERM_NORMALIZING_WORKAROUND_MARK,
                                 null,
-                                null).term;
+                                null,
+                                reasonerParameters).term;
 
                             if (!t3.hasVar()) {
                                 if (type == TermLink.COMPOUND_CONDITION) {
@@ -436,9 +441,9 @@ public class Terms {
         return componentLinks;
     }
 
-   public  static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final CompoundTerm ct) {
+   public  static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final CompoundTerm ct, final Parameters reasonerParameters) {
         final short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
-        return prepareComponentLinks(componentLinks, type, ct);
+        return prepareComponentLinks(componentLinks, type, ct, reasonerParameters);
     }
 
     //TODO move this to a utility method

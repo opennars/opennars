@@ -61,7 +61,8 @@ public class Believe extends Operator {
             content,
             Symbols.JUDGMENT_MARK,
             truth,
-            new Stamp(time, memory));
+            new Stamp(time, memory),
+            memory.narParameters);
 
         final float quality = BudgetFunctions.truthToQuality(truth);
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, quality, memory.narParameters);

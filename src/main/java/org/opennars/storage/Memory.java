@@ -313,7 +313,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             operation,
             Symbols.JUDGMENT_MARK,
             truth,
-            stamp);
+            stamp,
+            narParameters);
 
         final BudgetValue budgetForNewTask = new BudgetValue(narParameters.DEFAULT_FEEDBACK_PRIORITY,
             narParameters.DEFAULT_FEEDBACK_DURABILITY,

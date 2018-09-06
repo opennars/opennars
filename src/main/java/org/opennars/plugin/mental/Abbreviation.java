@@ -113,7 +113,8 @@ public class Abbreviation implements Plugin {
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
                     new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                    new Stamp(time, memory));
+                    new Stamp(time, memory),
+                    memory.narParameters);
             
             final float quality = BudgetFunctions.truthToQuality(sentence.truth);
             

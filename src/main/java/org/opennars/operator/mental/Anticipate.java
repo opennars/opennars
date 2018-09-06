@@ -245,7 +245,8 @@ public class Anticipate extends Operator implements EventObserver {
                     op,
                     Symbols.JUDGMENT_MARK,
                     truth,
-                    st);
+                    st,
+                    nal.narParameters);
 
             final BudgetValue budgetForNewTask = new BudgetValue(
                 memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*ANTICIPATION_PRIORITY_MUL,
@@ -271,7 +272,8 @@ public class Anticipate extends Operator implements EventObserver {
             aTerm,
             Symbols.JUDGMENT_MARK,
             truth,
-            stamp);
+            stamp,
+            nal.narParameters);
 
         final Task task = new Task(S, budget, Task.EnumType.INPUT);
 

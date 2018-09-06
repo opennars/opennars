@@ -102,7 +102,8 @@ public class Counting implements Plugin {
                                 new_term,
                                 Symbols.JUDGMENT_MARK,
                                 truth,
-                                stampi);
+                                stampi,
+                                n.narParameters);
                             final BudgetValue budg = task.budget.clone();
 
                             final Task newTask = new Task(j, budg, Task.EnumType.INPUT);

@@ -236,7 +236,8 @@ public class ProcessGoal {
                         q,
                         Symbols.QUESTION_MARK,
                         null,
-                        st);
+                        st,
+                        nal.narParameters);
 
                     if(s!=null) {
                         final BudgetValue budget=new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
@@ -398,7 +399,8 @@ public class ProcessGoal {
                 precon.bestop,
                 Symbols.JUDGMENT_MARK,
                 precon.bestop_truth,
-                projectedGoal.stamp);
+                projectedGoal.stamp,
+                nal.narParameters);
             final Task t = new Task(createdSentence,
                                     new BudgetValue(1.0f,1.0f,1.0f, nal.narParameters),
                                     Task.EnumType.DERIVED);

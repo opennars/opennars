@@ -423,7 +423,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
-            new Stamp(this, memory, Tense.Eternal));
+            new Stamp(this, memory, Tense.Eternal),
+            narParameters);
         final BudgetValue budget = new BudgetValue(
             narParameters.DEFAULT_QUESTION_PRIORITY,
             narParameters.DEFAULT_QUESTION_DURABILITY,
@@ -444,7 +445,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
-            new Stamp(this, memory, Tense.Present));
+            new Stamp(this, memory, Tense.Present),
+            narParameters);
         final BudgetValue budgetForNewTask = new BudgetValue(
             narParameters.DEFAULT_QUESTION_PRIORITY,
             narParameters.DEFAULT_QUESTION_DURABILITY,

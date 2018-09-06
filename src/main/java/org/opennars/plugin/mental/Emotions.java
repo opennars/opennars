@@ -138,7 +138,7 @@ public class Emotions implements Plugin, Serializable {
             final Term subject=Term.SELF;
             final Inheritance inh=Inheritance.make(subject, predicate);
             final TruthValue truth=new TruthValue(happy,nal.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nal.narParameters);
-            final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.time, nal.memory));
+            final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.time, nal.memory),nal.narParameters);
             s.stamp.setOccurrenceTime(nal.time.time());
 
             final BudgetValue budgetOfNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,
@@ -216,7 +216,8 @@ public class Emotions implements Plugin, Serializable {
                 inh,
                 Symbols.JUDGMENT_MARK,
                 truth,
-                new Stamp(nal.time, nal.memory));
+                new Stamp(nal.time, nal.memory),
+                nal.narParameters);
             s.stamp.setOccurrenceTime(nal.time.time());
 
             final BudgetValue budgetForNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,

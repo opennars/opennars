@@ -145,7 +145,7 @@ public class Concept extends Item<Term> implements Serializable {
         this.termLinks = new LevelBag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
                 
         if (tm instanceof CompoundTerm) {
-            this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
+            this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks(memory.narParameters);
         } else {
             this.termLinkTemplates = null;
         }

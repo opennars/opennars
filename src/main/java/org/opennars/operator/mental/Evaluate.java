@@ -60,7 +60,8 @@ public class Evaluate extends Operator {
             content,
             Symbols.QUEST_MARK,
             null,
-            new Stamp(time, memory));
+            new Stamp(time, memory),
+            memory.narParameters);
 
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUEST_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);
 

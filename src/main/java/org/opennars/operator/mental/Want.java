@@ -59,7 +59,8 @@ public class Want extends Operator {
             content,
             Symbols.GOAL_MARK,
             truth,
-            new Stamp(time, memory));
+            new Stamp(time, memory),
+            memory.narParameters);
         
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_GOAL_PRIORITY, memory.narParameters.DEFAULT_GOAL_DURABILITY, truth, memory.narParameters);
 

@@ -175,7 +175,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float w2 = c2w( v2.getConfidence(), narParameters );
         final float w = w1 + w2;
         result.setFrequency( (w1 * f1 + w2 * f2) / w );
-        result.setConfidence( w2c(w, narParameters) );
+        result.setConfidence( w2c(w, narParameters), narParameters.TRUTH_EPSILON );
         return result;
     }
     

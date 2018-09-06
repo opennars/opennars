@@ -81,10 +81,12 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     private CharSequence key;
 
     private final int hash;
+
+    private final Parameters reasonerParameters;
     
     
-    public Sentence(final T term, final char punctuation, final TruthValue newTruth, final Stamp newStamp) {
-        this(term, punctuation, newTruth, newStamp, true);
+    public Sentence(final T term, final char punctuation, final TruthValue newTruth, final Stamp newStamp, final Parameters reasonerParameters) {
+        this(term, punctuation, newTruth, newStamp, true, reasonerParameters);
     }
     
     /**
@@ -96,8 +98,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, final boolean normalize) {
-        
+    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, final boolean normalize, final Parameters reasonerParameters) {
+        this.reasonerParameters = reasonerParameters;
+
         //cut interval at end for sentence in serial conjunction, and inbetween for parallel
         if(punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             if(_content instanceof Conjunction) {
@@ -148,11 +151,11 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if( truth != null ) {
             if (_content instanceof Implication || _content instanceof Equivalence) {
                 if (((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
-                    truth.setConfidence(0.0f);
+                    truth.setConfidence(0.0f, reasonerParameters.TRUTH_EPSILON);
                 if (((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
-                    truth.setConfidence(0.0f); //TODO:
+                    truth.setConfidence(0.0f, reasonerParameters.TRUTH_EPSILON); //TODO:
             } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                truth.setConfidence(0.0f, reasonerParameters.TRUTH_EPSILON); //do it that way for now, because else further inference is interrupted.
                 if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES)
                     throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
@@ -162,7 +165,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             }
 
             if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                truth.setConfidence(0.0f, reasonerParameters.TRUTH_EPSILON); //do it that way for now, because else further inference is interrupted.
                 if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES)
                     throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
             }
@@ -332,7 +335,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             t,
             punctuation,
             truth!=null ? new TruthValue(truth) : null,
-            stamp.clone());
+            stamp.clone(),
+            reasonerParameters);
     }
 
     /**
@@ -355,7 +359,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             punctuation,
             newTruth,
             newStamp,
-            false);
+            false,
+            mem.narParameters);
     }
 
     
@@ -555,7 +560,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      *
      */
     public void discountConfidence(Parameters narParameters) {
-        truth.setConfidence(truth.getConfidence() * narParameters.DISCOUNT_RATE).setAnalytic(false);
+        truth.setConfidence(truth.getConfidence() * narParameters.DISCOUNT_RATE, narParameters.TRUTH_EPSILON).setAnalytic(false);
     }
 
     /**

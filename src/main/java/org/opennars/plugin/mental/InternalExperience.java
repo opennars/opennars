@@ -34,6 +34,7 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
@@ -214,7 +215,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             
             //old strategy always, new strategy only for QUESTION and QUEST:
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
-                InternalExperienceFromTaskInternal(memory,task, FULL_REFLECTION, nar);
+                InternalExperienceFromTaskInternal(memory,task, FULL_REFLECTION, nar, nar.narParameters);
             }
         }
         else if (event == Events.BeliefReason.class) {
@@ -238,11 +239,11 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             return;
         }
         if(!memory.internalExperience.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            InternalExperienceFromTaskInternal(memory, task, full, time);
+            InternalExperienceFromTaskInternal(memory, task, full, time, memory.narParameters);
         }
     }
 
-    public static boolean InternalExperienceFromTaskInternal(final Memory memory, final Task task, final boolean full, final Timable time) {
+    public static boolean InternalExperienceFromTaskInternal(final Memory memory, final Task task, final boolean full, final Timable time, final Parameters reasonerParameters) {
         if(!enabled) {
             return false;
         }
@@ -278,7 +279,8 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             ret,
             Symbols.JUDGMENT_MARK,
             truth,
-            stamp);
+            stamp,
+            reasonerParameters);
 
         final BudgetValue newbudget=new BudgetValue(
                 memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE*memory.internalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
@@ -320,7 +322,8 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
                     new_term,
                     Symbols.GOAL_MARK,
                     new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                    new Stamp(nal.time, memory));
+                    new Stamp(nal.time, memory),
+                    memory.narParameters);
                 
                 final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 final BudgetValue budget = new BudgetValue(
@@ -368,7 +371,8 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
                         new_term,
                         Symbols.GOAL_MARK,
                         new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                        new Stamp(nal.time, memory));
+                        new Stamp(nal.time, memory),
+                        memory.narParameters);
 
                     final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     final BudgetValue budget = new BudgetValue(
