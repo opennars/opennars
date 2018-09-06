@@ -74,7 +74,7 @@ public class ProcessAnticipation {
             Concept.AnticipationEntry toDelete = null;
             Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
             boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
-            //choose an element to replace with the new, either because
+            //choose an element to replace with the new, in case that we are already at full capacity
             if(fullCapacity) {
                 for(Concept.AnticipationEntry entry : c.anticipations) {
                     if(priority > entry.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
