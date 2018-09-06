@@ -23,6 +23,8 @@
  */
 package org.opennars.control.concept;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.BudgetValue;
@@ -39,13 +41,13 @@ import org.opennars.interfaces.Timable;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
+import org.opennars.language.Equivalence;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
-import org.opennars.plugin.mental.InternalExperience;
 
 /**
  *
@@ -59,7 +61,6 @@ public class ProcessAnticipation {
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
-        //long serial = stamp.evidentialBase[0];
         final Sentence s = new Sentence(
             mainSentence.term,
             mainSentence.punctuation,
@@ -68,25 +69,41 @@ public class ProcessAnticipation {
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
         Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
-                c.negConfirmation = t;
-                c.negConfirmationPriority = priority;
-                c.negConfirm_abort_maxtime = maxtime;
-                c.negConfirm_abort_mintime = mintime;
-                if(c.negConfirmation.sentence.term instanceof Implication) {
-                    final Implication imp = (Implication) c.negConfirmation.sentence.term;
-                    final Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null) {
-                        Operator anticipate_op = ((Anticipate)c.memory.getOperator("^anticipate"));
-                        if(anticipate_op != null && anticipate_op instanceof Anticipate) {
-                            ((Anticipate)anticipate_op).anticipationFeedback(imp.getPredicate(), null, c.memory, nal.time);
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
+                mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            Concept.AnticipationEntry toDelete = null;
+            Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
+            boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
+            //choose an element to replace with the new, either because
+            if(fullCapacity) {
+                for(Concept.AnticipationEntry entry : c.anticipations) {
+                    if(priority > entry.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                        //prefer to replace one that is more far in the future, takes longer to be disappointed about
+                        if(toDelete == null || entry.negConfirm_abort_maxtime > toDelete.negConfirm_abort_maxtime) {
+                            toDelete = entry;
                         }
                     }
                 }
-                nal.memory.emit(OutputHandler.ANTICIPATE.class,specificAnticipationTerm); //disappoint/confirm printed anyway
             }
+            //we were at full capacity but there was no item that can be replaced with the new one
+            if(fullCapacity && toDelete == null) {
+                return;
+            }
+            if(toDelete != null) {
+                c.anticipations.remove(toDelete);
+            }
+            c.anticipations.add(toInsert);
+            final Statement impOrEqu = (Statement) toInsert.negConfirmation.sentence.term;
+            final Concept ctarget = nal.memory.concept(impOrEqu.getPredicate());
+            if(ctarget != null) {
+                Operator anticipate_op = ((Anticipate)c.memory.getOperator("^anticipate"));
+                if(anticipate_op != null && anticipate_op instanceof Anticipate) {
+                    ((Anticipate)anticipate_op).anticipationFeedback(impOrEqu.getPredicate(), null, c.memory, nal.time);
+                }
+            }
+            nal.memory.emit(OutputHandler.ANTICIPATE.class, specificAnticipationTerm); //disappoint/confirm printed anyway
         }
+   
     }
 
     /**
@@ -97,48 +114,65 @@ public class ProcessAnticipation {
      */
     public static void maintainDisappointedAnticipations(final Concept concept, final Timable time) {
         //here we can check the expiration of the feedback:
-        if(concept.negConfirmation == null || time.time() <= concept.negConfirm_abort_maxtime) {
-            return;
-        }
-        //at first search beliefs for input tasks:
-        boolean cancelled = false;
-        for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
-            final Task t = tl.targetTask;
-            if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                    CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
-                if(t.sentence.getOccurenceTime() >= concept.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= concept.negConfirm_abort_maxtime) {
-                    cancelled = true;
-                    break;
+        List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
+        List<Concept.AnticipationEntry> disappointed = new ArrayList<>();
+        for(Concept.AnticipationEntry entry : concept.anticipations) {
+            if(entry.negConfirmation == null || time.time() <= entry.negConfirm_abort_maxtime) {
+                continue;
+            }
+            //at first search beliefs for input tasks:
+            boolean gotConfirmed = false;
+            for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
+                final Task t = tl.targetTask;
+                if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
+                        CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
+                    if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
+                        confirmed.add(entry);
+                        gotConfirmed = true;
+                        break;
+                    }
                 }
             }
+            if(!gotConfirmed) {
+                disappointed.add(entry);
+            }
         }
-        if(cancelled) {
+        //confirmed by input, nothing to do
+        if(confirmed.size() > 0) {
             concept.memory.emit(OutputHandler.CONFIRM.class,concept.getTerm());
-            concept.negConfirmation = null; //confirmed
-            return;
-        }        
-        concept.memory.inputTask(time, concept.negConfirmation, false);
-        concept.memory.emit(OutputHandler.DISAPPOINT.class,concept.getTerm());
-        concept.negConfirmation = null;
+        }
+        concept.anticipations.removeAll(confirmed);
+        //not confirmed and time is out, generate disappointment
+        if(disappointed.size() > 0) {
+            concept.memory.emit(OutputHandler.DISAPPOINT.class,concept.getTerm());
+        }
+        for(Concept.AnticipationEntry entry : disappointed) {
+            concept.memory.inputTask(time, entry.negConfirmation, false);
+            concept.anticipations.remove(entry);
+        }
     }
     
     /**
-     * Whether a processed judgement task satisfies the anticipation withon concept
+     * Whether a processed judgement task satisfies the anticipations within concept
      * 
      * @param task The judgement task be checked
      * @param concept The concept that is processed
      * @param nal The derivation context
      */
     public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
-        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
-                                              concept.negConfirmation != null &&
-                                              task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
+        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal();
         final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
-        if(satisfiesAnticipation && isExpectationAboveThreshold &&
-          ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
-            concept.negConfirmation = null; // confirmed
+        List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
+        for(Concept.AnticipationEntry entry : concept.anticipations) {
+            if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime &&
+              ((Statement) entry.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+                confirmed.add(entry);
+            }
         }
+        if(confirmed.size() > 0) {
+            nal.memory.emit(OutputHandler.CONFIRM.class, concept.getTerm());
+        }
+        concept.anticipations.removeAll(confirmed);
     }
     
     /**

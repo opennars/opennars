@@ -264,11 +264,14 @@ public class Parameters implements Serializable {
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
     public volatile float TASKLINK_FORGET_DURATIONS = 4.0f;
 
-    /** Sequence bag forget durations **/
+    /** Sequence bag forget durations */
     public volatile float EVENT_FORGET_DURATIONS = 4.0f;
     
-    /** Maximum attempted combinations in variable introduction.**/
+    /** Maximum attempted combinations in variable introduction.*/
     public volatile int VARIABLE_INTRODUCTION_COMBINATIONS_MAX = 8;
+    
+    /** Maximum anticipations about its content stored in a concept */
+    public volatile int ANTICIPATIONS_PER_CONCEPT_MAX = 8;
     
     /** Default threads amount at startup */
     public volatile int THREADS_AMOUNT = 1;
