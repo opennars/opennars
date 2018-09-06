@@ -475,16 +475,18 @@ public final class CompositionalRules {
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-        final Map<Term, Term> res1 = new HashMap<>();
-        final Map<Term, Term> res2 = new HashMap<>();
-        final Map<Term, Term> res3 = new HashMap<>();
-        final Map<Term, Term> res4 = new HashMap<>();
+        final Map<Term, Term>
+            res1 = new HashMap<>(),
+            res2 = new HashMap<>(),
+            res3 = new HashMap<>(),
+            res4 = new HashMap<>();
+
+        res1.clear();
+        res2.clear();
 
         if (figure == 21) {
 
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -502,8 +504,6 @@ public final class CompositionalRules {
         }
         else if (figure == 12) {
 
-            res1.clear();
-            res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
@@ -522,8 +522,6 @@ public final class CompositionalRules {
         }
         else if (figure == 11) {
 
-            res1.clear();
-            res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
@@ -540,8 +538,6 @@ public final class CompositionalRules {
         }
         else if (figure == 22) {
 
-            res1.clear();
-            res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
