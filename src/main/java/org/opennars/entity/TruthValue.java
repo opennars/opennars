@@ -273,6 +273,18 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         }
         return Truth_UNSURE;
     }
+    
+    public static TruthValue fromWordTerm(Parameters narParameters, Term term) {
+        if(term.equals(Truth_TRUE)) {
+            return new TruthValue(1.0f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE, narParameters);
+        } else if(term.equals(Truth_FALSE)) {
+            return new TruthValue(0.0f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE, narParameters);
+        } else if(term.equals(Truth_UNSURE)) {
+            return new TruthValue(0.5f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE / 2.0f, narParameters);
+        } else {
+            return null;
+        }
+    }
 
     public TruthValue set(final float frequency, final float confidence) {
         setFrequency(frequency);

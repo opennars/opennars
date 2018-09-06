@@ -24,6 +24,7 @@
 package org.opennars.inference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -38,6 +39,7 @@ import java.util.Set;
 
 import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
+import org.opennars.storage.Memory;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -372,28 +374,28 @@ public final class CompositionalRules {
             return;
         }
         for(boolean subjectIntroduction : new boolean[]{true, false}) {
-            Set<Term> contents = CompositionalRules.introduceVariables(Implication.make(state1, state2),subjectIntroduction);
+            Set<Term> contents = CompositionalRules.introduceVariables(nal, Implication.make(state1, state2),subjectIntroduction);
             for(Term content : contents) {
                 TruthValue truth = induction(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
                 nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            contents = CompositionalRules.introduceVariables(Implication.make(state2, state1), subjectIntroduction);
+            contents = CompositionalRules.introduceVariables(nal, Implication.make(state2, state1), subjectIntroduction);
              for(Term content : contents) {
                 TruthValue truth = induction(truthB, truthT, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
                 nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            contents = CompositionalRules.introduceVariables(Equivalence.make(state1, state2), subjectIntroduction);
+            contents = CompositionalRules.introduceVariables(nal, Equivalence.make(state1, state2), subjectIntroduction);
              for(Term content : contents) {
                 TruthValue truth = comparison(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
                 nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
 
-            contents = CompositionalRules.introduceVariables(Conjunction.make(state1, state2), subjectIntroduction);
+            contents = CompositionalRules.introduceVariables(nal, Conjunction.make(state1, state2), subjectIntroduction);
             for(Term content : contents) {
                 TruthValue truth = intersection(truthT, truthB, nal.narParameters);
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -427,7 +429,7 @@ public final class CompositionalRules {
                 return false;  
             }
             for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Term> conts = introduceVariables(content, subjectIntro);
+                Set<Term> conts = introduceVariables(nal, content, subjectIntro);
                 for(Term cont : conts) {
                     final TruthValue truth = intersection(taskSentence.truth, belief.truth, nal.narParameters);
                     final BudgetValue budget = BudgetFunctions.forward(truth, nal);
@@ -442,7 +444,7 @@ public final class CompositionalRules {
                 return false;
             }
             for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Term> conts = introduceVariables(content, subjectIntro);
+                Set<Term> conts = introduceVariables(nal, content, subjectIntro);
                 for(Term cont : conts) {
                     final TruthValue truth;
                     if (premise1.equals(taskSentence.term)) {
@@ -651,7 +653,7 @@ public final class CompositionalRules {
             }
             final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
             for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Term> conts = introduceVariables(T, subjectIntro);
+                Set<Term> conts = introduceVariables(nal, T, subjectIntro);
                 for(Term cont : conts) {
                     final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
                     nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
@@ -694,7 +696,7 @@ public final class CompositionalRules {
      * @param subject
      * @return 
      */
-    public static Set<Term> introduceVariables(Term implicationEquivalenceOrJunction, boolean subject) {
+    public static Set<Term> introduceVariables(DerivationContext nal, Term implicationEquivalenceOrJunction, boolean subject) {
         HashSet<Term> result = new HashSet<Term>();
         boolean validForIntroduction =  implicationEquivalenceOrJunction instanceof Conjunction ||
                                         implicationEquivalenceOrJunction instanceof Disjunction ||
@@ -731,9 +733,23 @@ public final class CompositionalRules {
             }
         }
         
-        Set<Set<Term>> powerset = powerSet(app.keySet());
+        List<Term> shuffledVariables = new ArrayList<Term>();
+        for(Term t : app.keySet()) {
+            shuffledVariables.add(t);
+        }
+        Collections.shuffle(shuffledVariables, Memory.randomNumber);
+        HashSet<Term> selected = new HashSet<Term>();
+        int i = 1;
+        for(Term t : shuffledVariables) {
+            selected.add(t);
+            if(Math.pow(2.0, i) > nal.narParameters.VARIABLE_INTRODUCTION_COMBINATIONS_MAX) {
+                break;
+            }
+            i++;
+        }
+        Set<Set<Term>> powerset = powerSet(selected);
         for(Set<Term> combo : powerset) {
-            Map<Term,Term> mapping = new HashMap<Term,Term>();
+            Map<Term,Term> mapping = new HashMap<>();
             for(Term vIntro : combo) {
                 mapping.put(vIntro, app.get(vIntro));
             }

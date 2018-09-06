@@ -83,7 +83,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v3.0.0-RC1";
+    public static final String VERSION = "Open-NARS v3.0.0-RC2";
 
     /**
      * The project web sites.
@@ -314,7 +314,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             return;
         }
         //Ignore any input that is just a comment
-        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0) {
+        if(text.startsWith("\'") || text.startsWith("//") || text.trim().length() <= 0) {
+            if(text.trim().length() > 0) {
+                emit(org.opennars.io.events.OutputHandler.ECHO.class, text);
+            }
             return;
         }
         try {
