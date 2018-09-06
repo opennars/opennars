@@ -495,9 +495,20 @@ public final class CompositionalRules {
         }
 
 
+        T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+        if(T1==null) {
+            return;
+        }
+        T2 = (Statement) T2.applySubstitute(res1);
+        if(T2==null) {
+            return;
+        }
+
+
         if (figure == 21) {
 
             //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
+            /*
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -506,6 +517,7 @@ public final class CompositionalRules {
             if(T2==null) {
                 return;
             }
+            */
 
             //update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
@@ -516,6 +528,7 @@ public final class CompositionalRules {
         else if (figure == 12) {
 
             //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is
+            /*
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -524,6 +537,7 @@ public final class CompositionalRules {
             if(T2==null) {
                 return;
             }
+            */
 
             //update the variables because T1 and T2 may have changed
             S2 = T1.getSubject();
@@ -534,7 +548,7 @@ public final class CompositionalRules {
         else if (figure == 11) {
 
             //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            /*T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
             }
@@ -542,6 +556,7 @@ public final class CompositionalRules {
             if(T2==null) {
                 return;
             }
+            */
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
@@ -550,6 +565,7 @@ public final class CompositionalRules {
         else if (figure == 22) {
 
             //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is
+            /*
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -558,6 +574,7 @@ public final class CompositionalRules {
             if(T2==null) {
                 return;
             }
+            */
 
             //update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
