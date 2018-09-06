@@ -481,9 +481,6 @@ public final class CompositionalRules {
             res3 = new HashMap<>(),
             res4 = new HashMap<>();
 
-        res1.clear();
-        res2.clear();
-
         if (figure == 21) {
 
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
