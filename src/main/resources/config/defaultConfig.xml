@@ -108,6 +108,7 @@
     <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
     
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
+    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
     
     <conf name="THREADS_AMOUNT" value="1"/>
     <conf name="VOLUME" value="100"/>

@@ -298,11 +298,21 @@ public class Concept extends Item<Term> implements Serializable {
         }
         return candidate;
     }
-
-    public float negConfirmationPriority = 0.0f;
-    public Task negConfirmation = null;
-    public long negConfirm_abort_mintime = 0;
-    public long negConfirm_abort_maxtime = 0;
+    
+    public static class AnticipationEntry implements Serializable {
+        public float negConfirmationPriority = 0.0f;
+        public Task negConfirmation = null;
+        public long negConfirm_abort_mintime = 0;
+        public long negConfirm_abort_maxtime = 0;
+        public AnticipationEntry(float negConfirmationPriority, Task negConfirmation, long negConfirm_abort_mintime, long negConfirm_abort_maxtime) {
+            this.negConfirmationPriority = negConfirmationPriority;
+            this.negConfirmation = negConfirmation;
+            this.negConfirm_abort_mintime = negConfirm_abort_mintime;
+            this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
+        }
+    }
+    public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
+    
     
     /* ---------- insert Links for indirect processing ---------- */
     /**
