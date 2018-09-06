@@ -482,8 +482,22 @@ public final class CompositionalRules {
             res4 = new HashMap<>();
 
         if (figure == 21) {
-
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
+        }
+        else if (figure == 12) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is
+        }
+        else if (figure == 11) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is
+        }
+        else if (figure == 22) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is
+        }
+
+
+        if (figure == 21) {
+
+            //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -501,7 +515,7 @@ public final class CompositionalRules {
         }
         else if (figure == 12) {
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
+            //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -519,7 +533,7 @@ public final class CompositionalRules {
         }
         else if (figure == 11) {
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
+            //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
@@ -535,7 +549,7 @@ public final class CompositionalRules {
         }
         else if (figure == 22) {
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
+            //Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if(T1==null) {
                 return;
