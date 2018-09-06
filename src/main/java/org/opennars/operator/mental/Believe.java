@@ -56,7 +56,7 @@ public class Believe extends Operator {
 
         final Term content = args[1];
         
-        final TruthValue truth = new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
+        final TruthValue truth = TruthValue.fromWordTerm(memory.narParameters, args[2]);
         final Sentence sentence = new Sentence(
             content,
             Symbols.JUDGMENT_MARK,

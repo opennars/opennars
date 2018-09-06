@@ -155,7 +155,7 @@ public class Abbreviation implements Plugin {
                 if (event != TaskDerive.class)
                     return;
 
-                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() >= abbreviationProbability))
                     return;
 
                 final Task task = (Task)a[0];

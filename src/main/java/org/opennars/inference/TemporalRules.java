@@ -208,7 +208,7 @@ public class TemporalRules {
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
             for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Term> ress = CompositionalRules.introduceVariables(statement2, subjectIntro);
+                Set<Term> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
                 for(Term res : ress) { //ok we applied it, all we have to do now is to use it
                     t11s.add(((Statement)res).getPredicate());
                     t22s.add(((Statement)res).getSubject());
