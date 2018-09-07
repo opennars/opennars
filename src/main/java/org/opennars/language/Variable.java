@@ -183,9 +183,9 @@ public class Variable extends Term {
     public int hashCode() {
         if (hash == 0) {
             if (scope!=this)
-                this.hash = 31 * name.hashCode() + scope.hashCode();            
+                this.hash = 31 * name().hashCode() + scope.hashCode();
             else
-                this.hash = name.hashCode();
+                this.hash = name().hashCode();
         }
         return hash;
     }
@@ -204,7 +204,7 @@ public class Variable extends Term {
         }
 
         final Variable thatVar = (Variable) that;
-        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name));
+        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name()));
         if( nameCmp != 0 ) {
             return nameCmp;
         }
@@ -214,7 +214,7 @@ public class Variable extends Term {
         if(this.getScope() != this && thatVar.getScope() == thatVar) {
             return -1;
         }
-        return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
+        return String.valueOf(this.getScope().name()).compareTo(String.valueOf(thatVar.getScope().name()));
     }
 
     /*

@@ -211,7 +211,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 if (t instanceof CompoundTerm) {
                     transformIndependentVariableToDependent((CompoundTerm) t);
                 } else if (t instanceof Variable && ((Variable)t).isIndependentVariable()) {  /* it's a variable */
-                    term[i] = new Variable(""+Symbols.VAR_DEPENDENT+t.name.subSequence(1, t.name.length())); // vars.get(t.toString());
+                    term[i] = new Variable(""+Symbols.VAR_DEPENDENT+t.name().subSequence(1, t.name().length())); // vars.get(t.toString());
                     assert term[i] != null;
                 }
             }
