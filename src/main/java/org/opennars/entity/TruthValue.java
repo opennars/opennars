@@ -31,6 +31,8 @@ import java.io.Serializable;
 import org.opennars.main.Parameters;
 
 /**
+ * Truth is a tuple of frequency and confidence as defined by NARS theory
+ *
  * @author Pei Wang
  * @author Patrick Hammer
  */
@@ -42,19 +44,19 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     final static Term Truth_UNSURE = new Term("UNSURE");
     
     /**
-     * The character that marks the two ends of a truth value
+     * character that marks the two ends of a truth value
      */
     private static final char DELIMITER = Symbols.TRUTH_VALUE_MARK;
     /**
-     * The character that separates the factors in a truth value
+     * character that separates the factors in a truth value
      */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
     /**
-     * The frequency factor of the truth value
+     * frequency factor of the truth value
      */
     private float frequency;
     /**
-     * The confidence factor of the truth value
+     * confidence factor of the truth value
      */
     private float confidence;
     /**
@@ -72,10 +74,10 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
     
     /**
-     * Constructor with two ShortFloats
+     * Constructor
      *
-     * @param f The frequency value
-     * @param c The confidence value
+     * @param f frequency value
+     * @param c confidence value
      * @param narParameters parameters of the reasoner
      */
     public TruthValue(final float f, final float c, Parameters narParameters) {
@@ -83,10 +85,10 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
 
     /**
-     * Constructor with two ShortFloats
+     * Constructor
      *
-     * @param f The frequency value
-     * @param c The confidence value
+     * @param f frequency value
+     * @param c confidence value
      * @param isAnalytic is the truth value an analytic one?
      * @param narParameters parameters of the reasoner
      */
@@ -100,7 +102,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Constructor with a TruthValue to clone
      *
-     * @param v The truth value to be cloned
+     * @param v truth value to be cloned
      */
     public TruthValue(final TruthValue v) {
         narParameters = v.narParameters;
@@ -110,22 +112,20 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
 
     /**
-     * Get the frequency value
+     * returns the frequency value
      *
-     * @return The frequency value
+     * @return frequency value
      */
     public float getFrequency() {
-        //return Math.round(frequency * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return frequency;
     }
 
     /**
-     * Get the confidence value
+     * returns the confidence value
      *
-     * @return The confidence value
+     * @return confidence value
      */
     public float getConfidence() {
-        //return Math.round(confidence * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return confidence;
     }
 
@@ -157,7 +157,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Calculate the expectation value of the truth value
      *
-     * @return The expectation value
+     * @return expectation value
      */
     public float getExpectation() {
         return (confidence * (frequency - 0.5f) + 0.5f);
@@ -167,8 +167,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * Calculate the absolute difference of the expectation value and that of a
      * given truth value
      *
-     * @param t The given value
-     * @return The absolute difference
+     * @param t given value
+     * @return absolute difference
      */
     public float getExpDifAbs(final TruthValue t) {
         return Math.abs(getExpectation() - t.getExpectation());
@@ -191,7 +191,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Compare two truth values
      *
-     * @param that The other TruthValue
+     * @param that other TruthValue
      * @return Whether the two are equivalent
      */
     @Override
@@ -208,7 +208,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * The hash code of a TruthValue
      *
-     * @return The hash code
+     * @return hash code
      */
     @Override
     public int hashCode() {
@@ -227,8 +227,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
 
     /**
-     * A simplified String representation of a TruthValue, where each factor is
-     * accruate to 1%
+     * A simplified String representation of a TruthValue
      */
     public StringBuilder appendString(final StringBuilder sb, final boolean external) {        
         sb.ensureCapacity(11);
@@ -247,18 +246,16 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
 
     /** output representation */
     public CharSequence toStringExternal() {
-        //return name().toString();
         final StringBuilder sb =  new StringBuilder();
         return appendString(sb, true);
     }
     /**
-     * The String representation of a TruthValue, as used internally by the system
+     * Returns a String representation of a TruthValue, as used internally by the system
      *
-     * @return The String
+     * @return String representation
      */
     @Override
     public String toString() {
-        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
         return name().toString();
     }
     
