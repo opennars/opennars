@@ -48,6 +48,7 @@ import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
+import org.opennars.util.FastTermTermMap;
 
 /**
  *
@@ -56,7 +57,7 @@ import org.opennars.operator.mental.Anticipate;
 public class ProcessAnticipation {
 
     public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
-            final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
+            final long mintime, final long maxtime, final float priority, FastTermTermMap substitution) {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);

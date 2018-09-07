@@ -32,6 +32,7 @@ import org.opennars.language.*;
 
 import java.util.List;
 import org.opennars.control.concept.ProcessAnticipation;
+import org.opennars.util.FastTermTermMap;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
@@ -663,7 +664,7 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new HashMap<Term,Term>());
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new FastTermTermMap());
         }
     }
 

@@ -26,6 +26,7 @@ package org.opennars.language;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.storage.Memory;
+import org.opennars.util.FastTermTermMap;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,8 +40,8 @@ import java.util.Set;
  */
 public class Variables {
     
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2) {
-        return findSubstitute(type, term1, term2, new Map[] { map1, map2 });
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final FastTermTermMap map1, final FastTermTermMap map2) {
+        return findSubstitute(type, term1, term2, new FastTermTermMap[] { map1, map2 });
     }
     
     public static boolean allowUnification(final char type, final char uniType)
@@ -70,10 +71,10 @@ public class Variables {
      * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
      */
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final FastTermTermMap[] map) {
         return findSubstitute(type, term1, term2, map, false);
     }
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final boolean allowPartial) {
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final FastTermTermMap[] map, final boolean allowPartial) {
 
         boolean term1HasVar = term1.hasVar(type);
         if(type == Symbols.VAR_INDEPENDENT) {
@@ -99,23 +100,23 @@ public class Variables {
                 if(c1.size() < c2.size()) {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
-                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<>();
-                        mapk[1] = new HashMap<>();
+                        final FastTermTermMap[] mapk = new FastTermTermMap[2];
+                        mapk[0] = new FastTermTermMap();
+                        mapk[1] = new FastTermTermMap();
                         if(map[0] == null) {
-                            map[0] = new HashMap<>();
+                            map[0] = new FastTermTermMap();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<>();
+                            map[1] = new FastTermTermMap();
                         }
                         appendToMap(map[0], mapk[0]);
                         appendToMap(map[1], mapk[1]);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
-                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<>();
-                            mapNew[1] = new HashMap<>();
+                            final FastTermTermMap[] mapNew = new FastTermTermMap[2];
+                            mapNew[0] = new FastTermTermMap();
+                            mapNew[1] = new FastTermTermMap();
                             appendToMap(map[0], mapNew[0]);
                             appendToMap(map[1], mapNew[1]);
                             //attempt unification:
@@ -148,7 +149,7 @@ public class Variables {
             final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
                 final Variable CommonVar = makeCommonVariable(term1, term2);
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
+                if (map[0] == null) {  map[0] = new FastTermTermMap(); map[1] = new FastTermTermMap(); }
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
                 return true;
@@ -164,7 +165,7 @@ public class Variables {
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
 
-            if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+            if (map[0] == null) {  map[0] = new FastTermTermMap(); map[1] = new FastTermTermMap(); }
 
             if (term1VarUnifyAllowed) {
 
@@ -239,14 +240,14 @@ public class Variables {
                         }
                         final Term ti = list[i].clone();
                         //clone map also:
-                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<>();
-                        mapNew[1] = new HashMap<>();
+                        final FastTermTermMap[] mapNew = new FastTermTermMap[2];
+                        mapNew[0] = new FastTermTermMap();
+                        mapNew[1] = new FastTermTermMap();
                         if(map[0] == null) {
-                            map[0] = new HashMap<>();
+                            map[0] = new FastTermTermMap();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<>();
+                            map[1] = new FastTermTermMap();
                         }
                         appendToMap(map[0], mapNew[0]);
                         appendToMap(map[1], mapNew[1]);
@@ -277,10 +278,8 @@ public class Variables {
         }
     }
 
-    private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
-        for(final Term c : source.keySet()) {
-            target.put(c, source.get(c));
-        }
+    private static void appendToMap(FastTermTermMap source, FastTermTermMap target) {
+        target.merge(source);
     }
 
 
@@ -338,7 +337,7 @@ public class Variables {
         return unify(type, t1, t2, compound, false);
     }
     public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound, final boolean allowPartial) {
-        final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
+        final FastTermTermMap map[] = new FastTermTermMap[2]; //begins empty: null,null
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map, allowPartial);
         if (hasSubs) {
@@ -366,7 +365,7 @@ public class Variables {
 
     /** appliesSubstitute and renameVariables, resulting in a cloned object, 
      *  will not change this instance  */
-    private static Term applySubstituteAndRenameVariables(final CompoundTerm t, final Map<Term, Term> subs) {
+    private static Term applySubstituteAndRenameVariables(final CompoundTerm t, final FastTermTermMap subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
@@ -423,7 +422,7 @@ public class Variables {
      * @return Whether there is a substitution
      */
     public static boolean hasSubstitute(final char type, final Term term1, final Term term2) {
-        return findSubstitute(type, term1, term2, new HashMap<>(), new HashMap<>());
+        return findSubstitute(type, term1, term2, new FastTermTermMap(), new FastTermTermMap());
     }
     
 }

@@ -30,6 +30,7 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
+import org.opennars.util.FastTermTermMap;
 
 import java.nio.CharBuffer;
 import java.util.*;
@@ -721,8 +722,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * May return null if the term can not be created
      * @param subs
      */
-    public Term applySubstitute(final Map<Term, Term> subs) {   
-        if ((subs == null) || (subs.isEmpty())) {            
+    public Term applySubstitute(final FastTermTermMap subs) {
+        if ((subs == null) || (subs.isEmpty())) {
             return this;//.clone();
         }
                 
@@ -763,7 +764,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** returns result of applySubstitute, if and only if it's a CompoundTerm. 
      * otherwise it is null */
-    public CompoundTerm applySubstituteToCompound(final Map<Term, Term> substitute) {
+    public CompoundTerm applySubstituteToCompound(final FastTermTermMap substitute) {
         final Term t = applySubstitute(substitute);
         if (t instanceof CompoundTerm)
             return ((CompoundTerm)t);

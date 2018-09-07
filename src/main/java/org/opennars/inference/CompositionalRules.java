@@ -40,6 +40,7 @@ import java.util.Set;
 import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
 import org.opennars.storage.Memory;
+import org.opennars.util.FastTermTermMap;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -477,11 +478,11 @@ public final class CompositionalRules {
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-        final Map<Term, Term>
-            res1 = new HashMap<>(),
-            res2 = new HashMap<>(),
-            res3 = new HashMap<>(),
-            res4 = new HashMap<>();
+        final FastTermTermMap
+            res1 = new FastTermTermMap(),
+            res2 = new FastTermTermMap(),
+            res3 = new FastTermTermMap(),
+            res4 = new FastTermTermMap();
 
         if (figure == 21) {
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2);
@@ -583,7 +584,7 @@ public final class CompositionalRules {
         }
     }
 
-    private static void eliminateVariableOfConditionAbductiveTryCrossUnification(Sentence sentence, Sentence belief, DerivationContext nal, Term s1, Term p2, Map<Term, Term> res3, Map<Term, Term> res4) {
+    private static void eliminateVariableOfConditionAbductiveTryCrossUnification(Sentence sentence, Sentence belief, DerivationContext nal, Term s1, Term p2, FastTermTermMap res3, FastTermTermMap res4) {
         if (s1 instanceof Conjunction) {
             //try to unify P2 with a component
             eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, p2, (CompoundTerm) s1, res3, res4);
@@ -594,7 +595,7 @@ public final class CompositionalRules {
         }
     }
 
-    private static void eliminateVariableOfConditionAbductiveTryUnification1(Sentence sentence, Sentence belief, DerivationContext nal, Term p1, CompoundTerm p2, Map<Term, Term> res3, Map<Term, Term> res4) {
+    private static void eliminateVariableOfConditionAbductiveTryUnification1(Sentence sentence, Sentence belief, DerivationContext nal, Term p1, CompoundTerm p2, FastTermTermMap res3, FastTermTermMap res4) {
         for (final Term s1 : p2.term) {
             res3.clear();
             res4.clear(); //here the dependent part matters, see example of Issue40
@@ -604,7 +605,7 @@ public final class CompositionalRules {
         }
     }
 
-    private static void eliminateVariableOfConditionAbductiveInner1(Sentence sentence, Sentence belief, DerivationContext nal, CompoundTerm s1, Map<Term, Term> res3, Term s12) {
+    private static void eliminateVariableOfConditionAbductiveInner1(Sentence sentence, Sentence belief, DerivationContext nal, CompoundTerm s1, FastTermTermMap res3, Term s12) {
         for (Term s2 : s1.term) {
             if (!(s2 instanceof CompoundTerm)) {
                 continue;
@@ -749,7 +750,7 @@ public final class CompositionalRules {
         }
         Set<Set<Term>> powerset = powerSet(selected);
         for(Set<Term> combo : powerset) {
-            Map<Term,Term> mapping = new HashMap<>();
+            FastTermTermMap mapping = new FastTermTermMap();
             for(Term vIntro : combo) {
                 mapping.put(vIntro, app.get(vIntro));
             }

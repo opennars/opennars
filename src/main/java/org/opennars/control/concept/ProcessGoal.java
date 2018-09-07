@@ -59,6 +59,7 @@ import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.util.FastTermTermMap;
 
 /**
  *
@@ -256,7 +257,7 @@ public class ProcessGoal {
         public Task executable_precond = null;
         public long mintime = -1;
         public long maxtime = -1;
-        public Map<Term,Term> substitution;
+        public FastTermTermMap substitution;
     }
     
     /**
@@ -281,7 +282,7 @@ public class ProcessGoal {
             synchronized(get_concept) {
                 for(Task precon : get_concept.general_executable_preconditions) {
                     //check whether the conclusion matches
-                    if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new HashMap<>(), new HashMap<>())) {
+                    if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new FastTermTermMap(), new FastTermTermMap())) {
                         ProcessJudgment.addToTargetConceptsPreconditions(precon, nal, concept); //it matches, so add to this concept!
                     }
                 }
@@ -326,17 +327,17 @@ public class ProcessGoal {
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
-            Map<Term,Term> subsBest = new HashMap<>();
+            FastTermTermMap subsBest = new FastTermTermMap();
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
-                    Map<Term,Term> subs = new HashMap<>();
+                    FastTermTermMap subs = new FastTermTermMap();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
                         boolean preconditionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(precondition), 
-                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>());
+                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new FastTermTermMap());
                         boolean conclusionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
-                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>());
+                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new FastTermTermMap());
                         if(preconditionMatches && conclusionMatches){
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
