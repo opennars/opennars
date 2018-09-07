@@ -163,6 +163,10 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public CharSequence name() {
+        return nameInternal();
+    }
+
+    protected CharSequence nameInternal() {
         return name;
     }
     

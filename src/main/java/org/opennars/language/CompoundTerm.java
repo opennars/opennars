@@ -352,10 +352,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     @Override
     public CharSequence name() {
-        if (this.name == null) {            
+        if (this.nameInternal() == null) {
             this.setName(makeName());
         }
-        return this.name;
+        return this.nameInternal();
     }
     
     
