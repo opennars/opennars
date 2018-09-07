@@ -174,7 +174,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     
     public void invalidateName() {        
-        this.name = null; //invalidate name so it will be (re-)created lazily        
+        this.setName(null); //invalidate name so it will be (re-)created lazily
         for (final Term t : term) {
             if (t.hasVar())
                 if (t instanceof CompoundTerm)
@@ -211,7 +211,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 if (t instanceof CompoundTerm) {
                     transformIndependentVariableToDependent((CompoundTerm) t);
                 } else if (t instanceof Variable && ((Variable)t).isIndependentVariable()) {  /* it's a variable */
-                    term[i] = new Variable(""+Symbols.VAR_DEPENDENT+t.name.subSequence(1, t.name.length())); // vars.get(t.toString());
+                    term[i] = new Variable(""+Symbols.VAR_DEPENDENT+t.name().subSequence(1, t.name().length())); // vars.get(t.toString());
                     assert term[i] != null;
                 }
             }
@@ -352,10 +352,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     @Override
     public CharSequence name() {
-        if (this.name == null) {            
-            this.name = makeName();
+        if (this.nameInternal() == null) {
+            this.setName(makeName());
         }
-        return this.name;
+        return this.nameInternal();
     }
     
     
