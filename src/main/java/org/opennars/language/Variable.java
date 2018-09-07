@@ -59,10 +59,8 @@ public class Variable extends Term {
         setScope(scope, name);
     }
 
-    @Override protected void setName(final CharSequence newName) { }
-
     public Variable setScope(final Term scope, final CharSequence n) {
-        this.name = n;
+        this.setName(n);
         this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily

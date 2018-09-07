@@ -174,7 +174,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     
     public void invalidateName() {        
-        this.name = null; //invalidate name so it will be (re-)created lazily        
+        this.setName(null); //invalidate name so it will be (re-)created lazily
         for (final Term t : term) {
             if (t.hasVar())
                 if (t instanceof CompoundTerm)

@@ -56,8 +56,8 @@ public class Term implements AbstractTerm, Serializable {
     final public static Term SEQ_SPATIAL = Term.get("#");
     final public static Term SEQ_TEMPORAL = Term.get("&/");
 
-    // TODO< private to cache it >
-    public CharSequence name = null;
+    // private to cache it
+    private CharSequence name = null;
 
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
