@@ -36,8 +36,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 /**
+ * Tests for interval handling integrity
  *
- * @author patha
+ * @author Patrick Hammer
  */
 public class ReplaceIntervalTest {
    //<(*,{SELF},<{(*,fragmentC,fragmentD)} --> compare>,TRUE) =\> (*,{SELF},(&/,<{fragmentC} --> mutate>,+12),TRUE)>. %1.00;0.25% 

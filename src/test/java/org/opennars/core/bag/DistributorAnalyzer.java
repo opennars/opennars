@@ -30,11 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author me
+ * Report the distribution of the bag
  */
-
-
 public class DistributorAnalyzer {
 
     @Test public void testDistributorProbabilities() {

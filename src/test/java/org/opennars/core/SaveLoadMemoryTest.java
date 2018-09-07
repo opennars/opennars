@@ -34,8 +34,9 @@ import org.opennars.main.Nar;
 import org.xml.sax.SAXException;
 
 /**
+ * Tests for the correct functionality of the serialization fo the state
  *
- * @author patha
+ * @author Patrick Hammer
  */
 public class SaveLoadMemoryTest {
     @Test
