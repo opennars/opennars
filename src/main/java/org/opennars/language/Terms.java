@@ -338,7 +338,7 @@ public class Terms {
             boolean had=false;
             for(final Term sB : componentsB) {
                 if(sA instanceof Variable && sB instanceof Variable) {
-                    if(sA.name.equals(sB.name)) {
+                    if(sA.name().equals(sB.name())) {
                         had=true;
         }
                 }

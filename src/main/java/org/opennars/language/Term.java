@@ -56,6 +56,9 @@ public class Term implements AbstractTerm, Serializable {
     final public static Term SEQ_SPATIAL = Term.get("#");
     final public static Term SEQ_TEMPORAL = Term.get("&/");
 
+    // private to cache it
+    private CharSequence name = null;
+
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
     }
@@ -89,8 +92,7 @@ public class Term implements AbstractTerm, Serializable {
     
     
     
-    protected CharSequence name = null;
-    
+
     /**
      * Default constructor that build an internal Term
      */
@@ -161,6 +163,10 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public CharSequence name() {
+        return nameInternal();
+    }
+
+    protected CharSequence nameInternal() {
         return name;
     }
     
@@ -174,13 +180,12 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public Term clone() {
-        //avoids setName and its intern(); the string will already be intern:
         final Term t = new Term();
         if(term_indices != null) {
             t.term_indices = term_indices.clone();
             t.index_variable = index_variable;
         }
-        t.name = name();
+        t.setName(name());
         t.imagination = imagination;
         return t;
     }
