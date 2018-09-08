@@ -92,7 +92,7 @@ public class TermTest {
     public void testTermSort() throws Exception {
         final Nar n = new Nar();
         
-        final Narsese m = new Narsese(n);
+        final Narsese m = new Narsese(n.memory);
         final Term a = m.parseTerm("a");
         final Term b = m.parseTerm("b");
         final Term c = m.parseTerm("c");
