@@ -47,8 +47,16 @@ import static org.opennars.language.CompoundTerm.termArray;
  * Experimental alternative to Abbreviation plugin.
  */
 public class Abbreviation implements Plugin {
+    public EventObserver obs;
+
+    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
+    //public PortableDouble priorityFactor = new PortableDouble(1.0);
+
 
     public volatile double abbreviationProbability = 0.0001f;
+    public volatile int abbreviationComplexityMin = 20;
+    public volatile double abbreviationQualityMin = 0.95f;
+
     public void setAbbreviationProbability(double val) {
         this.abbreviationProbability = val;
     }
@@ -56,14 +64,13 @@ public class Abbreviation implements Plugin {
         return abbreviationProbability;
     }
     
-    public volatile int abbreviationComplexityMin = 20;
     public void setAbbreviationComplexityMin(double val) {
         this.abbreviationComplexityMin = (int) val;
     }
     public double getAbbreviationComplexityMin() {
         return abbreviationComplexityMin;
     }
-    public volatile double abbreviationQualityMin = 0.95f;
+
     public void setAbbreviationQualityMin(double val) {
         this.abbreviationQualityMin = val;
     }
@@ -77,63 +84,7 @@ public class Abbreviation implements Plugin {
         this.abbreviationComplexityMin = abbreviationComplexityMin;
         this.abbreviationQualityMin = abbreviationQualityMin;
     }
-    
-    /**
-    * Operator that give a CompoundTerm an atomic name
-    */
-    public static class Abbreviate extends Operator {
 
-        public Abbreviate() {
-            super("^abbreviate");
-        }
-
-        private static Integer currentTermSerial = 1;
-        public Term newSerialTerm(final char prefix) {
-            synchronized(currentTermSerial) {
-                currentTermSerial++;
-            }
-            return new Term(prefix + String.valueOf(currentTermSerial));
-        }
-
-
-        /**
-         * To create a judgment with a given statement
-         * @param args Arguments, a Statement followed by an optional tense
-         * @param memory The memory in which the operation is executed
-         * @return Immediate results as Tasks
-         */
-        @Override
-        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
-            
-            final Term compound = args[0];
-            
-            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
-                        
-            final Sentence sentence = new Sentence(
-                    Similarity.make(compound, atomic), 
-                    Symbols.JUDGMENT_MARK, 
-                    new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                    new Stamp(time, memory));
-            
-            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
-            
-            final BudgetValue budget = new BudgetValue(
-                    memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
-                    memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
-                    quality, memory.narParameters);
-
-            final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
-            return Lists.newArrayList(newTask);
-
-        }
-
-    }
-    
-    public EventObserver obs;
-    
-    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
-    //public PortableDouble priorityFactor = new PortableDouble(1.0);
-    
     public boolean canAbbreviate(final Task task) {
         return !(task.sentence.term instanceof Operation) && 
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin) &&
@@ -179,5 +130,56 @@ public class Abbreviation implements Plugin {
         
         return true;
     }
-    
+
+
+    /**
+     * Operator that give a CompoundTerm an atomic name
+     */
+    public static class Abbreviate extends Operator {
+
+        public Abbreviate() {
+            super("^abbreviate");
+        }
+
+        private static Integer currentTermSerial = 1;
+        public Term newSerialTerm(final char prefix) {
+            synchronized(currentTermSerial) {
+                currentTermSerial++;
+            }
+            return new Term(prefix + String.valueOf(currentTermSerial));
+        }
+
+
+        /**
+         * To create a judgment with a given statement
+         * @param args Arguments, a Statement followed by an optional tense
+         * @param memory The memory in which the operation is executed
+         * @return Immediate results as Tasks
+         */
+        @Override
+        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+
+            final Term compound = args[0];
+
+            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
+
+            final Sentence sentence = new Sentence(
+                Similarity.make(compound, atomic),
+                Symbols.JUDGMENT_MARK,
+                new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
+                new Stamp(time, memory));
+
+            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
+
+            final BudgetValue budget = new BudgetValue(
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY,
+                quality, memory.narParameters);
+
+            final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
+            return Lists.newArrayList(newTask);
+
+        }
+
+    }
 }
