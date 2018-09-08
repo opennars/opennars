@@ -38,45 +38,58 @@ import org.opennars.plugin.Plugin;
 public class Emotions implements Plugin, Serializable {
 
     public volatile float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+    public volatile float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+    public volatile float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+    public volatile float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
+    public volatile int CHANGE_STEPS_DEMANDED = 1000;
+
+    public double lasthappy=0.5;
+    public long last_happy_time = 0;
+    public long last_busy_time = 0;
+
+
+    /** average desire-value */
+    private float happy;
+    /** average priority */
+    private float busy;
+
+
+
     public void setHAPPY_EVENT_HIGHER_THRESHOLD(double val) {
         this.HAPPY_EVENT_HIGHER_THRESHOLD = (float) val;
     }
     public double getHAPPY_EVENT_HIGHER_THRESHOLD() {
         return HAPPY_EVENT_HIGHER_THRESHOLD;
     }
-    public volatile float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+
     public void setHAPPY_EVENT_LOWER_THRESHOLD(double val) {
         this.HAPPY_EVENT_LOWER_THRESHOLD = (float) val;
     }
     public double getHAPPY_EVENT_LOWER_THRESHOLD() {
         return HAPPY_EVENT_LOWER_THRESHOLD;
     }
-    public volatile float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+
     public void setBUSY_EVENT_HIGHER_THRESHOLD(double val) {
         this.BUSY_EVENT_HIGHER_THRESHOLD = (float) val;
     }
     public double getBUSY_EVENT_HIGHER_THRESHOLD() {
         return BUSY_EVENT_HIGHER_THRESHOLD;
     }
-    public volatile float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
+
     public void setBUSY_EVENT_LOWER_THRESHOLD(double val) {
         this.BUSY_EVENT_LOWER_THRESHOLD = (float) val;
     }
     public double getBUSY_EVENT_LOWER_THRESHOLD() {
         return BUSY_EVENT_LOWER_THRESHOLD;
     }
-    public volatile int CHANGE_STEPS_DEMANDED = 1000;
+
     public void setCHANGE_STEPS_DEMANDED(double val) {
         this.CHANGE_STEPS_DEMANDED = (int) val;
     }
     public double getCHANGE_STEPS_DEMANDED() {
         return CHANGE_STEPS_DEMANDED;
     }
-    
-    /** average desire-value */
-    private float happy;
-    /** average priority */
-    private float busy;
+
 
     public void resetEmotions() {
         this.happy = 0.5f;
@@ -108,9 +121,7 @@ public class Emotions implements Plugin, Serializable {
         return busy;
     }
 
-    public double lasthappy=0.5;
-    public long last_happy_time = 0;
-    public long last_busy_time = 0;
+
     public void adjustSatisfaction(final float newValue, final float weight, final DerivationContext nal) {
         
         //        float oldV = happyValue;

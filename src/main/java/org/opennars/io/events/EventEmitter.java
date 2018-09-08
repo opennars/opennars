@@ -32,12 +32,6 @@ import java.util.*;
 // TODO separate this into a single-thread and multithread implementation
 public class EventEmitter {
 
-    
-    /** Observes events emitted by EventEmitter */
-    public interface EventObserver<C> {
-        void event(Class<? extends C> event, Object[] args);
-    }
-
     private final Map<Class<?>, List<EventObserver>> events;
             
     
@@ -141,5 +135,11 @@ public class EventEmitter {
             m.event(eventClass, params);
         }
         
+    }
+
+
+    /** Observes events emitted by EventEmitter */
+    public interface EventObserver<C> {
+        void event(Class<? extends C> event, Object[] args);
     }
 }
