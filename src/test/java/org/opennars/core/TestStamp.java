@@ -32,11 +32,9 @@ import org.opennars.entity.Stamp.BaseEntry;
 import static org.opennars.entity.Stamp.toSetArray;
 
 /**
+ * Tests the correct functionality of stamps
  *
- * @author me
  */
-
-
 public class TestStamp {
     private long narid = 0;
     BaseEntry entry(long inputId) {

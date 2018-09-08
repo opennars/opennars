@@ -33,6 +33,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Random;
 
+/**
+ * Checks for the stability of the system over a long time period (days, weeks, etc)
+ *
+ * @author Robert Wünsche
+ */
 public class LongTermStability {
     public final Reasoner reasoner;
 

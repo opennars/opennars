@@ -41,8 +41,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO run this for each different kind of attention/bag etc
+ * Checks for invariants of Concepts
  */
+// TODO run this for each different kind of attention/bag etc
 public class AttentionTest {
     
     @Test public void testSampleNextConcept() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
