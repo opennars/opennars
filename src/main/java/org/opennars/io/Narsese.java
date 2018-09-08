@@ -374,10 +374,6 @@ public class Narsese implements Serializable {
 
     }
 
-//    private static void showWarning(String message) {
-//		new TemporaryFrame( message + "\n( the faulty line has been kept in the addInput window )",
-//				40000, TemporaryFrame.WARNING );
-//    }
     /**
      * Parse a term that has no internal structure.
      * <p>
@@ -595,14 +591,6 @@ public class Narsese implements Serializable {
             return false;
         
         return i < 2 || !isRelation(s.substring(i - 2, i + 1));
-    }
-
-    /**
-     * @param s string to get checked if it may be narsese
-     * @return returns if the string may be narsese
-     */
-    public static boolean possiblyNarsese(final String s) {
-        return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
 
     /**
