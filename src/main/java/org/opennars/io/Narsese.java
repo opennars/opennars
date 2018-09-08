@@ -53,7 +53,7 @@ import static org.opennars.operator.Operation.make;
  */
 public class Narsese implements Serializable {
     
-    public final Memory memory;
+    protected final Memory memory;
 
                 
     /**
