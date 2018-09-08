@@ -105,6 +105,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Deque<Task> newTasks;
     
     //Boolean localInferenceMutex = false;
+
+
+    boolean checked=false;
+    boolean isjUnit=false;
     
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
@@ -237,9 +241,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         emit(Events.TaskAdd.class, t, reason);
         output(t);
     }
-    
-    boolean checked=false;
-    boolean isjUnit=false;
+
     public static boolean isJUnitTest() {
         final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         final StackTraceElement[] list = stackTrace;
