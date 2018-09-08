@@ -41,8 +41,9 @@ import org.opennars.main.Nar;
 import org.xml.sax.SAXException;
 
 /**
+ * Tests the correct functionality of the unifier
  *
- * @author patham9
+ * @author Patrick Hammer
  */
 public class UnificationTest {
     @Test

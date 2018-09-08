@@ -37,7 +37,9 @@ import org.opennars.main.NarNode;
 import org.opennars.main.NarNode.TargetNar;
 import org.xml.sax.SAXException;
 
-
+/**
+ * Test for NarNode functionality
+ */
 public class NarNodeTest {
     static Integer a = 0;
     @Test

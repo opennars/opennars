@@ -46,7 +46,10 @@ import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-
+/**
+ * Test for the integrity of the different NAL levels.
+ * Tests example, multistep etc.
+ */
 @RunWith(Parameterized.class)
 public class NALTest  {
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
