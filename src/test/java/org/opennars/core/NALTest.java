@@ -69,6 +69,9 @@ public class NALTest  {
     /** how many times should one test be run (to collect run scores) */
     public int numberOfSamples = 1;
 
+    // exposed to be able to change it from the outside
+    public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
+
     public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
@@ -91,7 +94,7 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
-        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
+        // return all test-paths of all files in the directories
 
         final Map<String, Object> et = ExampleFileInput.getUnitTests(directories);
         final Collection t = et.values();
