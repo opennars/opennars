@@ -54,21 +54,6 @@ import static org.opennars.operator.Operation.make;
 public class Narsese implements Serializable {
     
     protected final Memory memory;
-
-                
-    /**
-     * All kinds of invalid addInput lines
-     */
-    public static class InvalidInputException extends Exception {
-
-        /**
-         * An invalid addInput line.
-         * @param s type of error
-         */
-        InvalidInputException(final String s) {
-            super(s);
-        }
-    }    
     
     public Narsese(final Memory memory) {
         this.memory = memory;
@@ -618,5 +603,19 @@ public class Narsese implements Serializable {
      */
     public static boolean possiblyNarsese(final String s) {
         return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
+    }
+
+    /**
+     * All kinds of invalid addInput lines
+     */
+    public static class InvalidInputException extends Exception {
+
+        /**
+         * An invalid addInput line.
+         * @param s type of error
+         */
+        InvalidInputException(final String s) {
+            super(s);
+        }
     }
 }
