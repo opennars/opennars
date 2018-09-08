@@ -67,7 +67,7 @@ public class NALTest  {
     final String scriptPath;
 
     /** how many times should one test be run (to collect run scores) */
-    public int numberOfSamples = 1;
+    public static int numberOfSamples = 1;
 
     // exposed to be able to change it from the outside
     public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
@@ -121,7 +121,8 @@ public class NALTest  {
             
             tests.put(test, false);
         }
-        
+
+        /* commented because name.split() is broken for a special case in NalTestMetrics
         final int[] levelSuccess = new int[10];
         final int[] levelTotals = new int[10];
         
@@ -147,6 +148,7 @@ public class NALTest  {
             }
             System.out.println(totalSucceeded + " / " + total);
         }
+         */
     }
 
 
