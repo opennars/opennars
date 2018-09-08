@@ -1,30 +1,38 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
 import org.opennars.storage.Memory;
-
 import java.util.List;
-
 import static org.opennars.inference.TemporalRules.matchingOrder;
 import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
@@ -32,35 +40,35 @@ import static org.opennars.language.CompoundTerm.extractIntervals;
 import static org.opennars.language.CompoundTerm.replaceIntervals;
 import org.opennars.main.Parameters;
 
-
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
  * matching, the new task is compared with an existing direct Task in that
  * Concept, to carry out:
  * <p>
- *   revision: between judgments or goals on non-overlapping evidence; 
- *   satisfy: between a Sentence and a Question/Goal; 
- *   merge: between items of the same type and stamp; 
- *   conversion: between different inheritance relations.
+ *   revision: between judgments or goals on non-overlapping evidence;<br>
+ *   satisfy: between a Sentence and a Question/Goal; <br>
+ *   merge: between items of the same type and stamp; <br>
+ *   conversion: between different inheritance relations.<br>
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class LocalRules {
 
     /* -------------------- same contents -------------------- */
     /**
      * The task and belief have the same content
-     * <p>
-     * called in RuleTables.reason
      *
      * @param task The task
      * @param belief The belief
-     * @param memory Reference to the memory
      */
-    public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
+    // called in RuleTables.reason
+    public static boolean match(final Task task, final Sentence belief, Concept beliefConcept, final DerivationContext nal) {
         final Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
             if (revisible(sentence, belief, nal.narParameters)) {
-                return revision(sentence, belief, true, nal);
+                return revision(sentence, belief, beliefConcept, true, nal);
             }
         } else {
             if (matchingOrder(sentence, belief)) {
@@ -99,15 +107,15 @@ public class LocalRules {
 
     /**
      * Belief revision
-     * <p>
-     * called from Concept.reviseTable and match
      *
+     * Summarizes the evidence of two beliefs with same content.
+     * called from processGoal and processJudgment and LocalRules.match
+     * 
      * @param newBelief The new belief in task
      * @param oldBelief The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
-     * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final Concept beliefConcept, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) { 
             return false;
         }
@@ -115,43 +123,7 @@ public class LocalRules {
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         final TruthValue newTruth = newBelief.truth.clone();
         final TruthValue oldTruth = oldBelief.truth;
-        boolean useNewBeliefTerm = false;
-        
-        if(newBelief.getTerm().hasInterval()) {
-            final Term cterm = replaceIntervals(newBelief.getTerm());
-            final Concept c = nal.memory.concept(cterm);
-            final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
-            if(c.recent_intervals.size() == 0) {
-                for(final Long l : ivalOld) {
-                    c.recent_intervals.add((float) l);
-                }
-            }
-            final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
-            for(int i=0;i<ivalNew.size();i++) {
-                final float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
-                c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
-            }
-            long AbsDiffSumNew = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSumNew += Math.abs(ivalNew.get(i) - c.recent_intervals.get(i));
-            }
-            long AbsDiffSumOld = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSumOld += Math.abs(ivalOld.get(i) - c.recent_intervals.get(i));
-            }
-            long AbsDiffSum = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
-            }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.param); //re-project, and it's safe:
-                                                            //we won't count more confidence than
-                                                            //when the second premise would have been shifted
-                                                            //to the necessary time in the first place
-                                                            //to build the hypothesis newBelief encodes
-            newTruth.setConfidence(newTruth.getConfidence()*a);
-            useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
-        }
+        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept, newTruth);
         
         final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
@@ -163,13 +135,69 @@ public class LocalRules {
         return false;
     }
 
+    /**
+     * Interval projection
+     * 
+     * Decides to use whether to use old or new term dependent on which one is more usual,
+     * also discounting the truth confidence according to the interval difference.
+     * called by Revision
+     * 
+     * @param nal
+     * @param newBeliefTerm
+     * @param oldBeliefTerm
+     * @param beliefConcept
+     * @param newTruth
+     * @return 
+     */
+    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final Concept beliefConcept, final TruthValue newTruth) {
+        boolean useNewBeliefTerm = false;
+        if(newBeliefTerm.hasInterval()) {    
+            final List<Long> ivalOld = extractIntervals(nal.memory, oldBeliefTerm);
+            final List<Long> ivalNew = extractIntervals(nal.memory, newBeliefTerm);
+            long AbsDiffSumNew = 0;
+            long AbsDiffSumOld = 0;
+            List<Float> recent_ivals = beliefConcept.recent_intervals;
+            synchronized(recent_ivals){
+                if(recent_ivals.isEmpty()) {
+                    for(final Long l : ivalOld) {
+                        recent_ivals.add((float) l);
+                    }
+                }
+                for(int i=0;i<ivalNew.size();i++) {
+                    final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
+                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
+                    recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
+                }
+                
+                for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
+                }
+                
+                for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
+                }
+            }
+            long AbsDiffSum = 0;
+            for(int i=0;i<ivalNew.size();i++) {
+                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
+            }
+            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
+            //we won't count more confidence than
+            //when the second premise would have been shifted
+            //to the necessary time in the first place
+            //to build the hypothesis newBelief encodes
+            newTruth.setConfidence(newTruth.getConfidence()*a);
+            useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
+        }
+        return useNewBeliefTerm;
+    }
+
 
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
      * @param belief The proposed answer
      * @param task The task to be processed
-     * @param memory Reference to the memory
      */
     public static boolean trySolution(final Sentence belief, final Task task, final DerivationContext nal, final boolean report) {
         final Sentence problem = task.sentence;
@@ -178,17 +206,17 @@ public class LocalRules {
         
         if (oldBest != null) {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
-            final float newQ = solutionQuality(rateByConfidence, task, belief, memory);
-            final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
+            final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
+            final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
             if (oldQ >= newQ) {
-                if (problem.isGoal()) {
-                    memory.emotion.adjustSatisfaction(oldQ, task.getPriority(),nal);
+                if (problem.isGoal() && memory.emotion != null) {
+                    memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
                 return false;
             }
         }
-        task.setBestSolution(memory,belief);
+        task.setBestSolution(memory, belief, nal.time);
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
         
         final BudgetValue budget = solutionEval(task, belief, task, nal);
@@ -217,11 +245,11 @@ public class LocalRules {
     /**
      * Evaluate the quality of the judgment as a solution to a problem
      *
-     * @param problem A goal or question
+     * @param probT A goal or question
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final boolean rateByConfidence, final Task probT, final Sentence solution, final Memory memory) {
+    public static float solutionQuality(final boolean rateByConfidence, final Task probT, final Sentence solution, final Memory memory, final Timable time) {
         final Sentence problem = probT.sentence;
         
         if ((probT.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) || !matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
@@ -230,7 +258,7 @@ public class LocalRules {
         
         TruthValue truth = solution.truth;
         if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
-            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time(), memory);            
+            truth = solution.projectionTruth(problem.getOccurenceTime(), time.time(), memory);
         }
         
         //when the solutions are comparable, we have to use confidence!! else truth expectation.
@@ -251,10 +279,8 @@ public class LocalRules {
      *
      * @param problem The problem (question or goal) to be solved
      * @param solution The belief as solution
-     * @param task The task to be immediately processed, or null for continued
-     * process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
+     * @param task The task to be immediately processed, or null for continued process
+     * @return The budget for the new task which is the belief activated, if necessary
      */
     public static BudgetValue solutionEval(final Task problem, final Sentence solution, Task task, final org.opennars.control.DerivationContext nal) {
         if(problem.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) {
@@ -268,9 +294,9 @@ public class LocalRules {
         }
         final boolean judgmentTask = task.sentence.isJudgment();
         final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
-        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem());
+        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem(), nal.time);
         
-        if (problem.sentence.isGoal()) {
+        if (problem.sentence.isGoal() && nal.memory.emotion != null) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
         
@@ -328,8 +354,9 @@ public class LocalRules {
 
     /* -------------------- two-premise inference rules -------------------- */
     /**
-     * {<S --> P>, <P --> S} |- <S <-> p> Produce Similarity/Equivalence from a
-     * pair of reversed Inheritance/Implication
+     * Produce Similarity/Equivalence from a pair of reversed Inheritance/Implication
+     * <br>
+     * {&lt;S --&gt; P&gt;, &lt;P --&gt; S} |- &lt;S &lt;-&gt; p&gt;
      *
      * @param judgment1 The first premise
      * @param judgment2 The second premise
@@ -353,8 +380,9 @@ public class LocalRules {
     }
 
     /**
-     * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
-     * from a Similarity/Equivalence and a reversed Inheritance/Implication
+     * Produce an Inheritance/Implication from a Similarity/Equivalence and a reversed Inheritance/Implication
+     * <br>
+     * {&lt;S &lt;-&gt; P&gt;, &lt;P --&gt; S&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param asym The asymmetric premise
      * @param sym The symmetric premise
@@ -375,8 +403,9 @@ public class LocalRules {
 
     /* -------------------- one-premise inference rules -------------------- */
     /**
-     * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
-     * reversed Inheritance/Implication
+     * Produce an Inheritance/Implication from a reversed Inheritance/Implication
+     * <br>
+     * {&lt;P --&gt; S&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param nal Reference to the memory
      */
@@ -387,8 +416,9 @@ public class LocalRules {
     }
 
     /**
-     * {<S --> P>} |- <S <-> P> {<S <-> P>} |- <S --> P> Switch between
-     * Inheritance/Implication and Similarity/Equivalence
+     * Switch between Inheritance/Implication and Similarity/Equivalence
+     * <br>
+     * {&lt;S --&gt; P&gt;} |- &lt;S &lt;-&gt; P&gt; {&lt;S &lt;-&gt; P&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param nal Reference to the memory
      */
@@ -408,8 +438,8 @@ public class LocalRules {
      * <p>
      * called in MatchingRules
      *
-     * @param budget The budget value of the new task
-     * @param truth The truth value of the new task
+     * @param newBudget The budget value of the new task
+     * @param newTruth The truth value of the new task
      * @param nal Reference to the memory
      */
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final DerivationContext nal) {

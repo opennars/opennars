@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -25,6 +34,8 @@ import java.util.Set;
 
 /**
  * Static utility class for static methods related to Variables
+ *
+ * @author Patrick Hammer
  */
 public class Variables {
     
@@ -54,7 +65,7 @@ public class Variables {
         return false;
     }
     
-    /** map is a 2-element array of Map<Term,Term>. it may be null, in which case
+    /** map is a 2-element array of Map&lt;Term,Term&gt;. it may be null, in which case
      * the maps will be instantiated as necessary.  
      * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
@@ -131,12 +142,6 @@ public class Variables {
             return true;
         }
         
-        
-        /*if (termsEqual) {
-            return true;
-        }*/
-        
-        final Term t;
         //variable "renaming" to variable of same type is always valid
         if(term1 instanceof Variable && term2 instanceof Variable) {
             final Variable v1 = (Variable) term1;
@@ -157,14 +162,7 @@ public class Variables {
 
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
-            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
             Variable termAAsVariable = (Variable)termA;
-
-            t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
-
-            if (t != null) {
-                return findSubstitute(type, t, termB, map);
-            }
 
             if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
 
@@ -213,8 +211,7 @@ public class Variables {
             final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if(
-                (areBothConjuctions && !isSameOrderAndSameSpatial) ||
+            if((areBothConjuctions && !isSameOrderAndSameSpatial) ||
                 ((areBothEquivalence || areBothImplication) && !isSameOrder)
             ) {
                 return false;
@@ -229,7 +226,6 @@ public class Variables {
             final Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                final Set<Integer> alreadyMatched = new HashSet<>();
                 //ok attempt unification
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
@@ -333,9 +329,9 @@ public class Variables {
      * To unify two terms
      *
      * @param type The type of variable that can be substituted
-     * @param compound1 The compound containing the first term, possibly modified
-     * @param compound2 The compound containing the second term, possibly modified
-     * @param t The first and second term as an array, which will have been modified upon returning true
+     * @param t1 The compound containing the first term, possibly modified
+     * @param t2 The compound containing the second term, possibly modified
+     * @param compound The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
     public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) { 
@@ -391,11 +387,11 @@ public class Variables {
     } //but it is an allowed rename like $1 -> #1 then the second type should be used
     
     /**
-     * Check whether a term is using an
+     * examines whether a term is using an
      * independent variable in an invalid way
      *
-     * @param n The string name to be checked
-     * @return Whether the name contains an independent variable
+     * @param T term to be examined
+     * @return Whether the term contains an independent variable
      */
     public static boolean indepVarUsedInvalid(final Term T) {
         

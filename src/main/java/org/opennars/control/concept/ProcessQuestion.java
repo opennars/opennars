@@ -1,25 +1,38 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.control.concept;
 
 import java.util.List;
+
+import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
+
+import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
@@ -28,42 +41,40 @@ import org.opennars.language.Variables;
 
 /**
  *
- * @author Patrick
+ * @author Patrick Hammer
  */
 public class ProcessQuestion {
     /**
      * To answer a question by existing beliefs
      *
      * @param task The task to be processed
-     * @return Whether to continue the processing of the task
      */
     protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
         Task quesTask = task;
-        boolean newQuestion = true;
         List<Task> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
             questions = concept.quests;
         }
-        for (final Task t : questions) {
-            if (t.sentence.term.equals(quesTask.sentence.term)) {
-                quesTask = t;
-                newQuestion = false;
-                break;
-            }
-        }
-        if (newQuestion) {
-            if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
-                final Task removed = questions.remove(0);    // FIFO
-                concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
-            }
+        if(task.sentence.isEternal()) {
+            final Optional<Task> eternalQuestionTask = tryFind(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
 
-            questions.add(task);
-            concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
+            // we can override the question task with the eternal question task if any was found
+            if(eternalQuestionTask.isPresent()) {
+                quesTask = eternalQuestionTask.get();
+            }
         }
+        if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
+            final Task removed = questions.remove(0);    // FIFO
+            concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
+        }
+
+        questions.add(quesTask);
+        concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
+            
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? concept.selectCandidate(quesTask, concept.beliefs)
-                : concept.selectCandidate(quesTask, concept.desires);
+                ? concept.selectCandidate(quesTask, concept.beliefs, nal.time)
+                : concept.selectCandidate(quesTask, concept.desires, nal.time);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
@@ -75,13 +86,12 @@ public class ProcessQuestion {
     
     /**
      * Recognize an existing belief task as solution to the what question task, which contains a query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
+     *
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param ques The belief task
      * @param nal The derivation context
      */
+    // called only in GeneralInferenceControl.insertTaskLink on concept selection
     public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
@@ -111,13 +121,12 @@ public class ProcessQuestion {
     
     /**
      * Recognize an added belief task as solution to what questions, those that contain query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
+     *
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param t The belief task
      * @param nal The derivation context
      */
+    // called only in GeneralInferenceControl.insertTaskLink on concept selection
     public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {

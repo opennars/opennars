@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -20,7 +29,10 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * A Statement about an Equivalence relation.
+ * A Statement about an Equivalence relation as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Equivalence extends Statement {
 
@@ -49,7 +61,10 @@ public class Equivalence extends Statement {
         return new Equivalence(term, temporalOrder);
     }
     
-    @Override public Equivalence clone(final Term[] t) {        
+    @Override public Equivalence clone(final Term[] t) {  
+        if(t == null) {
+            return null;
+        }
         if (t.length!=2)
             throw new IllegalStateException("Equivalence requires 2 components: " + Arrays.toString(t));
         
@@ -71,7 +86,6 @@ public class Equivalence extends Statement {
      *
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Equivalence make(final Term subject, final Term predicate) {  // to be extended to check if subject is Conjunction

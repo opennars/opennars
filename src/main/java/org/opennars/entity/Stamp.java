@@ -1,20 +1,30 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Tense;
 import org.opennars.main.MiscFlags;
@@ -30,10 +40,16 @@ import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Tense.*;
 import org.opennars.main.Parameters;
 
+/**
+ * Stamps are used to keep track of done derivations
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public class Stamp implements Cloneable, Serializable {
     
     /**
-     * Element of the evidental base of stamp
+     * Element of the evidential base of stamp
      */
     public static class BaseEntry implements Comparable, Serializable { 
         public final long narId; //the NAR in which the input evidence was added
@@ -46,7 +62,7 @@ public class Stamp implements Cloneable, Serializable {
         }
         
         /**
-         * The evidental base entry
+         * The evidential base entry
          * 
          * @param narId The id of the NAR the input evidence was obtained from
          * @param inputId The nar-specific input id of the input
@@ -88,24 +104,31 @@ public class Stamp implements Cloneable, Serializable {
         }
     }
     
-    /*serial numbers. not to be modified after Stamp constructor has initialized it*/
+    /** serial numbers. not to be modified after Stamp constructor has initialized it*/
     public BaseEntry[] evidentialBase;
-    /* evidentialBase baseLength*/
+
+    /** the length of @see evidentialBase */
     public int baseLength;
-    /*creation time of the stamp*/
+
+    /** creation time of the stamp */
     private long creationTime;
-    /* estimated occurrence time of the event*/
+
+    /** estimated occurrence time of the event */
     private long occurrenceTime;
-    /*default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
+
+    /** default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
     public static final long ETERNAL = Integer.MIN_VALUE;
-    /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/    
+
+    /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/
     private BaseEntry[] evidentialSet = null;
-    /*Tense of the item*/
+
+    /** Tense of the item*/
     private Tense tense;
-    /*True when its a neg confirmation task that was already checked:*/
+
+    /** is it a neg confirmation task that was already checked*/
     public boolean alreadyAnticipatedNegConfirmation = false;
     
-    /** caches  */
+    /** caches */
     CharSequence name = null;
     
     /**
@@ -169,7 +192,7 @@ public class Stamp implements Cloneable, Serializable {
      * For single-premise rules
      *
      * @param old The stamp of the single premise
-     * @param creationTim The current time
+     * @param creationTime The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
         this(old, creationTime, old);
@@ -217,13 +240,13 @@ public class Stamp implements Cloneable, Serializable {
         }
     }
 
-    public Stamp(final Memory memory, final Tense tense) {
-        this(memory.time(), tense, memory.newStampSerial(), memory.narParameters.DURATION);
+    public Stamp(final Timable time, final Memory memory, final Tense tense) {
+        this(time.time(), tense, memory.newStampSerial(), memory.narParameters.DURATION);
     }
 
     /** creates a stamp with default Present tense */
-    public Stamp(final Memory memory) {
-        this(memory, Tense.Present);
+    public Stamp(final Timable time, final Memory memory) {
+        this(time, memory, Tense.Present);
     }
     
     /** Detects evidental base overlaps **/
@@ -348,7 +371,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Check if two stamps contains the same types of content
      *
-     * @param that The Stamp to be compared
+     * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
     public boolean equals(final Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
@@ -367,9 +390,9 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     /**
-     * The hash code of Stamp
+     * hash code of Stamp
      *
-     * @return The hash code
+     * @return hash code
      */
     public final int evidentialHash() {
         if (evidentialSet==null)
@@ -388,7 +411,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Get the occurrenceTime of the truth-value
      *
-     * @return The occurrence time
+     * @return occurrence time
      */
     public long getOccurrenceTime() {
         return occurrenceTime;
@@ -413,7 +436,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Get the occurrenceTime of the truth-value
      *
-     * @return The occurrence time
+     * @return occurrence time
      */
     public String getOccurrenceTimeString() {
         if (isEternal()) {
@@ -481,7 +504,7 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     /**
-     * @return the creationTime
+     * @return time of creation
      */
     public long getCreationTime() {
         return creationTime;

@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/*
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.core;
 
@@ -37,29 +46,22 @@ import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-
+/**
+ * Test for the integrity of the different NAL levels.
+ * Tests example, multistep etc.
+ */
 @RunWith(Parameterized.class)
 public class NALTest  {
-        
-
-    static {
-        Memory.randomNumber.setSeed(1);
-        MiscFlags.DEBUG = false;
-        MiscFlags.TEST_RUNNING = true;
-    }
-
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public boolean showOutput = false;
-    static public boolean saveSimilar = true;
     static public  boolean showSuccess = false;
     static public final boolean showFail = true;
     static public final boolean showReport = true;
     static public final boolean requireSuccess = true;
     static public final int similarsToSave = 5;
-    private static final boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
-    protected static final Map<String, String> examples = new HashMap(); //path -> script data
-    public static final Map<String, Boolean> tests = new HashMap();
-    public static final Map<String, Double> scores = new HashMap();
+    protected static final Map<String, String> examples = new HashMap<>(); //path -> script data
+    public static final Map<String, Boolean> tests = new HashMap<>();
+    public static final Map<String, Double> scores = new HashMap<>();
     final String scriptPath;
     
     public static String getExample(final String path) {
@@ -79,9 +81,6 @@ public class NALTest  {
     
     public Nar newNAR() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         return new Nar();
-        //return Nar.build(Default.fromJSON("nal/build/pei1.fast.nar"));
-        //return new ContinuousBagNARBuilder().build();
-        //return new DiscretinuousBagNARBuilder().build();
     }
     
     
@@ -105,18 +104,7 @@ public class NALTest  {
 
         tests.clear();
         scores.clear();
-        
-        if (waitForEnterKeyOnStart) {
-            System.out.println("When ready, press enter");
-            try {
-                System.in.read();
-            } catch (final IOException ex) {
-                throw new IllegalStateException("Could not read user input.", ex);
-            }
-        }
-        
-        //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        
+
         final Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
               
         
@@ -159,28 +147,16 @@ public class NALTest  {
         }
         return totalScore;
     }
-    
-    public static void main(final String[] args) {
-        runTests(NALTest.class);
-    }
+
 
     public NALTest(final String scriptPath) {
         this.scriptPath = scriptPath;
         
     }
-    
-    public double run() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        return testNAL(scriptPath);
-    }
-    
-    protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+
+    public double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
-        
-        final List<OutputCondition> expects = new ArrayList();
-        
-        Nar n = null;
-        final boolean error = false;
-        n = newNAR();
+
         final String example = getExample(path);
 
         if (showOutput) {
@@ -188,21 +164,29 @@ public class NALTest  {
             System.out.println();
         }
 
-        final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-        expects.addAll(extractedExpects);
+        Nar n = newNAR();
 
-        if (showOutput)
+        final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
+        final List<OutputCondition> expects = new ArrayList<>(extractedExpects);
+
+
+        if (showOutput) {
             new TextOutputHandler(n, System.out);
+        }
 
         n.addInputFile(path);
         n.cycles(minCycles);
-      
-        System.err.flush();
-        System.out.flush();
-        
-        boolean success = expects.size() > 0 && (!error);
+
+        if (showOutput) {
+            System.err.flush();
+            System.out.flush();
+        }
+
+        boolean success = expects.size() > 0;
         for (final OutputCondition e: expects) {
-            if (!e.succeeded) success = false;
+            if (!e.succeeded) {
+                success = false;
+            }
         }
 
         double score = Double.POSITIVE_INFINITY;
@@ -210,9 +194,10 @@ public class NALTest  {
             long lastSuccess = -1;
             for (final OutputCondition e: expects) {
                 if (e.getTrueTime()!=-1) {
-                    if (lastSuccess < e.getTrueTime())
+                    if (lastSuccess < e.getTrueTime()) {
                         lastSuccess = e.getTrueTime();
-                }                
+                    }
+                }
             }
             if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
@@ -227,21 +212,31 @@ public class NALTest  {
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
         if ((!success & showFail) || (success && showSuccess)) {
-            System.err.println('\n' + path + " @" + n.memory.time());
+            System.err.println('\n' + path + " @" + n.time());
             for (final OutputCondition e: expects) {
                 System.err.println("  " + e);
             }
         }
-        
-        //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
-        if (requireSuccess)
+
+        if (requireSuccess) {
             assertTrue(path, success);
-        
+        }
+
         return score;  
     }
     
     @Test
     public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
+    }
+
+    public static void main(final String[] args) {
+        runTests(NALTest.class);
+    }
+
+    static {
+        Memory.randomNumber.setSeed(1);
+        MiscFlags.DEBUG = false;
+        MiscFlags.TEST = true;
     }
 }

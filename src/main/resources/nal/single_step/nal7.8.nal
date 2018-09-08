@@ -1,0 +1,15 @@
+'********** updating and revision 
+
+<(*,John,key_101) --> hold>. :|: 
+
+6
+
+<(*,John,key_101) --> hold>. :|: %0% 
+
+<(*,John,key_101) --> hold>? :|: 
+
+200
+//revision on events
+''outputMustContain('<John --> (/,hold,_,key_101)>. :!0: %0.55;0.94%')
+//but also looking at it as separate:
+''outputMustContain('<John --> (/,hold,_,key_101)>. :!6: %0.00;0.90%')

@@ -1,20 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.control;
 
@@ -35,7 +40,7 @@ import java.util.Set;
 
 /**
  *
- * @author patrick.hammer
+ * @author Patrick Hammer
  */
 public class TemporalInferenceControl {
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -53,7 +58,7 @@ public class TemporalInferenceControl {
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return null; //temporal inductions for judgements only
         
-        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.memory.time());
+        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.time.time());
         nal.setCurrentTask(controllerTask);
 
         final Sentence previousBelief = stmLast;
@@ -90,12 +95,12 @@ public class TemporalInferenceControl {
                 if(already_attempted.contains(takeout) || 
                         Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
                                 takeout.sentence.stamp.evidentialBase)) {
-                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }
                 already_attempted.add(takeout);
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
         }
 
@@ -111,7 +116,7 @@ public class TemporalInferenceControl {
                 if(already_attempted_ops.contains(Toperation)) {
                     //put opc back into bag
                     //(k>0 holds here):
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }
                 already_attempted_ops.add(Toperation);
@@ -126,7 +131,7 @@ public class TemporalInferenceControl {
                             break; //there were no elements in the bag to try
                         }
                         if(already_attempted.contains(takeout)) {
-                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                             continue;
                         }
                         already_attempted.add(takeout);
@@ -146,12 +151,12 @@ public class TemporalInferenceControl {
                             }
                         }
 
-                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     }
                 }
                 //put Toperation back into bag if it was taken out
                 if(k > 0) {
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                 }
             }
         }
@@ -162,7 +167,7 @@ public class TemporalInferenceControl {
     
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {
         //multiple versions are necessary, but we do not allow duplicates
-        final List<Task> removals = new LinkedList<>();
+        Task removal = null;
         synchronized(nal.memory.seq_current) {
             for(final Task s : nal.memory.seq_current) {
                 if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
@@ -182,13 +187,14 @@ public class TemporalInferenceControl {
                             continue;
                         }
                     }
-                    removals.add(s);
+                    removal = s;
                     break;
                 }
             }
-            for(final Task removal : removals) {
+            if (removal != null) {
                 nal.memory.seq_current.take(removal);
             }
+
             //ok now add the new one:
             //making sure we do not mess with budget of the task:
             if(!(newEvent.sentence.getTerm() instanceof Operation)) {

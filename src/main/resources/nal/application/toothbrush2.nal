@@ -1,0 +1,14 @@
+<cup --> object>.
+<cup --> [bendable]>.
+<(*,cup,plastic) --> made_of>.
+<toothbrush --> [bendable]>.
+<toothbrush --> object>.
+<(&/,<(*,$1,plastic) --> made_of>,(^lighter,{SELF},$1)) =/> <$1 --> [heated]>>.
+<<$1 --> [heated]> =/> <$1 --> [melted]>>.
+<<$1 --> [melted]> <|> <$1 --> [pliable]>>.
+<(&/,<$1 --> [pliable]>,(^reshape,{SELF},$1)) =/> <$1 --> [hardened]>>.
+<<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
+(&&,<#1 --> object>,<#1 --> [unscrewing]>)!
+200000
+''outputMustContain('(^lighter,{SELF},cup)! %1.00;0.39%')
+''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.26%')

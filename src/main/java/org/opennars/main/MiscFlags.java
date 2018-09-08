@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.main;
 
@@ -19,21 +28,28 @@ package org.opennars.main;
  * All static values will be removed so that this is an entirely dynamic class.
  */
 public class MiscFlags {
-    public static final boolean SHOW_REASONING_ERRORS=false; //currently false because the sentence constructor is the only one
-                                                       //who creates them but is not doing it because of an error.
-
-    /** use this for advanced error checking, at the expense of lower performance.
-     it is enabled for unit tests automatically regardless of the value here.    */
+    /** Show errors in reasoning cycle, they are not fatal but ideally should not be hidden, recommended.*/
+    public static final boolean SHOW_REASONING_ERRORS = true;
+    /** Whether the system should try to continue after the occurrence of a reasoning error, recommended as not all cases might be tested*/
+    public static final boolean REASONING_ERRORS_CONTINUE = true;
+    
+    /** Show execution errors in operators, they ideally should not be hidden, recommended.*/
+    public static final boolean SHOW_EXECUTION_ERRORS = true;
+    /** Whether the system should try to continue after the occurrence of an execution error, recommended as they are not always avoidable*/
+    public static final boolean EXECUTION_ERRORS_CONTINUE = true;
+    
+    /** Show input errors, not recommended as the program that uses NARS should handle them by itself */
+    public static final boolean SHOW_INPUT_ERRORS = false;
+    /** Whether the system should continue after an input error, not recommended as it should be handled from outside*/
+    public static boolean INPUT_ERRORS_CONTINUE = false;
+    
+    /** use this for advanced error checking, at the expense of lower performance.*/
     public static boolean DEBUG = false;
-    public static boolean TEST_RUNNING = false;
-
-    /** for thorough bag debugging (slow) */
+    /** for thorough bag debugging (slow), requires DEBUG=true */
     public static final boolean DEBUG_BAG = false;
-    public static final boolean DEBUG_INVALID_SENTENCES = true;
+    /* for thorough sentence debugging (slow), requires DEBUG=true */
+    public static final boolean DEBUG_SENTENCES = false;
     
-    /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
-    public static final boolean TERM_ELEMENT_EQUIVALENCY = false; //TODO check potential, if can't work, remove
-    
-    /** enables the parsing of functional input format for operation terms: function(a,b,...) */
-    public static boolean FUNCTIONAL_OPERATIONAL_FORMAT = true;
+    /** Set to true by the test system, leave false */
+    public static boolean TEST = false;
 }

@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
@@ -24,16 +33,19 @@ import static org.opennars.inference.UtilityFunctions.*;
 import org.opennars.main.Parameters;
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class BudgetValue implements Cloneable, Serializable {
 
-    /** The character that marks the two ends of a budget value */
+    /** character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
-    /** The character that separates the factors in a budget value */
+    /** character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
    
     
-    /** The relative share of time resource to be allocated */
+    /** relative share of time resource to be allocated */
     private float priority;
     
     /**
@@ -44,7 +56,7 @@ public class BudgetValue implements Cloneable, Serializable {
      */
     private float durability;
     
-    /** The overall (context-independent) evaluation */
+    /** overall (context-independent) evaluation */
     private float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
@@ -145,7 +157,7 @@ public class BudgetValue implements Cloneable, Serializable {
 
     /**
      * Change durability value
-     * @param v The new durability
+     * @param d The new durability
      */
     public void setDurability(float d) {
         if(d>=1.0f) {
@@ -215,15 +227,14 @@ public class BudgetValue implements Cloneable, Serializable {
     }
     
     /**
-     * returns true if this budget is greater in all quantities than another budget,
-     * used to prevent a merge that would have no consequence
-     * @param other
-     * @return 
+     * @param rhs compared truth value
+     * @return if this budget is greater in all quantities than another budget,
      */
-    public boolean greaterThan(final BudgetValue other) {
-        return (getPriority() - other.getPriority() > this.narParameters.BUDGET_THRESHOLD) &&
-                (getDurability()- other.getDurability()> this.narParameters.BUDGET_THRESHOLD) &&
-                (getQuality() - other.getQuality() > this.narParameters.BUDGET_THRESHOLD);
+    // used to prevent a merge that would have no consequence
+    public boolean greaterThan(final BudgetValue rhs) {
+        return (getPriority() - rhs.getPriority() > this.narParameters.BUDGET_THRESHOLD) &&
+                (getDurability()- rhs.getDurability()> this.narParameters.BUDGET_THRESHOLD) &&
+                (getQuality() - rhs.getQuality() > this.narParameters.BUDGET_THRESHOLD);
     }
 
     
@@ -288,7 +299,12 @@ public class BudgetValue implements Cloneable, Serializable {
             .toString();                
     }
 
-    /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
+    /**
+     * computes the period and sets the current time to the period
+     *
+     * @return period in time: currentTime - lastForgetTime
+     */
+    // TODO< split this into two methods >
     public long setLastForgetTime(final long currentTime) {
         final long period;
         if (this.lastForgetTime == -1)            

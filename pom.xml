@@ -18,13 +18,13 @@
     </prerequisites>
 
     <name>OpenNARS</name>
-    <description>A reasoning engine.</description>
+    <description>A Non-Axiomatic Reasoning engine</description>
     <url>http://OpenNARS.org</url>
 
     <licenses>
         <license>
-            <name>GNU General Public License (GPL) version 3.0</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -46,13 +46,24 @@
     </issueManagement>
 
     <developers>
+		<developer>
+            <id>peiwang</id>
+            <name>Pei Wang</name>
+            <email>pei.wang@gmail.com</email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
+            <roles>
+                <role>Project Owner</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
         <developer>
-            <id>JeffreyPhillipsFreeman</id>
-            <name>Jeffrey Phillips Freeman</name>
-            <email>Jeffrey.Freeman@Syncleus.com</email>
-            <url>http://JeffreyFreeman.me</url>
-            <organization>Syncleus</organization>
-            <organizationUrl>http://syncleus.com</organizationUrl>
+            <id>patham9</id>
+            <name>Patrick Hammer</name>
+            <email>patham9@gmail.com</email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
             <roles>
                 <role>Project Owner</role>
                 <role>Developer</role>
@@ -62,7 +73,7 @@
         <developer>
             <id>TonyLo1</id>
             <name>Tony Lofthouse</name>
-            <email>Tony.Lofthouse@GMILab.com</email>
+            <email>Tony_Lofthouse@BTInternet.com</email>
             <organization>OpenNARS</organization>
             <organizationUrl>http://OpenNARS.org</organizationUrl>
             <roles>
@@ -70,6 +81,48 @@
                 <role>Developer</role>
             </roles>
             <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>GMPow2</id>
+            <name>Robert Wuensche</name>
+            <email></email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
+            <roles>
+                <role>Project Owner</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>JeffreyPhillipsFreeman</id>
+            <name>Jeffrey Phillips Freeman</name>
+            <email>Jeffrey.Freeman@Syncleus.com</email>
+            <url>http://JeffreyFreeman.me</url>
+            <organization>Syncleus</organization>
+            <organizationUrl>http://syncleus.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>jim</id>
+            <name>Jim Northrup</name>
+            <email>jim@cydesign.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>TreverShick</id>
+            <name>Trever Shick</name>
+            <url>http://trevershick.github.io</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
         </developer>
     </developers>
 
@@ -93,22 +146,30 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.encog</groupId>
-            <artifactId>encog-core</artifactId>
-            <version>3.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.1-jre</version>
+        </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    
     <build>
         <defaultGoal>package</defaultGoal>
         <plugins>
@@ -128,7 +189,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <show>private</show>
                 </configuration>
             </plugin>
             <plugin>
@@ -164,12 +225,40 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
-                    <skipExistingHeaders>false</skipExistingHeaders>
+                <!-- Configures the created archive -->
+                    <archive>
+                    <!-- Configures the content of the created manifest -->
+                        <manifest>
+                        <!-- Adds the classpath to the created manifest -->
+                            <addClasspath>true</addClasspath>
+                            <!--
+                            Specifies that all dependencies of our application are found
+                            from the lib directory.
+                            -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- Configures the main class of the application -->
+                            <mainClass>org.opennars.main.Shell</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -180,6 +269,7 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
+            
         </plugins>
     </build>
 
@@ -200,13 +290,7 @@
             <id>sign</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <configuration>
-                            <keyname>UPDATEME</keyname>
-                        </configuration>
-                    </plugin>
+                   
                 </plugins>
             </build>
         </profile>

@@ -1,28 +1,38 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/*
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.perf;
 
 import com.google.common.collect.Lists;
+import org.xml.sax.SAXException;
+
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
-import org.xml.sax.SAXException;
+import org.opennars.main.Parameters;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -32,22 +42,20 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.opennars.main.Parameters;
 
 /**
- *
- * @author me
+ * Performance test of bag implementation
  */
 public class BagPerf {
     
     private static Parameters narParameters;
     final int repeats = 8;
     final int warmups = 1;
-    static PortableDouble forgetRate;
+    static float forgetRate;
 
     static {
         try {
-            forgetRate = (new Nar().param).conceptForgetDurations;
+            forgetRate = (new Nar().narParameters).CONCEPT_FORGET_DURATIONS;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -72,14 +80,38 @@ public class BagPerf {
     int randomAccesses;
     final double insertRatio = 0.9;
     
+    public int getLevelSize(LevelBag lb, final int level) {
+        return (lb.level[level] == null) ? 0 : lb.level[level].size();
+    }
 
     
-    public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
+    public float getMaxItemsPerLevel(LevelBag b) {
+        int max = getLevelSize(b,0);
+        for (int i = 1; i < b.levels; i++) {
+            final int s = getLevelSize(b,i);
+            if (s > max) {
+                max = s;
+            }
+        }
+        return max;
+    }
 
-    public void testBag(final boolean List, final int levels, final int capacity, final PortableDouble forgetRate) {
+    public float getMinItemsPerLevel(LevelBag b) {
+        int min = getLevelSize(b,0);
+        for (int i = 1; i < b.levels; i++) {
+            final int s = getLevelSize(b,i);
+            if (s < min) {
+                min = s;
+            }
+        }
+        return min;
+    }
+    
+    public float totalPriority, totalMinItemsPerLevel, totalMaxItemsPerLevel;
+
+    public void testBag(final boolean List, final int levels, final int capacity, final float forgetRate) {
         
         totalPriority = 0;
-        totalMass = 0;
         totalMaxItemsPerLevel = totalMinItemsPerLevel = 0;
         
         final Performance p = new Performance((List ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
@@ -123,10 +155,9 @@ public class BagPerf {
                 randomBagIO(b, randomAccesses, insertRatio);
                 
                 if (!warmup) {                    
-                    totalPriority += b.getAveragePriority();
-                    totalMass += b.getMass();                    
-                    totalMinItemsPerLevel += b.getMinItemsPerLevel();
-                    totalMaxItemsPerLevel += b.getMaxItemsPerLevel();
+                    totalPriority += b.getAveragePriority();                
+                    totalMinItemsPerLevel += getMinItemsPerLevel(b);
+                    totalMaxItemsPerLevel += getMaxItemsPerLevel(b);
                 }
             }
             
@@ -140,7 +171,6 @@ public class BagPerf {
         //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
-        System.out.print(totalMass/repeats/levels + ",");
         System.out.println();
     }
             
@@ -193,8 +223,7 @@ public class BagPerf {
     public interface BagBuilder<E extends Item<K>,K> {
         Bag<E,K> newBag();
     }
-    
-    //final boolean first, final int levels, final int levelCapacity, 
+
     public static double getTime(final String label, final BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, final int repeats, final int warmups) {
         
         Memory.resetStatic();
@@ -273,49 +302,38 @@ public class BagPerf {
         
         for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
             for (int levels = 1; levels <= 10; levels += 1) {
-                
-                final int items = levels*itemsPerLevel;
+
+                final int items = levels * itemsPerLevel;
                 final int iterations = iterationsPerItem * items;
                 final int randomAccesses = accessesPerItem * items;
-                        
+
                 final Bag[] bags = new LevelBag[1];
-                bags[0] = new LevelBag(levels, items, narParameters);                       
-    
-                
+                bags[0] = new LevelBag(levels, items, narParameters);
+
+
                 final Map<Bag, Double> t = BagPerf.compare(
                     iterations, randomAccesses, insertRatio, repeats, warmups,
                     bags
                 );
-                
-                /*System.out.print(Arrays.toString(new Object[] { "(x" + repeats + ")", "items", items, "inserts:removals", insertRatio, "accesses", randomAccesses, "nexts", iterations }));                
-                System.out.print("  ");
-                for (Map.Entry<Bag, Double> e : t.entrySet()) {
-                    System.out.print(e.getKey() + "," + e.getValue() + ",  ");
-                }*/
-                
+
                 if (!printedHeader) {
-                    
+
                     final List<String> ls = Lists.newArrayList("items", "io_ratio", "accesses", "nexts");
                     for (final Map.Entry<Bag, Double> e : t.entrySet())
                         ls.add(e.getKey().toString());
-                                        
-                    printCSVLine(System.out, ls  );
+
+                    printCSVLine(System.out, ls);
                     printedHeader = true;
                 }
 
                 {
-                    final List<String> ls = Lists.newArrayList(items+"", insertRatio+"", randomAccesses+"", iterations+"");
+                    final List<String> ls = Lists.newArrayList(items + "", insertRatio + "", randomAccesses + "", iterations + "");
                     for (final Map.Entry<Bag, Double> e : t.entrySet())
                         ls.add(e.getValue().toString());
-                                        
-                    printCSVLine(System.out, ls  );
+
+                    printCSVLine(System.out, ls);
                 }
-                
-                
             }
         }
-
-        
     }
-    
 }

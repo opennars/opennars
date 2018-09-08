@@ -1,0 +1,2 @@
+(^count,{SELF},{a,b,c,d},?1)!
+''outputMustContain('(^count,{SELF},{a,b,c,d},4). :!0: %1.00;0.90%')

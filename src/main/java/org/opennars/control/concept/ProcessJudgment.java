@@ -1,34 +1,52 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.control.concept;
 
+import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+
+import static com.google.common.collect.Iterables.tryFind;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
+
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
+import org.opennars.language.Negation;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -47,9 +65,6 @@ public class ProcessJudgment {
      * Additionally, judgements can themselves be the solution to existing questions
      * and goals, which is also processed here.
      * 
-     * <p>
-     * called only by ConceptProcessing.processTask
-     * 
      * @param task The judgment task to be accepted
      * @param concept The concept of the judment task
      * @param nal The derivation context
@@ -58,7 +73,7 @@ public class ProcessJudgment {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
-        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, nal.time);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -68,11 +83,11 @@ public class ProcessJudgment {
                 concept.memory.removeTask(task, "Duplicated");
                 return;
             } else if (revisible(judg, oldBelief, nal.narParameters)) {
-                nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                final Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime(), concept.memory);
+                nal.setTheNewStamp(newStamp, oldStamp, nal.time.time());
+                final Sentence projectedBelief = oldBelief.projection(nal.time.time(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
+                    revision(judg, projectedBelief, concept, false, nal);
                 }
             }
         }
@@ -88,21 +103,16 @@ public class ProcessJudgment {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
         concept.addToTable(task, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
-        if(isExecutableHypothesis(task,nal)) {
-            addToTargetConceptsPreconditions(task, nal, concept);
-        }
     }
 
     /**
-     * Handle the feedback of the operation that was processed as a judgment
+     * Handle the feedback of the operation that was processed as a judgment.
+     * <br>
      * The purpose is to start a new operation frame which makes the operation concept 
-     * interpret current events as preconditions and future events as postconditions to the invoked operation.
-     * <p>
-     * called in processJudgment only
+     * interpret current events as preconditions and future events as post-conditions to the invoked operation.
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
-     * @return Whether to continue the processing of the task
      */
     public static void handleOperationFeedback(Task task, DerivationContext nal) {
         if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
@@ -118,9 +128,7 @@ public class ProcessJudgment {
     
     /**
      * Check whether the task is an executable hypothesis of the form
-     * <(&/,a,op()) =/> b>.
-     * <p>
-     * called in processJudgment only
+     * &lt;(&amp;/,a,op()) =/&gt; b&gt;.
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
@@ -129,8 +137,7 @@ public class ProcessJudgment {
     protected static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
         final Term term = task.getTerm();
         if(!task.sentence.isEternal() ||
-           !(term instanceof Implication) ||
-           term.hasVarIndep())  //Might be relaxed in the future!!
+           !(term instanceof Implication))
         {
             return false;
         }
@@ -140,9 +147,7 @@ public class ProcessJudgment {
         }
         //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
         final Term subj = imp.getSubject();
-        final Term pred = imp.getPredicate();
-        final Concept pred_conc = nal.memory.concept(pred);
-        if (pred_conc == null /*|| (pred instanceof Operation)*/ || !(subj instanceof Conjunction)) {
+        if (!(subj instanceof Conjunction)) {
             return false;
         }
         final Conjunction conj = (Conjunction) subj;
@@ -155,52 +160,70 @@ public class ProcessJudgment {
     }
     
     /**
-     * Add <(&/,a,op()) =/> b> beliefs to preconditions in concept b
-     * <p>
-     * called in processJudgment only
+     * Add &lt;(&amp;/,a,op()) =/&gt; b&gt; beliefs to preconditions in concept b
      * 
      * @param task The potential implication task
      * @param nal The derivation context
-     * @param concept The concept of the task
+     * @param alternativeTarget The alternative concept to put the best candidate in
      */
-    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
-        final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
-        //we do not add the target, instead the strongest belief in the target concept
-        if (concept.beliefs.isEmpty()) {
+    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept alternativeTarget) {
+        Set<Term> targets = new HashSet<Term>();
+        if(alternativeTarget == null) { 
+            //add to all components, unless it doesn't have vars
+            if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
+                targets.add(((Implication)task.getTerm()).getPredicate());
+            } else {
+                Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);
+                for(Term r : ret.keySet()) {
+                    targets.add(r);
+                }
+            }
+        } else {
+            targets.add(alternativeTarget.getTerm());
+        }
+        //the concept of the implication task
+        Concept origin_concept = nal.memory.concept(task.getTerm());
+        if(origin_concept == null) {
             return;
         }
-        Task strongest_target = null;
         //get the first eternal. the highest confident one (due to the sorted order):
-        for(final Task t : concept.beliefs) {
-            if(t.sentence.isEternal()) {
-                strongest_target = t;
-                break;
-            }
+        Optional<Task> strongest_target = null;
+        synchronized(origin_concept) {
+            strongest_target = tryFind(origin_concept.beliefs, iTask -> iTask.sentence.isEternal());
         }
-        if (strongest_target == null) {
+        if (!strongest_target.isPresent()) {
             return;
         }
-        synchronized(target_concept) {
-            //at first we have to remove the last one with same content from table
-            int i_delete = -1;
-            for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
-                if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
-                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
-                    i_delete = i; //even these with same term but different intervals are removed here
-                    break;
+        for(Term t : targets) { //the target sub concepts it needs to go to
+            final Concept target_concept = nal.memory.concept(t);
+            if(target_concept == null) { //target concept does not exist
+                continue;
+            }
+            // we do not add the target, instead the strongest belief in the target concept
+            synchronized(target_concept) {       
+                List<Task> table = strongest_target.get().sentence.term.hasVar() ?  target_concept.general_executable_preconditions : 
+                                                                                    target_concept.executable_preconditions;
+                //at first we have to remove the last one with same content from table
+                int i_delete = -1;
+                for(int i=0; i < table.size(); i++) {
+                    if(CompoundTerm.replaceIntervals(table.get(i).getTerm()).equals(
+                            CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
+                        i_delete = i; //even these with same term but different intervals are removed here
+                        break;
+                    }
                 }
-            }
-            if(i_delete != -1) {
-                target_concept.executable_preconditions.remove(i_delete);
-            }
-            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-            for (int i = 0; i<prec.length-2; i++) {
-                if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                    return; //for now, these can be decomposed into smaller such statements anyway
+                if(i_delete != -1) {
+                    table.remove(i_delete);
                 }
+                final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
+                for (int i = 0; i<prec.length-2; i++) {
+                    if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                        return; //for now, these can be decomposed into smaller such statements anyway
+                    }
+                }
+                //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+                target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
             }
-            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
     }
 }

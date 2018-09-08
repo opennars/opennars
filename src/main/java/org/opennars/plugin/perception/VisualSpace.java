@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.plugin.perception;
 
@@ -25,9 +34,6 @@ import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author Patrick
@@ -38,16 +44,13 @@ public class VisualSpace implements ImaginationSpace {
     public final float[][] cropped; //all elements assumed to be in [0,1] range
     public final int height;
     public final int width;
-    public final int px = 0;
-    public final int py = 0;
+    public int px = 0;
+    public int py = 0;
     
     //those are the same for each instance:
-    static final NullOperator right = new NullOperator("^right");
-    static final NullOperator left = new NullOperator("^left");
-    static final NullOperator up = new NullOperator("^up");
-    static final NullOperator down = new NullOperator("^down");
-    final Set<Operator> ops = new HashSet<>();
-    final Nar nar;
+    public static final NullOperator move = new NullOperator("^move");
+    public static final NullOperator zoom = new NullOperator("^zoom");
+    private final Nar nar;
     
     public VisualSpace(final Nar nar, final float[][] source, final int py, final int px, final int height, final int width) {
         this.nar = nar;
@@ -55,21 +58,19 @@ public class VisualSpace implements ImaginationSpace {
         this.width = width;    
         this.cropped = new float[height][width];
         this.source = new float[source.length][source[0].length];
+        this.py = py;
+        this.px = px;
         for(int i=0;i<source.length;i++) { //"snapshot" from source
             System.arraycopy(source[i], 0, this.source[i], 0, source[0].length);
         }
         //now copy into data
         for(int i=0; i<height; i++) {
-            System.arraycopy(source[py + i], px + 0, cropped[i], 0, width);
+            int relIndexY = 0; //was py, px but sensory device already does the shifting
+            int relIndexX = 0; 
+            System.arraycopy(source[relIndexY + i], relIndexX + 0, cropped[i], 0, width);
         }
-        nar.addPlugin(right);
-        nar.addPlugin(left);
-        nar.addPlugin(up);
-        nar.addPlugin(down);
-        ops.add(right);
-        ops.add(left);
-        ops.add(up);
-        ops.add(down);
+        nar.addPlugin(move);
+        nar.addPlugin(zoom);
     }
 
     @Override
@@ -150,7 +151,7 @@ public class VisualSpace implements ImaginationSpace {
     
     public boolean IsOperationInSpace(final Operation oper) {
         final Operator op = (Operator) oper.getPredicate();
-        return ops.contains(op);
+        return op.equals(move) || op.equals(zoom);
     }
     
     //Needs to be resolved:

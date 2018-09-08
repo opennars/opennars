@@ -1,23 +1,32 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
-
 package org.opennars.operator.mental;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
@@ -31,61 +40,62 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;
 
 import java.util.*;
 
-//**
-//* Operator that creates a judgment with a given statement
- //*
+/**
+ * Operator that creates a judgment with a given statement
+ */
 public class Anticipate extends Operator implements EventObserver {
 
-    public final Map<Vector2Int,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
+    public final Map<Prediction,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
-    final Set<Term> newTasks = new LinkedHashSet();
-    DerivationContext nal;
+    private transient Set<Term> newTasks = new LinkedHashSet();
  
     private TruthValue expiredTruth = null;
     private BudgetValue expiredBudget = null;
     
+     //internal experience has less durability?
+    public float ANTICIPATION_DURABILITY_MUL=0.1f; //0.1
+    //internal experience has less priority?
+    public float ANTICIPATION_PRIORITY_MUL=0.1f; //0.1
+    
     public Anticipate() {
         super("^anticipate");        
+    }
+    public Anticipate(float ANTICIPATION_DURABILITY_MUL, float ANTICIPATION_PRIORITY_MUL) {
+        this();
+        this.ANTICIPATION_DURABILITY_MUL = ANTICIPATION_DURABILITY_MUL;
+        this.ANTICIPATION_PRIORITY_MUL = ANTICIPATION_PRIORITY_MUL;
     }
 
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
-        expiredTruth = new TruthValue(0.0f, n.narParameters.ANTICIPATION_CONFIDENCE, n.narParameters);
+        expiredTruth = new TruthValue(0.0f, n.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, n.narParameters);
         expiredBudget = new BudgetValue(n.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
                                                     n.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
                                                     BudgetFunctions.truthToQuality(expiredTruth), n.narParameters);
         return true;
     }
-    
-    class Vector2Int {
-        public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
-        public final long predictedOccurenceTime;
-        public Vector2Int(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
-            this.predictionCreationTime=predictionCreationTime; //when the prediction happened
-            this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
-        }
-    }
-    
-    public void updateAnticipations() {
+
+    public void updateAnticipations(DerivationContext nal) {
 
         if (anticipations.isEmpty()) return;
 
-        final long now=nal.memory.time();
+        final long now=nal.time.time();
                 
         //share stamps created by tasks in this cycle
-        
+        if(newTasks == null) {
+            newTasks = new LinkedHashSet();
+        }
         boolean hasNewTasks = !newTasks.isEmpty();
         
-        final Iterator<Map.Entry<Vector2Int, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
+        final Iterator<Map.Entry<Prediction, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
         while (aei.hasNext()) {
             
-            final Map.Entry<Vector2Int, LinkedHashSet<Term>> ae = aei.next();
+            final Map.Entry<Prediction, LinkedHashSet<Term>> ae = aei.next();
             
             final long aTime = ae.getKey().predictedOccurenceTime;
             final long predictionstarted=ae.getKey().predictionCreationTime;
@@ -122,11 +132,14 @@ public class Anticipate extends Operator implements EventObserver {
                 boolean remove = false;
                 
                 if (didntHappen) {
-                    deriveDidntHappen(aTerm,aTime);                                
+                    deriveDidntHappen(aTerm,aTime,nal);
                     remove = true;
                 }
 
                 if (maybeHappened) {
+                    if(newTasks == null) {
+                        newTasks = new LinkedHashSet();
+                    }
                     if (newTasks.remove(aTerm)) {
                         //in case it happened, temporal induction will do the rest, else deriveDidntHappen occurred
                         if(!remove) {
@@ -147,39 +160,42 @@ public class Anticipate extends Operator implements EventObserver {
             }
         }       
     
+        if(newTasks == null) {
+            newTasks = new LinkedHashSet();
+        }
         newTasks.clear();        
     }
     
+    private transient DerivationContext nal; //don't serialize, it will be re-set after deserialization
     @Override
     public void event(final Class event, final Object[] args) {
         if (event == Events.InduceSucceedingEvent.class || event == Events.TaskDerive.class) {            
             final Task newEvent = (Task)args[0];
-            this.nal= (DerivationContext)args[1];
+            DerivationContext nal= (DerivationContext)args[1];
+            this.nal = nal;
             
-            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > this.nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
+            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
+                if(newTasks == null) {
+                    newTasks = new LinkedHashSet();
+                }
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
 
-        if (nal!=null && event == CycleEnd.class) {            
-            updateAnticipations();
+        if (this.nal!=null && event == CycleEnd.class) {            
+            updateAnticipations(this.nal);
         }
     }
     
 
-    //*
-    // * To create a judgment with a given statement
-    // * @param args Arguments, a Statement followed by an optional tense
-    // * @param memory The memory in which the operation is executed
-   // * @return Immediate results as Tasks
-   //  *
+    // to create a judgment with a given statement
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
-        if(operation==null) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        if (operation==null) {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[1],memory,memory.time()+memory.narParameters.DURATION, null);
+        anticipate(args[1], memory, time.time()+memory.narParameters.DURATION, null, time);
         
         return null;
     }
@@ -195,46 +211,34 @@ public class Anticipate extends Operator implements EventObserver {
         anticipationOperator=val;
     }
     
-    public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t) {
-        //if(true)
-        //    return;
-        
-        /*if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            return;
-        }*/
-        
+    public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t, final Timable time) {
         if(t!=null && t.sentence.truth.getExpectation() < memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
-        } 
-        
-       // Concept c = memory.concept(t.getTerm());
-       /* if(!c.observable) {
-            return;
-        }*/
-        
+        }
+
        if(t != null) {
            memory.emit(ANTICIPATE.class, t);
        } else  {
           memory.emit(ANTICIPATE.class, content);
        }
-        
+
         final LinkedHashSet<Term> ae = new LinkedHashSet();
-        anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
+        anticipations.put(new Prediction(time.time(),occurenceTime), ae);
 
         ae.add(content);
-        anticipationFeedback(content, t, memory);
+        anticipationFeedback(content, t, memory, time);
     }
 
-    public void anticipationFeedback(final Term content, final Task t, final Memory memory) {
+    public void anticipationFeedback(final Term content, final Task t, final Memory memory, final Timable time) {
         if(anticipationOperator) {
             final Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
             final TruthValue truth=new TruthValue(1.0f,memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
             final Stamp st;
             if(t==null) {
-                st=new Stamp(memory);
+                st=new Stamp(time, memory);
             } else {
                 st=t.sentence.stamp.clone();
-                st.setOccurrenceTime(memory.time());
+                st.setOccurrenceTime(time.time());
             }
 
             final Sentence s=new Sentence(
@@ -244,8 +248,8 @@ public class Anticipate extends Operator implements EventObserver {
                     st);
 
             final BudgetValue budgetForNewTask = new BudgetValue(
-                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*ANTICIPATION_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*ANTICIPATION_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth), memory.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
@@ -253,12 +257,12 @@ public class Anticipate extends Operator implements EventObserver {
         }
     }
 
-    protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime) {
-                
+    protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime, DerivationContext nal) {
+
         final TruthValue truth = expiredTruth;
         final BudgetValue budget = expiredBudget;
 
-        final Stamp stamp = new Stamp(nal.memory);
+        final Stamp stamp = new Stamp(nal.time, nal.memory);
         //stamp.setOccurrenceTime(nal.memory.time());
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
@@ -274,5 +278,14 @@ public class Anticipate extends Operator implements EventObserver {
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);
+    }
+
+    class Prediction {
+        public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
+        public final long predictedOccurenceTime;
+        public Prediction(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
+            this.predictionCreationTime=predictionCreationTime; //when the prediction happened
+            this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
+        }
     }
 }

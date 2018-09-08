@@ -46,11 +46,9 @@ Beginners can start at the following online materials:
 Contents
 --------
  * **[core](https://github.com/opennars/opennars/tree/master/src/main/java/org/opennars)** - reasoning engine
- * **[nal](https://github.com/opennars/opennars/tree/master/src/test/resources/nal)** - examples/unit tests
+ * **[nal](https://github.com/opennars/opennars/tree/master/src/main/resources/nal)** - examples/unit tests
 
 The core is derived from the code of Pei Wang.
-
-For an overview of reasoning features, see working examples explained in [SingleStepTestingCases](https://github.com/opennars/opennars/tree/master/src/test/resources/nal/single_step) and [MultiStepExamples](https://github.com/opennars/opennars/tree/master/src/test/resources/nal/multi_step).
 
 
 Run Requirements
@@ -59,13 +57,7 @@ Run Requirements
 
 Example Files
 -------------
-
-Example experience files are in directory nal/Examples
- * "Example-NALn-*.txt" contains single step examples for most of the inference rules defined in NAL level n. The "edited" version contains English translations, and with the unrelated information removed; the "unedited" version contains the actual input/output data recorded by the "Save Experience" function of the GUI. The files can be loaded using the "Load Experience" function of the GUI. 
- * "Example-MultiStep-edited" contains multi-step inference examples described in http://code.google.com/p/open-nars/wiki/MultiStepExamples
- * "Example-NLP-edited" contains an example of natural language processing described in the AGI-13 paper "Natural Language Processing by Reasoning and Learning".
-
-Unit tests are in nal/test.
+For an overview of reasoning features, see working examples (tests) in the nal folder, also explained in [SingleStepTestingCases](https://github.com/opennars/opennars/tree/master/src/main/resources/nal/single_step) and [MultiStepExamples](https://github.com/opennars/opennars/tree/master/src/main/resources/nal/multi_step).
 
 
 Development Requirements

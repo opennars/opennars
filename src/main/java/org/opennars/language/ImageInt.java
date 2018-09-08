@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -19,11 +28,15 @@ import org.opennars.io.Symbols.NativeOperator;
 import java.util.Arrays;
 
 /**
- * An intension image.
+ * An intension image as defined in the NARS-theory
+ *
  * <p>
- * (\,P,A,_)) --> B iff P --> (*,A,B)
+ * (\,P,A,_)) --&gt; B iff P --&gt; (*,A,B)
  * <p>
  * Internally, it is actually (\,A,P)_1, with an index.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class ImageInt extends Image {
 
@@ -31,7 +44,6 @@ public class ImageInt extends Image {
 
     /**
      * constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
@@ -51,6 +63,9 @@ public class ImageInt extends Image {
 
     @Override
     public Term clone(final Term[] replaced) {
+        if(replaced == null) {
+            return null;
+        }
         if (replaced.length != term.length)
             throw new IllegalStateException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         
@@ -62,7 +77,6 @@ public class ImageInt extends Image {
      * Try to make a new ImageExt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] argList) {
         if (argList.length < 2) {
@@ -88,7 +102,6 @@ public class ImageInt extends Image {
      * @param product The product
      * @param relation The relation
      * @param index The index of the place-holder
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Product product, final Term relation, final short index) {
@@ -113,7 +126,6 @@ public class ImageInt extends Image {
      * @param oldImage The existing Image
      * @param component The component to be added into the component list
      * @param index The index of the place-holder in the new Image
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final ImageInt oldImage, final Term component, final short index) {
@@ -129,7 +141,6 @@ public class ImageInt extends Image {
      * Try to make a new compound from a set of term. Called by the public make methods.
      * @param argument The argument list
      * @param index The index of the place-holder in the new Image
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
     public static ImageInt make(final Term[] argument, final short index) {        

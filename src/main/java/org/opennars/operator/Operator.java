@@ -1,22 +1,32 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.operator;
 
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.OutputHandler.EXE;
 import org.opennars.language.Product;
 import org.opennars.language.Statement;
@@ -27,6 +37,8 @@ import org.opennars.storage.Memory;
 
 import java.util.Arrays;
 import java.util.List;
+import org.opennars.io.events.OutputHandler.ERR;
+import org.opennars.main.MiscFlags;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -46,11 +58,8 @@ public abstract class Operator extends Term implements Plugin {
             throw new IllegalStateException("Operator name needs ^ prefix");
     }
 
-    public Nar nar;
-    
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
-        this.nar = n;
         this.executionConfidence = n.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
         return true;
     }        
@@ -65,22 +74,34 @@ public abstract class Operator extends Term implements Plugin {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
+    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory, final Timable time);
 
     /**
     * The standard way to carry out an operation, which invokes the execute
     * method defined for the operator, and handles feedback tasks as input
     *
-    * @param op The operator to be executed
+    * @param operation The operator to be executed
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
+    * @param time used to retrieve the time
     * @return true if successful, false if an error occurred
     */
-    public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
-        final List<Task> feedback = execute(operation, args, memory);
+    public final boolean call(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        List<Task> feedback = null;
+        try {
+            feedback = execute(operation, args, memory, time);
+        }
+        catch(Exception ex) {//peripherie, maybe used incorrectly, failure is unavoidable
+            if(MiscFlags.SHOW_EXECUTION_ERRORS) {
+                memory.event.emit(ERR.class, ex);
+            }
+            if(!MiscFlags.EXECUTION_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Execution error:\n", ex);
+            }
+        }
 
         if(feedback == null || feedback.isEmpty()) { //null operator case
-            memory.executedTask(operation, new TruthValue(1f,executionConfidence, memory.narParameters));
+            memory.executedTask(time, operation, new TruthValue(1f,executionConfidence, memory.narParameters));
         }
 
         reportExecution(operation, args, feedback, memory);
@@ -88,7 +109,7 @@ public abstract class Operator extends Term implements Plugin {
 
         if (feedback!=null) {
             for (final Task t : feedback) {
-                memory.inputTask(t);
+                memory.inputTask(time, t);
             }
         }
 
@@ -187,12 +208,12 @@ public abstract class Operator extends Term implements Plugin {
         
     }
 
-    public final boolean call(final Operation op, final Memory memory) {
+    public final boolean call(final Operation op, final Memory memory, final Timable time) {
         if(!op.isExecutable(memory)) {
             return false;
         }
         final Product args = op.getArguments();
-        return call(op, args.term, memory);
+        return call(op, args.term, memory, time);
     }
     
 

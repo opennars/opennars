@@ -1,28 +1,40 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
 import org.opennars.io.Texts;
-import org.opennars.main.MiscFlags;
-
 import java.nio.CharBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.opennars.io.Symbols.*;
 
 /**
  * A variable term, which does not correspond to a concept
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Variable extends Term {
     /** caches the type character for faster lookup than charAt(0) */
@@ -47,10 +59,8 @@ public class Variable extends Term {
         setScope(scope, name);
     }
 
-    @Override protected void setName(final CharSequence newName) { }
-
     public Variable setScope(final Term scope, final CharSequence n) {
-        this.name = n;
+        this.setName(n);
         this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily
@@ -118,25 +128,24 @@ public class Variable extends Term {
     
 
     @Override public boolean equals(final Object that) {
-        if (that == this) return true;
-        if (!(that instanceof Variable)) return false;
-        final Variable v = (Variable)that;
-
-        if(!super.equals(that))
+        if (that == this) {
+            return true;
+        }
+        if (!(that instanceof Variable)) { 
             return false;
-
-                
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            return equalsTerm(that);
         }
-        else {
-            if (!name().equals(v.name())) return false;
-            if ((getScope() == this && v.getScope()!=v) ||
-                (getScope() != this && v.getScope() == v)) {
-                return false;
-            }
-            return (v.getScope().name().equals(getScope().name()));
+        if(!super.equals(that)) {
+            return false;
         }
+        final Variable v = (Variable)that;
+        if (!name().equals(v.name())) {
+            return false;
+        }
+        if ((getScope() == this && v.getScope() != v) ||
+            (getScope() != this && v.getScope() == v)) {
+            return false;
+        }
+        return (v.getScope().name().equals(getScope().name()));
     }
     
     public boolean equalsTerm(final Object that) {
@@ -172,44 +181,41 @@ public class Variable extends Term {
     public int hashCode() {
         if (hash == 0) {
             if (scope!=this)
-                this.hash = 31 * name.hashCode() + scope.hashCode();            
+                this.hash = 31 * name().hashCode() + scope.hashCode();
             else
-                this.hash = name.hashCode();
+                this.hash = name().hashCode();
         }
         return hash;
     }
 
     @Override
     public int compareTo(final AbstractTerm that) {
-        if(this == that)
+        if(this == that) {
             return 0;
+        }
         final int superCmp = super.compareTo(that);
-        if(superCmp != 0)
+        if(superCmp != 0) {
             return superCmp;
-
-        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
-            throw new UnsupportedOperationException("not implemented!");
+        }
+        if(!(that instanceof Variable)) {
+            return 0;
         }
 
-        if(!(that instanceof Variable))
-            return 0;
-
         final Variable thatVar = (Variable) that;
-
-        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name));
-        if( nameCmp != 0 )
+        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name()));
+        if( nameCmp != 0 ) {
             return nameCmp;
-
-        if(this.getScope() == this && thatVar.getScope() != thatVar)
+        }
+        if(this.getScope() == this && thatVar.getScope() != thatVar) {
             return 1;
-
-        if(this.getScope() != this && thatVar.getScope() == thatVar)
+        }
+        if(this.getScope() != this && thatVar.getScope() == thatVar) {
             return -1;
-
-        return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
+        }
+        return String.valueOf(this.getScope().name()).compareTo(String.valueOf(thatVar.getScope().name()));
     }
 
-    /**
+    /*
      * variable terms are listed first alphabetically
      *
      * @param that The Term to be compared with the current Term
@@ -304,7 +310,13 @@ public class Variable extends Term {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);
         return cb.compact().toString();
-
     }
     
+    @Override
+    public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
+        if(map == null) {
+            map = new HashMap<Term, Integer>();
+        }
+        return map; //don't count vars
+    }
 }

@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
@@ -28,6 +37,9 @@ import java.util.List;
 /**
  * Single-premise inference rules involving compound terms. Input are one
  * sentence (the premise) and one TermLink (indicating a component)
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class StructuralRules {
 
@@ -35,8 +47,9 @@ public final class StructuralRules {
 
     /* -------------------- transform between compounds and term -------------------- */
     /**
-     * {<S --> P>, S@(S&T)} |- <(S&T) --> (P&T)> {<S --> P>, S@(M-S)} |- <(M-P)
-     * --> (M-S)>
+     * {&lt;S --&gt; P&gt;, S@(S&amp;T)} |- &lt;(S&amp;T) --&gt; (P&amp;T)&gt;
+     * <br>
+     * {&lt;S --&gt; P&gt;, S@(M-S)} |- &lt;(M-P) --&gt; (M-S)&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -93,7 +106,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<(S*T) --> (P*T)>, S@(S*T)} |- <S --> P>
+     * {&lt;(S*T) --&gt; (P*T)&gt;, S@(S*T)} |- &lt;S --&gt; P&gt;
      *
      * @param statement The premise
      * @param nal Reference to the memory
@@ -140,8 +153,7 @@ public final class StructuralRules {
     }
 
     /**
-     * List the cases where the direction of inheritance is revised in
-     * conclusion
+     * List the cases where the direction of inheritance is revised in conclusion
      *
      * @param compound The compound term
      * @param index The location of focus in the compound
@@ -154,7 +166,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<S --> P>, P@(P|Q)} |- <S --> (P|Q)>
+     * {&lt;S --&gt; P&gt;, P@(P|Q)} |- &lt;S --&gt; (P|Q)&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -206,7 +218,9 @@ public final class StructuralRules {
     }
 
     /**
-     * {<(S|T) --> P>, S@(S|T)} |- <S --> P> {<S --> (P&T)>, P@(P&T)} |- <S --> P>
+     * {&lt;(S|T) --&gt; P&gt;, S@(S|T)} |- &lt;S --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (P&amp;T)&gt;, P@(P&amp;T)} |- &lt;S --&gt; P&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -283,7 +297,7 @@ public final class StructuralRules {
 
     /* -------------------- set transform -------------------- */
     /**
-     * {<S --> {P}>} |- <S <-> {P}>
+     * {&lt;S --&gt; {P}&gt;} |- &lt;S &lt;-&gt; {P}&gt;
      *
      * @param compound The set compound
      * @param statement The premise
@@ -329,10 +343,13 @@ public final class StructuralRules {
 
     /* -------------------- products and images transform -------------------- */
     /**
-     * Equivalent transformation between products and images {<(*, S, M) --> P>,
-     * S@(*, S, M)} |- <S --> (/, P, _, M)> {<S --> (/, P, _, M)>, P@(/, P, _,
-     * M)} |- <(*, S, M) --> P> {<S --> (/, P, _, M)>, M@(/, P, _, M)} |- <M -->
-     * (/, P, S, _)>
+     * Equivalent transformation between products and images
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param inh An Inheritance statement
      * @param oldContent The whole content
@@ -359,6 +376,9 @@ public final class StructuralRules {
         if (!(compT instanceof CompoundTerm))
             return;
         final CompoundTerm comp = (CompoundTerm)compT;
+        if(comp.size() <= index) { //make sure it points into the compound
+            return;
+        }
         
         if (comp instanceof Product) {
             if (side == 0) {
@@ -456,9 +476,13 @@ public final class StructuralRules {
 
     /**
      * Equivalent transformation between products and images when the subject is
-     * a compound {<(*, S, M) --> P>, S@(*, S, M)} |- <S --> (/, P, _, M)> {<S
-     * --> (/, P, _, M)>, P@(/, P, _, M)} |- <(*, S, M) --> P> {<S --> (/, P, _,
-     * M)>, M@(/, P, _, M)} |- <M --> (/, P, S, _)>
+     * a compound
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param subject The subject term
      * @param predicate The predicate term
@@ -514,9 +538,13 @@ public final class StructuralRules {
 
     /**
      * Equivalent transformation between products and images when the predicate
-     * is a compound {<(*, S, M) --> P>, S@(*, S, M)} |- <S --> (/, P, _, M)>
-     * {<S --> (/, P, _, M)>, P@(/, P, _, M)} |- <(*, S, M) --> P> {<S --> (/,
-     * P, _, M)>, M@(/, P, _, M)} |- <M --> (/, P, S, _)>
+     * is a compound
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param subject The subject term
      * @param predicate The predicate term
@@ -585,7 +613,8 @@ public final class StructuralRules {
     /* --------------- Flatten sequence transform --------------- */
     /**
      * {(#,(#,A,B),C), (#,A,B)@(#,(#,A,B), C)} |- (#,A,B,C)
-     * (same for &/)
+     * (same for &amp;/)
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -612,8 +641,10 @@ public final class StructuralRules {
     
     /* --------------- Take out from conjunction --------------- */
     /**
-     * {(&&,A,B,C), B@(&&,A,B,C)} |- (&&,A,C)
+     * {(&amp;&amp;,A,B,C), B@(&amp;&amp;,A,B,C)} |- (&amp;&amp;,A,C)
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -642,7 +673,9 @@ public final class StructuralRules {
     /* --------------- Split sequence apart --------------- */
     /**
      * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,A,B,C), (#,C,D,E)
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -672,14 +705,20 @@ public final class StructuralRules {
         }
     }
     
-    /* --------------- Group sequence left and right --------------- */
     /**
      * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,(#,A,B),C,D,E), (#,A,B,C,(#,D,E))
+     *
+     * Group sequence left and right
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
+     *
+     * @author Patrick Hammer
+     * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
         if(!(compound instanceof Conjunction)) {
@@ -720,12 +759,14 @@ public final class StructuralRules {
         }
     }
 
-    /* Derives a subsequence of a sequence based on a (inclusive) index range
+    /** Derives a sub-sequence of a sequence based on a (inclusive) index range
      * 
      * @param sourceConjunction The conjunction we take out a certain part from
      * @param inclusiveStartIndex The start index (inclusive)
      * @param inclusiveEndIndex The end index (inclusive)
-     * @param nal The derivation contect
+     * @param nal The derivation context
+     *
+     * @author Robert Wünsche
      */
     private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
         int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
@@ -759,8 +800,7 @@ public final class StructuralRules {
      * Derives a sequence task, inheriting properties from parentConj
      * 
      * @param nal The derivation context
-     * @param inheritPropertiesConj The parent conjunction type that should be used for the derivation too
-     * @param total The subterms the conjunction should be created from
+     * @param total The sub-terms the conjunction should be created from
      * @param truth The truth value of the derivation
      */
     private static void deriveSequenceTask(DerivationContext nal, Conjunction parentConj, Term[] total, TruthValue truth) {
@@ -786,8 +826,11 @@ public final class StructuralRules {
     
     /* --------------- Disjunction and Conjunction transform --------------- */
     /**
-     * {(&&, A, B), A@(&&, A, B)} |- A, or answer (&&, A, B)? using A {(||, A,
-     * B), A@(||, A, B)} |- A, or answer (||, A, B)? using A
+     * {(&amp;&amp;, A, B), A@(&amp;&amp;, A, B)} |- A,
+     * <br>
+     * or answer (&amp;&amp;, A, B)? using A {(||, A, B), A@(||, A, B)} |- A,
+     * <br>
+     * or answer (||, A, B)? using A
      *
      * @param compound The premise
      * @param component The recognized component in the premise
@@ -875,7 +918,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
+     * {&lt;A ==&gt; B&gt;, A@(--, A)} |- &lt;(--, B) ==&gt; (--, A)&gt;
      *
      * @param statement The premise
      * @param nal Reference to the memory

@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
@@ -25,7 +34,8 @@ import java.util.*;
 
 /**
  *
- * @author peiwang
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class TemporalRules {
 
@@ -145,83 +155,6 @@ public class TemporalRules {
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
-        Term t11=null;
-        Term t22=null;
-        
-        if (!deriveSequenceOnly && termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
-            
-            final Statement ss1 = (Statement) t1;
-            final Statement ss2 = (Statement) t2;
-
-            final Variable var1 = new Variable("$0");
-            final Variable var2 = new Variable("$1");
-            
-            if(ss2.containsTermRecursively(ss1.getSubject())) {
-                final Map<Term,Term> subs=new HashMap();
-                subs.put(ss1.getSubject(), var1);
-                if(ss2.containsTermRecursively(ss1.getPredicate())) {
-                    subs.put(ss1.getPredicate(), var2);
-                }
-                t11=ss1.applySubstitute(subs);
-                t22=ss2.applySubstitute(subs);
-            }
-            
-            if(ss1.containsTermRecursively(ss2.getSubject())) {
-                final Map<Term,Term> subs=new HashMap();
-                subs.put(ss2.getSubject(), var1);
-                if(ss1.containsTermRecursively(ss2.getPredicate())) {
-                    subs.put(ss2.getPredicate(), var2);
-                }
-                t11=ss1.applySubstitute(subs);
-                t22=ss2.applySubstitute(subs);
-            }
-            
-            //allow also temporal induction on operator arguments:
-            if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
-                if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    final Term comp=ss1.getSubject();
-                    final Term ss2_term = ss2.getSubject();
-                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-                    
-                    if(ss2_term instanceof Product) {
-                        final Product ss2_prod=(Product) ss2_term;
-                        
-                        if(applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
-                            
-                            final Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
-                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            final Operation op=(Operation) Operation.make(
-                                    new Product(ars), 
-                                    ss2.getPredicate()
-                            );
-                            t22 = op;
-                        }
-                    }
-                }
-                if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    final Term comp=ss2.getSubject();
-                    final Term ss1_term = ss1.getSubject();
-                    
-                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-                    
-                    if(ss1_term instanceof Product) {
-                        final Product ss1_prod=(Product) ss1_term;
-                                               
-                        if(applicableVariableType && Terms.contains(ss1_prod.term, comp)) { //only if there is one and it isnt a variable already
-                            
-                            final Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
-                            t22 = Statement.make(ss2, var1, ss2.getPredicate());
-                            final Operation op=(Operation) Operation.make(
-                                    new Product(ars), 
-                                    ss1.getPredicate()
-                            );
-                            t11 = op;
-                        }
-                    }
-                }
-            }
-        }
-
         final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
@@ -229,19 +162,11 @@ public class TemporalRules {
         Interval interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
-            
             interval = new Interval(Math.abs(timeDiff));
-            
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
-                if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
-                }
             } else {
                 t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
-                if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
-                }
             }
         }
         final int order = order(timeDiff, durationCycles);
@@ -249,7 +174,7 @@ public class TemporalRules {
         TruthValue givenTruth2 = s2.truth;
         
         //This code adds a penalty for large time distance (TODO probably revise)
-        final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time(), nal.memory);
+        final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.time.time(), nal.memory);
         givenTruth2 = s3.truth; 
         
         //Truth and priority calculations
@@ -258,11 +183,8 @@ public class TemporalRules {
         final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2, nal.narParameters);
         final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2, nal.narParameters);
         final BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
-        budget1.setPriority(budget1.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
-        budget2.setPriority(budget2.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
-        budget3.setPriority(budget3.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         final Statement statement1 = Implication.make(t1, t2, order);
@@ -281,47 +203,30 @@ public class TemporalRules {
                 break;
         }
         
-        //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
-        //TODO: rethink this for 1.6.3
+        List<Term> t11s = new ArrayList<>();
+        List<Term> t22s = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if(!deriveSequenceOnly && statement2!=null) { //there is no general form
-            //ok then it may be the (&/ =/> case which 
-            //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-            final Statement st=statement2;
-            if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                final Term precon= st.getSubject();
-                final Inheritance consequence=(Inheritance) st.getPredicate();
-                final Term pred=consequence.getPredicate();
-                final Term sub=consequence.getSubject();
-                //look if subject is contained in precon:
-                final boolean SubsSub=precon.containsTermRecursively(sub);
-                final boolean SubsPred=precon.containsTermRecursively(pred);
-                final Variable v1=new Variable("$91");
-                final Variable v2=new Variable("$92");
-                final Map<Term,Term> app= new HashMap<>();
-                if(SubsSub || SubsPred) {
-                    if(SubsSub)
-                        app.put(sub, v1);
-                    if(SubsPred)
-                        app.put(pred,v2);
-                    final Term res= statement2.applySubstitute(app);
-                    if(res!=null) { //ok we applied it, all we have to do now is to use it
-                        t22=((Statement)res).getSubject();
-                        t11=((Statement)res).getPredicate();
-                    }
+        if(!deriveSequenceOnly && statement2!=null) {
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
+                for(Term res : ress) { //ok we applied it, all we have to do now is to use it
+                    t11s.add(((Statement)res).getPredicate());
+                    t22s.add(((Statement)res).getSubject());
                 }
-             }
+            }
         }
         
         final List<Task> derivations= new ArrayList<>();
         if (!deriveSequenceOnly ) {
-            if (t11!=null && t22!=null) {
+            for(int i=0; i<t11s.size(); i++) {
+                Term t11 = t11s.get(i);
+                Term t22 = t22s.get(i);
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendConclusion(nal, truth1, budget1, statement11, derivations);
-                appendConclusion(nal, truth2, budget2, statement22, derivations);
-                appendConclusion(nal, truth3, budget3, statement33, derivations);
+                appendConclusion(nal, truth1.clone(), budget1.clone(), statement11, derivations);
+                appendConclusion(nal, truth2.clone(), budget2.clone(), statement22, derivations);
+                appendConclusion(nal, truth3.clone(), budget3.clone(), statement33, derivations);
             }
 
             appendConclusion(nal, truth1, budget1, statement1, derivations);

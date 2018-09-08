@@ -1,22 +1,32 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
@@ -49,8 +59,8 @@ public abstract class Feel extends Operator {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected List<Task> feeling(final float value, final Memory memory) {
-        final Stamp stamp = new Stamp(memory, Tense.Present);
+    protected List<Task> feeling(final float value, final Memory memory, final Timable time) {
+        final Stamp stamp = new Stamp(time, memory, Tense.Present);
         final TruthValue truth = new TruthValue(value, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
                 
         final Term predicate = new SetInt(feelingTerm);

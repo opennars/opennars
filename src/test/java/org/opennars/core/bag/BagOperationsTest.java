@@ -1,20 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 /*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * The MIT License
+ *
+ * Copyright 2018 The OpenNARS authors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.core.bag;
 
@@ -82,6 +87,23 @@ public class BagOperationsTest {
         this.narParameters = nar.narParameters;
         testBagSequence(new LevelBag(2, 2, nar.narParameters));    
     }
+
+    public static float getMinPriority(Bag<Concept,Term> bag) {
+        float min = 1.0f;
+        for (final Item e : bag) {
+            final float p = e.getPriority();
+            if (p < min) min = p;
+        }
+        return min;            
+    }
+    public static float getMaxPriority(Bag<Concept,Term> bag) {
+        float max = 0.0f;
+        for (final Item e : bag) {
+            final float p = e.getPriority();
+            if (p > max) max = p;
+        }
+        return max;
+    }
     
     public static void testBagSequence(final Bag b) {
 
@@ -98,8 +120,8 @@ public class BagOperationsTest {
         
         b.putIn(makeConcept("c", 0.2f));
         assertEquals(2, b.size());
-        assertEquals(0.1f, b.getMinPriority(),0.001f);
-        assertEquals(0.2f, b.getMaxPriority(),0.001f);
+        assertEquals(0.1f, getMinPriority(b),0.001f);
+        assertEquals(0.2f, getMaxPriority(b),0.001f);
         
         //if (b instanceof GearBag()) return;
         
@@ -108,8 +130,8 @@ public class BagOperationsTest {
         
         
         assertEquals(2, b.size());
-        assertEquals(0.2f, b.getMinPriority(),0.001f);
-        assertEquals(0.4f, b.getMaxPriority(),0.001f);
+        assertEquals(0.2f, getMinPriority(b),0.001f);
+        assertEquals(0.4f, getMaxPriority(b),0.001f);
         
         
         final Item tb = b.take(new Term("b"));

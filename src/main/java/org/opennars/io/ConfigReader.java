@@ -1,19 +1,29 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.io;
 
+import com.google.common.io.Resources;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Parameters;
 import org.opennars.main.MiscFlags;
@@ -28,21 +38,51 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * Used to read and parse the XML configuration file
+ *
+ * @author Robert Wünsche
+ */
 public class ConfigReader {
 
     public static List<Plugin> loadParamsFromFileAndReturnPlugins(final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        
+        System.out.println("Got relative path for loading the config: " + filepath);
         List<Plugin> ret = new ArrayList<Plugin>();
-        final File file = new File(filepath);
+        File file = new File(filepath);
+
+        InputStream stream = null;
+        // if this failed, then load from resources
+        if(!file.exists()) {
+            file = null;
+            URL n = Resources.getResource("config/defaultConfig.xml");
+            //System.out.println(n.toURI().toString());
+            URLConnection connection = n.openConnection();
+            stream = connection.getInputStream();
+            System.out.println("Loading config " + "config/defaultConfig.xml" +" from resources");
+        } else {
+            System.out.println("Loading config " + file.getName() +" from file");
+        }
+        
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        final Document document = documentBuilder.parse(file);
+        final Document document = stream != null ? documentBuilder.parse(stream) : documentBuilder.parse(file);
         final NodeList config = document.getElementsByTagName("config").item(0).getChildNodes();
 
         for (int iterationConfigIdx = 0; iterationConfigIdx < config.getLength(); iterationConfigIdx++) {
@@ -152,7 +192,11 @@ public class ConfigReader {
                 types.add(float.class);
                 values.add(Float.parseFloat(valueString));
             }
-            else if (typeString.equals("java.lang.String.class")) {
+            else if (typeString.equals("boolean.class")) {
+                types.add(boolean.class);
+                values.add(Boolean.parseBoolean(valueString));
+            }
+            else if (typeString.equals("String.class")) {
                 types.add(java.lang.String.class);
                 values.add(valueString);
             }

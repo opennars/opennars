@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.io;
 
@@ -39,6 +48,8 @@ import static org.opennars.operator.Operation.make;
  * Utility methods for working and reacting to Narsese input.
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
+ *
+ * @author Patrick Hammer
  */
 public class Narsese implements Serializable {
     
@@ -74,8 +85,6 @@ public class Narsese implements Serializable {
      * called from ExperienceIO.loadLine
      *
      * @param buffer The line to be parsed
-     * @param memory Reference to the memory
-     * @param time The current time
      * @return An experienced task
      */
     public Task parseNarsese(final StringBuilder buffer) throws InvalidInputException {
@@ -113,12 +122,10 @@ public class Narsese implements Serializable {
      * locally.
      *
      * @param s the single-line addInput String
-     * @param memory Reference to the memory
-     * @param time The current time
      * @return An experienced task
      */    
     public Task parseTask(final String s) throws InvalidInputException {
-        final StringBuilder buffer = new StringBuilder(Texts.escape(s));
+        final StringBuilder buffer = new StringBuilder(s);
         
         final String budgetString = getBudgetString(buffer);
         final String truthString = getTruthString(buffer);
@@ -153,8 +160,8 @@ public class Narsese implements Serializable {
      *
      * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
-     * @throws org.opennars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a BudgetValue
+     *
+     * @throws InvalidInputException if the addInput cannot be parsed into a BudgetValue
      */
     private static String getBudgetString(final StringBuilder s) throws InvalidInputException {
         if (s.length() == 0 || s.charAt(0) != BUDGET_VALUE_MARK) {
@@ -177,8 +184,8 @@ public class Narsese implements Serializable {
      *
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuilder
-     * @throws org.opennars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a TruthValue
+     *
+     * @throws InvalidInputException if the addInput cannot be parsed into a TruthValue
      */
     private static String getTruthString(final StringBuilder s) throws InvalidInputException {
         final int last = s.length() - 1;
@@ -233,8 +240,7 @@ public class Narsese implements Serializable {
      * @param s addInput String
      * @param punctuation Task punctuation
      * @return the addInput BudgetValue
-     * @throws org.opennars.io.StringParser.InvalidInputException If the String cannot
-     * be parsed into a BudgetValue
+     * @throws InvalidInputException If the String cannot be parsed into a BudgetValue
      */
     private BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
         float priority, durability;
@@ -293,17 +299,17 @@ public class Narsese implements Serializable {
     
     /* ---------- react String into term ---------- */
     /**
-     * Top-level method that react a Term in general, which may recursively call
- itself.
+     * Top-level method that react a Term in general, which may recursively call itself.
      * <p>
- There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
- a built-in getOperator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
- SetInt; 4. <T1 Re T2> is a Statement (including higher-order Statement);
+     * There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
+     * a built-in getOperator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
+     * SetInt; 4. &lt;T1 Re T2&gt; is a Statement (including higher-order Statement);
      * 5. otherwise it is a simple term.
      *
-     * @param s0 the String to be parsed
-     * @param memory Reference to the memory
+     * @param s the String to be parsed
      * @return the Term generated from the String
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     public Term parseTerm(String s) throws InvalidInputException {
         s = s.trim();
@@ -343,7 +349,7 @@ public class Narsese implements Serializable {
                     }
             }
         }
-        else if (MiscFlags.FUNCTIONAL_OPERATIONAL_FORMAT) {
+        else {
             
             //parse functional operation:
             //  function()
@@ -392,14 +398,14 @@ public class Narsese implements Serializable {
 //				40000, TemporaryFrame.WARNING );
 //    }
     /**
-     * Parse a Term that has no internal structure.
+     * Parse a term that has no internal structure.
      * <p>
-     * The Term can be a constant or a variable.
+     * The term can be a constant or a variable.
      *
      * @param s0 the String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
      * @return the Term generated from the String
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Term parseAtomicTerm(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -429,12 +435,12 @@ public class Narsese implements Serializable {
     }
 
     /**
-     * Parse a String to create a Statement.
+     * Parse a string to create a statement.
      *
-     * @return the Statement generated from the String
+     * @return the statement generated from the string
      * @param s0 The addInput String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Statement parseStatement(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -457,8 +463,8 @@ public class Narsese implements Serializable {
      *
      * @return the Term generated from the String
      * @param s0 The String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Term parseCompoundTerm(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -503,8 +509,8 @@ public class Narsese implements Serializable {
      *
      * @return the arguments in an List
      * @param s0 The String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into an argument get
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private List<Term> parseArguments(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -610,9 +616,11 @@ public class Narsese implements Serializable {
         return i < 2 || !isRelation(s.substring(i - 2, i + 1));
     }
 
+    /**
+     * @param s string to get checked if it may be narsese
+     * @return returns if the string may be narsese
+     */
     public static boolean possiblyNarsese(final String s) {
         return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
-            
-    
 }
