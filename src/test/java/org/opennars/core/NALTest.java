@@ -61,7 +61,9 @@ public class NALTest  {
     static public final int similarsToSave = 5;
     protected static final Map<String, String> examples = new HashMap<>(); //path -> script data
     public static final Map<String, Boolean> tests = new HashMap<>();
-    public static final Map<String, Double> scores = new HashMap<>();
+
+    // we store a list of scores to keep track of each sample
+    public static final Map<String, List<Double>> scores = new HashMap<>();
     final String scriptPath;
 
     /** how many times should one test be run (to collect run scores) */
@@ -103,7 +105,7 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static double runTests(final Class c) {
+    public static void runTests(final Class c) {
 
         tests.clear();
         scores.clear();
@@ -129,10 +131,6 @@ public class NALTest  {
                 levelSuccess[level]++;
             }
         }
-
-        double totalScore = 0;
-        for (final Double d : scores.values())
-            totalScore += d;
         
         if (showReport) {
             int totalSucceeded = 0, total = 0;
@@ -145,10 +143,7 @@ public class NALTest  {
                 total += levelTotals[i];
             }
             System.out.println(totalSucceeded + " / " + total);
-
-            System.out.println("Score: " + totalScore);
         }
-        return totalScore;
     }
 
 
@@ -211,11 +206,26 @@ public class NALTest  {
             if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
                 score = lastSuccess;
-                scores.put(path, score);
+
+                if (scores.containsKey(path)) {
+                    scores.get(path).add(score);
+                }
+                else {
+                    List<Double> scoresList = new ArrayList<>();
+                    scoresList.add(score);
+                    scores.put(path, scoresList);
+                }
             }
         }
         else {
-            scores.put(path, Double.POSITIVE_INFINITY);
+            if (scores.containsKey(path)) {
+                scores.get(path).add(Double.POSITIVE_INFINITY);
+            }
+            else {
+                List<Double> scoresList = new ArrayList<>();
+                scoresList.add(Double.POSITIVE_INFINITY);
+                scores.put(path, scoresList);
+            }
         }
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
