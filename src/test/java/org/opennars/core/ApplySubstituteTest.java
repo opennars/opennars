@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 public class ApplySubstituteTest {
     
     final Nar n = new Nar();
-    final Narsese np = new Narsese(n);
+    final Narsese np = new Narsese(n.memory);
 
     public ApplySubstituteTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
     }

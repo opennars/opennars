@@ -249,7 +249,7 @@ public class VisionChannel extends SensoryChannel  {
                     try {
                         //timing to make sure procedure learning observes the operation after the last prototype
                         this.nar.cycles(this.nar.narParameters.DURATION);
-                        Task taskX = new Narsese(this.nar).parseTask("(^move,{SELF},"+minusX+Texts.n1(xParam)+","+minusY+Texts.n1(yParam)+"). :|:");
+                        Task taskX = new Narsese(this.nar.memory).parseTask("(^move,{SELF},"+minusX+Texts.n1(xParam)+","+minusY+Texts.n1(yParam)+"). :|:");
                         taskX.setElemOfSequenceBuffer(true);
                         this.results.add(taskX);               
                         this.step_finished(time);

@@ -73,10 +73,6 @@ public class Narsese implements Serializable {
     public Narsese(final Memory memory) {
         this.memory = memory;
     }
-
-    public Narsese(final Nar n) {
-        this(n.memory);
-    }
     
 
     /**

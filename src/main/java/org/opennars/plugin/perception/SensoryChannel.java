@@ -86,7 +86,7 @@ public abstract class SensoryChannel implements Plugin, Serializable {
     }
     public void addInput(final String text, final Timable time) {
         try {
-            final Task t = new Narsese(nar).parseTask(text);
+            final Task t = new Narsese(nar.memory).parseTask(text);
             this.addInput(t, time);
         } catch (final Narsese.InvalidInputException ex) {
             Logger.getLogger(SensoryChannel.class.getName()).log(Level.SEVERE, null, ex);

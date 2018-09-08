@@ -46,7 +46,7 @@ public class TuneTuffy {
         public SolutionMonitor(final Nar n, final String term) throws Narsese.InvalidInputException {
             super(n, true, OUT.class, Answer.class);
             
-            final Term t = new Narsese(n).parseTerm(term);
+            final Term t = new Narsese(n.memory).parseTerm(term);
             this.term = t;
             
             n.addInput(t.toString() + "?");
