@@ -63,45 +63,6 @@ public class Narsese implements Serializable, Parser {
         this(n.memory);
     }
     
-
-    /**
-     * Parse a line of addInput experience
-     * <p>
-     * called from ExperienceIO.loadLine
-     *
-     * @param buffer The line to be parsed
-     * @return An experienced task
-     */
-    public Task parseNarsese(final StringBuilder buffer) throws Parser.InvalidInputException {
-        
-        final int i = buffer.indexOf(valueOf(PREFIX_MARK));
-        if (i > 0) {
-            final String prefix = buffer.substring(0, i).trim();
-            if (prefix.equals(INPUT_LINE_PREFIX)) {
-                buffer.delete(0, i + 1);                
-            }
-            else if (prefix.equals(OUTPUT_LINE_PREFIX)) {
-                //ignore outputs
-                return null;                
-            }            
-        }
-        
-        
-        
-        char c = buffer.charAt(buffer.length() - 1);
-        if (c == STAMP_CLOSER) {
-            //ignore stamp
-            final int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
-            buffer.delete(j - 1, buffer.length());
-        }
-        c = buffer.charAt(buffer.length() - 1);
-        if (c == ']') {
-            final int j = buffer.lastIndexOf(valueOf('['));
-            buffer.delete(j-1, buffer.length());
-        }
-        return parseTask(buffer.toString().trim());
-    }
-    
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
      * locally.

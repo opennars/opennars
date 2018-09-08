@@ -213,15 +213,6 @@ public class TermTest {
 
     }    
 
-    @Test(expected = Narsese.InvalidInputException.class)
-    public void testInvalidInputThrowsException() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        final String t = "<$1 --> (~,{place4},$1)>";
-        final Nar n = new Nar();
-        final Narsese p = new Narsese(n);
-
-        p.parseNarsese(new StringBuilder(t + "."));
-    }
-
     @Test
     public void invalidTermIndep() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
