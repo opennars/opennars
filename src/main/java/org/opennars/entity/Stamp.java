@@ -47,63 +47,6 @@ import org.opennars.main.Parameters;
  * @author Patrick Hammer
  */
 public class Stamp implements Cloneable, Serializable {
-    
-    /**
-     * Element of the evidential base of stamp
-     */
-    public static class BaseEntry implements Comparable, Serializable { 
-        public final long narId; //the NAR in which the input evidence was added
-        public long getNarId() {
-            return narId;
-        }
-        public final long inputId;
-        public long getInputId() {
-            return inputId;
-        }
-        
-        /**
-         * The evidential base entry
-         * 
-         * @param narId The id of the NAR the input evidence was obtained from
-         * @param inputId The nar-specific input id of the input
-         */
-        public BaseEntry(long narId, long inputId) {
-            this.narId = narId; 
-            this.inputId = inputId; 
-        }
-
-        @Override
-        public String toString() {
-            return "(" + narId + "," + inputId + ")";
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other == this) {
-                return true;
-            }
-            if (!(other instanceof BaseEntry)){
-                return false;
-            }
-            BaseEntry other_ = (BaseEntry) other;
-            return other_.inputId == this.inputId && other_.narId == this.narId;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Long.hashCode(narId);
-            result = prime * result + Long.hashCode(inputId);
-            return result;
-        }
-        
-        @Override
-        public int compareTo(Object o) {
-            return Comparator.comparing(BaseEntry::getNarId).thenComparing(BaseEntry::getInputId).compare(this, (BaseEntry) o);
-        }
-    }
-    
     /** serial numbers. not to be modified after Stamp constructor has initialized it*/
     public BaseEntry[] evidentialBase;
 
@@ -508,5 +451,63 @@ public class Stamp implements Cloneable, Serializable {
      */
     public long getCreationTime() {
         return creationTime;
+    }
+
+
+
+    /**
+     * Element of the evidential base of stamp
+     */
+    public static class BaseEntry implements Comparable, Serializable {
+        public final long narId; //the NAR in which the input evidence was added
+        public long getNarId() {
+            return narId;
+        }
+        public final long inputId;
+        public long getInputId() {
+            return inputId;
+        }
+
+        /**
+         * The evidential base entry
+         *
+         * @param narId The id of the NAR the input evidence was obtained from
+         * @param inputId The nar-specific input id of the input
+         */
+        public BaseEntry(long narId, long inputId) {
+            this.narId = narId;
+            this.inputId = inputId;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + narId + "," + inputId + ")";
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof BaseEntry)){
+                return false;
+            }
+            BaseEntry other_ = (BaseEntry) other;
+            return other_.inputId == this.inputId && other_.narId == this.narId;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Long.hashCode(narId);
+            result = prime * result + Long.hashCode(inputId);
+            return result;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return Comparator.comparing(BaseEntry::getNarId).thenComparing(BaseEntry::getInputId).compare(this, (BaseEntry) o);
+        }
     }
 }
