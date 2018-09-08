@@ -51,24 +51,9 @@ import static org.opennars.operator.Operation.make;
  *
  * @author Patrick Hammer
  */
-public class Narsese implements Serializable {
+public class Narsese implements Serializable, Parser {
     
     public final Memory memory;
-
-                
-    /**
-     * All kinds of invalid addInput lines
-     */
-    public static class InvalidInputException extends Exception {
-
-        /**
-         * An invalid addInput line.
-         * @param s type of error
-         */
-        InvalidInputException(final String s) {
-            super(s);
-        }
-    }    
     
     public Narsese(final Memory memory) {
         this.memory = memory;
@@ -77,7 +62,6 @@ public class Narsese implements Serializable {
     public Narsese(final Nar n) {
         this(n.memory);
     }
-
     
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
@@ -85,8 +69,9 @@ public class Narsese implements Serializable {
      *
      * @param s the single-line addInput String
      * @return An experienced task
-     */    
-    public Task parseTask(final String s) throws InvalidInputException {
+     */
+    @Override
+    public Task parseTask(final String s) throws Parser.InvalidInputException {
         final StringBuilder buffer = new StringBuilder(s);
         
         final String budgetString = getBudgetString(buffer);
@@ -101,7 +86,7 @@ public class Narsese implements Serializable {
 
         final TruthValue truth = parseTruth(truthString, punc);
         final Term content = parseTerm(str.substring(0, last));
-        if (content == null) throw new InvalidInputException("Content term missing");
+        if (content == null) throw new Parser.InvalidInputException("Content term missing");
             
         final Sentence sentence = new Sentence(
             content,
@@ -123,19 +108,19 @@ public class Narsese implements Serializable {
      * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
      *
-     * @throws InvalidInputException if the addInput cannot be parsed into a BudgetValue
+     * @throws Parser.InvalidInputException if the addInput cannot be parsed into a BudgetValue
      */
-    private static String getBudgetString(final StringBuilder s) throws InvalidInputException {
+    private static String getBudgetString(final StringBuilder s) throws Parser.InvalidInputException {
         if (s.length() == 0 || s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
         final int i = s.indexOf(valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
         if (i < 0) {
-            throw new InvalidInputException("missing budget closer");
+            throw new Parser.InvalidInputException("missing budget closer");
         }
         final String budgetString = s.substring(1, i).trim();
         if (budgetString.length() == 0) {
-            throw new InvalidInputException("empty budget");
+            throw new Parser.InvalidInputException("empty budget");
         }
         s.delete(0, i + 1);
         return budgetString;
@@ -147,20 +132,20 @@ public class Narsese implements Serializable {
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuilder
      *
-     * @throws InvalidInputException if the addInput cannot be parsed into a TruthValue
+     * @throws Parser.InvalidInputException if the addInput cannot be parsed into a TruthValue
      */
-    private static String getTruthString(final StringBuilder s) throws InvalidInputException {
+    private static String getTruthString(final StringBuilder s) throws Parser.InvalidInputException {
         final int last = s.length() - 1;
         if (s.length() == 0 || s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
         final int first = s.indexOf(valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
         if (first == last) { // no matching closer
-            throw new InvalidInputException("missing truth mark");
+            throw new Parser.InvalidInputException("missing truth mark");
         }
         final String truthString = s.substring(first + 1, last).trim();
         if (truthString.length() == 0) {                // empty usage
-            throw new InvalidInputException("empty truth");
+            throw new Parser.InvalidInputException("empty truth");
         }
         s.delete(first, last + 1);                 // remaining addInput to be processed outside
         s.trimToSize();
@@ -202,9 +187,9 @@ public class Narsese implements Serializable {
      * @param s addInput String
      * @param punctuation Task punctuation
      * @return the addInput BudgetValue
-     * @throws InvalidInputException If the String cannot be parsed into a BudgetValue
+     * @throws Parser.InvalidInputException If the String cannot be parsed into a BudgetValue
      */
-    private BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
+    private BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws Parser.InvalidInputException {
         float priority, durability;
         switch (punctuation) {
             case JUDGMENT_MARK:
@@ -224,7 +209,7 @@ public class Narsese implements Serializable {
                 durability = memory.narParameters.DEFAULT_QUEST_DURABILITY;
                 break;                
             default:
-                throw new InvalidInputException("unknown punctuation: '" + punctuation + "'");
+                throw new Parser.InvalidInputException("unknown punctuation: '" + punctuation + "'");
         }
         if (s != null) { // overrite default
             final int i = s.indexOf(VALUE_SEPARATOR);
@@ -271,9 +256,9 @@ public class Narsese implements Serializable {
      * @param s the String to be parsed
      * @return the Term generated from the String
      *
-     * @throws InvalidInputException if the String couldn't get parsed to a term
+     * @throws Parser.InvalidInputException if the String couldn't get parsed to a term
      */
-    public Term parseTerm(String s) throws InvalidInputException {
+    public Term parseTerm(String s) throws Parser.InvalidInputException {
         s = s.trim();
         
         if (s.length() == 0) return null;
@@ -289,25 +274,25 @@ public class Narsese implements Serializable {
                     if (last == COMPOUND_TERM_CLOSER.ch) {
                        return parseCompoundTerm(s.substring(1, index));
                     } else {
-                        throw new InvalidInputException("missing CompoundTerm closer");
+                        throw new Parser.InvalidInputException("missing CompoundTerm closer");
                     }
                 case SET_EXT_OPENER:
                     if (last == SET_EXT_CLOSER.ch) {
                         return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
-                        throw new InvalidInputException("missing ExtensionSet closer");
+                        throw new Parser.InvalidInputException("missing ExtensionSet closer");
                     }                    
                 case SET_INT_OPENER:
                     if (last == SET_INT_CLOSER.ch) {
                         return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
-                        throw new InvalidInputException("missing IntensionSet closer");
+                        throw new Parser.InvalidInputException("missing IntensionSet closer");
                     }   
                 case STATEMENT_OPENER:
                     if (last == STATEMENT_CLOSER.ch) {
                         return parseStatement(s.substring(1, index));
                     } else {
-                        throw new InvalidInputException("missing Statement closer");
+                        throw new Parser.InvalidInputException("missing Statement closer");
                     }
             }
         }
@@ -329,7 +314,7 @@ public class Narsese implements Serializable {
                 
                 if (operator == null) {
                     //???
-                    throw new InvalidInputException("Unknown operator: " + operatorString);
+                    throw new Parser.InvalidInputException("Unknown operator: " + operatorString);
                 }
                 
                 final String argString = s.substring(pOpen+1, pClose+1);
@@ -367,12 +352,12 @@ public class Narsese implements Serializable {
      * @param s0 the String to be parsed
      * @return the Term generated from the String
      *
-     * @throws InvalidInputException if the String couldn't get parsed to a term
+     * @throws Parser.InvalidInputException if the String couldn't get parsed to a term
      */
-    private Term parseAtomicTerm(final String s0) throws InvalidInputException {
+    private Term parseAtomicTerm(final String s0) throws Parser.InvalidInputException {
         final String s = s0.trim();
         if (s.length() == 0) {
-            throw new InvalidInputException("missing term");
+            throw new Parser.InvalidInputException("missing term");
         }
         
         final Operator op = memory.getOperator(s0);
@@ -381,7 +366,7 @@ public class Narsese implements Serializable {
         }
         
         if (s.contains(" ")) { // invalid characters in a name
-            throw new InvalidInputException("invalid term: " + s);
+            throw new Parser.InvalidInputException("invalid term: " + s);
         }
         
         final char c = s.charAt(0);
@@ -402,20 +387,20 @@ public class Narsese implements Serializable {
      * @return the statement generated from the string
      * @param s0 The addInput String to be parsed
      *
-     * @throws InvalidInputException if the String couldn't get parsed to a term
+     * @throws Parser.InvalidInputException if the String couldn't get parsed to a term
      */
-    private Statement parseStatement(final String s0) throws InvalidInputException {
+    private Statement parseStatement(final String s0) throws Parser.InvalidInputException {
         final String s = s0.trim();
         final int i = topRelation(s);
         if (i < 0) {
-            throw new InvalidInputException("invalid statement: topRelation(s) < 0");
+            throw new Parser.InvalidInputException("invalid statement: topRelation(s) < 0");
         }
         final String relation = s.substring(i, i + 3);
         final Term subject = parseTerm(s.substring(0, i));
         final Term predicate = parseTerm(s.substring(i + 3));
         final Statement t = make(getRelation(relation), subject, predicate, false, 0);
         if (t == null) {
-            throw new InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
+            throw new Parser.InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
         }
         return t;
     }
@@ -426,16 +411,16 @@ public class Narsese implements Serializable {
      * @return the Term generated from the String
      * @param s0 The String to be parsed
      *
-     * @throws InvalidInputException if the String couldn't get parsed to a term
+     * @throws Parser.InvalidInputException if the String couldn't get parsed to a term
      */
-    private Term parseCompoundTerm(final String s0) throws InvalidInputException {
+    private Term parseCompoundTerm(final String s0) throws Parser.InvalidInputException {
         final String s = s0.trim();
         if (s.isEmpty()) {
-            throw new InvalidInputException("Empty compound term: " + s);
+            throw new Parser.InvalidInputException("Empty compound term: " + s);
         }
         final int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         if (firstSeparator == -1) {
-            throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
+            throw new Parser.InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
         }
                 
         final String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
@@ -443,7 +428,7 @@ public class Narsese implements Serializable {
         final Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oNative == null)) {
-            throw new InvalidInputException("Unknown operator: " + op);
+            throw new Parser.InvalidInputException("Unknown operator: " + op);
         }
 
         final List<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
@@ -460,7 +445,7 @@ public class Narsese implements Serializable {
             t = make(oRegistered, argA, true);
         }
         else {
-            throw new InvalidInputException("Invalid compound term");
+            throw new Parser.InvalidInputException("Invalid compound term");
         }
         
         return t;
@@ -472,9 +457,9 @@ public class Narsese implements Serializable {
      * @return the arguments in an List
      * @param s0 The String to be parsed
      *
-     * @throws InvalidInputException if the String couldn't get parsed to a term
+     * @throws Parser.InvalidInputException if the String couldn't get parsed to a term
      */
-    private List<Term> parseArguments(final String s0) throws InvalidInputException {
+    private List<Term> parseArguments(final String s0) throws Parser.InvalidInputException {
         final String s = s0.trim();
         final List<Term> list = new ArrayList<>();
         int start = 0;
@@ -489,7 +474,7 @@ public class Narsese implements Serializable {
             start = end + 1;
         }
         if (list.isEmpty()) {
-            throw new InvalidInputException("null argument");
+            throw new Parser.InvalidInputException("null argument");
         }
         return list;
     }
