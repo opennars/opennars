@@ -154,13 +154,16 @@ public class NALTest  {
 
     public void testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         for (int iSample = 0; iSample < numberOfSamples; iSample++) {
+            // we do it here because drawing multiple samples with the same seed doesn't make any sense
+            // one is the offset because all tests were done this way
+            Memory.randomNumber.setSeed(1 + iSample);
+            Memory.resetStatic();
+
             sample(path);
         }
     }
 
     public double sample(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        Memory.resetStatic();
-
         final String example = getExample(path);
 
         if (showOutput) {
@@ -254,7 +257,6 @@ public class NALTest  {
     }
 
     static {
-        Memory.randomNumber.setSeed(1);
         MiscFlags.DEBUG = false;
         MiscFlags.TEST = true;
     }
