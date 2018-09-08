@@ -63,7 +63,10 @@ public class NALTest  {
     public static final Map<String, Boolean> tests = new HashMap<>();
     public static final Map<String, Double> scores = new HashMap<>();
     final String scriptPath;
-    
+
+    /** how many times should one test be run (to collect run scores) */
+    public int numberOfSamples = 1;
+
     public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
@@ -154,7 +157,13 @@ public class NALTest  {
         
     }
 
-    public double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    public void testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        for (int iSample = 0; iSample < numberOfSamples; iSample++) {
+            sample(path);
+        }
+    }
+
+    public double sample(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
 
         final String example = getExample(path);
