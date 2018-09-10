@@ -42,8 +42,9 @@ import org.opennars.util.FastTermTermMap;
 import org.xml.sax.SAXException;
 
 /**
+ * Tests the correct functionality of the unifier
  *
- * @author patham9
+ * @author Patrick Hammer
  */
 public class UnificationTest {
     @Test

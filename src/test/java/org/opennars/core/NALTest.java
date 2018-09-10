@@ -46,7 +46,10 @@ import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-
+/**
+ * Test for the integrity of the different NAL levels.
+ * Tests example, multistep etc.
+ */
 @RunWith(Parameterized.class)
 public class NALTest  {
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
@@ -58,9 +61,17 @@ public class NALTest  {
     static public final int similarsToSave = 5;
     protected static final Map<String, String> examples = new HashMap<>(); //path -> script data
     public static final Map<String, Boolean> tests = new HashMap<>();
-    public static final Map<String, Double> scores = new HashMap<>();
+
+    // we store a list of scores to keep track of each sample
+    public static final Map<String, List<Double>> scores = new HashMap<>();
     final String scriptPath;
-    
+
+    /** how many times should one test be run (to collect run scores) */
+    public static int numberOfSamples = 1;
+
+    // exposed to be able to change it from the outside
+    public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
+
     public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
@@ -83,7 +94,7 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
-        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
+        // return all test-paths of all files in the directories
 
         final Map<String, Object> et = ExampleFileInput.getUnitTests(directories);
         final Collection t = et.values();
@@ -97,7 +108,7 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static double runTests(final Class c) {
+    public static void runTests(final Class c) {
 
         tests.clear();
         scores.clear();
@@ -110,7 +121,8 @@ public class NALTest  {
             
             tests.put(test, false);
         }
-        
+
+        /* commented because name.split() is broken for a special case in NalTestMetrics
         final int[] levelSuccess = new int[10];
         final int[] levelTotals = new int[10];
         
@@ -123,10 +135,6 @@ public class NALTest  {
                 levelSuccess[level]++;
             }
         }
-
-        double totalScore = 0;
-        for (final Double d : scores.values())
-            totalScore += d;
         
         if (showReport) {
             int totalSucceeded = 0, total = 0;
@@ -139,10 +147,8 @@ public class NALTest  {
                 total += levelTotals[i];
             }
             System.out.println(totalSucceeded + " / " + total);
-
-            System.out.println("Score: " + totalScore);
         }
-        return totalScore;
+         */
     }
 
 
@@ -151,9 +157,18 @@ public class NALTest  {
         
     }
 
-    public double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        Memory.resetStatic();
+    public void testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        for (int iSample = 0; iSample < numberOfSamples; iSample++) {
+            // we do it here because drawing multiple samples with the same seed doesn't make any sense
+            // one is the offset because all tests were done this way
+            Memory.randomNumber.setSeed(1 + iSample);
+            Memory.resetStatic();
 
+            sample(path);
+        }
+    }
+
+    public double sample(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final String example = getExample(path);
 
         if (showOutput) {
@@ -199,11 +214,26 @@ public class NALTest  {
             if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
                 score = lastSuccess;
-                scores.put(path, score);
+
+                if (scores.containsKey(path)) {
+                    scores.get(path).add(score);
+                }
+                else {
+                    List<Double> scoresList = new ArrayList<>();
+                    scoresList.add(score);
+                    scores.put(path, scoresList);
+                }
             }
         }
         else {
-            scores.put(path, Double.POSITIVE_INFINITY);
+            if (scores.containsKey(path)) {
+                scores.get(path).add(Double.POSITIVE_INFINITY);
+            }
+            else {
+                List<Double> scoresList = new ArrayList<>();
+                scoresList.add(Double.POSITIVE_INFINITY);
+                scores.put(path, scoresList);
+            }
         }
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
@@ -232,7 +262,6 @@ public class NALTest  {
     }
 
     static {
-        Memory.randomNumber.setSeed(1);
         MiscFlags.DEBUG = false;
         MiscFlags.TEST = true;
     }

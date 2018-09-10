@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  *
- * @author me
+ *
  */
 public class VariableTest {
  
