@@ -265,6 +265,10 @@ public class LocalRules {
         //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
         //so the previous handling to let whether the problem has query vars decide was wrong.
         if (!rateByConfidence) {
+            /*
+             * just some function that decreases quality of solution if it is complex, and increases if it has a high truth expecation
+             */
+            
             return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT))));
         } else {
             return truth.getConfidence();
