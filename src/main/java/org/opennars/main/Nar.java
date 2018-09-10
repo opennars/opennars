@@ -29,7 +29,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.ConfigReader;
 import org.opennars.io.Narsese;
-import org.opennars.io.Narsese.InvalidInputException;
+import org.opennars.io.Parser;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.AnswerHandler;
 import org.opennars.io.events.EventEmitter;
@@ -99,7 +99,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
-        } catch (final InvalidInputException ex) {
+        } catch (final Parser.InvalidInputException ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
         }
@@ -309,7 +309,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     
     public void addInput(String text) {
         text = text.trim();
-        final Narsese narsese = new Narsese(this);
+        final Parser narsese = new Narsese(this);
         if(addMultiLineInput(text)) {
             return;
         }
@@ -330,7 +330,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         Task task = null;
         try {
             task = narsese.parseTask(text);
-        } catch (final InvalidInputException e) {
+        } catch (final Parser.InvalidInputException e) {
             if(MiscFlags.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
             }
@@ -414,11 +414,11 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
 
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(final String concept) throws InvalidInputException {
+    public Concept concept(final String concept) throws Parser.InvalidInputException {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
 
-    public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar ask(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
@@ -439,7 +439,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     }
 
-    public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar askNow(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,

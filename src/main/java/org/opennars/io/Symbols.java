@@ -67,6 +67,49 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
+
+
+
+    /* experience line prefix */
+    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
+    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
+    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
+
+    public static final char PREFIX_MARK = ':';
+    public static final char COMMENT_MARK = '/';
+    //public static final char URL_INCLUDE_MARK = '`';
+    public static final char ECHO_MARK = '\'';
+    //public static final char NATURAL_LANGUAGE_MARK = '\"';
+
+    /* control commands */
+    public static final String RESET_COMMAND = "*reset";
+    public static final String REBOOT_COMMAND = "*reboot";
+    public static final String STOP_COMMAND = "*stop";
+    public static final String START_COMMAND = "*start";
+    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
+    public static final String SET_DECISION_LEVEL_COMMAND = "*decisionthreshold";
+
+    /* Stamp, display only */
+    public static final char STAMP_OPENER = '{';
+    public static final char STAMP_CLOSER = '}';
+    public static final char STAMP_SEPARATOR = ';';
+    public static final char STAMP_STARTER = ':';
+
+    /* TermLink type, display only */
+    public static final String TO_COMPONENT_1 = "@(";
+    public static final String TO_COMPONENT_2 = ")_";
+    public static final String TO_COMPOUND_1 = "_@(";
+    public static final String TO_COMPOUND_2 = ")";
+
+    public static String SELF = "SELF";
+
+
+
+
+    protected static final Map<String,NativeOperator> stringToOperator
+        = new HashMap(NativeOperator.values().length * 2);
+    protected static final Map<Character,NativeOperator> charToOperator
+        = new HashMap(NativeOperator.values().length * 2);
     
     public enum NativeOperator {
         
@@ -161,10 +204,6 @@ public class Symbols {
         public String toString() { return symbol; }
     }    
 
-    protected static final Map<String,NativeOperator> stringToOperator 
-            = new HashMap(NativeOperator.values().length * 2);
-    protected static final Map<Character,NativeOperator> charToOperator 
-            = new HashMap(NativeOperator.values().length * 2);
             
     static {
         //Setup NativeOperator String index hashtable 
@@ -220,37 +259,4 @@ public class Symbols {
     public static boolean isRelation(final String s) {
         return getRelation(s)!=null;
     }
-    
-    /* experience line prefix */
-    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
-    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
-    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
-
-    public static final char PREFIX_MARK = ':';
-    public static final char COMMENT_MARK = '/';
-    //public static final char URL_INCLUDE_MARK = '`';
-    public static final char ECHO_MARK = '\'';
-    //public static final char NATURAL_LANGUAGE_MARK = '\"';
-
-    /* control commands */
-    public static final String RESET_COMMAND = "*reset";
-    public static final String REBOOT_COMMAND = "*reboot";
-    public static final String STOP_COMMAND = "*stop";
-    public static final String START_COMMAND = "*start";
-    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
-    public static final String SET_DECISION_LEVEL_COMMAND = "*decisionthreshold";
-    
-    /* Stamp, display only */
-    public static final char STAMP_OPENER = '{';
-    public static final char STAMP_CLOSER = '}';
-    public static final char STAMP_SEPARATOR = ';';
-    public static final char STAMP_STARTER = ':';
-    
-    /* TermLink type, display only */
-    public static final String TO_COMPONENT_1 = "@(";
-    public static final String TO_COMPONENT_2 = ")_";
-    public static final String TO_COMPOUND_1 = "_@(";
-    public static final String TO_COMPOUND_2 = ")";
-
-    public static String SELF = "SELF";
 }
