@@ -47,51 +47,75 @@ import java.util.Arrays;
  * called from Concept
  */
 public class InternalExperience implements Plugin, EventObserver, Serializable {
-    
-        
+    private Memory memory;
+
+    public static boolean enabled=false;
+
+    private Nar nar;
+
+
     public volatile float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
+    public volatile float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
+
+    //internal experience has less durability?
+    public volatile float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+
+    //internal experience has less durability?
+    public volatile float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+
+    //internal experience has less priority?
+    public volatile float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+
+
+    /** less probable form */
+    public volatile float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+
+    /** dont use internal experience for want and believe if this setting is true */
+    public volatile boolean ALLOW_WANT_BELIEF=true;
+
+    //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public volatile boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false;
+
+
+    public volatile boolean FULL_REFLECTION = false;
+
+
     public void setMINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC(double val) {
         this.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC = (float) val;
     }
     public double getMINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC() {
         return MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC;
     }
-    public volatile float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
+
     public void setMINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE(double val) {
         this.MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE = (float) val;
     }
     public double getMINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE() {
         return MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE;
     }
-    
-    //internal experience has less durability?
-    public volatile float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+
+
     public void setINTERNAL_EXPERIENCE_PROBABILITY(double val) {
         this.INTERNAL_EXPERIENCE_PROBABILITY = (float) val;
     }
     public double getINTERNAL_EXPERIENCE_PROBABILITY() {
         return INTERNAL_EXPERIENCE_PROBABILITY;
     }
-    
-    //less probable form
-    public volatile float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+
     public void setINTERNAL_EXPERIENCE_RARE_PROBABILITY(double val) {
         this.INTERNAL_EXPERIENCE_RARE_PROBABILITY = (float) val;
     }
     public double getINTERNAL_EXPERIENCE_RARE_PROBABILITY() {
         return INTERNAL_EXPERIENCE_RARE_PROBABILITY;
     }
-    
-    //internal experience has less durability?
-    public volatile float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+
     public void setINTERNAL_EXPERIENCE_DURABILITY_MUL(double val) {
         this.INTERNAL_EXPERIENCE_DURABILITY_MUL = (float) val;
     }
     public double getINTERNAL_EXPERIENCE_DURABILITY_MUL() {
         return INTERNAL_EXPERIENCE_DURABILITY_MUL;
     }
-    //internal experience has less priority?
-    public volatile float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+
     public void setINTERNAL_EXPERIENCE_PRIORITY_MUL(double val) {
         this.INTERNAL_EXPERIENCE_PRIORITY_MUL = (float) val;
     }
@@ -99,24 +123,22 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         return INTERNAL_EXPERIENCE_PRIORITY_MUL;
     }
     
-    //dont use internal experience for want and believe if this setting is true
-    public volatile boolean ALLOW_WANT_BELIEF=true;
+
     public boolean isALLOW_WANT_BELIEF() {
         return ALLOW_WANT_BELIEF;
     }
     public void setALLOW_WANT_BELIEF(final boolean val) {
         ALLOW_WANT_BELIEF=val;
     }
-    
-    public volatile boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+
     public boolean isOLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY() {
         return OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
     }
     public void setOLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY(final boolean val) {
         OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=val;
     }
-    
-    public volatile boolean FULL_REFLECTION = false;
+
+
     public boolean isFULL_REFLECTION() {
         return FULL_REFLECTION;
     }
@@ -143,13 +165,6 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         this.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY = OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
         this.FULL_REFLECTION = FULL_REFLECTION;
     }
-    
-    private Memory memory;
-    
-    public static boolean enabled=false;
-
-    private Nar nar;
-    
     @Override public boolean setEnabled(final Nar n, final boolean enable) {
         memory = n.memory;
         this.nar = n;

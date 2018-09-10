@@ -29,7 +29,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.ConfigReader;
 import org.opennars.io.Narsese;
-import org.opennars.io.Narsese.InvalidInputException;
+import org.opennars.io.Parser;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.AnswerHandler;
 import org.opennars.io.events.EventEmitter;
@@ -330,7 +330,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         Task task = null;
         try {
             task = narsese.parseTask(text);
-        } catch (final InvalidInputException e) {
+        } catch (final Parser.InvalidInputException e) {
             if(MiscFlags.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
             }
@@ -418,7 +418,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return memory.concept(new Narsese(this.memory).parseTerm(concept));
     }
 
-    public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar ask(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this.memory).parseTerm(termString),
             Symbols.QUESTION_MARK,
@@ -439,7 +439,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     }
 
-    public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar askNow(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this.memory).parseTerm(termString),
             Symbols.QUESTION_MARK,

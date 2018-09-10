@@ -60,7 +60,11 @@ public class Anticipate extends Operator implements EventObserver {
     public float ANTICIPATION_DURABILITY_MUL=0.1f; //0.1
     //internal experience has less priority?
     public float ANTICIPATION_PRIORITY_MUL=0.1f; //0.1
-    
+
+
+    private transient DerivationContext nal; //don't serialize, it will be re-set after deserialization
+
+
     public Anticipate() {
         super("^anticipate");        
     }
@@ -166,7 +170,6 @@ public class Anticipate extends Operator implements EventObserver {
         newTasks.clear();        
     }
     
-    private transient DerivationContext nal; //don't serialize, it will be re-set after deserialization
     @Override
     public void event(final Class event, final Object[] args) {
         if (event == Events.InduceSucceedingEvent.class || event == Events.TaskDerive.class) {            
