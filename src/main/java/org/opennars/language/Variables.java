@@ -221,7 +221,7 @@ public class Variables {
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
                 //ok attempt unification
-                if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
+                if(list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
                 final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
