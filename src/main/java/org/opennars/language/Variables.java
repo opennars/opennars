@@ -142,7 +142,7 @@ public class Variables {
             final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
                 final Variable CommonVar = makeCommonVariable(term1, term2);
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
+                if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
                 return true;
@@ -158,7 +158,7 @@ public class Variables {
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
 
-            if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+            if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
 
             if (term1VarUnifyAllowed) {
 
