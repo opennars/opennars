@@ -107,21 +107,11 @@ public class Variables {
                             map[1] = new HashMap<>();
                         }
 
-                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-
-                        mapk[0] = new HashMap<>();
-                        mapk[1] = new HashMap<>();
-
-                        appendToMap(map[0], mapk[0]);
-                        appendToMap(map[1], mapk[1]);
+                        final Map<Term, Term>[] mapk = copyMapFrom(map);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
-                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<>();
-                            mapNew[1] = new HashMap<>();
-                            appendToMap(map[0], mapNew[0]);
-                            appendToMap(map[1], mapNew[1]);
+                            final Map<Term, Term>[] mapNew = copyMapFrom(map);
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
                                 appendToMap(mapNew[0], mapk[0]);
@@ -251,12 +241,7 @@ public class Variables {
                             map[1] = new HashMap<>();
                         }
 
-                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<>();
-                        mapNew[1] = new HashMap<>();
-
-                        appendToMap(map[0], mapNew[0]);
-                        appendToMap(map[1], mapNew[1]);
+                        final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
@@ -282,6 +267,22 @@ public class Variables {
             return true;
 
         }
+    }
+
+    /**
+     * copies two maps from source into two new maps
+     * @param source source maps (two)
+     * @return copied maps
+     */
+    private static Map<Term, Term>[] copyMapFrom(Map<Term, Term>[] source) {
+        final Map<Term, Term>[] destination = (Map<Term, Term>[]) new HashMap<?,?>[2];
+
+        destination[0] = new HashMap<>();
+        destination[1] = new HashMap<>();
+
+        appendToMap(source[0], destination[0]);
+        appendToMap(source[1], destination[1]);
+        return destination;
     }
 
     private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
