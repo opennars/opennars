@@ -99,15 +99,19 @@ public class Variables {
                 if(c1.size() < c2.size()) {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
-                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<>();
-                        mapk[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
+
+                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
+
+                        mapk[0] = new HashMap<>();
+                        mapk[1] = new HashMap<>();
+
                         appendToMap(map[0], mapk[0]);
                         appendToMap(map[1], mapk[1]);
                         boolean succeeded = true;
@@ -239,15 +243,18 @@ public class Variables {
                         }
                         final Term ti = list[i].clone();
                         //clone map also:
-                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<>();
-                        mapNew[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
+
+                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                        mapNew[0] = new HashMap<>();
+                        mapNew[1] = new HashMap<>();
+
                         appendToMap(map[0], mapNew[0]);
                         appendToMap(map[1], mapNew[1]);
                         //attempt unification:
