@@ -215,6 +215,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public Nar(long narId, String relativeConfigFilePath, final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException,
         NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
+        ParametersOverride.override(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
             new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
             new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
@@ -227,7 +228,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             this.addPlugin(p);
         }
 
-        ParametersOverride.override(narParameters, parameterOverrides);
     }
     
     /** constructs the NAR and loads a config from the filepath
@@ -264,8 +264,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * @param parameterOverrides (overwritten) parameters of a Reasoner
      */
     public Nar(final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(DEFAULTCONFIG_FILEPATH);
-        ParametersOverride.override(narParameters, parameterOverrides);
+        this(DEFAULTCONFIG_FILEPATH, parameterOverrides);
     }
 
     /**
