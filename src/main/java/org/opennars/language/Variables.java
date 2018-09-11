@@ -201,11 +201,11 @@ public class Variables {
             final boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
             final boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
 
-            final boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
+            final boolean areBothConjunctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
             final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if((areBothConjuctions && !isSameOrderAndSameSpatial) ||
+            if((areBothConjunctions && !isSameOrderAndSameSpatial) ||
                 ((areBothEquivalence || areBothImplication) && !isSameOrder)
             ) {
                 return false;
