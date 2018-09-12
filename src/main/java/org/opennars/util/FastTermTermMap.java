@@ -2,7 +2,9 @@ package org.opennars.util;
 
 import org.opennars.language.Term;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,30 +13,26 @@ import java.util.Map;
 public class FastTermTermMap {
     protected Map<Term, Term> map = new HashMap<>();
 
-    protected CachedElementByKey[] cachedEntries;
+    protected List<CachedElementByKey> cachedEntries = new ArrayList<>();
 
     public FastTermTermMap() {
-        cachedEntries = new CachedElementByKey[2];
     }
 
     public void put(final Term key, final Term value) {
-        for(int cacheIdx=0;cacheIdx<cachedEntries.length;cacheIdx++) {
-            if (cachedEntries[cacheIdx] == null) {
-                // the slot is free, this means that we can cache here
-                cachedEntries[cacheIdx] = new CachedElementByKey(key, value);
+        for(int cacheIdx=0;cacheIdx<cachedEntries.size();cacheIdx++) {
+            // the slot is already used, we need to check if we have to override the value if keys match
+            if (key.equalsFast(cachedEntries.get(cacheIdx).key)) {
+                cachedEntries.set(cacheIdx, new CachedElementByKey(key, value));
 
-                // we return because we put it already into the cache and there is no reason to put it into the slowpath map
+                // we return because we stored the new value
                 return;
             }
-            else {
-                // the slot is already used, we need to check if we have to override the value if keys match
-                if (key.equals(cachedEntries[cacheIdx].key)) {
-                    cachedEntries[cacheIdx] = new CachedElementByKey(key, value);
+        }
 
-                    // we return because we stored the new value
-                    return;
-                }
-            }
+        // we can cache it if there is any space left to cache
+        if (cachedEntries.size() < 2) {
+            cachedEntries.add(new CachedElementByKey(key, value));
+            return;
         }
 
         map.put(key, value);
@@ -43,11 +41,7 @@ public class FastTermTermMap {
     public boolean containsKey(final Term key) {
         // first we check in the cache
         for (final CachedElementByKey iCached : cachedEntries) {
-            if (iCached == null) {
-                continue;
-            }
-
-            if (iCached.key.equals(key)) {
+            if (iCached.key.equalsFast(key)) {
                 return true;
             }
         }
@@ -59,11 +53,7 @@ public class FastTermTermMap {
     public Term get(final Term key) {
         // first we check in the cache
         for (final CachedElementByKey iCached : cachedEntries) {
-            if (iCached == null) {
-                continue;
-            }
-
-            if (iCached.key.equals(key)) {
+            if (iCached.key.equalsFast(key)) {
                 return iCached.value;
             }
         }
@@ -85,55 +75,25 @@ public class FastTermTermMap {
     }
 
     public int size() {
-        int elementsInCache = 0;
-
-        for (final CachedElementByKey iCached : cachedEntries) {
-            if (iCached == null) {
-                continue;
-            }
-
-            elementsInCache++;
-        }
-
-        return map.size() + elementsInCache;
+        return map.size() + cachedEntries.size();
     }
 
     public void clear() {
         map.clear();
 
-        cachedEntries = new CachedElementByKey[2];
+        cachedEntries = new ArrayList<>();
     }
 
     public void merge(final FastTermTermMap source) {
         // TODO< optimize >
 
-        // we need to invalidate the cache because source may override some cached entries and we don't want to pay for the extra logic
-        invalidateCache();
+        for (CachedElementByKey iCachedEntry : source.cachedEntries) {
+            put(iCachedEntry.key, iCachedEntry.value);
+        }
 
         for(final Term c : source.map.keySet()) {
-            map.put(c, source.get(c));
+            put(c, source.get(c));
         }
-
-        // we need to add the cachedEntries of source too
-        for(final CachedElementByKey iCachedOfSource : source.cachedEntries) {
-            if (iCachedOfSource != null) {
-                map.put(iCachedOfSource.key, iCachedOfSource.value);
-            }
-        }
-    }
-
-    /**
-     * invalidates the cache
-     */
-    private void invalidateCache() {
-        // move all cached values into the "real" map
-        for(final CachedElementByKey iCachedOfSource : cachedEntries) {
-            if (iCachedOfSource != null) {
-                map.put(iCachedOfSource.key, iCachedOfSource.value);
-            }
-        }
-
-        cachedEntries = new CachedElementByKey[2];
     }
 
     private static class CachedElementByKey {
