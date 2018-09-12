@@ -238,17 +238,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * memory later according to the length of the input queue.
      */
     private boolean addMultiLineInput(final String text) {
-        if(text.contains("\n")) {
-            final String[] lines = text.split("\n");
-            for(final String s : lines) {
-                addInput(s);
-                if(!running) {
-                    this.cycle();
-                }
+        final String[] lines = text.split("\n");
+        for(final String s : lines) {
+            addInput(s);
+            if(!running) {
+                this.cycle();
             }
-            return true;
         }
-        return false;
+        return true;
     }
     
     private boolean addCommand(final String text) throws IOException {
