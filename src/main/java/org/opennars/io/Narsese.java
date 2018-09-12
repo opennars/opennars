@@ -53,14 +53,10 @@ import static org.opennars.operator.Operation.make;
  */
 public class Narsese implements Serializable, Parser {
     
-    public final Memory memory;
-    
+    protected final Memory memory;
+
     public Narsese(final Memory memory) {
         this.memory = memory;
-    }
-
-    public Narsese(final Nar n) {
-        this(n.memory);
     }
     
     /**
@@ -340,10 +336,6 @@ public class Narsese implements Serializable, Parser {
 
     }
 
-//    private static void showWarning(String message) {
-//		new TemporaryFrame( message + "\n( the faulty line has been kept in the addInput window )",
-//				40000, TemporaryFrame.WARNING );
-//    }
     /**
      * Parse a term that has no internal structure.
      * <p>
@@ -564,10 +556,16 @@ public class Narsese implements Serializable, Parser {
     }
 
     /**
-     * @param s string to get checked if it may be narsese
-     * @return returns if the string may be narsese
+     * All kinds of invalid addInput lines
      */
-    public static boolean possiblyNarsese(final String s) {
-        return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
+    public static class InvalidInputException extends Exception {
+
+        /**
+         * An invalid addInput line.
+         * @param s type of error
+         */
+        InvalidInputException(final String s) {
+            super(s);
+        }
     }
 }

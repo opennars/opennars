@@ -45,7 +45,7 @@ public class ReplaceIntervalTest {
     @Test
     public void replaceIvalTest() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Nar nar = new Nar();
-        Narsese parser = new Narsese(nar);
+        Narsese parser = new Narsese(nar.memory);
         Term ret = parser.parseTerm("<(*,{SELF},<{(*,fragmentC,fragmentD)} --> compare>,TRUE) =\\> (*,{SELF},(&/,<{fragmentC} --> mutate>,+12),TRUE)>");
         CompoundTerm ct = (CompoundTerm) CompoundTerm.replaceIntervals(ret);
         assert(ct.toString().equals("<(*,{SELF},<{(*,fragmentC,fragmentD)} --> compare>,TRUE) =\\> (*,{SELF},(&/,<{fragmentC} --> mutate>,+1),TRUE)>"));

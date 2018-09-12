@@ -98,8 +98,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
-            sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
-        } catch (final Parser.InvalidInputException ex) {
+            sensoryChannels.put(new Narsese(this.memory).parseTerm(term), channel);
+        } catch (final InvalidInputException ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
         }
@@ -309,7 +309,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     
     public void addInput(String text) {
         text = text.trim();
-        final Parser narsese = new Narsese(this);
+        final Narsese narsese = new Narsese(this.memory);
         if(addMultiLineInput(text)) {
             return;
         }
@@ -414,13 +414,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
 
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(final String concept) throws Parser.InvalidInputException {
-        return memory.concept(new Narsese(this).parseTerm(concept));
+    public Concept concept(final String concept) throws InvalidInputException {
+        return memory.concept(new Narsese(this.memory).parseTerm(concept));
     }
 
     public Nar ask(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
-            new Narsese(this).parseTerm(termString),
+            new Narsese(this.memory).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
             new Stamp(this, memory, Tense.Eternal));
@@ -441,7 +441,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     public Nar askNow(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
         final Sentence sentenceForNewTask = new Sentence(
-            new Narsese(this).parseTerm(termString),
+            new Narsese(this.memory).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
             new Stamp(this, memory, Tense.Present));

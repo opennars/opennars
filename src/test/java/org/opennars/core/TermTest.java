@@ -54,7 +54,7 @@ import static org.junit.Assert.assertTrue;
 public class TermTest {
     
     final Nar n = new Nar();
-    final Narsese np = new Narsese(n);
+    final Narsese np = new Narsese(n.memory);
 
     public TermTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
     }
@@ -92,7 +92,7 @@ public class TermTest {
     public void testTermSort() throws Exception {
         final Nar n = new Nar();
         
-        final Narsese m = new Narsese(n);
+        final Narsese m = new Narsese(n.memory);
         final Term a = m.parseTerm("a");
         final Term b = m.parseTerm("b");
         final Term c = m.parseTerm("c");
@@ -218,7 +218,7 @@ public class TermTest {
         
         final String t = "<$1 --> (~,{place4},$1)>";
         final Nar n = new Nar();
-        final Narsese p = new Narsese(n);
+        final Narsese p = new Narsese(n.memory);
         
         Term subj = null, pred = null;
 
@@ -249,7 +249,7 @@ public class TermTest {
     @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final Nar n = new Nar();
-        final Narsese p = new Narsese(n);
+        final Narsese p = new Narsese(n.memory);
 
         final Term x = p.parseTerm("wonder(a,b)");
         assertEquals(Operation.class, x.getClass());

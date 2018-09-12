@@ -50,7 +50,7 @@ public class UnificationTest {
     public void testUnificationTermination() {
         try {
             Nar nar = new Nar();
-            Narsese parser = new Narsese(nar);
+            Narsese parser = new Narsese(nar.memory);
             CompoundTerm t1 = (CompoundTerm) parser.parseTerm("<(&&,$1#1$,$2,$4$3$,(#,$2,$1#1$,$4$3$)) ==> <(*,$1#1$,(*,(/,REPRESENT,$2,_),(/,REPRESENT,$4$3$,_))) --> REPRESENT>>");
             CompoundTerm t2 = (CompoundTerm) parser.parseTerm("<(&&,#1,$2,$3,(#,$2,#1,$3)) ==> <(*,#1,(*,(/,REPRESENT,$2,_),(/,REPRESENT,$3,_))) --> REPRESENT>>");
             Map[] unifier = new HashMap[]{new HashMap<Term,Term>(), new HashMap<Term,Term>()};
