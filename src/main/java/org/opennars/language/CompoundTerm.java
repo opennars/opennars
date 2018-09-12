@@ -806,14 +806,43 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return super.compareTo(that);
     }
-    
+
+
+
     @Override
     public boolean equals(final Object that) {
         if (that==this) return true;                
         if (!(that instanceof Term))
             return false;
+
         return name().equals(((Term)that).name());
-    }   
+    }
+
+    @Override
+    public boolean equalsFast(final Object that) {
+        if (that==this) return true;
+        if (!(that instanceof Term))
+            return false;
+
+        if (nameHash != null && ((Term) that).nameHash != null) {
+            if (nameHash.intValue() != ((Term) that).nameHash.intValue()) {
+                // can't be equal if the hash of the name is not equal
+                return false;
+            }
+        }
+
+        // we may need to recalculate name hashes
+        if(nameHash == null) {
+            this.nameHash = name().hashCode();
+        }
+
+        if(((Term) that).nameHash == null) {
+            ((Term) that).nameHash = ((Term) that).name().hashCode();
+        }
+
+
+        return name().equals(((Term)that).name());
+    }
 
     public void setNormalized(final boolean b) {
         this.normalized = b;

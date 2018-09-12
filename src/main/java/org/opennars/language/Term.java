@@ -59,6 +59,8 @@ public class Term implements AbstractTerm, Serializable {
     // private to cache it
     private CharSequence name = null;
 
+    protected Integer nameHash;
+
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
     }
@@ -206,6 +208,11 @@ public class Term implements AbstractTerm, Serializable {
         if (that == this) return true;
         if (getClass() != this.getClass()) return false; //optimization, if complexity is different they cant be equal
         return this.getComplexity() == ((Term) that).getComplexity() && name().equals(((Term)that).name());
+    }
+
+    public boolean equalsFast(final Object that) {
+        /// we just send the message to equals because this is not hot code
+        return equals(that);
     }
 
     /**
