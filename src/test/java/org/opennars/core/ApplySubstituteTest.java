@@ -28,6 +28,7 @@ import org.opennars.io.Narsese;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
+import org.opennars.util.FastTermTermMap;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -58,7 +59,7 @@ public class ApplySubstituteTest {
         final String xyS ="<x --> y>";
         final Term xy = np.parseTerm(xyS);
         
-        final Map<Term,Term> h = new HashMap();
+        final FastTermTermMap h = new FastTermTermMap();
         h.put(np.parseTerm("b"), xy);
         final CompoundTerm c = ab.applySubstituteToCompound(h);
                 
@@ -76,7 +77,7 @@ public class ApplySubstituteTest {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         final Nar n = new Nar();
             
-        final Map<Term,Term> h = new HashMap();
+        final FastTermTermMap h = new FastTermTermMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        
         final CompoundTerm c = ((CompoundTerm)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
         

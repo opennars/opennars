@@ -30,6 +30,7 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
+import org.opennars.util.FastTermTermMap;
 
 import java.nio.CharBuffer;
 import java.util.*;
@@ -721,8 +722,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * May return null if the term can not be created
      * @param subs
      */
-    public Term applySubstitute(final Map<Term, Term> subs) {   
-        if ((subs == null) || (subs.isEmpty())) {            
+    public Term applySubstitute(final FastTermTermMap subs) {
+        if ((subs == null) || (subs.isEmpty())) {
             return this;//.clone();
         }
                 
@@ -763,7 +764,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** returns result of applySubstitute, if and only if it's a CompoundTerm. 
      * otherwise it is null */
-    public CompoundTerm applySubstituteToCompound(final Map<Term, Term> substitute) {
+    public CompoundTerm applySubstituteToCompound(final FastTermTermMap substitute) {
         final Term t = applySubstitute(substitute);
         if (t instanceof CompoundTerm)
             return ((CompoundTerm)t);
@@ -805,14 +806,43 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return super.compareTo(that);
     }
-    
+
+
+
     @Override
     public boolean equals(final Object that) {
         if (that==this) return true;                
         if (!(that instanceof Term))
             return false;
+
         return name().equals(((Term)that).name());
-    }   
+    }
+
+    @Override
+    public boolean equalsFast(final Object that) {
+        if (that==this) return true;
+        if (!(that instanceof Term))
+            return false;
+
+        if (nameHash != null && ((Term) that).nameHash != null) {
+            if (nameHash.intValue() != ((Term) that).nameHash.intValue()) {
+                // can't be equal if the hash of the name is not equal
+                return false;
+            }
+        }
+
+        // we may need to recalculate name hashes
+        if(nameHash == null) {
+            this.nameHash = name().hashCode();
+        }
+
+        if(((Term) that).nameHash == null) {
+            ((Term) that).nameHash = ((Term) that).name().hashCode();
+        }
+
+
+        return name().equals(((Term)that).name());
+    }
 
     public void setNormalized(final boolean b) {
         this.normalized = b;
