@@ -99,25 +99,19 @@ public class Variables {
                 if(c1.size() < c2.size()) {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
-                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<>();
-                        mapk[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        appendToMap(map[0], mapk[0]);
-                        appendToMap(map[1], mapk[1]);
+
+                        final Map<Term, Term>[] mapk = copyMapFrom(map);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
-                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<>();
-                            mapNew[1] = new HashMap<>();
-                            appendToMap(map[0], mapNew[0]);
-                            appendToMap(map[1], mapNew[1]);
+                            final Map<Term, Term>[] mapNew = copyMapFrom(map);
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
                                 appendToMap(mapNew[0], mapk[0]);
@@ -148,7 +142,7 @@ public class Variables {
             final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
                 final Variable CommonVar = makeCommonVariable(term1, term2);
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
+                if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
                 return true;
@@ -164,7 +158,7 @@ public class Variables {
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
 
-            if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+            if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
 
             if (term1VarUnifyAllowed) {
 
@@ -207,11 +201,11 @@ public class Variables {
             final boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
             final boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
 
-            final boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
+            final boolean areBothConjunctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
             final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if((areBothConjuctions && !isSameOrderAndSameSpatial) ||
+            if((areBothConjunctions && !isSameOrderAndSameSpatial) ||
                 ((areBothEquivalence || areBothImplication) && !isSameOrder)
             ) {
                 return false;
@@ -227,7 +221,7 @@ public class Variables {
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
                 //ok attempt unification
-                if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
+                if(list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
                 final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
@@ -239,17 +233,15 @@ public class Variables {
                         }
                         final Term ti = list[i].clone();
                         //clone map also:
-                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<>();
-                        mapNew[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        appendToMap(map[0], mapNew[0]);
-                        appendToMap(map[1], mapNew[1]);
+
+                        final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
@@ -275,6 +267,22 @@ public class Variables {
             return true;
 
         }
+    }
+
+    /**
+     * copies two maps from source into two new maps
+     * @param source source maps (two)
+     * @return copied maps
+     */
+    private static Map<Term, Term>[] copyMapFrom(Map<Term, Term>[] source) {
+        final Map<Term, Term>[] destination = (Map<Term, Term>[]) new HashMap<?,?>[2];
+
+        destination[0] = new HashMap<>();
+        destination[1] = new HashMap<>();
+
+        appendToMap(source[0], destination[0]);
+        appendToMap(source[1], destination[1]);
+        return destination;
     }
 
     private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
