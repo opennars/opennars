@@ -340,7 +340,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             return;
         }
         // check if it should go to a sensory channel and dispatch to it instead
-        if (dispatchToSensoryChannel(task)) return;
+        if (dispatchToSensoryChannel(task)) {
+            return;
+        }
 
         //else input into NARS directly:
         this.memory.inputTask(this, task);
