@@ -51,6 +51,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.*;
@@ -215,7 +216,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public Nar(long narId, String relativeConfigFilePath, final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException,
         NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
-        ParametersOverride.override(narParameters, parameterOverrides);
+        overrideParameters(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
             new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
             new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
@@ -682,5 +683,27 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public void setThreadYield(final boolean b) {
         this.threadYield = b;
+    }
+
+
+    /**
+     * overrides parameter values by name
+     * @param parameters (overwritten) parameters of a Reasoner
+     * @param overrides specific override values by parameter name
+     */
+    private static void overrideParameters(Parameters parameters, Map<String, Object> overrides) {
+        for (final Map.Entry<String, Object> iOverride : overrides.entrySet()) {
+            final String propertyName = iOverride.getKey();
+            final Object value = iOverride.getValue();
+
+            try {
+                final Field fieldOfProperty = Parameters.class.getField(propertyName);
+                fieldOfProperty.set(parameters, value);
+            } catch (NoSuchFieldException e) {
+                // ignore
+            } catch (IllegalAccessException e) {
+                // ignore
+            }
+        }
     }
 }
