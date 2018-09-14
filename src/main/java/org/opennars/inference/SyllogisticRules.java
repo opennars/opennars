@@ -171,10 +171,17 @@ public final class SyllogisticRules {
             final TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE), 
-                    T3, BudgetFunctions.forward(T3, nal),false, false);   
-            return true; //no need for other syllogistic inference, it were sensational terms,
-        }           //but it would not hurt to allow it either.. but why afford tasks that summarize
-                    //so little evidence in comparison to the amount summarized by the array comparison.
+                    T3, BudgetFunctions.forward(T3, nal),false, false);
+
+            /**
+             * no need for other syllogistic inference, it were sensational terms,
+             * but it would not hurt to allow it either.. but why afford tasks that summarize
+             * so little evidence in comparison to the amount summarized by the array comparison.
+             */
+
+            return true;
+        }
+
         long occurrence_time2 = nal.getCurrentTask().sentence.getOccurenceTime();
         while (occurrence_time2!=Stamp.ETERNAL && (term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             final Interval interval = (Interval) ((CompoundTerm) term2).term[0];
@@ -204,20 +211,22 @@ public final class SyllogisticRules {
         }
         if(nal.narParameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement() && sentence2.term.isHigherOrderStatement()) { //
             /* Bridge to higher order statements:
-            <a ==> c>.
-            <b ==> c>.
-            |-
-            <a <-> b>. %F_cmp%
-            <a --> b>. %F_abd%
-            <b --> a>. %F_abd%
-            */
-          /*  if(truth1!=null) 
+             * <a ==> c>.
+             * <b ==> c>.
+             * |-
+             * <a <-> b>. %F_cmp%
+             * <a --> b>. %F_abd%
+             * <b --> a>. %F_abd%
+             */
+            /* // commented because it may be useful in the future
+            if(truth1!=null)
                 truth1=truth1.clone();
             if(truth2!=null) 
                 truth2=truth2.clone();*/
             if(truth3!=null) 
                 truth3=truth3.clone();
-           /* nal.doublePremiseTask(
+            /* // commented because it may be useful in the future
+            nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
@@ -347,45 +356,51 @@ public final class SyllogisticRules {
             final TruthValue value2 = belief.truth;
             
             if (sentence.isQuestion()) {
-               /* budget1 = BudgetFunctions.backward(value2, nal);
+               /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.backward(value2, nal);
                 budget2 = BudgetFunctions.backwardWeak(value2, nal);*/
                 budget3 = BudgetFunctions.backward(value2, nal);
             } else if (sentence.isQuest()) {
-               /* budget1 = BudgetFunctions.backwardWeak(value2, nal);
+               /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.backwardWeak(value2, nal);
                 budget2 = BudgetFunctions.backward(value2, nal);*/
                 budget3 = BudgetFunctions.backwardWeak(value2, nal);            
             } else {
                 if (sentence.isGoal()) {
-                  /*  truth1 = TruthFunctions.desireStrong(value1, value2);
+                    /* // commented because it may be useful in the future
+                    truth1 = TruthFunctions.desireStrong(value1, value2);
                     truth2 = TruthFunctions.desireWeak(value2, value1);*/
                     truth3 = TruthFunctions.desireStrong(value1, value2, nal.narParameters);
                 } else { 
                     // isJudgment
-                   /* truth1 = TruthFunctions.abduction(value1, value2);
+                    /* // commented because it may be useful in the future
+                    truth1 = TruthFunctions.abduction(value1, value2);
                     truth2 = TruthFunctions.abduction(value2, value1);*/
                     truth3 = TruthFunctions.comparison(value1, value2, nal.narParameters);
                 }
 
-                /*budget1 = BudgetFunctions.forward(truth1, nal);
+                /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.forward(truth1, nal);
                 budget2 = BudgetFunctions.forward(truth2, nal);*/
                 budget3 = BudgetFunctions.forward(truth3, nal);
             }
            
             /* Bridge to higher order statements:
-            <b <=> k>.
-            <b <=> c>.
-            |-
-            <k <-> c>. %F_cmp%
-            */
-           /* nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE, term1, term2), 
+             * <b <=> k>.
+             * <b <=> c>.
+             * |-
+             * <k <-> c>. %F_cmp%
+             */
+            /* // commented because it may be useful in the future
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2),
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE, term2, term1), 
+                Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
-                    truth3, budget3.clone(),false, false);
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE),
+                truth3, budget3.clone(),false, false);
         }
     }
 
