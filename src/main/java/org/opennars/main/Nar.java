@@ -339,7 +339,21 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             }
             return;
         }
-        //check if it should go to a sensory channel instead:
+        // check if it should go to a sensory channel and dispatch to it instead
+        if (dispatchToSensoryChannel(task)) {
+            return;
+        }
+
+        //else input into NARS directly:
+        this.memory.inputTask(this, task);
+    }
+
+    /**
+     * dispatches the task to the sensory channel if necessary
+     * @param task dispatched task
+     * @return was it dispatched to a sensory channel?
+     */
+    private boolean dispatchToSensoryChannel(Task task) {
         final Term t = task.getTerm();
         if(t != null) {
             Term predicate = null;
@@ -349,13 +363,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                 predicate = SetInt.make(new Term("OBSERVED"));
             }
             if(this.sensoryChannels.containsKey(predicate)) {
-                //Transform to channel-specific coordinate if available.
+                // transform to channel-specific coordinate if available.
                 int channelWidth = this.sensoryChannels.get(predicate).width;
                 int channelHeight = this.sensoryChannels.get(predicate).height;
-                if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) && 
+                if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) &&
                         (((Inheritance )t).getSubject() instanceof SetExt)) {
                     final SetExt subj = (SetExt) ((Inheritance) t).getSubject();
-                    //map to pei's -1 to 1 indexing schema
+                    // map to pei's -1 to 1 indexing schema
                     if(subj.term[0].term_indices == null) {
                         final String variable = subj.toString().split("\\[")[0];
                         final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
@@ -368,17 +382,16 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                                           task.sentence.punctuation + ev + task.sentence.truth.toString();
                         //this.emit(OutputHandler.IN.class, task); too expensive to print each input task, consider vision :)
                         this.addInput(newInput);
-                        return;
+                        return true;
                     }
                 }
                 this.sensoryChannels.get(predicate).addInput(task, this);
-                return;
+                return true;
             }
         }
-        //else input into NARS directly:
-        this.memory.inputTask(this, task);
+        return false;
     }
-    
+
     public void addInputFile(final String s) {
         try (final BufferedReader br = new BufferedReader(new FileReader(s))) {
             String line;
