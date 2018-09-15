@@ -31,6 +31,7 @@ import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -48,10 +49,13 @@ import org.opennars.main.Parameters;
  */
 public class Stamp implements Cloneable, Serializable {
     /** serial numbers. not to be modified after Stamp constructor has initialized it*/
-    public BaseEntry[] evidentialBase;
+    private ByteBuffer evidentialBaseIds;
+
+    /** corresponding reasoner id's for the serial numbers. not to be modified after Stamp constructor has initialized it*/
+    private ByteBuffer evidentialBaseReasonerIds;
 
     /** the length of @see evidentialBase */
-    public int baseLength;
+    public final int baseLength;
 
     /** creation time of the stamp */
     private long creationTime;
@@ -97,14 +101,23 @@ public class Stamp implements Cloneable, Serializable {
         return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
 
     public float getOriginality() {
-        return 1.0f / (evidentialBase.length + 1);
+        return 1.0f / (getLength() + 1);
+    }
+
+    public int getLength() {
+        return baseLength;
     }
     
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
     protected Stamp(final Tense tense, final BaseEntry serial) {
         this.baseLength = 1;
-        this.evidentialBase = new BaseEntry[baseLength];
-        this.evidentialBase[0] = serial;
+
+        evidentialBaseIds = ByteBuffer.allocate(1*8);
+        evidentialBaseReasonerIds = ByteBuffer.allocate(1*8);
+
+        evidentialBaseIds.putLong(0, serial.inputId);
+        evidentialBaseReasonerIds.putLong(0, serial.narId);
+
         this.tense = tense;
         this.creationTime = -1;
     }
@@ -142,8 +155,10 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
-        this.evidentialBase = useEvidentialBase.evidentialBase;
-        this.baseLength = useEvidentialBase.baseLength;
+        evidentialBaseIds = useEvidentialBase.evidentialBaseIds;
+        evidentialBaseReasonerIds = useEvidentialBase.evidentialBaseReasonerIds;
+        baseLength = useEvidentialBase.baseLength;
+
         this.creationTime = creationTime;
 
         this.occurrenceTime = old.getOccurrenceTime();
@@ -162,12 +177,17 @@ public class Stamp implements Cloneable, Serializable {
         int i1, i2, j;
         i1 = i2 = j = 0;
         this.baseLength = Math.min(first.baseLength + second.baseLength, narParameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        this.evidentialBase = new BaseEntry[baseLength];
 
-        final BaseEntry[] firstBase = first.evidentialBase;
-        final BaseEntry[] secondBase = second.evidentialBase;     
-        final int firstLength = firstBase.length;
-        final int secondLength = secondBase.length;
+        evidentialBaseIds = ByteBuffer.allocate(8*baseLength);
+        evidentialBaseReasonerIds = ByteBuffer.allocate(8*baseLength);
+
+        ByteBuffer firstBaseIds = first.evidentialBaseIds;
+        ByteBuffer firstReasonerIds = first.evidentialBaseReasonerIds;
+        ByteBuffer secondBaseIds = second.evidentialBaseIds;
+        ByteBuffer secondReasonerIds = second.evidentialBaseReasonerIds;
+
+        final int firstLength = first.baseLength;
+        final int secondLength = second.baseLength;
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
@@ -175,10 +195,24 @@ public class Stamp implements Cloneable, Serializable {
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (j < baseLength) {
             if(i2 < secondLength) {
-                evidentialBase[j++] = secondBase[i2++];
+                long reasonerId = secondReasonerIds.getLong(i2*8);
+                evidentialBaseReasonerIds.putLong(j*8, reasonerId);
+
+                long baseId = secondBaseIds.getLong(i2*8);
+                evidentialBaseIds.putLong(j*8, baseId);
+
+                j++;
+                i2++;
             }
             if(i1 < firstLength) {
-                evidentialBase[j++] = firstBase[i1++];
+                long reasonerId = firstReasonerIds.getLong(i1*8);
+                evidentialBaseReasonerIds.putLong(j*8, reasonerId);
+
+                long baseId = firstBaseIds.getLong(i1*8);
+                evidentialBaseIds.putLong(j*8, baseId);
+
+                j++;
+                i1++;
             }
         }
     }
@@ -211,13 +245,19 @@ public class Stamp implements Cloneable, Serializable {
      }
     
     public boolean evidenceIsCyclic() {
-        final Set<BaseEntry> task_base = new HashSet<>(this.evidentialBase.length);
-        for (final BaseEntry anEvidentialBase : this.evidentialBase) {
-            if (task_base.contains(anEvidentialBase)) { //can have an overlap in itself already
+        final Set<BaseEntry> task_base = new HashSet<>(baseLength);
+
+        for (int idx=0;idx<baseLength;idx++) {
+            final long reasonerId = evidentialBaseReasonerIds.getLong(idx*8);
+            final long baseId = evidentialBaseIds.getLong(idx*8);
+            final BaseEntry baseEntry = new BaseEntry(reasonerId, baseId);
+
+            if (task_base.contains(baseEntry)) { //can have an overlap in itself already
                 return true;
             }
-            task_base.add(anEvidentialBase);
+            task_base.add(baseEntry);
         }
+
         return false;
     }
 
@@ -298,8 +338,18 @@ public class Stamp implements Cloneable, Serializable {
      * @return The NavigableSet representation of the evidential base
      */
     private BaseEntry[] toSet() {        
-        if (evidentialSet == null) {        
-            evidentialSet = toSetArray(evidentialBase);
+        if (evidentialSet == null) {
+
+            // convert evidential base to BaseEntry's
+            BaseEntry[] evidentialBaseAsEntrys = new BaseEntry[baseLength];
+            for (int idx=0;idx<baseLength;idx++) {
+                final long inputId = evidentialBaseIds.getLong(8*idx);
+                final long reasonerId = evidentialBaseReasonerIds.getLong(8*idx);
+
+                evidentialBaseAsEntrys[idx] = new BaseEntry(reasonerId, inputId);
+            }
+
+            evidentialSet = toSetArray(evidentialBaseAsEntrys);
             evidentialHash = Arrays.hashCode(evidentialSet);
         }
         
@@ -427,7 +477,12 @@ public class Stamp implements Cloneable, Serializable {
             }
             buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
             for (int i = 0; i < baseLength; i++) {
-                buffer.append(evidentialBase[i].toString());
+                {
+                    final long reasonerId = evidentialBaseReasonerIds.getLong(8*i);
+                    final long baseId = evidentialBaseIds.getLong(8*i);
+                    buffer.append(new BaseEntry(reasonerId, baseId).toString());
+                }
+
                 if (i < (baseLength - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);
                 }
