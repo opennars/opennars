@@ -209,6 +209,25 @@ public class Stamp implements Cloneable, Serializable {
         }
         return false;
      }
+
+    /**
+     * checks for self overlapping of the stamp
+     * @param stamp tested stamp
+     * @return is it self overlapping?
+     */
+    public static boolean checkSelfOverlap(Stamp stamp) {
+        final int stampLength = stamp.baseLength;
+        for (int i = 0; i < stampLength; i++) {
+            final BaseEntry baseI = stamp.evidentialBase[i];
+            for (int j = 0; j < stampLength; j++) {
+
+                if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     public boolean evidenceIsCyclic() {
         final Set<BaseEntry> task_base = new HashSet<>(this.evidentialBase.length);

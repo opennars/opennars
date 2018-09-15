@@ -120,7 +120,7 @@ public class DerivationContext {
                 return false;
             }
 
-            final boolean selfOverlap = checkSelfOverlap(stamp);
+            final boolean selfOverlap = Stamp.checkSelfOverlap(stamp);
             if (selfOverlap) {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
                 return false;
@@ -147,20 +147,6 @@ public class DerivationContext {
             addTask(task, "Derived");
         }
         return true;
-    }
-
-    private boolean checkSelfOverlap(Stamp stamp) {
-        final int stampLength = stamp.baseLength;
-        for (int i = 0; i < stampLength; i++) {
-            final BaseEntry baseI = stamp.evidentialBase[i];
-            for (int j = 0; j < stampLength; j++) {
-
-                if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /* --------------- new task building --------------- */
