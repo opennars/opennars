@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -25,6 +34,8 @@ import java.util.Set;
 
 /**
  * Static utility class for static methods related to Variables
+ *
+ * @author Patrick Hammer
  */
 public class Variables {
     
@@ -54,7 +65,7 @@ public class Variables {
         return false;
     }
     
-    /** map is a 2-element array of Map<Term,Term>. it may be null, in which case
+    /** map is a 2-element array of Map&lt;Term,Term&gt;. it may be null, in which case
      * the maps will be instantiated as necessary.  
      * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
@@ -88,25 +99,19 @@ public class Variables {
                 if(c1.size() < c2.size()) {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
-                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<>();
-                        mapk[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        appendToMap(map[0], mapk[0]);
-                        appendToMap(map[1], mapk[1]);
+
+                        final Map<Term, Term>[] mapk = copyMapFrom(map);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
-                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<>();
-                            mapNew[1] = new HashMap<>();
-                            appendToMap(map[0], mapNew[0]);
-                            appendToMap(map[1], mapNew[1]);
+                            final Map<Term, Term>[] mapNew = copyMapFrom(map);
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
                                 appendToMap(mapNew[0], mapk[0]);
@@ -131,19 +136,13 @@ public class Variables {
             return true;
         }
         
-        
-        /*if (termsEqual) {
-            return true;
-        }*/
-        
-        final Term t;
         //variable "renaming" to variable of same type is always valid
         if(term1 instanceof Variable && term2 instanceof Variable) {
             final Variable v1 = (Variable) term1;
             final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
                 final Variable CommonVar = makeCommonVariable(term1, term2);
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
+                if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
                 return true;
@@ -157,16 +156,9 @@ public class Variables {
 
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
-            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
             Variable termAAsVariable = (Variable)termA;
 
-            t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
-
-            if (t != null) {
-                return findSubstitute(type, t, termB, map);
-            }
-
-            if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+            if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
 
             if (term1VarUnifyAllowed) {
 
@@ -209,12 +201,11 @@ public class Variables {
             final boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
             final boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
 
-            final boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
+            final boolean areBothConjunctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
             final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if(
-                (areBothConjuctions && !isSameOrderAndSameSpatial) ||
+            if((areBothConjunctions && !isSameOrderAndSameSpatial) ||
                 ((areBothEquivalence || areBothImplication) && !isSameOrder)
             ) {
                 return false;
@@ -229,9 +220,8 @@ public class Variables {
             final Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                final Set<Integer> alreadyMatched = new HashSet<>();
                 //ok attempt unification
-                if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
+                if(list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
                 final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
@@ -243,17 +233,15 @@ public class Variables {
                         }
                         final Term ti = list[i].clone();
                         //clone map also:
-                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<>();
-                        mapNew[1] = new HashMap<>();
+
                         if(map[0] == null) {
                             map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        appendToMap(map[0], mapNew[0]);
-                        appendToMap(map[1], mapNew[1]);
+
+                        final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
@@ -279,6 +267,22 @@ public class Variables {
             return true;
 
         }
+    }
+
+    /**
+     * copies two maps from source into two new maps
+     * @param source source maps (two)
+     * @return copied maps
+     */
+    private static Map<Term, Term>[] copyMapFrom(Map<Term, Term>[] source) {
+        final Map<Term, Term>[] destination = (Map<Term, Term>[]) new HashMap<?,?>[2];
+
+        destination[0] = new HashMap<>();
+        destination[1] = new HashMap<>();
+
+        appendToMap(source[0], destination[0]);
+        appendToMap(source[1], destination[1]);
+        return destination;
     }
 
     private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
@@ -333,9 +337,9 @@ public class Variables {
      * To unify two terms
      *
      * @param type The type of variable that can be substituted
-     * @param compound1 The compound containing the first term, possibly modified
-     * @param compound2 The compound containing the second term, possibly modified
-     * @param t The first and second term as an array, which will have been modified upon returning true
+     * @param t1 The compound containing the first term, possibly modified
+     * @param t2 The compound containing the second term, possibly modified
+     * @param compound The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
     public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) { 
@@ -346,9 +350,13 @@ public class Variables {
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map, allowPartial);
         if (hasSubs) {
-            final Term a = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            final Term a = (compound[0] instanceof Variable && map[0].containsKey(compound[0])) ? 
+                            map[0].get(compound[0]) : 
+                            applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
             if (a == null) return false;
-            final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
+            final Term b = (compound[1] instanceof Variable && map[1].containsKey(compound[1])) ? 
+                            map[1].get(compound[1]) :
+                            applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
             if (b == null) return false;
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
             if(compound[0] instanceof Variable && compound[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarIndep()) ) {
@@ -387,11 +395,11 @@ public class Variables {
     } //but it is an allowed rename like $1 -> #1 then the second type should be used
     
     /**
-     * Check whether a term is using an
+     * examines whether a term is using an
      * independent variable in an invalid way
      *
-     * @param n The string name to be checked
-     * @return Whether the name contains an independent variable
+     * @param T term to be examined
+     * @return Whether the term contains an independent variable
      */
     public static boolean indepVarUsedInvalid(final Term T) {
         

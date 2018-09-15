@@ -1,0 +1,12 @@
+'********** inference on tense
+
+'If someone hold key_101, he will enter room_101 (in 100 steps)
+<(&/,<(*, $x, key_101) --> hold>,+100) =/> <(*, $x, room_101) --> enter>>.
+
+'John is entering room_101 now
+<(*,John,room_101) --> enter>. :|:
+
+15
+
+'John held the key_101 (105 steps before)
+''outputMustContain('<(*,John,key_101) --> hold>. :!-105: %1.00;0.45%')

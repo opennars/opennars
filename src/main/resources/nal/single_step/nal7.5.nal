@@ -1,0 +1,25 @@
+'********** induction on events 
+
+'John is opening door_101 now
+<(*,John,door_101) --> open>. :|: 
+
+11
+
+'John is not entering room_101 now
+<(*,John,room_101) --> enter>. :|: %0% 
+
+10
+
+'If John open the door_101, he will not enter room_101
+''outputMustContain('<(&/,<(*,John,door_101) --> open>,+11) =/> <(*,John,room_101) --> enter>>. :!11: %0.00;0.45%') 
+'If John enter the door_101, it doesn't mean he will enter the room_101
+''outputMustContain('<(&/,<(*,John,door_101) --> open>,+11) </> <(*,John,room_101) --> enter>>. :!11: %0.00;0.45%')
+'adjusted +3 to +4
+
+'original output (1.3.3): 
+' OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. :\: %1.00;0.45%  
+' OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. :\: %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. :\: %1.00;0.45%   
+' OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. %1.00;0.45%   

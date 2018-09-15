@@ -1,24 +1,35 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.main;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
+import org.opennars.io.ConfigReader;
 import org.opennars.io.Narsese;
-import org.opennars.io.Narsese.InvalidInputException;
+import org.opennars.io.Parser;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.AnswerHandler;
 import org.opennars.io.events.EventEmitter;
@@ -26,7 +37,6 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CyclesEnd;
 import org.opennars.io.events.Events.CyclesStart;
-import org.opennars.io.events.OutputHandler;
 import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
@@ -37,11 +47,19 @@ import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.language.SetInt;
+import org.opennars.plugin.mental.Emotions;
+import org.opennars.plugin.mental.InternalExperience;
 
 
 /**
@@ -53,14 +71,20 @@ import java.util.logging.Logger;
  * memory operations.  It executesa series sof cycles in two possible modes:
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
-    public NarParameters narParameters = new NarParameters();
+    public Parameters narParameters = new Parameters();
+
+    /* System clock, relatively defined to guarantee the repeatability of behaviors */
+    private Long cycle = new Long(0);
 
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.6pre2";
+    public static final String VERSION = "Open-NARS v3.0.0";
 
     /**
      * The project web sites.
@@ -71,12 +95,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    Github website:  http://github.com/opennars/ \n" +
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
-
-    final Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
+    private transient Thread[] threads = null;
+    protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
-        } catch (final InvalidInputException ex) {
+        } catch (final Parser.InvalidInputException ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
         }
@@ -89,20 +113,23 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         outStream.close();
     }
     
-    public static Nar LoadFromFile(final String name) throws IOException, ClassNotFoundException {
+    public static Nar LoadFromFile(final String name) throws IOException, ClassNotFoundException, 
+            IllegalAccessException, ParseException, ParserConfigurationException, SAXException, 
+            NoSuchMethodException, InstantiationException, InvocationTargetException {
         final FileInputStream inStream = new FileInputStream(name);
         final ObjectInputStream stream = new ObjectInputStream(inStream);
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
-        ret.plugins = new ArrayList<>(); 
-        for (final Operator o : Operators.get(ret))
-            ret.memory.addOperator(o);
-        new Plugins().init(ret);
+        ret.plugins = new ArrayList<>();
+        ret.sensoryChannels = new HashMap<>();
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
+        for(Plugin p : pluginsToAdd) {
+            ret.addPlugin(p);
+        }
         return ret;
     }
 
-    private Thread thread = null;
-    long minCyclePeriodMS;
+    volatile long minCyclePeriodMS;
 
     /**
      * The name of the reasoner
@@ -112,43 +139,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * The memory of the reasoner
      */
     public final Memory memory;
-    
-    
-    public static class Lock extends Object implements Serializable { }
-    //Because AtomicInteger/Double ot supported by teavm
-    public static class PortableInteger implements Serializable {
-        public PortableInteger(){}
-        final Lock lock = new Lock();
-        int VAL = 0;
-        public PortableInteger(final int VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(final int VAL){synchronized(lock){this.VAL = VAL;}}
-        public int get() {return this.VAL;}
-        public float floatValue() {return (float)this.VAL;}
-        public float doubleValue() {return (float)this.VAL;}
-        public int intValue() {return this.VAL;}
-        public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
-    }
-    public static class PortableDouble implements Serializable {
-        final Lock lock = new Lock();
-        public PortableDouble(){}
-        double VAL = 0;
-        public PortableDouble(final double VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(final double VAL){synchronized(lock){this.VAL = VAL;}}
-        public double get() {return this.VAL;}
-        public float floatValue() {return (float)this.VAL;}
-        public float doubleValue() {return (float)this.VAL;}
-        public int intValue() {return (int)this.VAL;}
-    }
-    /*Nar Parameters which can be changed during runtime.*/
-   public class RuntimeParameters implements Serializable {
-       public RuntimeParameters() {    }
-       public final PortableInteger noiseLevel = new PortableInteger(100);
-       public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
-       public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
-       public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
-       public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
-   }
-    public final RuntimeParameters param;
 
     public class PluginState implements Serializable {
         final public Plugin plugin;
@@ -179,30 +169,110 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     protected transient List<PluginState> plugins = new ArrayList<>(); //was CopyOnWriteArrayList
 
     /** Flag for running continuously  */
-    private boolean running = false;
+    private transient boolean running = false;
     /** used by stop() to signal that a running loop should be interrupted */
-    private boolean stopped = false;
-    private boolean threadYield;
+    private transient boolean stopped = false;
+    private transient boolean threadYield;
 
-    public Nar() {
-        final Plugins b = new Plugins();
-        final Memory m = new Memory(new RuntimeParameters(),
-                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
-                new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
-                new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
-                new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
+    public static final String DEFAULTCONFIG_FILEPATH = "./config/defaultConfig.xml";
+    
+    /** constructs the NAR and loads a config from the default filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     */
+    public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
+            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        this(narId, DEFAULTCONFIG_FILEPATH);
+    }
+
+    public String usedConfigFilePath = "";
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
+     */
+    public Nar(long narId, String relativeConfigFilePath) throws IOException, InstantiationException, InvocationTargetException, 
+            NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
+        final Memory m = new Memory(this.narParameters,
+                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
-        this.param = m.param;
-        for (final Operator o : Operators.get(this))
-            this.memory.addOperator(o);
-        new Plugins().init(this);
+        this.memory.narId = narId;
+        this.usedConfigFilePath = relativeConfigFilePath;
+        for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
+            this.addPlugin(p);
+        }
+    }
+
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
+     * @param parameterOverrides (overwritten) parameters of a Reasoner
+     */
+    public Nar(long narId, String relativeConfigFilePath, final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException,
+        NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
+        overrideParameters(narParameters, parameterOverrides);
+        final Memory m = new Memory(this.narParameters,
+            new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+            new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+            new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+            new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
+        this.memory = m;
+        this.memory.narId = narId;
+        this.usedConfigFilePath = relativeConfigFilePath;
+        for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
+            this.addPlugin(p);
+        }
+
+    }
+    
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
+     */
+    public Nar(String relativeConfigFilePath) throws IOException, InstantiationException, InvocationTargetException, 
+            NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), relativeConfigFilePath);
+    }
+
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param relativeConfigFilePath (relative) path of the XML encoded config file
+     * @param parameterOverrides (overwritten) parameters of a Reasoner
+     */
+    public Nar(String relativeConfigFilePath, final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException,
+        NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), relativeConfigFilePath, parameterOverrides);
+    }
+    
+    /** constructs the NAR and loads a config from the default filepath
+     *
+     * Assigns a random id to the instance
+     */
+    public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        this(DEFAULTCONFIG_FILEPATH);
+    }
+
+    /** constructs the NAR and loads a config from the default filepath
+     *
+     * Assigns a random id to the instance
+     *
+     * @param parameterOverrides (overwritten) parameters of a Reasoner
+     */
+    public Nar(final Map<String, Object> parameterOverrides) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        this(DEFAULTCONFIG_FILEPATH, parameterOverrides);
     }
 
     /**
-     * Reset the system with an empty memory and reset clock. Called locally and
-     * from {@link NARControls}.
+     * Reset the system with an empty memory and reset clock. Called locally.
      */
     public void reset() {
+        cycle = (long) 0;
         memory.reset();
     }
 
@@ -213,26 +283,23 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * memory later according to the length of the input queue.
      */
     private boolean addMultiLineInput(final String text) {
-        if(text.contains("\n")) {
-            final String[] lines = text.split("\n");
-            for(final String s : lines) {
-                addInput(s);
-                if(!running) {
-                    this.cycle();
-                }
+        final String[] lines = text.split("\n");
+        for(final String s : lines) {
+            addInput(s);
+            if(!running) {
+                this.cycle();
             }
-            return true;
         }
-        return false;
+        return true;
     }
     
-    private boolean addCommand(final String text) {
+    private boolean addCommand(final String text) throws IOException {
         if(text.startsWith("**")) {
             this.reset();
             return true;
         }
         else
-        if(text.startsWith("*decisionthreshold=")) {
+        if(text.startsWith("*decisionthreshold=")) { //TODO use reflection for narParameters, allow to set others too
             final Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
             narParameters.DECISION_THRESHOLD = value.floatValue();
             return true;
@@ -240,9 +307,35 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         else
         if(text.startsWith("*volume=")) {
             final Integer value = Integer.valueOf(text.split("volume=")[1]);
-            param.noiseLevel.set(value);
+            narParameters.VOLUME = value;
             return true;
         }
+        else
+        if(text.startsWith("*threads=")) {
+            final Integer value = Integer.valueOf(text.split("threads=")[1]);
+            narParameters.THREADS_AMOUNT = value;
+            return true;
+        }
+        else
+        if(text.startsWith("*save=")) {
+            final String filename = text.split("save=")[1];
+            boolean wasRunning = this.isRunning();
+            if(wasRunning) {
+                this.stop();
+            }
+            this.SaveToFile(filename);
+            if(wasRunning) {
+                this.start(this.minCyclePeriodMS);
+            }
+            return true;
+        }
+        else
+        if(text.startsWith("*speed=")) {
+            final Integer value = Integer.valueOf(text.split("speed=")[1]);
+            this.minCyclePeriodMS = value;
+            return true;
+        }
+        else
         if(StringUtils.isNumeric(text)) {
             final Integer retVal = Integer.parseInt(text);
             if(!running) {
@@ -258,89 +351,141 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     
     public void addInput(String text) {
         text = text.trim();
+        final Parser narsese = new Narsese(this);
+        if (text.contains("\n") && addMultiLineInput(text)) {
+            return;
+        }
         //Ignore any input that is just a comment
-        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
-            return;
-
-        final Narsese narsese = new Narsese(this);
-        if(addMultiLineInput(text)) {
-            return;
-        }
-        if(addCommand(text)) {
+        if(text.startsWith("\'") || text.startsWith("//") || text.trim().length() <= 0) {
+            if(text.trim().length() > 0) {
+                emit(org.opennars.io.events.OutputHandler.ECHO.class, text);
+            }
             return;
         }
-        final Task task;
         try {
-            task = narsese.parseTask(text);
-        } catch (final InvalidInputException e) {
-            throw new IllegalStateException("Invalid input: " + text, e);
-        }
-        //check if it should go to a sensory channel instead:
-        final Term t = task.getTerm();
-        if(t != null && t instanceof Inheritance) {
-            final Term predicate = ((Inheritance) t).getPredicate();
-            if(this.sensoryChannels.containsKey(predicate)) {
-                final Inheritance inh = (Inheritance) task.sentence.term;
-                final SetExt subj = (SetExt) inh.getSubject();
-                //map to pei's -1 to 1 indexing schema
-                if(subj.term[0].term_indices == null) {
-                    final String variable = subj.toString().split("\\[")[0];
-                    final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
-                    final double height = Double.parseDouble(vals[0]);
-                    final double width = Double.parseDouble(vals[1]);
-                    final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
-                    final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
-                    final String ev = task.sentence.isEternal() ? " " : " :|: ";
-                    final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
-                                      task.sentence.punctuation + ev + task.sentence.truth.toString();
-                    this.emit(OutputHandler.IN.class, task);
-                    this.addInput(newInput);
-                    return;
-                }
-                this.sensoryChannels.get(predicate).addInput(task);
+            if(addCommand(text)) {
                 return;
             }
+        } catch (IOException ex) {
+            throw new IllegalStateException("I/O command failed: " + text, ex);
         }
+        Task task = null;
+        try {
+            task = narsese.parseTask(text);
+        } catch (final Parser.InvalidInputException e) {
+            if(MiscFlags.SHOW_INPUT_ERRORS) {
+                emit(ERR.class, e);
+            }
+            if(!MiscFlags.INPUT_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Invalid input: " + text, e);
+            }
+            return;
+        }
+        // check if it should go to a sensory channel and dispatch to it instead
+        if (dispatchToSensoryChannel(task)) {
+            return;
+        }
+
         //else input into NARS directly:
-        this.memory.inputTask(task);
+        this.memory.inputTask(this, task);
     }
-    
+
+    /**
+     * dispatches the task to the sensory channel if necessary
+     * @param task dispatched task
+     * @return was it dispatched to a sensory channel?
+     */
+    private boolean dispatchToSensoryChannel(Task task) {
+        final Term t = task.getTerm();
+        if(t != null) {
+            Term predicate = null;
+            if(t instanceof Inheritance) {
+                predicate = ((Inheritance) t).getPredicate();
+            } else {
+                predicate = SetInt.make(new Term("OBSERVED"));
+            }
+            if(this.sensoryChannels.containsKey(predicate)) {
+                // transform to channel-specific coordinate if available.
+                int channelWidth = this.sensoryChannels.get(predicate).width;
+                int channelHeight = this.sensoryChannels.get(predicate).height;
+                if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) &&
+                        (((Inheritance )t).getSubject() instanceof SetExt)) {
+                    final SetExt subj = (SetExt) ((Inheritance) t).getSubject();
+                    // map to pei's -1 to 1 indexing schema
+                    if(subj.term[0].term_indices == null) {
+                        final String variable = subj.toString().split("\\[")[0];
+                        final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
+                        final double height = Double.parseDouble(vals[0]);
+                        final double width = Double.parseDouble(vals[1]);
+                        final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
+                        final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
+                        final String ev = task.sentence.isEternal() ? " " : " :|: ";
+                        final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
+                                          task.sentence.punctuation + ev + task.sentence.truth.toString();
+                        //this.emit(OutputHandler.IN.class, task); too expensive to print each input task, consider vision :)
+                        this.addInput(newInput);
+                        return true;
+                    }
+                }
+                this.sensoryChannels.get(predicate).addInput(task, this);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addInputFile(final String s) {
         try (final BufferedReader br = new BufferedReader(new FileReader(s))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if(!line.isEmpty()) {
-                    this.addInput(line);
+                    //Loading experience file lines, or else just normal input lines
+                    if(line.matches("([A-Za-z])+:(.*)")) {
+                        //Extract creation time:
+                        if(!line.startsWith("IN:")) {
+                            continue; //ignore
+                        }
+                        String[] spl = line.replace("IN:", "").split("\\{");
+                        int creationTime = Integer.parseInt(spl[spl.length-1].split(" :")[0].split("\\|")[0]);
+                        while(this.time() < creationTime) {
+                            this.cycles(1);
+                        }
+                        String lineReconstructed = ""; //the line but without the stamp info at the end
+                        for(int i=0; i<spl.length-1; i++) {
+                            lineReconstructed += spl[i] + "{";
+                        }
+                        lineReconstructed = lineReconstructed.substring(0, lineReconstructed.length()-1);
+                        this.addInput(lineReconstructed.trim());
+                    } else {
+                        this.addInput(line);
+                    }
                 }
             }
-        } catch (final IOException ex) {
+        } catch (final Exception ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
-            throw new IllegalStateException("Could not open specified file", ex);
+            throw new IllegalStateException("Loading experience file failed ", ex);
         }
     }
 
 
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(final String concept) throws InvalidInputException {
+    public Concept concept(final String concept) throws Parser.InvalidInputException {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
 
-    public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar ask(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
+        final Sentence sentenceForNewTask = new Sentence(
+            new Narsese(this).parseTerm(termString),
+            Symbols.QUESTION_MARK,
+            null,
+            new Stamp(this, memory, Tense.Eternal));
+        final BudgetValue budget = new BudgetValue(
+            narParameters.DEFAULT_QUESTION_PRIORITY,
+            narParameters.DEFAULT_QUESTION_DURABILITY,
+            1, narParameters);
+        final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.INPUT);
 
-        final Task t;
-        addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Eternal)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
-        );
+        addInput(t, this);
 
         if (answered!=null) {
             answered.start(t, this);
@@ -349,22 +494,19 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     }
 
-    public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar askNow(final String termString, final AnswerHandler answered) throws Parser.InvalidInputException {
+        final Sentence sentenceForNewTask = new Sentence(
+            new Narsese(this).parseTerm(termString),
+            Symbols.QUESTION_MARK,
+            null,
+            new Stamp(this, memory, Tense.Present));
+        final BudgetValue budgetForNewTask = new BudgetValue(
+            narParameters.DEFAULT_QUESTION_PRIORITY,
+            narParameters.DEFAULT_QUESTION_DURABILITY,
+            1, narParameters);
+        final Task t = new Task(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
 
-        final Task t;
-        addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Present)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
-        );
+        addInput(t, this);
 
         if (answered!=null) {
             answered.start(t, this);
@@ -373,8 +515,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     }
 
-    public Nar addInput(final Task t) {
-        this.memory.inputTask(t);
+    public Nar addInput(final Task t, final Timable time) {
+        this.memory.inputTask(this, t);
         return this;
     }
 
@@ -394,8 +536,20 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public void addPlugin(final Plugin p) {
+        if(p instanceof SensoryChannel) {
+            this.addSensoryChannel(((SensoryChannel) p).getName(), (SensoryChannel) p);
+        }
+        else
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
+        }
+        else
+        if(p instanceof Emotions) {
+            memory.emotion = (Emotions) p;
+        }
+        else
+        if(p instanceof InternalExperience) {
+            memory.internalExperience = (InternalExperience) p;
         }
         final PluginState ps = new PluginState(p);
         plugins.add(ps);
@@ -407,6 +561,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             final Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
+            }
+            if (p instanceof SensoryChannel) {
+                sensoryChannels.remove(p);
             }
             //TODO sensory channels can be plugins
             ps.setEnabled(false);
@@ -421,20 +578,29 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     public void start(final long minCyclePeriodMS) {
         this.minCyclePeriodMS = minCyclePeriodMS;
-        if (thread == null) {
-            thread = new Thread(this, "Inference");
-            thread.start();
+        if (threads == null) {
+            int n_threads = narParameters.THREADS_AMOUNT;
+            threads = new Thread[n_threads];
+            for(int i=0;i<n_threads;i++) {
+                threads[i] = new Thread(this, "Inference"+i);
+                threads[i].start();
+            }
         }
         running = true;
+    }
+    public void start() {
+        start(narParameters.MILLISECONDS_PER_STEP);
     }
 
     /**
      * Stop the inference process, killing its thread.
      */
     public void stop() {
-        if (thread!=null) {
-            thread.interrupt();
-            thread = null;
+        if (threads!=null) {
+            for(Thread thread : threads) {
+                thread.interrupt();
+            }
+            threads = null;
         }
         stopped = true;
         running = false;
@@ -485,12 +651,18 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void cycle() {
         try {
             memory.cycle(this);
+
+            synchronized (cycle) {
+                cycle++;
+            }
         }
         catch (final Exception e) {
-            if(Parameters.SHOW_REASONING_ERRORS) {
+            if(MiscFlags.SHOW_REASONING_ERRORS) {
                 emit(ERR.class, e);
             }
-            throw e;
+            if(!MiscFlags.REASONING_ERRORS_CONTINUE) {
+                throw new IllegalStateException("Reasoning error:\n", e);
+            }
         }
     }
 
@@ -501,7 +673,11 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
 
     public long time() {
-        return memory.time();
+        if(narParameters.STEPS_CLOCK) {
+            return cycle;
+        } else {
+            return System.currentTimeMillis();
+        }
     }
 
     public boolean isRunning() {
@@ -517,5 +693,27 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public void setThreadYield(final boolean b) {
         this.threadYield = b;
+    }
+
+
+    /**
+     * overrides parameter values by name
+     * @param parameters (overwritten) parameters of a Reasoner
+     * @param overrides specific override values by parameter name
+     */
+    private static void overrideParameters(Parameters parameters, Map<String, Object> overrides) {
+        for (final Map.Entry<String, Object> iOverride : overrides.entrySet()) {
+            final String propertyName = iOverride.getKey();
+            final Object value = iOverride.getValue();
+
+            try {
+                final Field fieldOfProperty = Parameters.class.getField(propertyName);
+                fieldOfProperty.set(parameters, value);
+            } catch (NoSuchFieldException e) {
+                // ignore
+            } catch (IllegalAccessException e) {
+                // ignore
+            }
+        }
     }
 }

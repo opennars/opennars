@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/*
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.core;
 
@@ -19,31 +28,34 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
+import org.opennars.entity.Stamp.BaseEntry;
 import static org.opennars.entity.Stamp.toSetArray;
 
 /**
+ * Tests the correct functionality of stamps
  *
- * @author me
  */
-
-
 public class TestStamp {
-
+    private long narid = 0;
+    BaseEntry entry(long inputId) {
+        return new BaseEntry(narid, inputId);
+    }
     @Test 
     public void testStampToSetArray() {
-        assertTrue(toSetArray(new long[] { 1, 2, 3 }).length == 3);        
-        assertTrue(toSetArray(new long[] { 1, 1, 3 }).length == 2);
-        assertTrue(toSetArray(new long[] { 1 }).length == 1);
-        assertTrue(toSetArray(new long[] {  }).length == 0);
+        
+        assertTrue(toSetArray(new BaseEntry[] { entry(1), entry(2), entry(3) }).length == 3);        
+        assertTrue(toSetArray(new BaseEntry[] { entry(1), entry(1), entry(3) }).length == 2);
+        assertTrue(toSetArray(new BaseEntry[] { entry(1) }).length == 1);
+        assertTrue(toSetArray(new BaseEntry[] {  }).length == 0);
         assertTrue(
-                Arrays.hashCode(toSetArray(new long[] { 3,2,1 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(3),entry(2),entry(1) }))
                 ==
-                Arrays.hashCode(toSetArray(new long[] { 2,3,1 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(2),entry(3),entry(1) }))
         );
         assertTrue(
-                Arrays.hashCode(toSetArray(new long[] { 1,2,3 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(1),entry(2),entry(3) }))
                 !=
-                Arrays.hashCode(toSetArray(new long[] { 1,1,3 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(1),entry(1),entry(3) }))
         );    
     }
 }

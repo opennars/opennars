@@ -1,47 +1,64 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
+import org.opennars.storage.Memory;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
  * <p>
  * New compound terms are introduced only in forward inference, while
  * decompositional rules are also used in backward inference
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class CompositionalRules {
 
     /* -------------------- intersections and differences -------------------- */
     /**
-     * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>
-     * M>,
-     * <(P-S) ==> M>}
+     * {&lt;S ==&gt; M&gt;, &lt;P ==&gt; M&gt;} |- <br>
+     * {&lt;(S|P) ==&gt; M&gt;, &lt;(S&amp;P) ==&gt; M&gt;, &lt;(S-P) ==&gt; M&gt;, &lt;(P-S) ==&gt; M&gt;}
      *
-     * @param taskSentence The first premise
-     * @param belief The second premise
+     * @param taskContent The first premise
+     * @param beliefContent The second premise
      * @param index The location of the shared term
      * @param nal Reference to the memory
      */
@@ -67,8 +84,8 @@ public final class CompositionalRules {
         }
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
-        final TruthValue truthOr = union(truthT, truthB);
-        final TruthValue truthAnd = intersection(truthT, truthB);
+        final TruthValue truthOr = union(truthT, truthB, nal.narParameters);
+        final TruthValue truthAnd = intersection(truthT, truthB, nal.narParameters);
         TruthValue truthDif = null;
         Term termOr = null;
         Term termAnd = null;
@@ -80,18 +97,20 @@ public final class CompositionalRules {
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
                         termDif = DifferenceExt.make(componentT, componentB);
-                        truthDif = intersection(truthT, negation(truthB));
+                        truthDif = intersection(truthT, negation(truthB, nal.narParameters), nal.narParameters);
                     }
                 } else if (truthT.isNegative()) {
                     termDif = DifferenceExt.make(componentB, componentT);
-                    truthDif = intersection(truthB, negation(truthT));
+                    truthDif = intersection(truthB, negation(truthT, nal.narParameters), nal.narParameters);
                 }
             } else if (taskContent instanceof Implication) {
                 termOr = Disjunction.make(componentT, componentB);
                 termAnd = Conjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, componentCommon, termOr, order, truthOr, nal);
-            processComposed(taskContent, componentCommon, termAnd, order, truthAnd, nal);
+            if(!(componentT.cloneDeep().equals(componentB.cloneDeep()))) {
+                processComposed(taskContent, componentCommon, termOr, order, truthOr, nal);
+                processComposed(taskContent, componentCommon, termAnd, order, truthAnd, nal);
+            }
             processComposed(taskContent, componentCommon, termDif, order, truthDif, nal);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
@@ -100,18 +119,21 @@ public final class CompositionalRules {
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
                         termDif = DifferenceInt.make(componentT, componentB);
-                        truthDif = intersection(truthT, negation(truthB));
+                        truthDif = intersection(truthT, negation(truthB, nal.narParameters), nal.narParameters);
                     }
                 } else if (truthT.isNegative()) {
                     termDif = DifferenceInt.make(componentB, componentT);
-                    truthDif = intersection(truthB, negation(truthT));
+                    truthDif = intersection(truthB, negation(truthT, nal.narParameters), nal.narParameters);
                 }
             } else if (taskContent instanceof Implication) {
                 termOr = Conjunction.make(componentT, componentB);
                 termAnd = Disjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, termOr, componentCommon, order, truthOr, nal);
-            processComposed(taskContent, termAnd, componentCommon, order, truthAnd, nal);
+            
+            if(!(componentT.cloneDeep().equals(componentB.cloneDeep()))) {
+                processComposed(taskContent, termOr, componentCommon, order, truthOr, nal);
+                processComposed(taskContent, termAnd, componentCommon, order, truthAnd, nal);
+            }
             processComposed(taskContent, termDif, componentCommon, order, truthDif, nal);
         }
     }
@@ -119,11 +141,11 @@ public final class CompositionalRules {
     /**
      * Finish composing implication term
      *
-     * @param premise1 Type of the contentInd
+     * @param statement Type of the contentInd
      * @param subject Subject of contentInd
      * @param predicate Predicate of contentInd
      * @param truth TruthValue of the contentInd
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final DerivationContext nal) {
         if ((subject == null) || (predicate == null)) {
@@ -138,13 +160,10 @@ public final class CompositionalRules {
     }
 
     /**
-     * {<(S|P) ==> M>, <P ==> M>} |- <S ==> M>
+     * {&lt;(S|P) ==&gt; M&gt;, &lt;P ==&gt; M&gt;} |- &lt;S ==&gt; M&gt;
      *
-     * @param implication The implication term to be decomposed
-     * @param componentCommon The part of the implication to be removed
      * @param term1 The other term in the contentInd
-     * @param index The location of the shared term: 0 for subject, 1 for
-     * predicate
+     * @param index The location of the shared term: 0 for subject, 1 for predicate
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
@@ -169,71 +188,58 @@ public final class CompositionalRules {
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         final Statement oldContent = (Statement) task.getTerm();
-        final TruthValue v1;
-        final TruthValue v2;
-        if (compoundTask) {
-            v1 = sentence.truth;
-            v2 = belief.truth;
-        } else {
-            v1 = belief.truth;
-            v2 = sentence.truth;
+
+        final TruthValue v1 = compoundTask ? sentence.truth : belief.truth;
+        final TruthValue v2 = compoundTask ? belief.truth : sentence.truth;
+
+        final Term content = Statement.make(oldContent, index == 0 ? term1 : term2, index == 0 ? term2 : term1, order);
+        if (content == null) {
+            return;
         }
+
         TruthValue truth = null;
-        final Term content;
         if (index == 0) {
-            content = Statement.make(oldContent, term1, term2, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
-                if (compound instanceof IntersectionExt) {
-                    truth = reduceConjunction(v1, v2);
-                } else if (compound instanceof IntersectionInt) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if ((compound instanceof SetInt) && (component instanceof SetInt)) {
-                    truth = reduceConjunction(v1, v2);
-                } else if ((compound instanceof SetExt) && (component instanceof SetExt)) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if (compound instanceof DifferenceExt) {
+                truth = lookupTruthOrNull(v1, v2, nal.narParameters,
+                    compound instanceof IntersectionExt,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof IntersectionInt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCECONJUNCTION,
+                    compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCEDISJUNCTION);
+
+                if (truth == null && compound instanceof DifferenceExt) {
                     if (compound.term[0].equals(component)) {
-                        truth = reduceDisjunction(v2, v1);
+                        truth = reduceDisjunction(v2, v1, nal.narParameters);
                     } else {
-                        truth = reduceConjunctionNeg(v1, v2);
+                        truth = reduceConjunctionNeg(v1, v2, nal.narParameters);
                     }
                 }
             } else if (oldContent instanceof Implication) {
                 if (compound instanceof Conjunction) {
-                    truth = reduceConjunction(v1, v2);
+                    truth = reduceConjunction(v1, v2, nal.narParameters);
                 } else if (compound instanceof Disjunction) {
-                    truth = reduceDisjunction(v1, v2);
+                    truth = reduceDisjunction(v1, v2, nal.narParameters);
                 }
             }
         } else {
-            content = Statement.make(oldContent, term2, term1, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
-                if (compound instanceof IntersectionInt) {
-                    truth = reduceConjunction(v1, v2);
-                } else if (compound instanceof IntersectionExt) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if ((compound instanceof SetExt) && (component instanceof SetExt)) {
-                    truth = reduceConjunction(v1, v2);
-                } else if ((compound instanceof SetInt) && (component instanceof SetInt)) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if (compound instanceof DifferenceInt) {
+                truth = lookupTruthOrNull(v1, v2, nal.narParameters,
+                    compound instanceof IntersectionInt,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof IntersectionExt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCECONJUNCTION,
+                    compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCEDISJUNCTION);
+
+                if( truth == null && compound instanceof DifferenceInt ) {
                     if (compound.term[1].equals(component)) {
-                        truth = reduceDisjunction(v2, v1);
+                        truth = reduceDisjunction(v2, v1, nal.narParameters);
                     } else {
-                        truth = reduceConjunctionNeg(v1, v2);
+                        truth = reduceConjunctionNeg(v1, v2, nal.narParameters);
                     }
                 }
             } else if (oldContent instanceof Implication) {
                 if (compound instanceof Disjunction) {
-                    truth = reduceConjunction(v1, v2);
+                    truth = reduceConjunction(v1, v2, nal.narParameters);
                 } else if (compound instanceof Conjunction) {
-                    truth = reduceDisjunction(v1, v2);
+                    truth = reduceDisjunction(v1, v2, nal.narParameters);
                 }
             }
         }
@@ -251,10 +257,8 @@ public final class CompositionalRules {
     }
 
     /**
-     * {(||, S, P), P} |- S {(&&, S, P), P} |- S
+     * {(||, S, P), P} |- S {(&amp;&amp;, S, P), P} |- S
      *
-     * @param implication The implication term to be decomposed
-     * @param componentCommon The part of the implication to be removed
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
@@ -294,47 +298,42 @@ public final class CompositionalRules {
                 if (contentBelief == null) {
                     return;
                 }
-                final Task contentTask = new Task(contentBelief, task.budget, false);
+
+                final Task contentTask = new Task(contentBelief, task.budget, Task.EnumType.DERIVED);
+
                 nal.setCurrentTask(contentTask);
                 final Term conj = Conjunction.make(component, content);
-                truth = intersection(contentBelief.truth, belief.truth);
+                truth = intersection(contentBelief.truth, belief.truth, nal.narParameters);
                 budget = BudgetFunctions.compoundForward(truth, conj, nal);
                 nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
                 nal.doublePremiseTask(conj, truth, budget, false, false);
             }
         } else {
-            final TruthValue v1;
-            final TruthValue v2;
-            if (compoundTask) {
-                v1 = taskSentence.truth;
-                v2 = belief.truth;
-            } else {
-                v1 = belief.truth;
-                v2 = taskSentence.truth;
-            }
-            if (compound instanceof Conjunction) {
-                if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                        truth = intersection(v1, v2);
-                    } else {
-                        return;
-                    }
-                } else { // isJudgment
-                    truth = reduceConjunction(v1, v2);
-                }
-            } else if (compound instanceof Disjunction) {
-                if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                        truth = reduceConjunction(v2, v1);
-                    } else {
-                        return;
-                    }
-                } else {  // isJudgment
-                    truth = reduceDisjunction(v1, v2);
+            final TruthValue v1 = compoundTask ? taskSentence.truth : belief.truth;
+            final TruthValue v2 = compoundTask ? belief.truth : taskSentence.truth;
+
+            if (compound instanceof Conjunction || compound instanceof Disjunction) {
+                if (taskSentence.isGoal() && !compoundTask) {
+                    return;
                 }
             } else {
                 return;
             }
+
+            if (compound instanceof Conjunction) {
+                if (taskSentence.isGoal()) {
+                    truth = intersection(v1, v2, nal.narParameters);
+                } else { // isJudgment
+                    truth = reduceConjunction(v1, v2, nal.narParameters);
+                }
+            } else {
+                if (taskSentence.isGoal()) {
+                    truth = reduceConjunction(v2, v1, nal.narParameters);
+                } else {  // isJudgment
+                    truth = reduceDisjunction(v1, v2, nal.narParameters);
+                }
+            }
+
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
@@ -344,11 +343,12 @@ public final class CompositionalRules {
     
     /* --------------- rules used for variable introduction --------------- */
     /**
-     * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
-     * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
+     * Introduce a dependent variable in an outer-layer conjunction
+     * <br>
+     * {&lt;S --&gt; P1&gt;, &lt;S --&gt; P2&gt;} |- (&amp;&amp;, &lt;#x --&gt; P1&gt;, &lt;#x --&gt; P2&gt;)
      *
-     * @param taskContent The first premise <M --> S>
-     * @param beliefContent The second premise <M --> P>
+     * @param taskContent The first premise &lt;M --&gt; S&gt;
+     * @param beliefContent The second premise &lt;M --&gt; P&gt;
      * @param index The location of the shared term: 0 for subject, 1 for
      * predicate
      * @param nal Reference to the memory
@@ -358,187 +358,57 @@ public final class CompositionalRules {
         if (!(taskContent instanceof Inheritance)) {
             return;
         }
-
-        final Variable varInd1 = new Variable("$varInd1");
-        final Variable varInd2 = new Variable("$varInd2");
         
-        Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
-
-        Term term11 = index == 0 ? varInd1 : taskContent.getSubject();
-        Term term21 = index == 0 ? varInd1 : beliefContent.getSubject();
-        Term term12 = index == 0 ? taskContent.getPredicate() : varInd1;
-        Term term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
-
-        if (index == 0) {
-            term12dependent=term12;
-            term22dependent=term22;
-        } else {
-            term11dependent=term11;
-            term21dependent=term21;
-        }
-
-        Term commonTerm = null;
-        final Map<Term, Term> subs = new HashMap<>();
-
-        // comment to firstIsImage and secondIsSameImage:
-        // Because if we have <{a} --> P> and <{a} --> C>
-        // then we want to introduce (&&,<{#1} -- P>,<{#1} --> C>).
-        // so we have to indeed check that
-        // they are equal set types (not seeing [a] and {a} as same)
-
-        // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
-
-        if (index == 0) {
-            if (term12 instanceof ImageExt) {
-                boolean firstIsImage = term22 instanceof ImageExt;
-                boolean secondIsSameImage = true;
-
-                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
-
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
-                }
-            }
-            if (commonTerm==null && term22 instanceof ImageExt) {
-                boolean firstIsImage = term12 instanceof ImageExt;
-                boolean secondIsSameImage = true;
-
-                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    term12 = applySubstituteIfCompoundTerm(varInd2, term12, subs);
-                }
-            }
-        } else {
-            if (term21 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term11 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
-                }
-            }
-            if (commonTerm==null && term11 instanceof ImageInt) {
-                boolean firstIsImage = true;
-                boolean secondIsSameImage = term21 instanceof ImageInt;
-
-                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
-                
-                if (commonTerm != null) {
-                    subs.put(commonTerm, varInd2);
-                    term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    term21 = applySubstituteIfCompoundTerm(varInd2, term21, subs);
-                }
-            }
-        }
-
+        Term term11 = taskContent.getSubject();
+        Term term21 = beliefContent.getSubject();
+        Term term12 = taskContent.getPredicate();
+        Term term22 = beliefContent.getPredicate();
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Term content = Implication.make(state1, state2);
-        if (content == null) {
-            return;
-        }
-
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
         if ((truthT == null) || (truthB == null)) {
-            if(Parameters.DEBUG) {
+            if(MiscFlags.DEBUG) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
             return;
         }
+        for(boolean subjectIntroduction : new boolean[]{true, false}) {
+            Set<Term> contents = CompositionalRules.introduceVariables(nal, Implication.make(state1, state2),subjectIntroduction);
+            for(Term content : contents) {
+                TruthValue truth = induction(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
+            }
 
-        TruthValue truth = induction(truthT, truthB);
-        BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
-        content = Implication.make(state2, state1);
-        truth = induction(truthB, truthT);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
-        content = Equivalence.make(state1, state2);
-        truth = comparison(truthT, truthB);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
+            contents = CompositionalRules.introduceVariables(nal, Implication.make(state2, state1), subjectIntroduction);
+             for(Term content : contents) {
+                TruthValue truth = induction(truthB, truthT, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
+            }
 
-        final Variable varDep = new Variable("#varDep");
-        if (index == 0) {
-            state1 = Inheritance.make(varDep, term12dependent);
-            state2 = Inheritance.make(varDep, term22dependent);
-        } else {
-            state1 = Inheritance.make(term11dependent, varDep);
-            state2 = Inheritance.make(term21dependent, varDep);
-        }
-        
-        if ((state1==null) || (state2 == null))
-            return;
-        
-        content = Conjunction.make(state1, state2);
-        truth = intersection(truthT, truthB);
-        budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
-    }
+            contents = CompositionalRules.introduceVariables(nal, Equivalence.make(state1, state2), subjectIntroduction);
+             for(Term content : contents) {
+                TruthValue truth = comparison(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
+            }
 
-    private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
-        return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
-    }
-
-    private static Term findCommonSubject(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
-        Term resultCommonTerm = commonTerm;
-
-        if (tested.containsTermRecursively(containedTest)) {
-            resultCommonTerm = containedTest;
-        }
-
-        if(secondIsSameImage && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(containedTest, tested, firstIsImage);
-        }
-        return resultCommonTerm;
-    }
-
-    private static Term findCommonTermPredicate(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
-        Term resultCommonTerm = commonTerm;
-
-        if (tested.containsTermRecursively(containedTest)) {
-            resultCommonTerm = containedTest;
-        }
-
-        if(secondIsSameImage && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(tested, containedTest, firstIsImage);
-        }
-        return resultCommonTerm;
-    }
-
-    private static Term retCommonTerm(Term term12, Term term22, boolean firstIsImage) {
-        Term commonTerm;
-        commonTerm = ((Image) term12).getTheOtherComponent();
-        if(!(term22.containsTermRecursively(commonTerm))) {
-            commonTerm=null;
-        }
-        if (firstIsImage && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
-            commonTerm = ((Image) term22).getTheOtherComponent();
-            if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
-                commonTerm = null;
+            contents = CompositionalRules.introduceVariables(nal, Conjunction.make(state1, state2), subjectIntroduction);
+            for(Term content : contents) {
+                TruthValue truth = intersection(truthT, truthB, nal.narParameters);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                nal.doublePremiseTask(content, truth.clone(), budget.clone(), false, false);
             }
         }
-        return commonTerm;
     }
 
     /**
-     * {<M --> S>, <C ==> <M --> P>>} |- <(&&, <#x --> S>, C) ==> <#x --> P>>
-     * {<M --> S>, (&&, C, <M --> P>)} |- (&&, C, <<#x --> S> ==> <#x --> P>>)
+     * {&lt;M --&gt; S&gt;, &lt;C ==&gt; &lt;M --&gt; P&gt;&gt;} |- &lt;(&amp;&amp;, &lt;#x --&gt; S&gt;, C) ==&gt; &lt;#x --&gt; P&gt;&gt;
+     * <br>
+     * {&lt;M --&gt; S&gt;, (&amp;&amp;, C, &lt;M --&gt; P&gt;)} |- (&amp;&amp;, C, &lt;&lt;#x --&gt; S&gt; ==&gt; &lt;#x --&gt; P&gt;&gt;)
      *
-     * @param taskContent The first premise directly used in internal induction,
-     * <M --> S>
-     * @param beliefContent The componentCommon to be used as a premise in
-     * internal induction, <M --> P>
      * @param oldCompound The whole contentInd of the first premise, Implication
      * or Conjunction
      * @param nal Reference to the memory
@@ -549,123 +419,55 @@ public final class CompositionalRules {
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
             return false;
         }
-        
-        final Term subject1 = premise1.getSubject();
-        final Term subject2 = premise2.getSubject();
-        final Term predicate1 = premise1.getPredicate();
-        final Term predicate2 = premise2.getPredicate();
-        final Term commonTerm1;
-        final Term commonTerm2;
-        if (subject1.equals(subject2)) {
-            commonTerm1 = subject1;
-            commonTerm2 = secondCommonTerm(predicate1, predicate2, 0);
-        } else if (predicate1.equals(predicate2)) {
-            commonTerm1 = predicate1;
-            commonTerm2 = secondCommonTerm(subject1, subject2, 0);
-        } else {
-            return false;
-        }
-        
         final Sentence belief = nal.getCurrentBelief();
-        final Map<Term, Term> substitute = new HashMap<>();
         
         boolean b1 = false, b2 = false;
         
         {
-            final Variable varDep2 = new Variable("#varDep2");
-
-
             Term content = Conjunction.make(premise1, oldCompound);
-
-            if (!(content instanceof CompoundTerm))
-                return false;           
-
-            substitute.put(commonTerm1, varDep2);
-
-            content = ((CompoundTerm)content).applySubstitute(substitute);
-
-            final TruthValue truth = intersection(taskSentence.truth, belief.truth);
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b1 = (nal.doublePremiseTask(content, truth, budget, false, false))!=null;
+            if (!(content instanceof CompoundTerm)) {
+                return false;  
+            }
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(nal, content, subjectIntro);
+                for(Term cont : conts) {
+                    final TruthValue truth = intersection(taskSentence.truth, belief.truth, nal.narParameters);
+                    final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                    b1 |= (nal.doublePremiseTask(cont, truth, budget, false, false))!=null;
+                }
+            }
         }
 
-        substitute.clear();
-
         {
-            final Variable varInd1 = new Variable("$varInd1");
-            final Variable varInd2 = new Variable("$varInd2");
-
-            substitute.put(commonTerm1, varInd1);
-
-            if (commonTerm2 != null) {
-                substitute.put(commonTerm2, varInd2);
-            }
-
-
             Term content = Implication.make(premise1, oldCompound);
-
             if ((content == null) || (!(content instanceof CompoundTerm))) {
                 return false;
             }
-
-            content = ((CompoundTerm)content).applySubstituteToCompound(substitute);
-
-            final TruthValue truth;
-            
-            if (premise1.equals(taskSentence.term)) {
-                truth = induction(belief.truth, taskSentence.truth);
-            } else {
-                truth = induction(taskSentence.truth, belief.truth);
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(nal, content, subjectIntro);
+                for(Term cont : conts) {
+                    final TruthValue truth;
+                    if (premise1.equals(taskSentence.term)) {
+                        truth = induction(belief.truth, taskSentence.truth, nal.narParameters);
+                    } else {
+                        truth = induction(taskSentence.truth, belief.truth, nal.narParameters);
+                    }
+                    final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                    b2 |= nal.doublePremiseTask(cont, truth, budget, false, false)!=null;
+                }
             }
-
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-
-            b2 = nal.doublePremiseTask(content, truth, budget, false, false)!=null;
         }
         
         return b1 || b2;
     }
 
-    /**
-     * Introduce a second independent variable into two terms with a common
-     * component
-     *
-     * @param term1 The first term
-     * @param term2 The second term
-     * @param index The index of the terms in their statement
-     */
-    private static Term secondCommonTerm(final Term term1, final Term term2, final int index) {
-        Term commonTerm = null;
-        if (index == 0) {
-            if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
-                commonTerm = ((ImageExt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageExt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
-                        commonTerm = null;
-                    }
-                }
-            }
-        } else if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
-            commonTerm = ((ImageInt) term1).getTheOtherComponent();
-            if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
-                    commonTerm = null;
-                }
-            }
-        }
-        return commonTerm;
-    }
-
     /*
-    The other inversion (abduction) should also be studied:
- IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
- IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
-OUT: <lock1 --> lock>.
-    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
-    */
+     * The other inversion (abduction) should also be studied:
+     * IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+     * IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
+     * OUT: <lock1 --> lock>.
+     * http://code.google.com/p/open-nars/issues/detail?id=40&can=1
+     */
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final DerivationContext nal) {
         Statement T1 = (Statement) sentence.term;
         Statement T2 = (Statement) belief.term;
@@ -675,84 +477,59 @@ OUT: <lock1 --> lock>.
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-        final Map<Term, Term> res1 = new HashMap<>();
-        final Map<Term, Term> res2 = new HashMap<>();
-        final Map<Term, Term> res3 = new HashMap<>();
-        final Map<Term, Term> res4 = new HashMap<>();
+        final Map<Term, Term>
+            res1 = new HashMap<>(),
+            res2 = new HashMap<>(),
+            res3 = new HashMap<>(),
+            res4 = new HashMap<>();
 
         if (figure == 21) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2);
+        }
+        else if (figure == 12) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2);
+        }
+        else if (figure == 11) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2);
+        }
+        else if (figure == 22) {
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2);
+        }
 
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
+        // this part is independent, the rule works if it unifies
+        T1 = (Statement) T1.applySubstitute(res2);
+        if(T1==null) {
+            return;
+        }
+        T2 = (Statement) T2.applySubstitute(res1);
+        if(T2==null) {
+            return;
+        }
 
-            //update the variables because T1 and T2 may have changed
+
+        if (figure == 21) {
+            // update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
             P2 = T1.getPredicate();
 
             eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, S1, P2, res3, res4);
         }
         else if (figure == 12) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
-
-            //update the variables because T1 and T2 may have changed
+            // update the variables because T1 and T2 may have changed
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
 
             eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, S2, P1, res3, res4);
         }
         else if (figure == 11) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
+            // update the variables because T1 and T2 may have changed
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            P2 = T1.getPredicate();
 
             eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, P1, P2, res3, res4);
         }
         else if (figure == 22) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
-
-            //update the variables because T1 and T2 may have changed
+            // update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
             S2 = T1.getSubject();
 
@@ -771,7 +548,7 @@ OUT: <lock1 --> lock>.
                                 continue;
                             }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
+                                final TruthValue truth = abduction(sentence.truth, belief.truth, nal.narParameters);
                                 final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.doublePremiseTask(s2, truth, budget, false, false);
                             }
@@ -795,7 +572,7 @@ OUT: <lock1 --> lock>.
                                 continue;
                             }
                             if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
+                                final TruthValue truth = abduction(sentence.truth, belief.truth, nal.narParameters);
                                 final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.doublePremiseTask(s2, truth, budget, false, false);
                             }
@@ -837,7 +614,7 @@ OUT: <lock1 --> lock>.
                 continue;
             }
             if (!s2.equals(s12) && (sentence.truth != null) && (belief.truth != null)) {
-                final TruthValue truth = abduction(sentence.truth, belief.truth);
+                final TruthValue truth = abduction(sentence.truth, belief.truth, nal.narParameters);
                 final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
                 nal.doublePremiseTask(s2, truth, budget, false, false);
             }
@@ -852,34 +629,186 @@ OUT: <lock1 --> lock>.
         CompoundTerm T = (CompoundTerm) T1;
         CompoundTerm T2 = (CompoundTerm) content;
         
-        
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
             //CompoundTerm result = T;
             if (component.equals(content)) {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
-            final Variable depIndVar1 = new Variable("#depIndVar1");
-            final Variable depIndVar2 = new Variable("#depIndVar2");
 
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
-                zw = (CompoundTerm) zw.setComponent(1, depIndVar1, nal.mem());
-                T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, nal.mem());
                 final Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
-                zw = (CompoundTerm) zw.setComponent(0, depIndVar2, nal.mem());
-                T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, nal.mem());
                 final Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             }
-            final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
-            final BudgetValue budget = BudgetFunctions.compoundForward(truth, T, nal);
-            nal.doublePremiseTask(T, truth, budget, false, false);
+            
+            if(T == null) {
+                return;
+            }
+            final TruthValue truth = induction(originalMainSentence.truth, subSentence.truth, nal.narParameters);
+            for(boolean subjectIntro : new boolean[]{true, false}) {
+                Set<Term> conts = introduceVariables(nal, T, subjectIntro);
+                for(Term cont : conts) {
+                    final BudgetValue budget = BudgetFunctions.compoundForward(truth, cont, nal);
+                    nal.doublePremiseTask(cont, truth.clone(), budget.clone(), false, false);
+                }
+            }
+        }
+    }
+    
+    
+    /**
+     * The power set, from João Silva, https://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
+     * 
+     * @param <T>
+     * @param originalSet
+     * @return 
+     */
+    public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+        Set<Set<T>> sets = new HashSet<Set<T>>();
+        if (originalSet.isEmpty()) {
+            sets.add(new HashSet<T>());
+            return sets;
+        }
+        List<T> list = new ArrayList<T>(originalSet);
+        T head = list.get(0);
+        Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+        for (Set<T> set : powerSet(rest)) {
+            Set<T> newSet = new HashSet<T>();
+            newSet.add(head);
+            newSet.addAll(set);
+            sets.add(newSet);
+            sets.add(set);
+        }       
+        return sets;
+    }
+    
+    /**
+     * Introduction of variables that appear either within subjects or within predicates and more than once
+     * 
+     * @param implicationEquivalenceOrJunction
+     * @param subject
+     * @return 
+     */
+    public static Set<Term> introduceVariables(DerivationContext nal, Term implicationEquivalenceOrJunction, boolean subject) {
+        HashSet<Term> result = new HashSet<Term>();
+        boolean validForIntroduction =  implicationEquivalenceOrJunction instanceof Conjunction ||
+                                        implicationEquivalenceOrJunction instanceof Disjunction ||
+                                        implicationEquivalenceOrJunction instanceof Equivalence ||
+                                        implicationEquivalenceOrJunction instanceof Implication;
+        if(!validForIntroduction) {
+            return result;
+        }
+        final Map<Term,Term> app = new HashMap<>();
+        Set<Term> candidates = new HashSet<>();
+        if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
+            addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getSubject(),   subject);
+            addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getPredicate(), subject);
+        }
+        if(implicationEquivalenceOrJunction instanceof Conjunction || implicationEquivalenceOrJunction instanceof Disjunction) {
+            addVariableCandidates(candidates, implicationEquivalenceOrJunction, subject);
+        }
+        Map<Term,Integer> termCounts = implicationEquivalenceOrJunction.countTermRecursively(null);
+        int k = 0;
+        for(Term t : candidates) {
+            if(termCounts.getOrDefault(t, 0) > 1) {
+                //ok it appeared as subject or predicate but appears in the Conjunction more than once
+                //=> introduce a dependent variable for it!
+                String varType = "#";
+                if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
+                    Statement imp = (Statement) implicationEquivalenceOrJunction;
+                    if(imp.getSubject().containsTermRecursively(t) && imp.getPredicate().containsTermRecursively(t)) {
+                        varType = "$";
+                    }
+                }
+                Variable introVar = new Variable(varType + "ind" + k);
+                app.put(t, introVar);
+                k++;
+            }
+        }
+        
+        List<Term> shuffledVariables = new ArrayList<Term>();
+        for(Term t : app.keySet()) {
+            shuffledVariables.add(t);
+        }
+        Collections.shuffle(shuffledVariables, Memory.randomNumber);
+        HashSet<Term> selected = new HashSet<Term>();
+        int i = 1;
+        for(Term t : shuffledVariables) {
+            selected.add(t);
+            if(Math.pow(2.0, i) > nal.narParameters.VARIABLE_INTRODUCTION_COMBINATIONS_MAX) {
+                break;
+            }
+            i++;
+        }
+        Set<Set<Term>> powerset = powerSet(selected);
+        for(Set<Term> combo : powerset) {
+            Map<Term,Term> mapping = new HashMap<>();
+            for(Term vIntro : combo) {
+                mapping.put(vIntro, app.get(vIntro));
+            }
+            if(mapping.size() > 0) {
+                result.add(((CompoundTerm)implicationEquivalenceOrJunction).applySubstitute(mapping));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Add the variable candidates that appear as subjects and predicates
+     * 
+     * @param candidates manipulated set of candidates
+     * @param side
+     * @param subject
+     */
+    public static void addVariableCandidates(Set<Term> candidates, Term side, boolean subject) {
+        boolean junction = (side instanceof Conjunction || side instanceof Disjunction);
+        int n = junction ? ((CompoundTerm) side).size() : 1;
+        for(int i=0; i<n; i++) {
+            // we found an Inheritance
+            Term t = null;
+            if(i<n) {
+                if(junction) {
+                    t = ((CompoundTerm) side).term[i];
+                } else {
+                    t = side;
+                }
+            }
+            if(t instanceof Inheritance || t instanceof Similarity) {
+                Inheritance inh = (Inheritance) t;
+                Term subjT = inh.getSubject();
+                Term predT = inh.getPredicate();
+                boolean addSubject = subject || subjT instanceof ImageInt; //also allow for images due to equivalence transform
+                Set<Term> removals = new HashSet<Term>();
+                if(addSubject && !subjT.hasVar()) {
+                    Set<Term> ret = CompoundTerm.addComponentsRecursively(subjT, null);
+                    for(Term ct : ret) {
+                        if(ct instanceof Image) {
+                            removals.add(((Image) ct).term[((Image) ct).relationIndex]);
+                        }
+                        candidates.add(ct);
+                    }
+                }
+                boolean addPredicate = !subject || predT instanceof ImageExt; //also allow for images due to equivalence transform
+                if(addPredicate && !predT.hasVar()) {
+                    Set<Term> ret = CompoundTerm.addComponentsRecursively(predT, null);
+                    for(Term ct : ret) {
+                        if(ct instanceof Image) {
+                            removals.add(((Image) ct).term[((Image) ct).relationIndex]);
+                        }
+                        candidates.add(ct);
+                    }
+                }
+                for(Term remove : removals) { //but do not introduce variables for image relation, only if they appear as product
+                    candidates.remove(remove);
+                }
+            }
         }
     }
 }

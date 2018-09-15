@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
@@ -19,17 +28,20 @@ import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
 import static org.opennars.io.Symbols.*;
+import static org.opennars.language.Statement.retOppositeSide;
 import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
  * belief. Used in indirective processing of a task, to dispatch inference cases
  * to the relevant inference rules.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class RuleTables {
     
@@ -39,7 +51,6 @@ public class RuleTables {
      *
      * @param tLink The selected TaskLink, which will provide a task
      * @param bLink The selected TermLink, which may provide a belief
-     * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final DerivationContext nal) {
 
@@ -55,7 +66,12 @@ public class RuleTables {
         
         final Concept beliefConcept = memory.concept(beliefTerm);
         
-        final Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
+        Sentence belief = null;
+        if(beliefConcept != null) {
+            synchronized(beliefConcept) { //we only need the target concept to select a belief
+                belief = beliefConcept.getBelief(nal, task);
+            }
+        }
         
         nal.setCurrentBelief( belief );
         
@@ -87,7 +103,7 @@ public class RuleTables {
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
-            if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return
+            if (LocalRules.match(task, belief, beliefConcept, nal)) { //new tasks resulted from the match, so return
                 return;
             }
         }
@@ -143,7 +159,7 @@ public class RuleTables {
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
-                        if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
+                        if ((belief != null) && (beliefTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
                             SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
                         }
@@ -153,7 +169,9 @@ public class RuleTables {
             case TermLink.COMPOUND:
                 switch (bLink.type) {
                     case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
+                        if(taskTerm instanceof CompoundTerm && beliefTerm instanceof CompoundTerm) {
+                            compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
+                        }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
@@ -186,7 +204,7 @@ public class RuleTables {
                         }
                         break;
                     case TermLink.COMPOUND:
-                        if (taskTerm instanceof Statement) {
+                        if (taskTerm instanceof Statement && beliefTerm instanceof CompoundTerm) {
                             compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, nal);
                         }
                         break;
@@ -239,7 +257,7 @@ public class RuleTables {
         if(task.sentence.isJudgment() && tIndex == 0 && bIndex == 1 && taskTerm instanceof Operation) {
             final Operation op = (Operation) taskTerm;
             if(op.getPredicate() == nal.memory.getOperator("^want")) {
-                final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
+                final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, nal.narParameters.reliance, nal.narParameters);
                 nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
             }
         }
@@ -252,19 +270,19 @@ public class RuleTables {
             if(taskTerm instanceof Implication) {
                 final Implication imp=(Implication)taskTerm;
                 if(imp.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                    if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
+                    if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
                         goalterm=imp.getSubject();
                     }
-                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
+                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
                         goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
                     }
                 }
                 else
                     if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
                             goalterm=imp.getPredicate();
                         }
-                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
+                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
                             goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
                         }
                     }
@@ -273,34 +291,42 @@ public class RuleTables {
                 if(taskTerm instanceof Equivalence) {
                     final Equivalence qu=(Equivalence)taskTerm;
                     if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
                             goalterm=qu.getSubject();
                         }
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
                             goalterm2=qu.getPredicate();
                         }
                     }
                 }
-            final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+            final TruthValue truth=new TruthValue(1.0f,nal.narParameters.DEFAULT_GOAL_CONFIDENCE*nal.narParameters.CURIOSITY_DESIRE_CONFIDENCE_MUL, nal.narParameters);
             if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
-                goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm);
+                goalterm = goalterm.cloneDeep();
+                CompoundTerm.transformIndependentVariableToDependent((CompoundTerm) goalterm);
+                ((CompoundTerm)goalterm).invalidateName();
                 final Sentence sent=new Sentence(
                     goalterm,
                     Symbols.GOAL_MARK,
                     truth,
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
+                    new Stamp(task.sentence.stamp,nal.time.time()));
 
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
+                                                            task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
+                                                            BudgetFunctions.truthToQuality(truth), nal.narParameters));
             }
             if(goalterm instanceof CompoundTerm && goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
-                goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
+                goalterm2 = goalterm2.cloneDeep();
+                CompoundTerm.transformIndependentVariableToDependent((CompoundTerm) goalterm2);
+                ((CompoundTerm)goalterm2).invalidateName();
                 final Sentence sent=new Sentence(
                     goalterm2,
                     Symbols.GOAL_MARK,
                     truth.clone(),
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
+                    new Stamp(task.sentence.stamp,nal.time.time()));
 
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
+                                                            task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
+                                                            BudgetFunctions.truthToQuality(truth), nal.narParameters));
             }
         }
     }
@@ -401,14 +427,13 @@ public class RuleTables {
         Statement taskStatement = (Statement) taskSentence.term;
         Statement beliefStatement = (Statement) belief.term;
         
-        Term t1 = null;
-        Term t2 = null;
+
         final Term[] u = new Term[] { taskStatement, beliefStatement };
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
-        if (!Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
+        if (!Variables.unify(VAR_INDEPENDENT, taskStatement.retBySide(figureLeft), beliefStatement.retBySide(figureRight), u)) {
             return;
         }
 
@@ -418,32 +443,14 @@ public class RuleTables {
             return;
         }
 
-        switch (figure) {
-            case 11: // induction
-            t1 = beliefStatement.getPredicate();
-            t2 = taskStatement.getPredicate();
-            break;
-
-            case 12: // deduction
-            t1 = beliefStatement.getSubject();
-            t2 = taskStatement.getPredicate();
-            break;
-
-            case 21: // exemplification
-            t1 = taskStatement.getSubject();
-            t2 = beliefStatement.getPredicate();
-            break;
-
-            case 22: // abduction
-            t1 = taskStatement.getSubject();
-            t2 = beliefStatement.getSubject();
-            break;
-        }
+        boolean isDeduction;
+        Term t1;
+        Term t2;
 
         switch (figure) {
             case 11: // induction
             {
-                final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                final boolean sensational = SyllogisticRules.abdIndCom(beliefStatement.getPredicate(), taskStatement.getPredicate(), taskSentence, belief, figure, nal);
                 if (sensational) {
                     return;
                 }
@@ -455,14 +462,13 @@ public class RuleTables {
             break;
             case 22: // abduction
             {
-                if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                    final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                if (!SyllogisticRules.conditionalAbd(taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
+                    final boolean sensational = SyllogisticRules.abdIndCom(taskStatement.getSubject(), beliefStatement.getSubject(), taskSentence, belief, figure, nal);
                     if(sensational) {
                         return;
                     }
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
                     CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
-
                 }
 
                 CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
@@ -471,6 +477,11 @@ public class RuleTables {
 
             case 12: // deduction
             case 21: // exemplification
+
+            isDeduction = figure == 12;
+
+            t1 = isDeduction ? beliefStatement.getSubject() : taskStatement.getSubject();
+            t2 = isDeduction ? taskStatement.getPredicate() : beliefStatement.getPredicate();
 
             if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
                 LocalRules.matchReverse(nal);
@@ -497,18 +508,18 @@ public class RuleTables {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         final Term[] u = new Term[] { asymSt, symSt };
-        if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
+        if (!Variables.unify(VAR_INDEPENDENT, asymSt.retBySide(figureLeft), symSt.retBySide(figureRight), u)) {
             return;
         }
 
         asymSt = (Statement) u[0];
         symSt = (Statement) u[1];
-        final Term t1 = retBySide(asymSt, retOppositeSide(figureLeft));
-        final Term t2 = retBySide(symSt, retOppositeSide(figureRight));
+        final Term t1 = asymSt.retBySide(retOppositeSide(figureLeft));
+        final Term t2 = symSt.retBySide(retOppositeSide(figureRight));
 
         if (Variables.unify(VAR_QUERY, t1, t2, u)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
@@ -528,20 +539,6 @@ public class RuleTables {
     }
 
     /**
-     * returns the subject (0) or predicate(1)
-     * @param statement statement for which the side has to be returned
-     * @param side subject(0) or predicate(1)
-     * @return the term of the side
-     */
-    private static Term retBySide(Statement statement, EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
-    }
-
-    private static EnumStatementSide retOppositeSide(EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
-    }
-
-    /**
      * converts the side of a figure to a zero based index - which determines the side of the Statement
      *
      * a figure is a encoding for the sides
@@ -549,30 +546,25 @@ public class RuleTables {
      * @param sideOfFigure side
      * @return
      */
-    private static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+    private static Statement.EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
         if( sideOfFigure == EnumFigureSide.LEFT ) {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.SUBJECT;
-                case 21: return EnumStatementSide.PREDICATE;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return Statement.EnumStatementSide.SUBJECT;
+                case 12: return Statement.EnumStatementSide.SUBJECT;
+                case 21: return Statement.EnumStatementSide.PREDICATE;
+                case 22: return Statement.EnumStatementSide.PREDICATE;
             }
         }
         else {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.PREDICATE;
-                case 21: return EnumStatementSide.SUBJECT;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return Statement.EnumStatementSide.SUBJECT;
+                case 12: return Statement.EnumStatementSide.PREDICATE;
+                case 21: return Statement.EnumStatementSide.SUBJECT;
+                case 22: return Statement.EnumStatementSide.PREDICATE;
             }
         }
 
         throw new IllegalArgumentException("figure is invalid");
-    }
-
-    enum EnumStatementSide {
-        SUBJECT,
-        PREDICATE,
     }
 
     enum EnumFigureSide {
@@ -593,15 +585,15 @@ public class RuleTables {
         final Statement s1 = (Statement) belief.term;
         final Statement s2 = (Statement) taskSentence.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         //parameters for unify()
-        final Term ut1 = retBySide(s1, figureLeft);
-        final Term ut2 = retBySide(s2, figureRight);
+        final Term ut1 = s1.retBySide(figureLeft);
+        final Term ut2 = s2.retBySide(figureRight);
         //parameters for resemblance()
-        Term rt1 = retBySide(s1, retOppositeSide(figureLeft));
-        Term rt2 = retBySide(s2, retOppositeSide(figureRight));
+        Term rt1 = s1.retBySide(retOppositeSide(figureLeft));
+        Term rt2 = s2.retBySide(retOppositeSide(figureRight));
         
         final Term[] u = new Term[] { s1, s2 };
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {
@@ -781,7 +773,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 final Conjunction conj = (Conjunction) compound;
                 final Term[] u = new Term[] { compound, statement };
-                if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
+                if (Variables.unify(VAR_DEPENDENT, component, statement, u) && u[0] instanceof Conjunction && u[1] instanceof Statement) {
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
@@ -854,28 +846,32 @@ public class RuleTables {
     public static void transformTask(final TaskLink tLink, final DerivationContext nal) {
         final CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getTerm();
         final short[] indices = tLink.index;
-        Term inh = null;
-        if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
-            inh = content;
-        } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-            inh = content.term[indices[0]];
-        } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-            final Term component = content.term[indices[0]];
-            if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                
-                final Term[] cterms = ((CompoundTerm) component).term;
-                if (indices[1] < cterms.length-1) {
-                    inh = cterms[indices[1]];
-                }
-                else {
+        Term expectedInheritanceTerm = null; // we store here the (dereferenced) term which we expect to be a inheritance
+
+        { // this block "dereferences" the term by the address which we are storing in "indices"
+            if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
+                expectedInheritanceTerm = content;
+            } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
+                expectedInheritanceTerm = content.term[indices[0]];
+            } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
+                final Term component = content.term[indices[0]];
+                if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
+
+                    final Term[] cterms = ((CompoundTerm) component).term;
+                    if (indices[1] < cterms.length - 1) {
+                        expectedInheritanceTerm = cterms[indices[1]];
+                    } else {
+                        return;
+                    }
+                } else {
                     return;
                 }
-            } else {
-                return;
             }
         }
-        if (inh instanceof Inheritance) {
-            StructuralRules.transformProductImage((Inheritance) inh, content, indices, nal);
+
+        // it is not a fatal error if it is not a inheritance, we just ignore it in this case
+        if (expectedInheritanceTerm instanceof Inheritance) {
+            StructuralRules.transformProductImage((Inheritance) expectedInheritanceTerm, content, indices, nal);
         }
     }
 }

@@ -1,19 +1,29 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;
@@ -25,6 +35,9 @@ import java.io.Serializable;
  * A task references its parent and an optional causal factor (usually an Operation instance).  These are implemented as WeakReference to allow forgetting via the
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 
@@ -34,54 +47,46 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
-    
+    /* Whether the task should go into event bag or not*/
+    private boolean partOfSequenceBuffer = false;
+    /* Whether it is an input task or not */
+    private boolean isInput = false;
+
     /**
-     * Constructor for input task and single premise task
+     * Constructor for input task and single premise derived task
      *
      * @param s The sentence
      * @param b The budget
      */ 
-    public Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
+    public Task(final Sentence<T> s, final BudgetValue b, EnumType type) {
         this(s, b, null, null);  
-        this.isInput = isInput;
-    }
-
-    protected Task() {
-        this(null, null, null, null);
+        this.isInput = type == EnumType.INPUT;
     }
     
-    private boolean partOfSequenceBuffer = false;
-    private boolean observablePrediction = false;
-    private boolean isInput = false;
-    
-    /**
-     * Constructor for a derived task
-     *
+    /***
+     * Constructors for double premise derived task 
+     * 
      * @param s The sentence
      * @param b The budget
-     * @param parentBelief The belief from which this new task is derived
+     * @param parentBelief The belief used for deriving the task
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief) {
         this(s, b, parentBelief, null);
     }
+    
+    /***
+     * Constructors for solved double premise derived task 
+     * 
+     * @param s The sentence
+     * @param b The budget
+     * @param parentBelief The belief used for deriving the task 
+     * @param solution The solution to the task
+     */
     public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
         this.bestSolution = solution;   
-    }
-    
-    /**
-     * Constructor for an activated task
-     *
-     * @param s The sentence
-     * @param b The budget
-     * @param parentTask The task from which this new task is derived
-     * @param parentBelief The belief from which this new task is derived
-     * @param solution The belief to be used in future inference
-     */
-    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, parentBelief, solution);
     }
     
     @Override public Sentence name() {
@@ -102,16 +107,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public int hashCode() {
         return sentence.hashCode();
     }
-    
-    public static Task make(final Sentence s, final BudgetValue b, final Task parent) {
-        return make(s, b, parent, null);
-    }
-    
-    public static Task make(final Sentence s, final BudgetValue b, final Task parent, final Sentence belief) {
-        final Term t = s.term;
-        return new Task(s, b, belief);
-    }
-    
+
     /**
      * Directly get the creation time of the sentence
      *
@@ -163,8 +159,10 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
      *
      * @param judg The solution to be remembered
      */
-    public void setBestSolution(final Memory memory,final Sentence judg) {
-        InternalExperience.InternalExperienceFromBelief(memory, this, judg);
+    public void setBestSolution(final Memory memory,final Sentence judg, final Timable time) {
+        if(memory.internalExperience != null) {
+            InternalExperience.InternalExperienceFromBelief(memory, this, judg, time);
+        }
         bestSolution = judg;
     }
 
@@ -201,16 +199,13 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public boolean isElemOfSequenceBuffer() {
         return !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
     }
-    
-    public void setObservablePrediction(final boolean b) {
-        this.observablePrediction = b;
-    }
-
-    public boolean isObservablePrediction() {
-        return this.observablePrediction;
-    }
 
     public T getTerm() {
         return sentence.getTerm();
+    }
+
+    public enum EnumType {
+        INPUT,
+        DERIVED,
     }
 }

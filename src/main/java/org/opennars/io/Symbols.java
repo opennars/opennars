@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.io;
 
@@ -21,7 +30,9 @@ import org.opennars.io.events.OutputHandler.OUT;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * @author Patrick Hammer
+ */
 public class Symbols {
 
     /* sentence type and delimitors */
@@ -56,6 +67,49 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
+
+
+
+    /* experience line prefix */
+    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
+    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
+    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
+
+    public static final char PREFIX_MARK = ':';
+    public static final char COMMENT_MARK = '/';
+    //public static final char URL_INCLUDE_MARK = '`';
+    public static final char ECHO_MARK = '\'';
+    //public static final char NATURAL_LANGUAGE_MARK = '\"';
+
+    /* control commands */
+    public static final String RESET_COMMAND = "*reset";
+    public static final String REBOOT_COMMAND = "*reboot";
+    public static final String STOP_COMMAND = "*stop";
+    public static final String START_COMMAND = "*start";
+    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
+    public static final String SET_DECISION_LEVEL_COMMAND = "*decisionthreshold";
+
+    /* Stamp, display only */
+    public static final char STAMP_OPENER = '{';
+    public static final char STAMP_CLOSER = '}';
+    public static final char STAMP_SEPARATOR = ';';
+    public static final char STAMP_STARTER = ':';
+
+    /* TermLink type, display only */
+    public static final String TO_COMPONENT_1 = "@(";
+    public static final String TO_COMPONENT_2 = ")_";
+    public static final String TO_COMPOUND_1 = "_@(";
+    public static final String TO_COMPOUND_2 = ")";
+
+    public static String SELF = "SELF";
+
+
+
+
+    protected static final Map<String,NativeOperator> stringToOperator
+        = new HashMap(NativeOperator.values().length * 2);
+    protected static final Map<Character,NativeOperator> charToOperator
+        = new HashMap(NativeOperator.values().length * 2);
     
     public enum NativeOperator {
         
@@ -150,10 +204,6 @@ public class Symbols {
         public String toString() { return symbol; }
     }    
 
-    protected static final Map<String,NativeOperator> stringToOperator 
-            = new HashMap(NativeOperator.values().length * 2);
-    protected static final Map<Character,NativeOperator> charToOperator 
-            = new HashMap(NativeOperator.values().length * 2);
             
     static {
         //Setup NativeOperator String index hashtable 
@@ -203,43 +253,10 @@ public class Symbols {
     /**
      * Check Statement getRelation symbol, called in StringPaser
      *
-     * @param s0 The String to be checked
+     * @param s The String to be checked
      * @return if the given String is a getRelation symbol
      */
     public static boolean isRelation(final String s) {
         return getRelation(s)!=null;
     }
-    
-    /* experience line prefix */
-    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
-    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
-    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
-
-    public static final char PREFIX_MARK = ':';
-    public static final char COMMENT_MARK = '/';
-    //public static final char URL_INCLUDE_MARK = '`';
-    public static final char ECHO_MARK = '\'';
-    //public static final char NATURAL_LANGUAGE_MARK = '\"';
-
-    /* control commands */
-    public static final String RESET_COMMAND = "*reset";
-    public static final String REBOOT_COMMAND = "*reboot";
-    public static final String STOP_COMMAND = "*stop";
-    public static final String START_COMMAND = "*start";
-    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
-    public static final String SET_DECISION_LEVEL_COMMAND = "*decisionthreshold";
-    
-    /* Stamp, display only */
-    public static final char STAMP_OPENER = '{';
-    public static final char STAMP_CLOSER = '}';
-    public static final char STAMP_SEPARATOR = ';';
-    public static final char STAMP_STARTER = ':';
-    
-    /* TermLink type, display only */
-    public static final String TO_COMPONENT_1 = "@(";
-    public static final String TO_COMPONENT_2 = ")_";
-    public static final String TO_COMPOUND_1 = "_@(";
-    public static final String TO_COMPOUND_2 = ")";
-
-    public static String SELF = "SELF";
 }

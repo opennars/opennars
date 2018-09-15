@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/*
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.core;
 
@@ -24,9 +33,14 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -35,14 +49,17 @@ import static org.junit.Assert.assertTrue;
 
 /**
  *
- * @author me
+ *
  */
 public class TermTest {
     
     final Nar n = new Nar();
     final Narsese np = new Narsese(n);
-    
-    protected void assertEquivalent(final String term1String, final String term2String) {
+
+    public TermTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    }
+
+    protected void assertEquivalent(final String term1String, final String term2String) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
 
         try {
@@ -62,7 +79,7 @@ public class TermTest {
     }
     
     @Test
-    public void testCommutativeCompoundTerm() {
+    public void testCommutativeCompoundTerm() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
@@ -88,7 +105,7 @@ public class TermTest {
     }    
     
     @Test
-    public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
+    public void testConjunctionTreeSet() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
         
         
@@ -145,7 +162,7 @@ public class TermTest {
     }
     
     @Test
-    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
+    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        final Nar n = new Nar();
         
        final String term1String ="<a --> b>";
@@ -164,7 +181,7 @@ public class TermTest {
     }
     
     @Test
-    public void testConceptInstancing() throws Narsese.InvalidInputException {
+    public void testConceptInstancing() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        final Nar n = new Nar();
         
        final String statement1 = "<a --> b>.";
@@ -195,48 +212,9 @@ public class TermTest {
        assertEquals(true, n.memory.concepts.iterator().hasNext());
 
     }    
-    
-    @Test
-    public void testEscaping() {        
-        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
-        
-//        Nar n = new Default().build();
-//        n.addInput("<a --> \"b c\">.");
-//        n.step(1);
-//        n.finish(1);
-//        
-//        Term t = new Term("\\\"b_c\\\"");
-//        System.out.println(t);
-//        System.out.println(n.memory.getConcepts());
-//        System.out.println(n.memory.conceptProcessor.getConcepts());
-//        
-//        
-//        assertTrue(n.memory.concept(new Term("a"))!=null);
-//        assertTrue(n.memory.concept(t)!=null);
-
-    }
-    
-    protected void bidiEscape(final String... tests) {
-        for (String s : tests) {
-            s = '"' + s + '"';
-            final String escaped = Texts.escape(s).toString();
-            final String unescaped = Texts.unescape(escaped).toString();
-            //System.out.println(s + " " + escaped + " " + unescaped);
-            assertEquals(s, unescaped);
-        }
-    }
-
-    @Test(expected = Narsese.InvalidInputException.class)
-    public void testInvalidInputThrowsException() throws Narsese.InvalidInputException {
-        final String t = "<$1 --> (~,{place4},$1)>";
-        final Nar n = new Nar();
-        final Narsese p = new Narsese(n);
-
-        p.parseNarsese(new StringBuilder(t + "."));
-    }
 
     @Test
-    public void invalidTermIndep() throws Narsese.InvalidInputException {
+    public void invalidTermIndep() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final String t = "<$1 --> (~,{place4},$1)>";
         final Nar n = new Nar();
@@ -268,8 +246,7 @@ public class TermTest {
     }
     
     
-    @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException {
-        Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
+    @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final Nar n = new Nar();
         final Narsese p = new Narsese(n);

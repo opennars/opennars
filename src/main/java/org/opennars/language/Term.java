@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -19,7 +28,7 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -35,6 +44,9 @@ import java.util.*;
  * A Term may have an associated Concept containing relations with other Terms.
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Term implements AbstractTerm, Serializable {
     public ImaginationSpace imagination;
@@ -43,6 +55,9 @@ public class Term implements AbstractTerm, Serializable {
     final public static Term SELF = SetExt.make(Term.get("SELF"));
     final public static Term SEQ_SPATIAL = Term.get("#");
     final public static Term SEQ_TEMPORAL = Term.get("&/");
+
+    // private to cache it
+    private CharSequence name = null;
 
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
@@ -77,8 +92,7 @@ public class Term implements AbstractTerm, Serializable {
     
     
     
-    protected CharSequence name = null;
-    
+
     /**
      * Default constructor that build an internal Term
      */
@@ -149,6 +163,10 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public CharSequence name() {
+        return nameInternal();
+    }
+
+    protected CharSequence nameInternal() {
         return name;
     }
     
@@ -162,13 +180,12 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public Term clone() {
-        //avoids setName and its intern(); the string will already be intern:
         final Term t = new Term();
         if(term_indices != null) {
             t.term_indices = term_indices.clone();
             t.index_variable = index_variable;
         }
-        t.name = name();
+        t.setName(name());
         t.imagination = imagination;
         return t;
     }
@@ -249,17 +266,16 @@ public class Term implements AbstractTerm, Serializable {
     }
          
     /**
-     * The syntactic complexity, for constant atomic Term, is 1.
-     *
      * @return The complexity of the term, an integer
      */
+    // the syntactic complexity, for constant atomic Term, is 1
     public short getComplexity() {
         return 1;
     }
 
-    /** only method that should modify Term.name. also caches hashcode 
-     * @return whether the name was changed
+    /** set the name
      */
+    // only method that should modify Term.name
     protected void setName(final CharSequence newName) {
         this.name = newName;
     }
@@ -270,27 +286,17 @@ public class Term implements AbstractTerm, Serializable {
      */
     @Override
     public int compareTo(final AbstractTerm that) {
-        if (that==this) return 0;
-        
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            if (!getClass().equals(that.getClass())) {
-                //differnt class, use class as ordering
-                return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
-            }
-            else {
-                //same class, compare by name()
-                return Texts.compareTo(name(), that.name());
-            }
-
+        if (that==this) {
+            return 0;
         }
-        else {
-            //previously: Orders among terms: variable < atomic < compound
-            if ((that instanceof Variable) && (getClass()!=Variable.class))
-                return 1;
-            else if ((this instanceof Variable) && (that.getClass()!=Variable.class))
-                return -1;
-            return Texts.compareTo(name(), that.name());            
+        //previously: Orders among terms: variable < atomic < compound
+        if ((that instanceof Variable) && (getClass()!=Variable.class)) {
+            return 1;
         }
+        else if ((this instanceof Variable) && (that.getClass()!=Variable.class)) {
+            return -1;
+        }
+        return Texts.compareTo(name(), that.name());            
     }
 
     
@@ -311,6 +317,20 @@ public class Term implements AbstractTerm, Serializable {
         }
         return equals(target);
     }
+    
+    /**
+     * Recursively count how often the terms are contained
+     *
+     * @param map The count map that will be created to count how often each term occurs
+     * @return The counts of the terms
+     */
+    public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
+        if(map == null) {
+            map = new HashMap<Term, Integer>();
+        }
+        map.put(this, map.getOrDefault(this, 0) + 1);
+        return map;
+    }
 
     /** whether this contains a term in its components. */
     public boolean containsTerm(final Term target) {
@@ -329,7 +349,7 @@ public class Term implements AbstractTerm, Serializable {
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Term text(final String t) {
-        return Term.get(Texts.escape('"' + t + '"').toString());
+        return Term.get("\"" + t + "\"");
     }
 
 
@@ -385,7 +405,7 @@ public class Term implements AbstractTerm, Serializable {
                 final Term b = arg[1];
                 final int c = a.compareTo(b);
 
-                if (Parameters.DEBUG) {
+                if (MiscFlags.DEBUG) {
                     //verify consistency of compareTo() and equals()
                     final boolean equal = a.equals(b);
                     if ((equal && (c!=0)) || (!equal && (c==0))) {

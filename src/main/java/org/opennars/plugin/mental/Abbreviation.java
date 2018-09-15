@@ -1,31 +1,38 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.plugin.mental;
 
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
-import org.opennars.main.Nar.PortableInteger;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
@@ -40,68 +47,48 @@ import static org.opennars.language.CompoundTerm.termArray;
  * Experimental alternative to Abbreviation plugin.
  */
 public class Abbreviation implements Plugin {
-
-    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
-    
-    /**
-    * Operator that give a CompoundTerm an atomic name
-    */
-    public static class Abbreviate extends Operator {
-
-        public Abbreviate() {
-            super("^abbreviate");
-        }
-
-        private static final PortableInteger currentTermSerial = new PortableInteger(1);
-
-        public Term newSerialTerm(final char prefix) {
-            return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
-        }
-
-
-        /**
-         * To create a judgment with a given statement
-         * @param args Arguments, a Statement followed by an optional tense
-         * @param memory The memory in which the operation is executed
-         * @return Immediate results as Tasks
-         */
-        @Override
-        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
-            
-            final Term compound = args[0];
-            
-            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
-                        
-            final Sentence sentence = new Sentence(
-                    Similarity.make(compound, atomic), 
-                    Symbols.JUDGMENT_MARK, 
-                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(memory));
-            
-            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
-            
-            final BudgetValue budget = new BudgetValue(
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                    Parameters.DEFAULT_JUDGMENT_DURABILITY, 
-                    quality);
-
-            return Lists.newArrayList( new Task(sentence, budget, true) );        
-
-        }
-
-    }
-    
-    public final PortableInteger abbreviationComplexityMin = new PortableInteger(20);
-    public final PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
     public EventObserver obs;
-    
+
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public PortableDouble priorityFactor = new PortableDouble(1.0);
+
+
+    public volatile double abbreviationProbability = 0.0001f;
+    public volatile int abbreviationComplexityMin = 20;
+    public volatile double abbreviationQualityMin = 0.95f;
+
+    public void setAbbreviationProbability(double val) {
+        this.abbreviationProbability = val;
+    }
+    public double getAbbreviationProbability() {
+        return abbreviationProbability;
+    }
     
+    public void setAbbreviationComplexityMin(double val) {
+        this.abbreviationComplexityMin = (int) val;
+    }
+    public double getAbbreviationComplexityMin() {
+        return abbreviationComplexityMin;
+    }
+
+    public void setAbbreviationQualityMin(double val) {
+        this.abbreviationQualityMin = val;
+    }
+    public double getAbbreviationQualityMin() {
+        return abbreviationQualityMin;
+    }
+    
+    public Abbreviation(){}
+    public Abbreviation(double abbreviationProbability, int abbreviationComplexityMin, double abbreviationQualityMin) {
+        this.abbreviationProbability = abbreviationProbability;
+        this.abbreviationComplexityMin = abbreviationComplexityMin;
+        this.abbreviationQualityMin = abbreviationQualityMin;
+    }
+
     public boolean canAbbreviate(final Task task) {
         return !(task.sentence.term instanceof Operation) && 
-                (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
-                (task.budget.getQuality() > abbreviationQualityMin.get());
+                (task.sentence.term.getComplexity() > abbreviationComplexityMin) &&
+                (task.budget.getQuality() > abbreviationQualityMin);
     }
     
     @Override
@@ -119,7 +106,7 @@ public class Abbreviation implements Plugin {
                 if (event != TaskDerive.class)
                     return;
 
-                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() >= abbreviationProbability))
                     return;
 
                 final Task task = (Task)a[0];
@@ -133,7 +120,7 @@ public class Abbreviation implements Plugin {
 
                     operation.setTask(task);
 
-                    abbreviate.call(operation, memory);
+                    abbreviate.call(operation, memory, n);
                 }
 
             };
@@ -143,5 +130,56 @@ public class Abbreviation implements Plugin {
         
         return true;
     }
-    
+
+
+    /**
+     * Operator that give a CompoundTerm an atomic name
+     */
+    public static class Abbreviate extends Operator {
+
+        public Abbreviate() {
+            super("^abbreviate");
+        }
+
+        private static Integer currentTermSerial = 1;
+        public Term newSerialTerm(final char prefix) {
+            synchronized(currentTermSerial) {
+                currentTermSerial++;
+            }
+            return new Term(prefix + String.valueOf(currentTermSerial));
+        }
+
+
+        /**
+         * To create a judgment with a given statement
+         * @param args Arguments, a Statement followed by an optional tense
+         * @param memory The memory in which the operation is executed
+         * @return Immediate results as Tasks
+         */
+        @Override
+        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+
+            final Term compound = args[0];
+
+            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
+
+            final Sentence sentence = new Sentence(
+                Similarity.make(compound, atomic),
+                Symbols.JUDGMENT_MARK,
+                new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
+                new Stamp(time, memory));
+
+            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
+
+            final BudgetValue budget = new BudgetValue(
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY,
+                quality, memory.narParameters);
+
+            final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
+            return Lists.newArrayList(newTask);
+
+        }
+
+    }
 }

@@ -1,20 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.control;
 
@@ -24,7 +29,6 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -36,7 +40,7 @@ import java.util.Set;
 
 /**
  *
- * @author patrick.hammer
+ * @author Patrick Hammer
  */
 public class TemporalInferenceControl {
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -54,7 +58,7 @@ public class TemporalInferenceControl {
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return null; //temporal inductions for judgements only
         
-        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.memory.time());
+        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.time.time());
         nal.setCurrentTask(controllerTask);
 
         final Sentence previousBelief = stmLast;
@@ -81,27 +85,29 @@ public class TemporalInferenceControl {
         final Set<Task> already_attempted = new HashSet<>();
         final Set<Task> already_attempted_ops = new HashSet<>();
         //Sequence formation:
-        for(int i =0; i<Parameters.SEQUENCE_BAG_ATTEMPTS; i++) {
-            final Task takeout = nal.memory.seq_current.takeNext();
-            if(takeout == null) {
-                break; //there were no elements in the bag to try
-            }
+        for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
+            synchronized(nal.memory.seq_current) {
+                final Task takeout = nal.memory.seq_current.takeNext();
+                if(takeout == null) {
+                    break; //there were no elements in the bag to try
+                }
 
-            if(already_attempted.contains(takeout) || 
-                    Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
-                            takeout.sentence.stamp.evidentialBase)) {
-                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
-                continue;
+                if(already_attempted.contains(takeout) || 
+                        Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
+                                takeout.sentence.stamp.evidentialBase)) {
+                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                    continue;
+                }
+                already_attempted.add(takeout);
+                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
+                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
-            already_attempted.add(takeout);
-            proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-            nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
         }
 
         //Conditioning:
         if(nal.memory.lastDecision != null && newEvent != nal.memory.lastDecision) {
             already_attempted_ops.clear();
-            for(int k = 0; k<Parameters.OPERATION_SAMPLES;k++) {
+            for(int k = 0; k<nal.narParameters.OPERATION_SAMPLES;k++) {
                 already_attempted.clear(); //todo move into k loop
                 final Task Toperation = k == 0 ? nal.memory.lastDecision : nal.memory.recent_operations.takeNext();
                 if(Toperation == null) {
@@ -110,22 +116,22 @@ public class TemporalInferenceControl {
                 if(already_attempted_ops.contains(Toperation)) {
                     //put opc back into bag
                     //(k>0 holds here):
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }
                 already_attempted_ops.add(Toperation);
                 final Concept opc = nal.memory.concept(Toperation.getTerm());
                 if(opc != null) {
                     if(opc.seq_before == null) {
-                        opc.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+                        opc.seq_before = new LevelBag<>(nal.narParameters.SEQUENCE_BAG_LEVELS, nal.narParameters.SEQUENCE_BAG_SIZE, nal.narParameters);
                     }
-                    for(int i = 0; i<Parameters.CONDITION_BAG_ATTEMPTS; i++) {
+                    for(int i = 0; i<nal.narParameters.CONDITION_BAG_ATTEMPTS; i++) {
                         final Task takeout = opc.seq_before.takeNext();
                         if(takeout == null) {
                             break; //there were no elements in the bag to try
                         }
                         if(already_attempted.contains(takeout)) {
-                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                             continue;
                         }
                         already_attempted.add(takeout);
@@ -145,12 +151,12 @@ public class TemporalInferenceControl {
                             }
                         }
 
-                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     }
                 }
                 //put Toperation back into bag if it was taken out
                 if(k > 0) {
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                 }
             }
         }
@@ -161,43 +167,49 @@ public class TemporalInferenceControl {
     
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {
         //multiple versions are necessary, but we do not allow duplicates
-        final List<Task> removals = new LinkedList<>();
-        for(final Task s : nal.memory.seq_current) {
-            if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
-                    CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
-                    // && //-- new outcommented
-                    //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
-                //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
-                //check term indices
-                if(s.getTerm().term_indices != null && newEvent.getTerm().term_indices != null) {
-                    boolean differentTermIndices = false;
-                    for(int i=0;i<s.getTerm().term_indices.length;i++) {
-                       if(s.getTerm().term_indices[i] != newEvent.getTerm().term_indices[i]) {
-                           differentTermIndices = true;
-                       }
+        Task removal = null;
+        synchronized(nal.memory.seq_current) {
+            for(final Task s : nal.memory.seq_current) {
+                if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
+                        CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
+                        // && //-- new outcommented
+                        //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
+                    //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
+                    //check term indices
+                    if(s.getTerm().term_indices != null && newEvent.getTerm().term_indices != null) {
+                        boolean differentTermIndices = false;
+                        for(int i=0;i<s.getTerm().term_indices.length;i++) {
+                           if(s.getTerm().term_indices[i] != newEvent.getTerm().term_indices[i]) {
+                               differentTermIndices = true;
+                           }
+                        }
+                        if(differentTermIndices) {
+                            continue;
+                        }
                     }
-                    if(differentTermIndices) {
-                        continue;
-                    }
+                    removal = s;
+                    break;
                 }
-                removals.add(s);
-                break;
             }
-        }
-        for(final Task removal : removals) {
-            nal.memory.seq_current.take(removal);
-        }
-        //ok now add the new one:
-        //making sure we do not mess with budget of the task:
-        if(!(newEvent.sentence.getTerm() instanceof Operation)) {
-            final Concept c = nal.memory.concept(newEvent.getTerm());
-            final float event_quality = BudgetFunctions.truthToQuality(newEvent.sentence.truth);
-            float event_priority = event_quality;
-            if(c != null) {
-                event_priority = Math.max(event_quality, c.getPriority());
+            if (removal != null) {
+                nal.memory.seq_current.take(removal);
             }
-            final Task t2 = new Task(newEvent.sentence, new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality), newEvent.getParentBelief(), newEvent.getBestSolution());
-            nal.memory.seq_current.putIn(t2);
+
+            //ok now add the new one:
+            //making sure we do not mess with budget of the task:
+            if(!(newEvent.sentence.getTerm() instanceof Operation)) {
+                final Concept c = nal.memory.concept(newEvent.getTerm());
+                final float event_quality = BudgetFunctions.truthToQuality(newEvent.sentence.truth);
+                float event_priority = event_quality;
+                if(c != null) {
+                    event_priority = Math.max(event_quality, c.getPriority());
+                }
+                final Task t2 = new Task(newEvent.sentence,
+                                         new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality, nal.narParameters),
+                                         newEvent.getParentBelief(),
+                                         newEvent.getBestSolution());
+                nal.memory.seq_current.putIn(t2);
+            }
         }
     }
     
@@ -217,16 +229,18 @@ public class TemporalInferenceControl {
         mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
         mem.lastDecision = task;
         final Concept c = mem.concept(task.getTerm());
-        if(c != null) {
-            if(c.seq_before == null) {
-                c.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-            }
-            for(final Task t : mem.seq_current) {
-                if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {
-                    c.seq_before.putIn(t);
+        synchronized(mem.seq_current) {
+            if(c != null) {
+                if(c.seq_before == null) {
+                    c.seq_before = new LevelBag<>(mem.narParameters.SEQUENCE_BAG_LEVELS, mem.narParameters.SEQUENCE_BAG_SIZE, mem.narParameters);
+                }
+                for(final Task t : mem.seq_current) {
+                    if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {
+                        c.seq_before.putIn(t);
+                    }
                 }
             }
+            mem.seq_current.clear();
         }
-        mem.seq_current.clear();
     }
 }

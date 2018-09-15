@@ -1,0 +1,22 @@
+'********** updating and revision 
+
+'John is holding key_101 now
+<(*,John,key_101) --> hold>. :|: 
+
+6
+
+'John is not holding key_101 now
+<(*,John,key_101) --> hold>. :|: %0% 
+
+'Is John holding key_101 now? 
+<(*,John,key_101) --> hold>? :|: 
+
+200
+
+//revision on events
+'John maybe holding key_101 now
+''outputMustContain('<John --> (/,hold,_,key_101)>. :!0: %0.55;0.94%')
+
+//but also looking at it as separate:
+'John will not hold key_101 in the future
+''outputMustContain('<John --> (/,hold,_,key_101)>. :!6: %0.00;0.90%')

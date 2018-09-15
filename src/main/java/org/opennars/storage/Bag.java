@@ -1,45 +1,36 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.storage;
 
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
-import org.opennars.main.Parameters;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
-    
-    public static int bin(final float x, final int bins) {
-        final int i = (int)Math.floor((x + 0.5f/bins) * bins);
-        return i;
-    }
 
     public abstract void clear();   
-
-    /**
-     * Check if an item is in the bag.  both its key and its value must match the parameter
-     *
-     * @param it An item
-     * @return Whether the Item is in the Bag
-     */
-    public boolean contains(final E it) {
-        final E exist = get(it.name());
-        return exist.equals(it);
-    }
     
     /**
      * Get an Item by key
@@ -48,23 +39,18 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return The Item with the given key
      */
     abstract public E get(final K key);
-    
-    abstract public Set<K> keySet();
-
-    abstract public int getCapacity();
-
-    abstract public float getMass();
 
     /**
-     * Choose an Item according to distribution policy and take it out of the Bag
-     * @return The selected Item, or null if this bag is empty
+     * Get the max. amount of items the Bag can store
+     * @return capacity 
+     */
+    abstract public int getCapacity();
+
+    /**
+     * Choose an Item according to distribution policy
+     * @return a item with taking it from the bag or null if this bag is empty
      */
     abstract public E takeNext();
-    
-
-    /** gets the next value without removing changing it or removing it from any index.  however
-     the bag is cycled so that subsequent elements are different. */    
-    abstract public E peekNext();
     
     
     /**
@@ -82,70 +68,53 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
     public E putIn(E newItem) {
-                
         final K newKey = newItem.name();
-        
         final E existingItemWithSameKey = take(newKey);
-        
         if (existingItemWithSameKey != null) {            
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
-        
         // put the (new or merged) item into itemTable        
         final E overflowItem = addItem(newItem);
-        
-        
         if (overflowItem!=null) {
             return overflowItem;
         }            
         else {
             return null;
         }
-        
     }
 
+    /**
+     * Removes an item by key
+     * 
+     * @param key The key
+     * @return the removed item
+     */
     abstract public E take(final K key);
 
+    /**
+     * Removes item by value 
+     * @param value
+     * @return the removed item's name
+     */
     public E take(final E value) {
         return take(value.name());
     }
     
     
     /**
-     * The number of items in the bag
-     *
-     * @return The number of items
+     * @return The number of items in the bag
      */
     public abstract int size();
-    
-    
-    public void printAll() {
-        for (final E e : this) {
-            System.out.println("  " + e + "\n");
-        }
-    }
-    
-    abstract public Iterable<E> values();
 
+    /**
+     * @return average of the priority of all items
+     */
     public abstract float getAveragePriority();
 
-    public float getTotalPriority() {
-        final int size = size();
-        if (size == 0) {
-            return 0;
-        }
-
-        return getAveragePriority() * size();
-    }
-
-    /** iterates all items in (approximately) descending priority */
+    /**
+     * @return iterator for all items in (approximately) descending priority
+     */
     @Override public abstract Iterator<E> iterator();
-    
-    /** allows adjusting forgetting rate in subclasses */    
-    public float getForgetCycles(final float baseForgetCycles, final E item) {
-        return baseForgetCycles;
-    }
-    
     
     /**
      * Put an item back into the itemTable
@@ -153,73 +122,17 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * The only place where the forgetting rate is applied
      *
      * @param oldItem The Item to put back
+     * @param m related memory
      * @return the item which was removed, or null if none removed
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
-        final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
-        BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
+        final float relativeThreshold = m.narParameters.QUALITY_RESCALED;
+        BudgetFunctions.applyForgetting(oldItem.budget, forgetCycles, relativeThreshold);
         return putIn(oldItem);
-    }
-    
-    
-    /** x = takeOut(), then putBack(x)
-     *  @forgetCycles forgetting time in cycles
-     *  @return the variable that was updated, or null if none was taken out
-     */
-    public E processNext(final float forgetCycles, final Memory m) {
-                
-        final E x = takeNext();
-        if (x == null) {
-            return null;
-        }
-        
-        final E r = putBack(x, forgetCycles, m);
-        if (r!=null) {
-            throw new IllegalStateException("Bag.processNext should always be able to re-insert item: " + r);
-        }
-        return x;
-    }
-    
-    public double[] getPriorityDistribution(final double[] x) {
-        final int bins = x.length;
-        double total = 0;
-        for (final E e : values()) {
-            final float p = e.budget.getPriority();
-            final int b = bin(p, bins-1);
-            x[b]++;
-            total++;
-        }
-        if (total > 0) {
-            for (int i = 0; i < bins; i++)
-                x[i] /= total;
-        }
-        return x;
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
-    }
-    
-    /** slow, probably want to override in subclasses */
-    public float getMinPriority() {
-        float min = 1.0f;
-        for (final Item e : this) {
-            final float p = e.getPriority();
-            if (p < min) min = p;
-        }
-        return min;            
-    }
-    
-    /** slow, probably want to override in subclasses */
-    public float getMaxPriority() {
-        float max = 0.0f;
-        for (final Item e : this) {
-            final float p = e.getPriority();
-            if (p > max) max = p;
-        }
-        return max;
-    }
-
-    
+    }    
 }

@@ -1,29 +1,41 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 
 import java.io.Serializable;
+import org.opennars.main.Parameters;
 
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
-
-
+/**
+ * Truth is a tuple of frequency and confidence as defined by NARS theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
 
 
@@ -32,81 +44,88 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     final static Term Truth_UNSURE = new Term("UNSURE");
     
     /**
-     * The character that marks the two ends of a truth value
+     * character that marks the two ends of a truth value
      */
     private static final char DELIMITER = Symbols.TRUTH_VALUE_MARK;
     /**
-     * The character that separates the factors in a truth value
+     * character that separates the factors in a truth value
      */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
     /**
-     * The frequency factor of the truth value
+     * frequency factor of the truth value
      */
     private float frequency;
     /**
-     * The confidence factor of the truth value
+     * confidence factor of the truth value
      */
     private float confidence;
     /**
      * Whether the truth value is derived from a definition
      */
     private boolean analytic = false;
+    
+    private Parameters narParameters;
 
-    public TruthValue() {
-        this(0,0);
+    /**
+     * @param narParameters parameters of the reasoner
+     */
+    public TruthValue(Parameters narParameters) {
+        this(0,0, narParameters);
     }
     
     /**
-     * Constructor with two ShortFloats
+     * Constructor
      *
-     * @param f The frequency value
-     * @param c The confidence value
+     * @param f frequency value
+     * @param c confidence value
+     * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c) {
-        this(f, c, false);
+    public TruthValue(final float f, final float c, Parameters narParameters) {
+        this(f, c, false, narParameters);
     }
 
     /**
-     * Constructor with two ShortFloats
+     * Constructor
      *
-     * @param f The frequency value
-     * @param c The confidence value
-     *
+     * @param f frequency value
+     * @param c confidence value
+     * @param isAnalytic is the truth value an analytic one?
+     * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c, final boolean b) {
+    public TruthValue(final float f, final float c, final boolean isAnalytic, Parameters narParameters) {
+        this.narParameters = narParameters;
         setFrequency(f);                
         setConfidence(c);        
-        setAnalytic(b);
+        setAnalytic(isAnalytic);
     }
 
     /**
      * Constructor with a TruthValue to clone
      *
-     * @param v The truth value to be cloned
+     * @param v truth value to be cloned
      */
     public TruthValue(final TruthValue v) {
+        narParameters = v.narParameters;
         frequency = v.getFrequency();
         confidence = v.getConfidence();
         analytic = v.getAnalytic();
     }
 
     /**
-     * Get the frequency value
+     * returns the frequency value
      *
-     * @return The frequency value
+     * @return frequency value
      */
     public float getFrequency() {
-        //return Math.round(frequency * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return frequency;
     }
 
     /**
-     * Get the confidence value
+     * returns the confidence value
      *
-     * @return The confidence value
+     * @return confidence value
      */
     public float getConfidence() {
-        //return Math.round(confidence * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return confidence;
     }
 
@@ -116,21 +135,20 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
     
     public TruthValue setConfidence(final float c) {
-        this.confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
+        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
+        this.confidence = (c < max_confidence) ? c : max_confidence;
         return this;
     }
     
     /**
-     * Get the isAnalytic flag
-     *
-     * @return The isAnalytic value
+     * @return is it a analytic truth value?
      */
     public boolean getAnalytic() {
         return analytic;
     }
 
     /**
-     * Set the isAnalytic flag
+     * Set it to analytic truth
      */
     public void setAnalytic() {
         analytic = true;
@@ -139,7 +157,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Calculate the expectation value of the truth value
      *
-     * @return The expectation value
+     * @return expectation value
      */
     public float getExpectation() {
         return (confidence * (frequency - 0.5f) + 0.5f);
@@ -149,8 +167,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * Calculate the absolute difference of the expectation value and that of a
      * given truth value
      *
-     * @param t The given value
-     * @return The absolute difference
+     * @param t given value
+     * @return absolute difference
      */
     public float getExpDifAbs(final TruthValue t) {
         return Math.abs(getExpectation() - t.getExpectation());
@@ -159,7 +177,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Check if the truth value is negative
      *
-     * @return True if the frequence is less than 1/2
+     * @return True if the frequency is less than 1/2
      */
     public boolean isNegative() {
         return getFrequency() < 0.5;
@@ -173,7 +191,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Compare two truth values
      *
-     * @param that The other TruthValue
+     * @param that other TruthValue
      * @return Whether the two are equivalent
      */
     @Override
@@ -181,8 +199,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         if (that instanceof TruthValue) {
             final TruthValue t = (TruthValue)that;
             return
-                isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON) &&
-                isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
+                isEqual(getFrequency(), t.getFrequency(), this.narParameters.TRUTH_EPSILON) &&
+                isEqual(getConfidence(), t.getConfidence(), this.narParameters.TRUTH_EPSILON);
         }
         return false;
     }
@@ -190,7 +208,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * The hash code of a TruthValue
      *
-     * @return The hash code
+     * @return hash code
      */
     @Override
     public int hashCode() {
@@ -199,7 +217,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
 
     @Override
     public TruthValue clone() {
-        return new TruthValue(frequency, confidence, getAnalytic());
+        return new TruthValue(frequency, confidence, getAnalytic(), this.narParameters);
     }
     
     
@@ -209,8 +227,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
 
     /**
-     * A simplified String representation of a TruthValue, where each factor is
-     * accruate to 1%
+     * A simplified String representation of a TruthValue
      */
     public StringBuilder appendString(final StringBuilder sb, final boolean external) {        
         sb.ensureCapacity(11);
@@ -229,24 +246,22 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
 
     /** output representation */
     public CharSequence toStringExternal() {
-        //return name().toString();
         final StringBuilder sb =  new StringBuilder();
         return appendString(sb, true);
     }
     /**
-     * The String representation of a TruthValue, as used internally by the system
+     * Returns a String representation of a TruthValue, as used internally by the system
      *
-     * @return The String
+     * @return String representation
      */
     @Override
     public String toString() {
-        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
         return name().toString();
     }
     
     public Term toWordTerm() {
         final float e = getExpectation();
-        final float t = Parameters.DEFAULT_CREATION_EXPECTATION;
+        final float t = this.narParameters.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
             return Truth_TRUE;
         }
@@ -254,6 +269,18 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
             return Truth_FALSE;
         }
         return Truth_UNSURE;
+    }
+    
+    public static TruthValue fromWordTerm(Parameters narParameters, Term term) {
+        if(term.equals(Truth_TRUE)) {
+            return new TruthValue(1.0f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE, narParameters);
+        } else if(term.equals(Truth_FALSE)) {
+            return new TruthValue(0.0f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE, narParameters);
+        } else if(term.equals(Truth_UNSURE)) {
+            return new TruthValue(0.5f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE / 2.0f, narParameters);
+        } else {
+            return null;
+        }
     }
 
     public TruthValue set(final float frequency, final float confidence) {

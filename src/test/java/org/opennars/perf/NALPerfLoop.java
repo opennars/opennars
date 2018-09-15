@@ -1,23 +1,38 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/*
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.perf;
 
 import org.opennars.core.NALTest;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Collection;
 
 import static org.opennars.perf.NALStressMeasure.perfNAL;
@@ -27,27 +42,20 @@ import static org.opennars.perf.NALStressMeasure.perfNAL;
  */
 public class NALPerfLoop {
     
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        
         final int repeats = 2;
         final int warmups = 1;
-        final int maxConcepts = 2000;
         final int extraCycles = 2048;
         final int randomExtraCycles = 512;
           
-        final Nar n = new Nar();
-        //Nar n = new Nar( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
-        //Nar n = new Nar(new Curve());
-        
-        //Nar n = new Discretinuous().setConceptBagSize(maxConcepts).build();
+        final Reasoner n = new Nar();
 
-        //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
-        
         final Collection c = NALTest.params();
         while (true) {
             for (final Object o : c) {
                 final String examplePath = (String)((Object[])o)[0];
-                Parameters.DEBUG = false;
+                MiscFlags.DEBUG = false;
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
             }

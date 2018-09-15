@@ -1,25 +1,36 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.storage;
 
-import org.opennars.control.ConceptProcessing;
+import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Resettable;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
@@ -33,9 +44,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
-import org.opennars.main.Nar.RuntimeParameters;
-import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -43,36 +51,38 @@ import org.opennars.plugin.mental.Emotions;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.plugin.mental.InternalExperience;
 
 
 /**
  * Memory consists of the run-time state of a Nar, including:
  *   * term and concept memory
- *   * clock
  *   * reasoner state
  *   * etc.
- * 
+ * <br>
  * Excluding input/output channels which are managed by a Nar.
- * 
+ * <br>
  * A memory is controlled by zero or one Nar's at a given time.
- * 
+ * <br>
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, Iterable<Concept> {
+public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
+     /* Nar parameters */
+    public final Parameters narParameters;
+    
+    public long narId = 0;
     //emotion meter keeping track of global emotion
-    public final Emotions emotion = new Emotions();   
-    public long decisionBlock = 0;
+    public Emotions emotion = null;   
+    public InternalExperience internalExperience = null;
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
     public static final long randomSeed = 1;
     public static final Random randomNumber = new Random(randomSeed);
-    public static void resetStatic() {
-        randomNumber.setSeed(randomSeed);    
-    }
     
     //todo make sense of this class and de-obfuscate
     public final Bag<Concept,Term> concepts;
@@ -80,6 +90,9 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     /* InnateOperator registry. Containing all registered operators of the system */
     public final Map<CharSequence, Operator> operators;
+    
+    /* a mutex for novel and new taskks*/
+    private final Boolean tasksMutex = Boolean.TRUE;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
@@ -91,23 +104,24 @@ public class Memory implements Serializable, Iterable<Concept> {
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
-    /* System clock, relatively defined to guarantee the repeatability of behaviors */
-    private long cycle;
+    //Boolean localInferenceMutex = false;
+
+
+    boolean checked=false;
+    boolean isjUnit=false;
     
-    /* System parameters that can be changed at runtime */
-    public final RuntimeParameters param;
+    public static void resetStatic() {
+        randomNumber.setSeed(randomSeed);    
+    }
     
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
-     *
-     * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
                   final Bag<Task<Term>,Sentence<Term>> seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
-
-        this.param = param;
+        this.narParameters = narParameters;
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
@@ -120,20 +134,22 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     public void reset() {
         event.emit(ResetStart.class);
-        decisionBlock = 0;
-        concepts.clear();
-        novelTasks.clear();
-        newTasks.clear();    
-        this.seq_current.clear();
-        cycle = 0;
-        emotion.resetEmotions();
+        synchronized (concepts) {
+            concepts.clear();
+        }
+        synchronized (tasksMutex) {
+            newTasks.clear();
+            novelTasks.clear();
+        }
+        synchronized(this.seq_current) {
+            this.seq_current.clear();
+        }
+        if(emotion != null) {
+            emotion.resetEmotions();
+        }
         this.lastDecision = null;
         resetStatic();
         event.emit(ResetEnd.class);
-    }
-
-    public long time() {
-        return cycle;
     }
 
     /* ---------- conversion utilities ---------- */
@@ -146,7 +162,9 @@ public class Memory implements Serializable, Iterable<Concept> {
      * @return a Concept or null
      */
     public Concept concept(final Term t) {
-        return concepts.get(CompoundTerm.replaceIntervals(t));
+        synchronized (concepts) {
+            return concepts.get(CompoundTerm.replaceIntervals(t));
+        }
     }
 
     /**
@@ -168,25 +186,34 @@ public class Memory implements Serializable, Iterable<Concept> {
             return null;
         }
         term = CompoundTerm.replaceIntervals(term);
-        //see if concept is active
-        Concept concept = concepts.take(term);
-        if (concept == null) {                            
-            //create new concept, with the applied budget
-            concept = new Concept(budget, term, this);
-            //if (memory.logic!=null)
-            //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());
-            emit(Events.ConceptNew.class, concept);                
+
+        final Concept displaced;
+        Concept concept;
+
+        synchronized (concepts) {
+            concept = concepts.take(term);
+
+            //see if concept is active
+            if (concept == null) {
+                //create new concept, with the applied budget
+                concept = new Concept(budget, term, this);
+                //if (memory.logic!=null)
+                //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+                emit(Events.ConceptNew.class, concept);
+            }
+            else if (concept!=null) {
+                //apply budget to existing concept
+                //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
+                BudgetFunctions.activate(concept.budget, budget, BudgetFunctions.Activating.TaskLink);
+            }
+            else {
+                //unable to create, ex: has variables
+                return null;
+            }
+
+            displaced = concepts.putBack(concept, cycles(narParameters.CONCEPT_FORGET_DURATIONS), this);
         }
-        else if (concept!=null) {            
-            //apply budget to existing concept
-            //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
-            BudgetFunctions.activate(concept.budget, budget, BudgetFunctions.Activating.TaskLink);            
-        }
-        else {
-            //unable to create, ex: has variables
-            return null;
-        }
-        final Concept displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
+
         if (displaced == null) {
             //added without replacing anything
             return concept;
@@ -207,14 +234,14 @@ public class Memory implements Serializable, Iterable<Concept> {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
-        newTasks.add(t);
+        synchronized (tasksMutex) {
+            newTasks.add(t);
+        }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
         output(t);
     }
-    
-    boolean checked=false;
-    boolean isjUnit=false;
+
     public static boolean isJUnitTest() {
         final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         final StackTraceElement[] list = stackTrace;
@@ -235,9 +262,10 @@ public class Memory implements Serializable, Iterable<Concept> {
  tasks with low priority are ignored, and the others are put into task
  buffer.
      *
+     * @param time indirection to retrieve time
      * @param t The addInput task
      */
-    public void inputTask(final Task t, final boolean emitIn) {
+    public void inputTask(final Timable time, final Task t, final boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -246,24 +274,25 @@ public class Memory implements Serializable, Iterable<Concept> {
             final Task task = t;
             final Stamp s = task.sentence.stamp;
             if (s.getCreationTime()==-1)
-                s.setCreationTime(time(), Parameters.DURATION);
+                s.setCreationTime(time.time(), narParameters.DURATION);
 
             if(emitIn) {
                 emit(IN.class, task);
             }
 
             if (task.budget.aboveThreshold()) {
-                
                 addNewTask(task, "Perceived");
-                
             } else {
                 removeTask(task, "Neglected");
             }
         }
     }
-    
-    public void inputTask(final Task t) {
-        inputTask(t, true);
+
+    /**
+     * @param time indirection to retrieve time
+     */
+    public void inputTask(final Timable time, final Task t) {
+        inputTask(time, t, true);
     }
 
     public void removeTask(final Task task, final String reason) {        
@@ -275,31 +304,32 @@ public class Memory implements Serializable, Iterable<Concept> {
      * ExecutedTask called in Operator.call
      *
      * @param operation The operation just executed
+     * @param time indirection to retrieve time
      */
-    public void executedTask(final Operation operation, final TruthValue truth) {
+    public void executedTask(final Timable time, final Operation operation, final TruthValue truth) {
         final Task opTask = operation.getTask();
        // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
-        final Stamp stamp = new Stamp(this, Tense.Present);
+        final Stamp stamp = new Stamp(time, this, Tense.Present);
         final Sentence sentence = new Sentence(
             operation,
             Symbols.JUDGMENT_MARK,
             truth,
             stamp);
-        
-        final Task task = new Task(sentence,
-                             new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, 
-                                             Parameters.DEFAULT_FEEDBACK_DURABILITY,
-                                             truthToQuality(sentence.getTruth())),
-                             true);
-        task.setElemOfSequenceBuffer(true);
-        addNewTask(task, "Executed");
+
+        final BudgetValue budgetForNewTask = new BudgetValue(narParameters.DEFAULT_FEEDBACK_PRIORITY,
+            narParameters.DEFAULT_FEEDBACK_DURABILITY,
+            truthToQuality(sentence.getTruth()), narParameters);
+        final Task newTask = new Task(sentence, budgetForNewTask, Task.EnumType.INPUT);
+
+        newTask.setElemOfSequenceBuffer(true);
+        addNewTask(newTask, "Executed");
     }
 
     public void output(final Task t) {
         
         final float budget = t.budget.summary();
-        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
+        final float noiseLevel = 1.0f - (narParameters.VOLUME / 100.0f);
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             emit(OUT.class, t);
@@ -322,64 +352,75 @@ public class Memory implements Serializable, Iterable<Concept> {
     
         event.emit(Events.CycleStart.class);
         
-        this.processNewTasks(inputs.narParameters);
+        this.processNewTasks(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
-        this.processNovelTask(inputs.narParameters);
+        this.processNovelTask(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
-        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters);
+        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters, inputs);
         
         event.emit(Events.CycleEnd.class);
         event.synch();
-        
-        cycle++;
     }
-    
-    public void localInference(final Task task, NarParameters narParameters) {
-        final DerivationContext cont = new DerivationContext(this, narParameters);
-        cont.setCurrentTask(task);
-        cont.setCurrentTerm(task.getTerm());
-        cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
-        if (cont.getCurrentConcept() != null) {
-            final boolean processed = ConceptProcessing.processTask(cont.getCurrentConcept(), cont, task);
-            if (processed) {
-                event.emit(Events.ConceptDirectProcessedTask.class, task);
+
+    /**
+     *
+     * @param task task to be processed
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
+     */
+    public void localInference(final Task task, Parameters narParameters, final Timable time) {
+        //synchronized (localInferenceMutex) {
+            final DerivationContext cont = new DerivationContext(this, narParameters, time);
+            cont.setCurrentTask(task);
+            cont.setCurrentTerm(task.getTerm());
+            cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
+            if (cont.getCurrentConcept() != null) {
+                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task, time);
+                if (processed) {
+                    event.emit(Events.ConceptDirectProcessedTask.class, task);
+                }
             }
-        }
-        
-        if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-            TemporalInferenceControl.eventInference(task, cont);
-        }
-        
-        //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
-        emit(Events.TaskImmediateProcess.class, task, cont);
+
+            if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
+                TemporalInferenceControl.eventInference(task, cont);
+            }
+
+            //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
+            emit(Events.TaskImmediateProcess.class, task, cont);
+        //}
     }
     
     /**
      * Process the newTasks accumulated in the previous workCycle, accept input
      * ones and those that corresponding to existing concepts, plus one from the
      * buffer.
+     *
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
      */
-    public void processNewTasks(NarParameters narParameters) {
-        Task task;
-        int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
-        while (counter-- > 0) {
-            task = newTasks.removeFirst();
-            final boolean enterDirect = true;
-            if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                localInference(task, narParameters);
-            } else {
-                final Sentence s = task.sentence;
-                if (s.isJudgment() || s.isGoal()) {
-                    final double d = s.getTruth().getExpectation();
-                    if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        novelTasks.putIn(task);    // new concept formation
-                    } else 
-                    if(s.isGoal() && d > Parameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
-                        novelTasks.putIn(task);    // new concept formation
-                    }
-                    else
-                    {
-                        removeTask(task, "Neglected");
+    public void processNewTasks(Parameters narParameters, final Timable time) {
+        synchronized (tasksMutex) {
+            Task task;
+            int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
+            while (counter-- > 0) {
+                task = newTasks.removeFirst();
+                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
+                        task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
+                    localInference(task, narParameters, time);
+                } else {
+                    final Sentence s = task.sentence;
+                    if (s.isJudgment() || s.isGoal()) {
+                        final double d = s.getTruth().getExpectation();
+                        if (s.isJudgment() && d > narParameters.DEFAULT_CREATION_EXPECTATION) {
+                            novelTasks.putIn(task);    // new concept formation
+                        } else
+                        if(s.isGoal() && d > narParameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
+                            novelTasks.putIn(task);    // new concept formation
+                        }
+                        else
+                        {
+                            removeTask(task, "Neglected");
+                        }
                     }
                 }
             }
@@ -388,13 +429,15 @@ public class Memory implements Serializable, Iterable<Concept> {
     
 
     /**
-     * Select a novel task to process.
-     * @return whether a task was processed
+     * Select a novel task to process
+     *
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
      */
-    public void processNovelTask(NarParameters narParameters) {
+    public void processNovelTask(Parameters narParameters, final Timable time) {
         final Task task = novelTasks.takeNext();
         if (task != null) {            
-            localInference(task, narParameters);
+            localInference(task, narParameters, time);
         }
     }
 
@@ -412,13 +455,13 @@ public class Memory implements Serializable, Iterable<Concept> {
      }
 
     private long currentStampSerial = 0;
-    public long newStampSerial() {
-        return currentStampSerial++;
+    public BaseEntry newStampSerial() {
+        return new BaseEntry(this.narId, currentStampSerial++);
     }   
 
     /** converts durations to cycles */
-    public final float cycles(final PortableDouble durations) {
-        return Parameters.DURATION * durations.floatValue();
+    public final float cycles(final double durations) {
+        return narParameters.DURATION * (float) durations;
     }
 
     @Override

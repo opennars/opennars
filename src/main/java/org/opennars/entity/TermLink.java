@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
@@ -32,25 +41,28 @@ import java.util.Objects;
  * The index value(s) indicates the location of the component in the compound.
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class TermLink extends Item<TermLink> implements TLink<Term>, Serializable {
     
     
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
-    /** At (&&, A, C), point to C */
+    /** At (&amp;&amp;, A, C), point to C */
     public static final short COMPONENT = 1;
-    /** At C, point to (&&, A, C) */
+    /** At C, point to (&amp;&amp;, A, C) */
     public static final short COMPOUND = 2;
-    /** At <C --> A>, point to C */
+    /** At &lt;C --&gt; A&gt;, point to C */
     public static final short COMPONENT_STATEMENT = 3;
-    /** At C, point to <C --> A> */
+    /** At C, point to &lt;C --&gt; A&gt; */
     public static final short COMPOUND_STATEMENT = 4;
-    /** At <(&&, C, B) ==> A>, point to C */
+    /** At &lt;(&amp;&amp;, C, B) ==&gt; A&gt;, point to C */
     public static final short COMPONENT_CONDITION = 5;
-    /** At C, point to <(&&, C, B) ==> A> */
+    /** At C, point to &lt;(&amp;&amp;, C, B) ==&gt; A&gt; */
     public static final short COMPOUND_CONDITION = 6;
-    /** At C, point to <(*, C, B) --> A>; TaskLink only */
+    /** At C, point to &lt;(*, C, B) --&gt; A&gt;; TaskLink only */
     public static final short TRANSFORM = 8;
     /** At C, point to B, potentially without common subterm term */
     public static final short TEMPORAL = 9;
@@ -85,11 +97,9 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         if (type == TermLink.COMPOUND_CONDITION) {  // the first index is 0 by default
             
             index = new short[indices.length + 1];
-            //index[0] = 0; //first index is zero, but not necessary to set since index[] was just created
+            index[0] = 0;
             
             System.arraycopy(indices, 0, index, 1, indices.length);
-            /* for (int i = 0; i < indices.length; i++)
-                index[i + 1] = (short) indices[i]; */
         } else {
             index = indices;            
         }
@@ -110,7 +120,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         super(v);
         target = t;
         type = (template.target.equals(t)) 
-                ? (short)(template.type - 1) //// point to component
+                ? (short)(template.type - 1) // point to component
                 : template.type;
         index = template.index;
         hash = init();
@@ -118,13 +128,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
 
     @Override public TermLink name() { return this; }
     
-//    @Override
-//    public CharSequence name() {
-//        if (key == null)
-//            setKey();
-//        return key;
-//    }
-
     @Override
     public int hashCode() { return hash;     }
 
@@ -161,24 +164,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         final int h = Objects.hash(target, type, Arrays.hashCode(index));
         return h;
     }
-    
-    /*protected final void setKey() {
-        setKey(null);        
-    }*/
-
-    
-    /**
-     * Set the key of the link
-     * @param suffix optional suffix, may be null
-     */    
-    /*protected final void setKey(final CharSequence suffix) {
-        this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
-                        newKeyPrefix(), 
-                        target!=null ? target.name() : null, 
-                        suffix);        
-    }*/
-       
-    
     
     @Override
     public String toString() {

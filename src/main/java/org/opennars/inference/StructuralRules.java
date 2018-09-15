@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
@@ -21,7 +30,6 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 import java.util.List;
@@ -29,6 +37,9 @@ import java.util.List;
 /**
  * Single-premise inference rules involving compound terms. Input are one
  * sentence (the premise) and one TermLink (indicating a component)
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class StructuralRules {
 
@@ -36,8 +47,9 @@ public final class StructuralRules {
 
     /* -------------------- transform between compounds and term -------------------- */
     /**
-     * {<S --> P>, S@(S&T)} |- <(S&T) --> (P&T)> {<S --> P>, S@(M-S)} |- <(M-P)
-     * --> (M-S)>
+     * {&lt;S --&gt; P&gt;, S@(S&amp;T)} |- &lt;(S&amp;T) --&gt; (P&amp;T)&gt;
+     * <br>
+     * {&lt;S --&gt; P&gt;, S@(M-S)} |- &lt;(M-P) --&gt; (M-S)&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -58,20 +70,23 @@ public final class StructuralRules {
         if (side == 0) {
             if (components.contains(sub)) {
                 sub = compound;
-                components.set(index, pred);
+                components.set(index, pred.cloneDeep());
                 pred = Terms.term(compound, components);
             }
         } else {
             if (components.contains(pred)) {
-                components.set(index, sub);
+                components.set(index, sub.cloneDeep());
                 sub = Terms.term(compound, components);
                 pred = compound;
             }
         }
         
-        if ((sub == null) || (pred == null))
+        if ((sub == null) || (pred == null)) {
             return;
-        
+        }
+        if(sub.cloneDeep().equals(pred.cloneDeep())) {
+            return;
+        }       
         final Statement content;
         final int order = statement.getTemporalOrder();
         if (switchOrder(compound, index)) {
@@ -80,17 +95,18 @@ public final class StructuralRules {
             content = Statement.make(statement, sub, pred, order);
         }
         
-        if (content == null)
+        if (content == null) {
             return;
+        }
         
         final Sentence sentence = nal.getCurrentTask().sentence;
-        final TruthValue truth = TruthFunctions.deduction(sentence.truth, Parameters.reliance);
+        final TruthValue truth = TruthFunctions.deduction(sentence.truth, nal.narParameters.reliance, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.singlePremiseTask(content, truth, budget);
     }
 
     /**
-     * {<(S*T) --> (P*T)>, S@(S*T)} |- <S --> P>
+     * {&lt;(S*T) --&gt; (P*T)&gt;, S@(S*T)} |- &lt;S --&gt; P&gt;
      *
      * @param statement The premise
      * @param nal Reference to the memory
@@ -137,8 +153,7 @@ public final class StructuralRules {
     }
 
     /**
-     * List the cases where the direction of inheritance is revised in
-     * conclusion
+     * List the cases where the direction of inheritance is revised in conclusion
      *
      * @param compound The compound term
      * @param index The location of focus in the compound
@@ -151,7 +166,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<S --> P>, P@(P|Q)} |- <S --> (P|Q)>
+     * {&lt;S --&gt; P&gt;, P@(P|Q)} |- &lt;S --&gt; (P|Q)&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -168,9 +183,9 @@ public final class StructuralRules {
         final int order = sentence.getTemporalOrder();
         final TruthValue truth = sentence.truth;
         
-        final float reliance = Parameters.reliance;
-        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        final float reliance = nal.narParameters.reliance;
+        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance, nal.narParameters);
+        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance, nal.narParameters), nal.narParameters);
         
         final Term subj = statement.getSubject();
         final Term pred = statement.getPredicate();
@@ -203,7 +218,9 @@ public final class StructuralRules {
     }
 
     /**
-     * {<(S|T) --> P>, S@(S|T)} |- <S --> P> {<S --> (P&T)>, P@(P&T)} |- <S --> P>
+     * {&lt;(S|T) --&gt; P&gt;, S@(S|T)} |- &lt;S --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (P&amp;T)&gt;, P@(P&amp;T)} |- &lt;S --&gt; P&gt;
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -224,9 +241,9 @@ public final class StructuralRules {
             return;
         }
         
-        final float reliance = Parameters.reliance;
-        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        final float reliance = nal.narParameters.reliance;
+        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance, nal.narParameters);
+        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance, nal.narParameters), nal.narParameters);
         
         final Term subj = statement.getSubject();
         final Term pred = statement.getPredicate();
@@ -280,7 +297,7 @@ public final class StructuralRules {
 
     /* -------------------- set transform -------------------- */
     /**
-     * {<S --> {P}>} |- <S <-> {P}>
+     * {&lt;S --&gt; {P}&gt;} |- &lt;S &lt;-&gt; {P}&gt;
      *
      * @param compound The set compound
      * @param statement The premise
@@ -326,16 +343,18 @@ public final class StructuralRules {
 
     /* -------------------- products and images transform -------------------- */
     /**
-     * Equivalent transformation between products and images {<(*, S, M) --> P>,
-     * S@(*, S, M)} |- <S --> (/, P, _, M)> {<S --> (/, P, _, M)>, P@(/, P, _,
-     * M)} |- <(*, S, M) --> P> {<S --> (/, P, _, M)>, M@(/, P, _, M)} |- <M -->
-     * (/, P, S, _)>
+     * Equivalent transformation between products and images
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param inh An Inheritance statement
      * @param oldContent The whole content
      * @param indices The indices of the TaskLink
-     * @param task The task
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     static void transformProductImage(final Inheritance inh, final CompoundTerm oldContent, final short[] indices, final DerivationContext nal) {
         final Memory memory = nal.mem();
@@ -357,6 +376,9 @@ public final class StructuralRules {
         if (!(compT instanceof CompoundTerm))
             return;
         final CompoundTerm comp = (CompoundTerm)compT;
+        if(comp.size() <= index) { //make sure it points into the compound
+            return;
+        }
         
         if (comp instanceof Product) {
             if (side == 0) {
@@ -408,7 +430,12 @@ public final class StructuralRules {
         } else {
             final Term[] componentList;
             final Term condition = oldContent.term[0];
-            if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
+            
+            final boolean oldContentIsImplicationOrEquivalence = oldContent instanceof Implication || oldContent instanceof Equivalence;
+            if (condition instanceof Conjunction && oldContentIsImplicationOrEquivalence) {
+                // ex: <(&&,<(*,a,b) --> R>,...) ==> C>. |- <(&&,<a --> (/,R,_,b)>,...) ==> C>
+                // ex: <(&&,<(*,a,b) --> R>,...) <=> C>. |- <(&&,<a --> (/,R,_,b)>,...) <=> C>
+                
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
                 final Term newCond = Terms.term((CompoundTerm) condition, componentList);
@@ -417,11 +444,16 @@ public final class StructuralRules {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
+                    // ex: (&&,<(*,a,b) --> R>,...) |- (&&,<a --> (/,R,_,b)>,...)
+                    
                     final Term newContent = Terms.term(oldContent, componentList);
                     if (!(newContent instanceof CompoundTerm))
                         return;
                     content = (CompoundTerm)newContent;
-                } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
+                } else if (oldContentIsImplicationOrEquivalence) {
+                    // ex: <<(*,a,b) --> R> ==> C>. |- <<a --> (/,R,_,b)> ==> C>
+                    // ex: <<(*,a,b) --> R> <=> C>. |- <<a --> (/,R,_,b)> <=> C>
+                    
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
@@ -444,9 +476,13 @@ public final class StructuralRules {
 
     /**
      * Equivalent transformation between products and images when the subject is
-     * a compound {<(*, S, M) --> P>, S@(*, S, M)} |- <S --> (/, P, _, M)> {<S
-     * --> (/, P, _, M)>, P@(/, P, _, M)} |- <(*, S, M) --> P> {<S --> (/, P, _,
-     * M)>, M@(/, P, _, M)} |- <M --> (/, P, S, _)>
+     * a compound
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param subject The subject term
      * @param predicate The predicate term
@@ -502,9 +538,13 @@ public final class StructuralRules {
 
     /**
      * Equivalent transformation between products and images when the predicate
-     * is a compound {<(*, S, M) --> P>, S@(*, S, M)} |- <S --> (/, P, _, M)>
-     * {<S --> (/, P, _, M)>, P@(/, P, _, M)} |- <(*, S, M) --> P> {<S --> (/,
-     * P, _, M)>, M@(/, P, _, M)} |- <M --> (/, P, S, _)>
+     * is a compound
+     *
+     * {&lt;(*, S, M) --&gt; P&gt;, S@(*, S, M)} |- &lt;S --&gt; (/, P, _, M)&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, P@(/, P, _, M)} |- &lt;(*, S, M) --&gt; P&gt;
+     * <br>
+     * {&lt;S --&gt; (/, P, _, M)&gt;, M@(/, P, _, M)} |- &lt;M --&gt; (/, P, S, _)&gt;
      *
      * @param subject The subject term
      * @param predicate The predicate term
@@ -573,7 +613,8 @@ public final class StructuralRules {
     /* --------------- Flatten sequence transform --------------- */
     /**
      * {(#,(#,A,B),C), (#,A,B)@(#,(#,A,B), C)} |- (#,A,B,C)
-     * (same for &/)
+     * (same for &amp;/)
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -600,8 +641,10 @@ public final class StructuralRules {
     
     /* --------------- Take out from conjunction --------------- */
     /**
-     * {(&&,A,B,C), B@(&&,A,B,C)} |- (&&,A,C)
+     * {(&amp;&amp;,A,B,C), B@(&amp;&amp;,A,B,C)} |- (&amp;&amp;,A,C)
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -614,7 +657,14 @@ public final class StructuralRules {
             System.arraycopy(conjCompound.term, 0, newTerm, 0, index);
             System.arraycopy(conjCompound.term, index + 1, newTerm, index, newTerm.length - index);
             final Term cont = Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+            Sentence curS = nal.getCurrentTask().sentence;
+            TruthValue truth = null;
+            if(curS.isJudgment()) {
+                truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, nal.narParameters.reliance, nal.narParameters);
+            }
+            if(curS.isGoal()) {
+                truth = TruthFunctions.desireStrong(nal.getCurrentTask().sentence.truth, new TruthValue(1.0f,nal.narParameters.reliance, nal.narParameters), nal.narParameters);
+            }
             final BudgetValue budget = BudgetFunctions.forward(truth, nal);
             nal.singlePremiseTask(cont, truth, budget);
         }
@@ -623,7 +673,9 @@ public final class StructuralRules {
     /* --------------- Split sequence apart --------------- */
     /**
      * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,A,B,C), (#,C,D,E)
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -640,23 +692,33 @@ public final class StructuralRules {
             }
             System.arraycopy(conjCompound.term, 0, newTermLeft, 0, newTermLeft.length);
             System.arraycopy(conjCompound.term, 0 + index, newTermRight, 0, newTermRight.length);
-            final Conjunction cont1 = (Conjunction) Conjunction.make(newTermLeft, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Conjunction cont2 = (Conjunction) Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-            nal.singlePremiseTask(cont1, truth,         budget);
-            nal.singlePremiseTask(cont2, truth.clone(), budget.clone());
+            final Sentence curS = nal.getCurrentTask().sentence;
+            TruthValue truth = null;
+            if(curS.isJudgment()) {
+                truth = TruthFunctions.deduction(curS.truth, nal.narParameters.reliance, nal.narParameters);
+            }
+            if(curS.isGoal()) {
+                truth = TruthFunctions.desireStrong(curS.truth, new TruthValue(1.0f, nal.narParameters.reliance, nal.narParameters), nal.narParameters);
+            }
+            deriveSequenceTask(nal, conjCompound, newTermLeft, truth);
+            deriveSequenceTask(nal, conjCompound, newTermRight, truth);
         }
     }
     
-    /* --------------- Group sequence left and right --------------- */
     /**
      * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,(#,A,B),C,D,E), (#,A,B,C,(#,D,E))
+     *
+     * Group sequence left and right
+     *
      * Works for all conjunctions
+     *
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
+     *
+     * @author Patrick Hammer
+     * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
         if(!(compound instanceof Conjunction)) {
@@ -668,57 +730,84 @@ public final class StructuralRules {
             return;
         }
 
-        final boolean hasLeft = index > 1;
-        final boolean hasRight = index < compound.size() - 2;
-        if(hasLeft) {
-            final int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
-            final Term[] newTermLeft = new Term[(index-minIndex)];
-            System.arraycopy(conjCompound.term, minIndex, newTermLeft, minIndex - minIndex, index - minIndex);
-            final Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
-            //1. add left of min index
-            int k=0;
-            for(int i=0;i<minIndex;i++) {
-                totalLeft[k++] = conjCompound.term[i];
+        final boolean hasLeft = index >= 1; // result subsequence will have at least two elements
+        final boolean hasRight = index < (compound.size() - 1);
+
+        if (hasLeft) {
+            final int sliceStartIndexInclusive = Memory.randomNumber.nextInt(index - 1 + 1 /* inclusive */); //if index-1 it would have length 1, no group
+            final int sliceEndIndexInclusive = index;
+
+            final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);
+            if( !allRange ) {
+                createSequenceTaskByRange(conjCompound, sliceStartIndexInclusive, sliceEndIndexInclusive, nal);
             }
-            //add formed group
-            totalLeft[k] = contLeft;
-            k+=newTermLeft.length-1;
-            //and add what is after
-            for(int i=index; i<conjCompound.size(); i++) {
-                totalLeft[k++] = conjCompound.term[i];
-            }
-            createSequenceTask(nal, conjCompound, totalLeft);
         }
 
-        if(hasRight) {
-            final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
-            final Term[] newTermRight = new Term[maxIndex -index];
-            System.arraycopy(conjCompound.term, index + 1, newTermRight, index + 1 - (index + 1), maxIndex + 1 - (index + 1));
-            final Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
+        if (hasRight) {
+            final int sliceStartIndexInclusive = index;
+            final int sliceEndIndexInclusive;
+            {
+                final int randminInclusive = index + 1;
+                final int randmaxInclusive = compound.size() - 1;
+                sliceEndIndexInclusive = Memory.randomNumber.nextInt(randmaxInclusive - randminInclusive + 1 /*inclusive*/) + randminInclusive;
+            }
 
-            //2. add left of index
-            int k=0;
-            for(int i=0; i<=index; i++) {
-                totalRight[k++] = conjCompound.term[i];
+            final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);
+            if( !allRange ) {
+                createSequenceTaskByRange(conjCompound, sliceStartIndexInclusive, sliceEndIndexInclusive, nal);
             }
-            //add formed group
-            totalRight[k] = contRight;
-            k+=newTermRight.length-1-1;
-            //and add what is after
-            for(int i=maxIndex+1;i<conjCompound.size();i++) {
-                totalRight[k++] = conjCompound.term[i];
-            }
-            createSequenceTask(nal, conjCompound, totalRight);
         }
     }
 
-    private static void createSequenceTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
-        final Term cont = Conjunction.make(total, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-        if(cont instanceof Conjunction && total.length != conjCompound.size()) {
-            final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+    /** Derives a sub-sequence of a sequence based on a (inclusive) index range
+     * 
+     * @param sourceConjunction The conjunction we take out a certain part from
+     * @param inclusiveStartIndex The start index (inclusive)
+     * @param inclusiveEndIndex The end index (inclusive)
+     * @param nal The derivation context
+     *
+     * @author Robert Wünsche
+     */
+    private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
+        int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
+        final Term[] subsequence = new Term[subsequenceLength];
+        // copy subsequence from source to subsequence:
+        for (int idxInSource=inclusiveStartIndex; idxInSource<=inclusiveEndIndex; idxInSource++) {
+            int idxInSubsequence = idxInSource - inclusiveStartIndex;
+            subsequence[idxInSubsequence] = sourceConjunction.term[idxInSource];
+        }
+        final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength + 1]; //+1 because the subsequence requires one element too
+        // copy everything before the subsequence:
+        int destinationIdx = 0;
+        for (int idx=0; idx<inclusiveStartIndex; idx++) {
+            destination[destinationIdx++] = sourceConjunction.term[idx];
+        }
+        assert destinationIdx == inclusiveStartIndex;
+        // followed by the subsequence
+        destination[destinationIdx++] = Conjunction.make(subsequence, sourceConjunction.getTemporalOrder(), sourceConjunction.getIsSpatial());
+        // followed by everything after the subsequence
+        for (int idxInSource=inclusiveEndIndex+1; idxInSource<sourceConjunction.size(); idxInSource++) {
+            destination[destinationIdx++] = sourceConjunction.term[idxInSource];
+        }
+        assert destinationIdx == destination.length;
+        // derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
+        Sentence curS = nal.getCurrentTask().sentence;
+        final TruthValue truth = curS.truth != null ? curS.truth.clone() : null;
+        deriveSequenceTask(nal, sourceConjunction, destination, truth);
+    }
+    
+    /***
+     * Derives a sequence task, inheriting properties from parentConj
+     * 
+     * @param nal The derivation context
+     * @param total The sub-terms the conjunction should be created from
+     * @param truth The truth value of the derivation
+     */
+    private static void deriveSequenceTask(DerivationContext nal, Conjunction parentConj, Term[] total, TruthValue truth) {
+        final Term cont = Conjunction.make(total, parentConj.getTemporalOrder(), parentConj.getIsSpatial());
+        if(cont instanceof Conjunction && total.length != parentConj.size()) {
+            final BudgetValue budget = truth != null ? BudgetFunctions.compoundForward(truth, cont, nal) : 
+                                                       BudgetFunctions.compoundBackward(cont, nal);
             nal.singlePremiseTask(cont, truth, budget);
         }
     }
@@ -737,8 +826,11 @@ public final class StructuralRules {
     
     /* --------------- Disjunction and Conjunction transform --------------- */
     /**
-     * {(&&, A, B), A@(&&, A, B)} |- A, or answer (&&, A, B)? using A {(||, A,
-     * B), A@(||, A, B)} |- A, or answer (||, A, B)? using A
+     * {(&amp;&amp;, A, B), A@(&amp;&amp;, A, B)} |- A,
+     * <br>
+     * or answer (&amp;&amp;, A, B)? using A {(||, A, B), A@(||, A, B)} |- A,
+     * <br>
+     * or answer (||, A, B)? using A
      *
      * @param compound The premise
      * @param component The recognized component in the premise
@@ -775,7 +867,7 @@ public final class StructuralRules {
         final Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
 
-        final float reliance = Parameters.reliance;
+        final float reliance = nal.narParameters.reliance;
 
         final BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
@@ -789,13 +881,13 @@ public final class StructuralRules {
             if ((sentence.isJudgment() || sentence.isGoal()) && 
                 ((!compoundTask && compound instanceof Disjunction) ||
                 (compoundTask && compound instanceof Conjunction))) {
-                truth = TruthFunctions.deduction(truth, reliance);
+                truth = TruthFunctions.deduction(truth, reliance, nal.narParameters);
             }else {
                 final TruthValue v1;
                 final TruthValue v2;
-                v1 = TruthFunctions.negation(truth);
-                v2 = TruthFunctions.deduction(v1, reliance);
-                truth = TruthFunctions.negation(v2);
+                v1 = TruthFunctions.negation(truth, nal.narParameters);
+                v2 = TruthFunctions.deduction(v1, reliance, nal.narParameters);
+                truth = TruthFunctions.negation(v2, nal.narParameters);
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
@@ -817,7 +909,7 @@ public final class StructuralRules {
         final BudgetValue budget;
         
         if (sentence.isJudgment() || sentence.isGoal()) {
-            truth = TruthFunctions.negation(truth);
+            truth = TruthFunctions.negation(truth, nal.narParameters);
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -826,10 +918,10 @@ public final class StructuralRules {
     }
 
     /**
-     * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
+     * {&lt;A ==&gt; B&gt;, A@(--, A)} |- &lt;(--, B) ==&gt; (--, A)&gt;
      *
      * @param statement The premise
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
         final Memory memory = nal.mem();
@@ -856,7 +948,7 @@ public final class StructuralRules {
             return nal.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);
         } else {
             if (content instanceof Implication) {
-                truth = TruthFunctions.contraposition(truth);
+                truth = TruthFunctions.contraposition(truth, nal.narParameters);
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
             return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);

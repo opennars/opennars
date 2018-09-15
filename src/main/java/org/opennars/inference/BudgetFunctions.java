@@ -1,28 +1,40 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
 import org.opennars.entity.*;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 import static java.lang.Math.*;
+import org.opennars.main.Parameters;
 
 /**
  * Budget functions for resources allocation
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class BudgetFunctions extends UtilityFunctions {
 
@@ -102,7 +114,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         }
         */
         
-        return new BudgetValue(priority, durability, quality);
+        return new BudgetValue(priority, durability, quality, nal.narParameters);
     }
 
     /**
@@ -112,13 +124,13 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param bTruth Truth value of the previous belief
      * @return Budget value of the updating task
      */
-    static BudgetValue update(final Task task, final TruthValue bTruth) {
+    public static BudgetValue update(final Task task, final TruthValue bTruth, Parameters narParameters) {
         final TruthValue tTruth = task.sentence.truth;
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());
         final float durability = aveAri(dif, task.getDurability());
         final float quality = truthToQuality(bTruth);
-        return new BudgetValue(priority, durability, quality);
+        return new BudgetValue(priority, durability, quality, narParameters);
     }
 
     /* ----------------------- Links ----------------------- */
@@ -129,9 +141,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param n Number of links
      * @return Budget value for each link
      */
-    public static BudgetValue distributeAmongLinks(final BudgetValue b, final int n) {
+    public static BudgetValue distributeAmongLinks(final BudgetValue b, final int n, Parameters narParameters) {
         final float priority = (float) (b.getPriority() / sqrt(n));
-        return new BudgetValue(priority, b.getDurability(), b.getQuality());
+        return new BudgetValue(priority, b.getDurability(), b.getQuality(), narParameters);
     }
 
     public enum Activating {
@@ -228,7 +240,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget value of the conclusion
      */
     public static BudgetValue backwardWeak(final TruthValue truth, final org.opennars.control.DerivationContext nal) {
-        return budgetInference(w2c(1) * truthToQuality(truth), 1, nal);
+        return budgetInference(w2c(1, nal.narParameters) * truthToQuality(truth), 1, nal);
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
@@ -241,7 +253,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundForward(final TruthValue truth, final Term content, final org.opennars.control.DerivationContext nal) {
-        final float complexity = (content == null) ? Parameters.COMPLEXITY_UNIT : Parameters.COMPLEXITY_UNIT*content.getComplexity();
+        final float complexity = (content == null) ? nal.narParameters.COMPLEXITY_UNIT : nal.narParameters.COMPLEXITY_UNIT*content.getComplexity();
         return budgetInference(truthToQuality(truth), complexity, nal);
     }
 
@@ -249,11 +261,11 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Backward inference with CompoundTerm conclusion, stronger case
      *
      * @param content The content of the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackward(final Term content, final org.opennars.control.DerivationContext nal) {
-        return budgetInference(1, content.getComplexity()*Parameters.COMPLEXITY_UNIT, nal);
+        return budgetInference(1, content.getComplexity()*nal.narParameters.COMPLEXITY_UNIT, nal);
     }
 
     /**
@@ -264,7 +276,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackwardWeak(final Term content, final org.opennars.control.DerivationContext nal) {
-        return budgetInference(w2c(1), content.getComplexity()*Parameters.COMPLEXITY_UNIT, nal);
+        return budgetInference(w2c(1, nal.narParameters), content.getComplexity()*nal.narParameters.COMPLEXITY_UNIT, nal);
     }
 
     /**
@@ -302,7 +314,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }
-        return new BudgetValue(priority, durability, quality);
+        return new BudgetValue(priority, durability, quality, nal.narParameters);
     }
 
     @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, final Task task, final Memory memory) {

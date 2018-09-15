@@ -1,29 +1,37 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
-import org.opennars.control.ConceptProcessing;
 import org.opennars.control.DerivationContext;
 import org.opennars.inference.LocalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.events.Events.*;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.main.Shell;
-import org.opennars.main.NarParameters;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -32,11 +40,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.opennars.control.concept.ProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
 import static org.opennars.inference.BudgetFunctions.rankBelief;
 import static org.opennars.inference.UtilityFunctions.or;
 
+/**
+ * Concept as defined by the NARS-theory
+ *
+ * Concepts are used to keep track of interrelated sentences
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
+ */
 public class Concept extends Item<Term> implements Serializable {
 
     
@@ -84,7 +101,8 @@ public class Concept extends Item<Term> implements Serializable {
      * and insertion in the middle
      */
     public final List<Task> beliefs;
-    public final List<Task> executable_preconditions;
+    public List<Task> executable_preconditions;
+    public List<Task> general_executable_preconditions;
 
     /**
      * Desire values on the term, similar to the above one
@@ -119,11 +137,12 @@ public class Concept extends Item<Term> implements Serializable {
         this.questions = new ArrayList<>();
         this.beliefs = new ArrayList<>();
         this.executable_preconditions = new ArrayList<>();
+        this.general_executable_preconditions = new ArrayList<>();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
-        this.taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS, Parameters.TASK_LINK_BAG_SIZE);
-        this.termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS, Parameters.TERM_LINK_BAG_SIZE);
+        this.taskLinks = new LevelBag<>(memory.narParameters.TASK_LINK_BAG_LEVELS, memory.narParameters.TASK_LINK_BAG_SIZE, memory.narParameters);
+        this.termLinks = new LevelBag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
@@ -176,20 +195,20 @@ public class Concept extends Item<Term> implements Serializable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task, final DerivationContext cont) {
+    public TaskLink linkToTask(final Task task, final DerivationContext content) {
         final BudgetValue taskBudget = task.budget;
 
-        insertTaskLink(new TaskLink(task, null, taskBudget,
-                Parameters.TERM_LINK_RECORD_LENGTH), cont);  // link type: SELF
+        TaskLink retLink = new TaskLink(task, null, taskBudget, content.narParameters.TERM_LINK_RECORD_LENGTH);
+        insertTaskLink(retLink, content);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
-            return;
+            return retLink;
         }
         if (termLinkTemplates.isEmpty()) {
-            return;
+            return retLink;
         }
                 
-        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), content.narParameters);
         if (subBudget.aboveThreshold()) {
 
             for (final TermLink termLink : termLinkTemplates) {
@@ -200,21 +219,22 @@ public class Concept extends Item<Term> implements Serializable {
                 final Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
                 if (componentConcept != null) {
-                    componentConcept.insertTaskLink(
-                        new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH), cont
-                    );
+                    synchronized(componentConcept) {
+                        componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget, content.narParameters.TERM_LINK_RECORD_LENGTH), content
+                        );
+                    }
                 }
             }
 
-            buildTermLinks(taskBudget);  // recursively insert TermLink
+            buildTermLinks(taskBudget, content.narParameters);  // recursively insert TermLink
         }
+        return retLink;
     }
 
     /**
      * Add a new belief (or goal) into the table Sort the beliefs/desires by
      * rank, and remove redundant or low rank one
      *
-     * @param newSentence The judgment to be processed
      * @param table The table to be revised
      * @param capacity The capacity of the table
      * @return whether table was modified
@@ -258,7 +278,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Task query, final List<Task> list) {
+    public Task selectCandidate(final Task query, final List<Task> list, final Timable time) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -269,7 +289,7 @@ public class Concept extends Item<Term> implements Serializable {
         synchronized (list) {
             for (final Task judgT : list) {
                 final Sentence judg = judgT.sentence;
-                beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
+                beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory, time); //makes revision explicitly search for
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
                     candidate = judgT;
@@ -278,11 +298,21 @@ public class Concept extends Item<Term> implements Serializable {
         }
         return candidate;
     }
-
-    public float negConfirmationPriority = 0.0f;
-    public Task negConfirmation = null;
-    public long negConfirm_abort_mintime = 0;
-    public long negConfirm_abort_maxtime = 0;
+    
+    public static class AnticipationEntry implements Serializable {
+        public float negConfirmationPriority = 0.0f;
+        public Task negConfirmation = null;
+        public long negConfirm_abort_mintime = 0;
+        public long negConfirm_abort_maxtime = 0;
+        public AnticipationEntry(float negConfirmationPriority, Task negConfirmation, long negConfirm_abort_mintime, long negConfirm_abort_maxtime) {
+            this.negConfirmationPriority = negConfirmationPriority;
+            this.negConfirmation = negConfirmation;
+            this.negConfirm_abort_mintime = negConfirm_abort_mintime;
+            this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
+        }
+    }
+    public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
+    
     
     /* ---------- insert Links for indirect processing ---------- */
     /**
@@ -294,15 +324,10 @@ public class Concept extends Item<Term> implements Serializable {
      */
     protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
         final Task target = taskLink.getTarget();
-        
         //what question answering, question side:
-        final Task ques = taskLink.getTarget();
-        ConceptProcessing.ProcessWhatQuestion(this, ques, nal);
-        
+        ProcessQuestion.ProcessWhatQuestion(this, target, nal);
         //what question answering, belief side:
-        final Task t = taskLink.getTarget();
-        ConceptProcessing.ProcessWhatQuestionAnswer(this, t, nal);
-        
+        ProcessQuestion.ProcessWhatQuestionAnswer(this, target, nal);
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
         final boolean isEternal = target.sentence.isEternal();
@@ -317,7 +342,7 @@ public class Concept extends Item<Term> implements Serializable {
                     lowest_priority = tl.getPriority();
                     lowest = tl;
                 }
-                if(nSameContent > Parameters.TASKLINK_PER_CONTENT) { //ok we reached the maximum so lets delete the lowest
+                if(nSameContent > nal.narParameters.TASKLINK_PER_CONTENT) { //ok we reached the maximum so lets delete the lowest
                     taskLinks.take(lowest);
                     memory.emit(TaskLinkRemove.class, lowest, this);
                     break;
@@ -325,10 +350,7 @@ public class Concept extends Item<Term> implements Serializable {
             }
         }
         //END HANDLE MAX PER CONTENT
-        
-        
-        final TaskLink removed = taskLinks.putIn(taskLink);
-        
+        final TaskLink removed = taskLinks.putIn(taskLink);      
         if (removed!=null) {
             if (removed == taskLink) {
                 memory.emit(TaskLinkRemove.class, taskLink, this);
@@ -352,12 +374,12 @@ public class Concept extends Item<Term> implements Serializable {
      *
      * @param taskBudget The BudgetValue of the task
      */
-    public void buildTermLinks(final BudgetValue taskBudget) {
+    public void buildTermLinks(final BudgetValue taskBudget, Parameters narParameters) {
         if (termLinkTemplates.size() == 0) {
             return;
         }
         
-        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), narParameters);
 
         if (!subBudget.aboveThreshold()) {
             return;
@@ -380,7 +402,7 @@ public class Concept extends Item<Term> implements Serializable {
             concept.insertTermLink(new TermLink(term, template, subBudget));
 
             if (target instanceof CompoundTerm && template.type != TermLink.TEMPORAL) {
-                concept.buildTermLinks(subBudget);
+                concept.buildTermLinks(subBudget, narParameters);
             }
         }
     }
@@ -450,7 +472,7 @@ public class Concept extends Item<Term> implements Serializable {
         return new StringBuilder(2 + title.length() + itemString.length() + 1).
                 append(" ").append(title).append(':').append(itemString).toString();
     }
-
+    
     /**
      * Recalculate the quality of the concept [to be refined to show
      * extension/intension balance]
@@ -460,7 +482,7 @@ public class Concept extends Item<Term> implements Serializable {
     @Override
     public float getQuality() {
         final float linkPriority = termLinks.getAveragePriority();
-        final float termComplexityFactor = 1.0f / term.getComplexity()*Parameters.COMPLEXITY_UNIT;
+        final float termComplexityFactor = 1.0f / (term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT);
         final float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new IllegalStateException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
@@ -491,14 +513,14 @@ public class Concept extends Item<Term> implements Serializable {
      */
     public Sentence getBelief(final DerivationContext nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
-        final long currentTime = memory.time();
+        final long currentTime = nal.time.time();
 
         for (final Task beliefT : beliefs) {  
             final Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
-            final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
+            final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), nal.time.time(), nal.memory);
             /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                nal.singlePremiseTask(projectedBelief, task.budget);
             }*/
@@ -543,10 +565,8 @@ public class Concept extends Item<Term> implements Serializable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time, final NarParameters narParameters) {
-        ConceptProcessing.maintainDisappointedAnticipations(this);
-
-        final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
+    public TermLink selectTermLink(final TaskLink taskLink, final long time, final Parameters narParameters) {
+        final int toMatch = narParameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
             final TermLink termLink = termLinks.takeNext();
@@ -565,7 +585,7 @@ public class Concept extends Item<Term> implements Serializable {
     }
 
     public void returnTermLink(final TermLink termLink) {
-        termLinks.putBack(termLink, memory.cycles(memory.param.termLinkForgetDurations), memory);
+        termLinks.putBack(termLink, memory.cycles(memory.narParameters.TERMLINK_FORGET_DURATIONS), memory);
     }
 
     /**
@@ -582,11 +602,11 @@ public class Concept extends Item<Term> implements Serializable {
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
             for (final Task t : beliefs) {
-                t.sentence.discountConfidence();
+                t.sentence.discountConfidence(memory.narParameters);
             }
         } else {
             for (final Task t : desires) {
-                t.sentence.discountConfidence();
+                t.sentence.discountConfidence(memory.narParameters);
             }
         }
     }

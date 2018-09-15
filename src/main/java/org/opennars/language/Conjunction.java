@@ -1,29 +1,41 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.util.*;
 
 import static java.lang.System.arraycopy;
 
 /**
- * Conjunction of statements
+ * Conjunction of statements as defined in the NARS-theory
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Conjunction extends CompoundTerm {
 
@@ -51,13 +63,16 @@ public class Conjunction extends CompoundTerm {
         this.isSpatial = spatial;
         temporalOrder = order;
         init(this.term);
-        //update imagination space if it exsists (also type checking the operations):
+        //update imagination space if it exists (also type checking the operations):
         if(arg[0].imagination != null) {
             this.imagination=arg[0].imagination.ConstructSpace(this);
         }
     }
 
     @Override public Term clone(final Term[] t) {
+        if(t == null) {
+            return null;
+        }
         return make(t, temporalOrder, isSpatial);
     }
 
@@ -108,7 +123,6 @@ public class Conjunction extends CompoundTerm {
      *
      * @return the Term generated from the arguments
      * @param argList the list of arguments
-     * @param memory Reference to the memory
      */
     final public static Term make(final Term[] argList) {
         return make(argList, TemporalRules.ORDER_NONE);
@@ -187,20 +201,43 @@ public class Conjunction extends CompoundTerm {
     }
     
     /**
+     * @param components The components
+     * @return The components sequence with summed intervals
+     * for transforming (&amp;/,a,+1,+1) to (&amp;/,a,+2)
+     */
+    public static Term[] simplifyIntervals(Term[] components) {
+        List<Term> ret = new ArrayList<Term>();
+        for(int i=0;i<components.length;) {
+            if(components[i] instanceof Interval) {
+                // add up next ones
+                long ival = 0;
+                for(;i<components.length && components[i] instanceof Interval; i++) {
+                    ival += ((Interval)components[i]).time;
+                }
+                ret.add(new Interval(ival));
+            }
+            else {
+                ret.add(components[i]);
+                i++;
+            }
+        }
+        return ret.toArray(new Term[0]);
+    }
+    
+    /**
      * Try to make a new compound from a list of term. Called by StringParser.
      *
      * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
         return make(argList, temporalOrder, false);
     }
     final public static Term make(final Term[] argList, final int temporalOrder, final boolean spatial) {
-        if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
+        if (MiscFlags.DEBUG) {  Terms.verifyNonNull(argList);}
         
-        if (argList.length == 0) {
+        if (argList == null || argList.length == 0) {
             return null;
         }                         // special case: single component
         if (argList.length == 1) {
@@ -208,7 +245,7 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final Term[] newArgList = spatial ? argList : flatten(argList, temporalOrder, spatial);
+            final Term[] newArgList = spatial ? argList : simplifyIntervals(flatten(argList, temporalOrder, spatial));
             
             if(newArgList.length == 1) {
                 return newArgList[0];
@@ -224,7 +261,7 @@ public class Conjunction extends CompoundTerm {
             final ConvRectangle rect = UpdateConvRectangle(flattened);
             for (final Term t : flattened) {
                 if(!(t instanceof Interval)) { //intervals only for seqs
-                    if(t.term_indices == null || rect.term_indices == null) {
+                    if(t.term_indices == null || rect == null || rect.term_indices == null) {
                         set.add(t);
                     } 
                     else 
@@ -264,7 +301,6 @@ public class Conjunction extends CompoundTerm {
     /**    
      *
      * @param set a set of Term as term
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
     final private static Term make(final Collection<Term> set, final int temporalOrder, final boolean spatial) {
@@ -284,7 +320,6 @@ public class Conjunction extends CompoundTerm {
      *
      * @param term1 The first component
      * @param term2 The second component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     final public static Term make(final Term term1, final Term term2) {

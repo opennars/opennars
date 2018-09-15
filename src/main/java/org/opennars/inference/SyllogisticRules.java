@@ -1,42 +1,53 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.inference;
 
-import org.opennars.control.ConceptProcessing;
+import java.util.HashMap;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
 
 import java.util.List;
+import org.opennars.control.concept.ProcessAnticipation;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
 
-
 /**
  * Syllogisms: Inference rules based on the transitivity of the relation.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public final class SyllogisticRules {
 
     /* --------------- rules used in both first-tense inference and higher-tense inference --------------- */
     /**
      * <pre>
-     * {<S ==> M>, <M ==> P>} |- {<S ==> P>, <P ==> S>}
+     * {&lt;S ==&gt; M&gt;, &lt;M ==&gt; P&gt;} |- {&lt;S ==&gt; P&gt;, &lt;P ==&gt; S&gt;}
      * </pre>
      *
      * @param term1 Subject of the first new task
@@ -64,12 +75,12 @@ public final class SyllogisticRules {
 
         if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
-                truth1 = TruthFunctions.desireWeak(value1, value2);
-                truth2 = TruthFunctions.desireWeak(value1, value2);
+                truth1 = TruthFunctions.desireWeak(value1, value2, nal.narParameters);
+                truth2 = TruthFunctions.desireWeak(value1, value2, nal.narParameters);
             } else {
                 // isJudgment
-                truth1 = TruthFunctions.deduction(value1, value2);
-                truth2 = TruthFunctions.exemplification(value1, value2);
+                truth1 = TruthFunctions.deduction(value1, value2, nal.narParameters);
+                truth2 = TruthFunctions.exemplification(value1, value2, nal.narParameters);
             }
         }
 
@@ -110,7 +121,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<M ==> S>, <M ==> P>} |- {<S ==> P>, <P ==> S>, <S <=> P>}
+     * {&lt;M ==&gt; S&gt;, &lt;M ==&gt; P&gt;} |- {&lt;S ==&gt; P&gt;, &lt;P ==&gt; S&gt;, &lt;S &lt;=&gt; P&gt;}
      *
      * @param term1 Subject of the first new task
      * @param term2 Predicate of the first new task
@@ -139,13 +150,13 @@ public final class SyllogisticRules {
         final TruthValue value2 = sentence2.truth;
 
         if (sentence1.isGoal()) {
-            truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
-            truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
-            truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+            truth1 = TruthFunctions.desireStrong(value1, value2, nal.narParameters); //P --> S
+            truth2 = TruthFunctions.desireWeak(value2, value1, nal.narParameters); //S --> P
+            truth3 = TruthFunctions.desireStrong(value1, value2, nal.narParameters); //S <-> P
         } else if( sentence1.isJudgment() ) {
-            truth1 = TruthFunctions.abduction(value1, value2); //P --> S
-            truth2 = TruthFunctions.abduction(value2, value1); //S --> P
-            truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
+            truth1 = TruthFunctions.abduction(value1, value2, nal.narParameters); //P --> S
+            truth2 = TruthFunctions.abduction(value2, value1, nal.narParameters); //S --> P
+            truth3 = TruthFunctions.comparison(value1, value2, nal.narParameters); //S <-> P
         }
 
         if (sentence1.isQuestion()) {
@@ -166,18 +177,25 @@ public final class SyllogisticRules {
             final TruthValue T = term1.imagination.AbductionOrComparisonTo(term2.imagination, true);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
-                    T, budget3.clone(),false, false);   
+                    T, BudgetFunctions.forward(T, nal),false, false);   
             final TruthValue T2 = term1.imagination.AbductionOrComparisonTo(term2.imagination, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2, TemporalRules.ORDER_NONE), 
-                    T2, budget3.clone(),false, false);   
+                    T2, BudgetFunctions.forward(T2, nal),false, false);   
             final TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE), 
-                    T3, budget3.clone(),false, false);   
-            return true; //no need for other syllogistic inference, it were sensational terms,
-        }           //but it would not hurt to allow it either.. but why afford tasks that summarize
-                    //so little evidence in comparison to the amount summarized by the array comparison.
+                    T3, BudgetFunctions.forward(T3, nal),false, false);
+
+            /**
+             * no need for other syllogistic inference, it were sensational terms,
+             * but it would not hurt to allow it either.. but why afford tasks that summarize
+             * so little evidence in comparison to the amount summarized by the array comparison.
+             */
+
+            return true;
+        }
+
         long occurrence_time2 = nal.getCurrentTask().sentence.getOccurenceTime();
         while (occurrence_time2!=Stamp.ETERNAL && (term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             final Interval interval = (Interval) ((CompoundTerm) term2).term[0];
@@ -205,22 +223,24 @@ public final class SyllogisticRules {
                     Statement.makeSym(taskContent, term1, term2, order), 
                         truth3, budget3,false, false);
         }
-        if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement() && sentence2.term.isHigherOrderStatement()) { //
+        if(nal.narParameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement() && sentence2.term.isHigherOrderStatement()) { //
             /* Bridge to higher order statements:
-            <a ==> c>.
-            <b ==> c>.
-            |-
-            <a <-> b>. %F_cmp%
-            <a --> b>. %F_abd%
-            <b --> a>. %F_abd%
-            */
-          /*  if(truth1!=null) 
+             * <a ==> c>.
+             * <b ==> c>.
+             * |-
+             * <a <-> b>. %F_cmp%
+             * <a --> b>. %F_abd%
+             * <b --> a>. %F_abd%
+             */
+            /* // commented because it may be useful in the future
+            if(truth1!=null)
                 truth1=truth1.clone();
             if(truth2!=null) 
                 truth2=truth2.clone();*/
             if(truth3!=null) 
                 truth3=truth3.clone();
-           /* nal.doublePremiseTask(
+            /* // commented because it may be useful in the future
+            nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
@@ -236,7 +256,7 @@ public final class SyllogisticRules {
     
 
     /**
-     * {<S ==> P>, <M <=> P>} |- <S ==> P>
+     * {&lt;S ==&gt; P&gt;, &lt;M &lt;=&gt; P&gt;} |- &lt;S ==&gt; P&gt;
      *
      * @param subj Subject of the new task
      * @param pred Predicate of the new task
@@ -274,9 +294,9 @@ public final class SyllogisticRules {
             }
         } else {
             if (sentence.isGoal()) {
-                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth);
+                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth, nal.narParameters);
             } else {
-                truth = TruthFunctions.analogy(asym.truth, sym.truth);
+                truth = TruthFunctions.analogy(asym.truth, sym.truth, nal.narParameters);
             }
             
             budget = BudgetFunctions.forward(truth, nal);
@@ -287,7 +307,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<S <=> M>, <M <=> P>} |- <S <=> P>
+     * {&lt;S &lt;=&gt; M&gt;, &lt;&lt; &lt;=&gt; P&gt;} |- &lt;S &lt;=&gt; P&gt;
      *
      * @param term1 Subject of the new task
      * @param term2 Predicate of the new task
@@ -311,10 +331,10 @@ public final class SyllogisticRules {
         final BudgetValue budget;
         if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
-                truth = TruthFunctions.desireStrong(sentence.truth, belief.truth);
+                truth = TruthFunctions.desireStrong(sentence.truth, belief.truth, nal.narParameters);
             } else {
                 // NOTE< this must be Judgement again ? >
-                truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
+                truth = TruthFunctions.resemblance(belief.truth, sentence.truth, nal.narParameters);
             }
         }
 
@@ -338,7 +358,7 @@ public final class SyllogisticRules {
         final Statement s=Statement.make(higherOrder ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
         nal.doublePremiseTask( s, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
         
-        if(Parameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
+        if(nal.narParameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
            
             final BudgetValue budget1=null;
             final BudgetValue budget2=null;
@@ -350,53 +370,63 @@ public final class SyllogisticRules {
             final TruthValue value2 = belief.truth;
             
             if (sentence.isQuestion()) {
-               /* budget1 = BudgetFunctions.backward(value2, nal);
+               /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.backward(value2, nal);
                 budget2 = BudgetFunctions.backwardWeak(value2, nal);*/
                 budget3 = BudgetFunctions.backward(value2, nal);
             } else if (sentence.isQuest()) {
-               /* budget1 = BudgetFunctions.backwardWeak(value2, nal);
+               /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.backwardWeak(value2, nal);
                 budget2 = BudgetFunctions.backward(value2, nal);*/
                 budget3 = BudgetFunctions.backwardWeak(value2, nal);            
             } else {
                 if (sentence.isGoal()) {
-                  /*  truth1 = TruthFunctions.desireStrong(value1, value2);
+                    /* // commented because it may be useful in the future
+                    truth1 = TruthFunctions.desireStrong(value1, value2);
                     truth2 = TruthFunctions.desireWeak(value2, value1);*/
-                    truth3 = TruthFunctions.desireStrong(value1, value2);
+                    truth3 = TruthFunctions.desireStrong(value1, value2, nal.narParameters);
                 } else { 
                     // isJudgment
-                   /* truth1 = TruthFunctions.abduction(value1, value2);
+                    /* // commented because it may be useful in the future
+                    truth1 = TruthFunctions.abduction(value1, value2);
                     truth2 = TruthFunctions.abduction(value2, value1);*/
-                    truth3 = TruthFunctions.comparison(value1, value2);
+                    truth3 = TruthFunctions.comparison(value1, value2, nal.narParameters);
                 }
 
-                /*budget1 = BudgetFunctions.forward(truth1, nal);
+                /* // commented because it may be useful in the future
+                budget1 = BudgetFunctions.forward(truth1, nal);
                 budget2 = BudgetFunctions.forward(truth2, nal);*/
                 budget3 = BudgetFunctions.forward(truth3, nal);
             }
            
             /* Bridge to higher order statements:
-            <b <=> k>.
-            <b <=> c>.
-            |-
-            <k <-> c>. %F_cmp%
-            */
-           /* nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE, term1, term2), 
+             * <b <=> k>.
+             * <b <=> c>.
+             * |-
+             * <k <-> c>. %F_cmp%
+             */
+            /* // commented because it may be useful in the future
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2),
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE, term2, term1), 
+                Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
-                    truth3, budget3.clone(),false, false);
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE),
+                truth3, budget3.clone(),false, false);
         }
     }
 
     /* --------------- rules used only in conditional inference --------------- */
     /**
-     * {<<M --> S> ==> <M --> P>>, <M --> S>} |- <M --> P> {<<M --> S> ==> <M
-     * --> P>>, <M --> P>} |- <M --> S> {<<M --> S> <=> <M --> P>>, <M --> S>}
-     * |- <M --> P> {<<M --> S> <=> <M --> P>>, <M --> P>} |- <M --> S>
+     * {&lt;&lt;M --&gt; S&gt; ==&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; S&gt;} |- &lt;M --&gt; P&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; ==&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; &lt;=&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; S&gt;} |- &lt;M --&gt; P&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; &lt;=&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
      *
      * @param mainSentence The implication/equivalence premise
      * @param subSentence The premise on part of s1
@@ -437,7 +467,7 @@ public final class SyllogisticRules {
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
             final long baseTime = subSentence.getOccurenceTime();
             if (baseTime != Stamp.ETERNAL) {
-                final long inc = order * Parameters.DURATION;
+                final long inc = order * nal.narParameters.DURATION;
                 occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
             }
         }
@@ -460,19 +490,19 @@ public final class SyllogisticRules {
         if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
-                    truth = TruthFunctions.desireStrong(truth1, truth2);
+                    truth = TruthFunctions.desireStrong(truth1, truth2, nal.narParameters);
                 } else if (side == 0) {
-                    truth = TruthFunctions.desireInd(truth1, truth2);
+                    truth = TruthFunctions.desireInd(truth1, truth2, nal.narParameters);
                 } else {
-                    truth = TruthFunctions.desireDed(truth1, truth2);
+                    truth = TruthFunctions.desireDed(truth1, truth2, nal.narParameters);
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
-                    truth = TruthFunctions.analogy(truth2, truth1);
+                    truth = TruthFunctions.analogy(truth2, truth1, nal.narParameters);
                 } else if (side == 0) {
-                    truth = TruthFunctions.deduction(truth1, truth2);
+                    truth = TruthFunctions.deduction(truth1, truth2, nal.narParameters);
                 } else {
-                    truth = TruthFunctions.abduction(truth2, truth1);
+                    truth = TruthFunctions.abduction(truth2, truth1, nal.narParameters);
                 }
             }
         }
@@ -504,9 +534,11 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S1, S2, S3) ==> P>, S1} |- <(&&, S2, S3) ==> P> {<(&&, S2, S3) ==>
-     * P>, <S1 ==> S2>} |- <(&&, S1, S3) ==> P> {<(&&, S1, S3) ==> P>, <S1 ==>
-     * S2>} |- <(&&, S2, S3) ==> P>
+     * {&lt;(&amp;&amp;, S1, S2, S3) ==&gt; P&gt;, S1} |- &lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;
      *
      * @param premise1 The conditional premise
      * @param index The location of the shared term in the condition of premise1
@@ -524,13 +556,11 @@ public final class SyllogisticRules {
         final boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
         final Term commonComponent;
         Term newComponent = null;
-        if (side == 0) {
-            commonComponent = ((Statement) premise2).getSubject();
-            newComponent = ((Statement) premise2).getPredicate();
-        } else if (side == 1) {
-            commonComponent = ((Statement) premise2).getPredicate();
-            newComponent = ((Statement) premise2).getSubject();
-        } else {
+        if (side == 0 || side == 1) {
+            Statement.EnumStatementSide sideOfCommonComponentAsEnum = side == 0 ? Statement.EnumStatementSide.SUBJECT : Statement.EnumStatementSide.PREDICATE;
+            commonComponent = ((Statement)premise2).retBySide(sideOfCommonComponentAsEnum);
+            newComponent = ((Statement)premise2).retBySide(Statement.retOppositeSide(sideOfCommonComponentAsEnum));
+        }else {
             commonComponent = premise2;
         }
         
@@ -634,19 +664,19 @@ public final class SyllogisticRules {
         if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 if (conditionalTask) {
-                    truth = TruthFunctions.desireWeak(truth1, truth2);
+                    truth = TruthFunctions.desireWeak(truth1, truth2, nal.narParameters);
                 } else if (deduction) {
-                    truth = TruthFunctions.desireInd(truth1, truth2);
+                    truth = TruthFunctions.desireInd(truth1, truth2, nal.narParameters);
                 } else {
-                    truth = TruthFunctions.desireDed(truth1, truth2);
+                    truth = TruthFunctions.desireDed(truth1, truth2, nal.narParameters);
                 }
             } else {
                 if (deduction) {
-                    truth = TruthFunctions.deduction(truth1, truth2);
+                    truth = TruthFunctions.deduction(truth1, truth2, nal.narParameters);
                 } else if (conditionalTask) {
-                    truth = TruthFunctions.induction(truth2, truth1);
+                    truth = TruthFunctions.induction(truth2, truth1, nal.narParameters);
                 } else {
-                    truth = TruthFunctions.induction(truth1, truth2);
+                    truth = TruthFunctions.induction(truth1, truth2, nal.narParameters);
                 }
             }
         }
@@ -659,25 +689,24 @@ public final class SyllogisticRules {
         
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
         final List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
-        if(!nal.evidentalOverlap && ret != null && ret.size() > 0) {
-            if(predictedEvent && taskSentence.isJudgment() && truth != null && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                    !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
-                premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-                ConceptProcessing.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
-            }
+        if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
+            truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
+            premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new HashMap<Term,Term>());
         }
     }
 
     /**
-     * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=> P>,
-     * <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
+     * {&lt;(&amp;&amp;, S1, S2, S3) &lt;=&gt; P&gt;, S1} |- &lt;(&amp;&amp;, S2, S3) &lt;=&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S2, S3) &lt;=&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S1, S3) &lt;=&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S1, S3) &lt;=&gt; P&gt;, &lt;S1 ==&gt;
      *
      * @param premise1 The equivalence premise
      * @param index The location of the shared term in the condition of premise1
-     * @param premise2 The premise which, or part of which, appears in the
-     * condition of premise1
-     * @param side The location of the shared term in premise2: 0 for subject, 1
-     * for predicate, -1 for the whole term
+     * @param premise2 The premise which, or part of which, appears in the condition of premise1
+     * @param side The location of the shared term in premise2: 0 for subject, 1 for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
     static void conditionalAna(Equivalence premise1, final short index, Term premise2, final int side, final DerivationContext nal) {
@@ -749,9 +778,9 @@ public final class SyllogisticRules {
         final BudgetValue budget;
         if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
-                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIREDED, truth1, truth2);
+                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIREDED, truth1, truth2, nal.narParameters);
             } else {
-                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.COMPARISON, TruthFunctions.EnumType.ANALOGY, truth1, truth2);
+                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.COMPARISON, TruthFunctions.EnumType.ANALOGY, truth1, truth2, nal.narParameters);
             }
         }
 
@@ -765,11 +794,11 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S2, S3) ==> P>, <(&&, S1, S3) ==> P>} |- <S1 ==> S2>
+     * {&lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;, &lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;} |- &lt;S1 ==&gt; S2&gt;
      *
      * @param cond1 The condition of the first premise
      * @param cond2 The condition of the second premise
-     * @param taskContent The first premise
+     * @param st1 The first premise
      * @param st2 The second premise
      * @param nal Reference to the memory
      * @return Whether there are derived tasks
@@ -802,52 +831,43 @@ public final class SyllogisticRules {
         final Sentence belief = nal.getCurrentBelief();
         final TruthValue value1 = sentence.truth;
         final TruthValue value2 = belief.truth;
-        Term content;
-        
+
         final boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm());
-        
-        TruthValue truth = null;
-        BudgetValue budget;
 
-        if (term1 != null) {
-            if (term2 != null) {
-                content = Statement.make(st2, term2, term1, st2.getTemporalOrder());
+        // we folded the logic to use loops for more compact code
+        for (int loop=0;loop<2;loop++) {
+            final boolean isFirstLoop = loop == 0;
+            Term term1InLoop = isFirstLoop ? term1 : term2;
+            Term term2InLoop = isFirstLoop ? term2 : term1;
+
+            if (term1InLoop == null) {
+                continue;
+            }
+            Term content;
+            TruthValue truth = null;
+            BudgetValue budget;
+
+            if (term2InLoop != null) {
+                content = Statement.make(isFirstLoop ? st2 : st1, term2InLoop, term1InLoop, isFirstLoop ? st2.getTemporalOrder() : st1.getTemporalOrder());
             } else {
-                content = term1;
+                content = term1InLoop;
                 if(content.hasVarIndep()) {
                     return false;
                 }
             }
-            if (sentence.isQuestion() || sentence.isQuest()) {
-                budget = BudgetFunctions.backwardWeak(value2, nal);
-            } else {
-                if (sentence.isGoal()) {
-                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
-                } else { // isJudgment
-                    truth = TruthFunctions.abduction(value2, value1);
-                }
-                budget = BudgetFunctions.forward(truth, nal);
-            }
-            nal.doublePremiseTask(content, truth, budget,false, false);
-        }
-        
-        if (term2 != null) {
-            if (term1 != null) {
-                content = Statement.make(st1, term1, term2, st1.getTemporalOrder());
-            } else {
-                content = term2;
-                if(content.hasVarIndep()) {
-                    return false;
-                }
-            }
-            if (sentence.isQuestion() || sentence.isQuest()) {
 
+            if (sentence.isQuestion() || sentence.isQuest()) {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
             } else {
                 if (sentence.isGoal()) {
-                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
+                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2, nal.narParameters);
                 } else { // isJudgment
-                    truth = TruthFunctions.abduction(value1, value2);
+                    if (isFirstLoop) {
+                        truth = TruthFunctions.abduction(value2, value1, nal.narParameters);
+                    }
+                    else {
+                        truth = TruthFunctions.abduction(value1, value2, nal.narParameters);
+                    }
                 }
                 budget = BudgetFunctions.forward(truth, nal);
             }
@@ -858,7 +878,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {(&&, <#x() --> S>, <#x() --> P>>, <M --> P>} |- <M --> S>
+     * {(&amp;&amp;, &lt;#x() --&gt; S&gt;, &lt;#x() --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
      *
      * @param compound The compound term to be decomposed
      * @param component The part of the compound to be removed
@@ -895,9 +915,9 @@ public final class SyllogisticRules {
 
         if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
-                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2);
+                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2, nal.narParameters);
             } else {
-                truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2) : TruthFunctions.anonymousAnalogy(v2, v1));
+                truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2, nal.narParameters) : TruthFunctions.anonymousAnalogy(v2, v1, nal.narParameters));
             }
         }
 

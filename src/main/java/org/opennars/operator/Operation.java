@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.operator;
 
@@ -33,8 +42,6 @@ public class Operation extends Inheritance {
     /**
      * Constructor with partial values, called by make
      *
-     * @param n The name of the term
-     * @param arg The component list of the term
      */
     protected Operation(final Term argProduct, final Term operator) {
         super(argProduct, operator);
@@ -59,25 +66,10 @@ public class Operation extends Inheritance {
      * Try to make a new compound from two components. Called by the inference
      * rules.
      *
-     * @param memory Reference to the memory
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
     public static Operation make(final Operator oper, final Term[] arg, final boolean addSelf) {
-
-//        if (Variables.containVar(arg)) {
-//            throw new IllegalStateException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
-//        }
-        /*//new cleaner  policy: should be added by the example already
-        if(addSelf && !Term.isSelf(arg[arg.length-1])) {
-            Term[] arg2=new Term[arg.length+1];
-            for(int i=0;i<arg.length;i++) {
-                arg2[i]=arg[i];
-            }
-            arg2[arg.length] = Term.SELF;
-            arg=arg2;
-        }*/
-        
         return new Operation( new Product(arg), oper  );        
     }
 
@@ -99,9 +91,6 @@ public class Operation extends Inheritance {
         
         int n=0;
         for (final Term t : arg) {
-            /*if(n==arg.length-1) {
-                break;
-            }*/
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.name());
             n++;

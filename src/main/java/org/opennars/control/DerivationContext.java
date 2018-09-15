@@ -1,37 +1,45 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.control;
 
 import org.opennars.entity.*;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.Events;
-import org.opennars.main.NarParameters;
-import org.opennars.language.*;
 import org.opennars.main.Parameters;
+import org.opennars.language.*;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opennars.entity.Stamp.BaseEntry;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
+ *
+ * @author Patrick Hammer
  */
 public class DerivationContext {
     public boolean evidentalOverlap = false;
@@ -45,12 +53,15 @@ public class DerivationContext {
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
 
-    public NarParameters narParameters;
+    public Parameters narParameters;
+
+    public Timable time;
     
-    public DerivationContext(final Memory mem, final NarParameters narParameters) {
+    public DerivationContext(final Memory mem, final Parameters narParameters, final Timable time) {
         super();
         this.memory = mem;
         this.narParameters = narParameters;
+        this.time = time;
     }
    
     public void emit(final Class c, final Object... o) {
@@ -72,14 +83,13 @@ public class DerivationContext {
                                       task.sentence.term instanceof Equivalence)) {
             return false; //implication and equivalence goals and quests are not supported anymore
         }
-
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
         } 
         if (task.sentence != null && task.sentence.truth != null) {
             final float conf = task.sentence.truth.getConfidence();
-            if (conf < Parameters.TRUTH_EPSILON) {
+            if (conf < narParameters.TRUTH_EPSILON) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");
                 return false;
@@ -92,6 +102,12 @@ public class DerivationContext {
                 return false;
             }
         }
+        if(task.sentence.term.cloneDeep() == null) {
+            //sorted subterm version leaded to a invalid term that remained undetected while the term was constructed optimistically
+            //example: (&,a,b) --> (&,b,a) which gets normalized to (&,a,b) --> (&,a,b) which is invalid.
+            memory.removeTask(task, "Wrong Format");
+            return false;
+        }
 
         final Stamp stamp = task.sentence.stamp;
         
@@ -99,10 +115,10 @@ public class DerivationContext {
         if(!overlapAllowed) { //todo reconsider
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
-                final long baseI = stamp.evidentialBase[i];
+                final BaseEntry baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
                     //!single since the derivation shouldn't depend on whether there is a current belief or not!!
-                    if ((!single && this.evidentalOverlap) || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
+                    if ((!single && this.evidentalOverlap) || ((i != j) && (baseI.equals(stamp.evidentialBase[j])))) {
                         memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
@@ -121,8 +137,8 @@ public class DerivationContext {
         
         task.setElemOfSequenceBuffer(false);
         if(!revised) {
-            task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
-            task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
+            task.getBudget().setDurability(task.getBudget().getDurability()*narParameters.DERIVATION_DURABILITY_LEAK);
+            task.getBudget().setPriority(task.getBudget().getPriority()*narParameters.DERIVATION_PRIORITY_LEAK);
         }
         memory.event.emit(Events.TaskDerive.class, task, revised, single);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
@@ -150,7 +166,9 @@ public class DerivationContext {
             getCurrentTask().sentence.punctuation,
             newTruth,
             derived_stamp);
+
         final Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
+
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
 
@@ -170,14 +188,9 @@ public class DerivationContext {
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction, final boolean overlapAllowed, final boolean addToMemory) {
         
         final List<Task> ret = new ArrayList<>();
-        if(newContent == null) {
+        if(newContent == null || !newBudget.aboveThreshold()) {
             return null;
         }
-        
-        if (!newBudget.aboveThreshold()) {
-            return null;
-        }
-        
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable))) {
             
             if(newContent.subjectOrPredicateIsIndependentVar()) {
@@ -193,7 +206,7 @@ public class DerivationContext {
                 derive_stamp);
 
             newSentence.producedByTemporalInduction=temporalInduction;
-            Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+            Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
             if (newTask!=null) {
                 final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
@@ -204,8 +217,8 @@ public class DerivationContext {
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-                final TruthValue truthEt=TruthFunctions.eternalize(newTruth);
+            if(temporalInduction && narParameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
+                final TruthValue truthEt=TruthFunctions.eternalize(newTruth, this.narParameters);
                 final Stamp st=derive_stamp.clone();
                 st.setEternal();
                 newSentence = new Sentence(
@@ -215,7 +228,7 @@ public class DerivationContext {
                     st);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
-                newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                newTask = new Task(newSentence, newBudget, getCurrentBelief());
                 if (newTask!=null) {
                     final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
@@ -249,8 +262,7 @@ public class DerivationContext {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public boolean singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
-        
+    public boolean singlePremiseTask( Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
         if (!newBudget.aboveThreshold())
             return false;
         
@@ -279,7 +291,7 @@ public class DerivationContext {
             newTruth,
             derive_stamp);
 
-        final Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
+        final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         if (newTask!=null) {
             return derivedTask(newTask, false, true, false);
         }
@@ -290,12 +302,13 @@ public class DerivationContext {
         if (!newBudget.aboveThreshold()) {
             return false;
         }
-        final Task newTask = new Task(newSentence, newBudget, false);
+
+        final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         return derivedTask(newTask, false, true, false);
     }
 
     public long getTime() {
-        return memory.time();
+        return time.time();
     }
 
     public Stamp getNewStamp() {
@@ -324,10 +337,12 @@ public class DerivationContext {
         this.currentConcept = currentConcept;
     }
 
-    /**
-     * @return the newStamp
-     */
+
     private long original_time = 0;
+
+    /**
+     * @return the created stamp
+     */
     public Stamp getTheNewStamp() {
         if (newStamp == null) {
             //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp
@@ -359,7 +374,7 @@ public class DerivationContext {
     /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
     public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
-        newStampBuilder = () -> new Stamp(first, second, time);
+        newStampBuilder = () -> new Stamp(first, second, time, this.narParameters);
     }
 
     /**
@@ -446,9 +461,8 @@ public class DerivationContext {
      * @param candidateBelief The belief to be used in future inference, for
      * forward/backward correspondence
      */
-    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
-        addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
-                "Activated");        
+    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
+        addTask(new Task(sentence, budget, sentence, candidateBelief), "Activated");
     }    
     
     @Override

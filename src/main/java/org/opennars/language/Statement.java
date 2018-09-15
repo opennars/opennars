@@ -1,22 +1,31 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;
@@ -25,8 +34,11 @@ import static org.opennars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 
 /**
- * A statement is a compound term, consisting of a subject, a predicate, and a
+ * A statement is a compound term as defined in the NARS-theory, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public abstract class Statement extends CompoundTerm {
     
@@ -49,7 +61,7 @@ public abstract class Statement extends CompoundTerm {
             throw new IllegalStateException("Null subject: " + this);
         if (t[1]==null)
             throw new IllegalStateException("Null predicate: " + this);
-        if (Parameters.DEBUG) {                
+        if (MiscFlags.DEBUG) {                
             if (isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
                     throw new IllegalStateException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
@@ -89,7 +101,6 @@ public abstract class Statement extends CompoundTerm {
      * @param o The relation String
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return The Statement built
      */
     final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final boolean customOrder, final int order) {
@@ -135,8 +146,6 @@ public abstract class Statement extends CompoundTerm {
      * @return The Statement built
      * @param subj The first component
      * @param pred The second component
-     * @param statement A sample statement providing the class type
-     * @param memory Reference to the memory
      */
     final public static Statement make(final NativeOperator op, final Term subj, final Term pred, final int order) {
 
@@ -156,7 +165,6 @@ public abstract class Statement extends CompoundTerm {
      * @param subj The first component
      * @param pred The second component
      * @param order The temporal order
-     * @param memory Reference to the memory
      * @return The Statement built
      */
     final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order) {
@@ -299,6 +307,23 @@ public abstract class Statement extends CompoundTerm {
         return term[1];
     }
 
+    /**
+     * returns the subject (0) or predicate(1)
+     * @param side subject(0) or predicate(1)
+     * @return the term of the side
+     */
+    public Term retBySide(final EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? getSubject() : getPredicate();
+    }
+
+    public static EnumStatementSide retOppositeSide(final EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
+    }
+
+    public enum EnumStatementSide {
+        SUBJECT,
+        PREDICATE,
+    }
+
     @Override public abstract Statement clone();
-   
 }

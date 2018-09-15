@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<config>
+    <!-- NarParameters -->
+    <conf name="NOVELTY_HORIZON" value="100000"/>
+    <conf name="DECISION_THRESHOLD" value="0.51"/>
+    <conf name="CONCEPT_BAG_SIZE" value="10000"/>
+    <conf name="CONCEPT_BAG_LEVELS" value="1000"/>
+    
+    <conf name="DURATION" value="5"/>
+    <conf name="HORIZON" value="1"/>
+    
+    <conf name="TRUTH_EPSILON" value="0.01"/>
+    <conf name="BUDGET_EPSILON" value="0.0001"/>
+    <conf name="BUDGET_THRESHOLD" value="0.01"/>
+    
+    <conf name="DEFAULT_CONFIRMATION_EXPECTATION" value="0.6"/>
+    <conf name="DEFAULT_CREATION_EXPECTATION" value="0.66"/>
+    <conf name="DEFAULT_CREATION_EXPECTATION_GOAL" value="0.6"/>
+    
+    <conf name="DEFAULT_JUDGMENT_CONFIDENCE" value="0.9"/>
+    <conf name="DEFAULT_JUDGMENT_PRIORITY" value="0.8"/>
+    <conf name="DEFAULT_JUDGMENT_DURABILITY" value="0.5"/>
+    
+    <conf name="DEFAULT_QUESTION_PRIORITY" value="0.9"/>
+    <conf name="DEFAULT_QUESTION_DURABILITY" value="0.9"/>
+    
+    <conf name="DEFAULT_GOAL_CONFIDENCE" value="0.9"/>
+    <conf name="DEFAULT_GOAL_PRIORITY" value="0.9"/>
+    <conf name="DEFAULT_GOAL_DURABILITY" value="0.9"/>
+    <conf name="DEFAULT_QUEST_PRIORITY" value="0.9"/>
+    <conf name="DEFAULT_QUEST_DURABILITY" value="0.9"/>
+    
+    <conf name="BAG_THRESHOLD" value="1.0"/>
+    <conf name="FORGET_QUALITY_RELATIVE" value="0.1"/>
+    <conf name="REVISION_MAX_OCCURRENCE_DISTANCE" value="10"/>
+    
+    <conf name="TASK_LINK_BAG_SIZE" value="100"/>
+    <conf name="TASK_LINK_BAG_LEVELS" value="10"/>
+    
+    <conf name="TERM_LINK_BAG_SIZE" value="100"/>
+    <conf name="TERM_LINK_BAG_LEVELS" value="10"/>
+    <conf name="TERM_LINK_MAX_MATCHED" value="10"/>
+    
+    <conf name="NOVEL_TASK_BAG_SIZE" value="100"/>
+    <conf name="NOVEL_TASK_BAG_LEVELS" value="10"/>
+    
+    <conf name="SEQUENCE_BAG_SIZE" value="30"/>
+    <conf name="SEQUENCE_BAG_LEVELS" value="10"/>
+    
+    <conf name="OPERATION_BAG_SIZE" value="10"/>
+    <conf name="OPERATION_BAG_LEVELS" value="10"/>
+    <conf name="OPERATION_SAMPLES" value="6"/>
+    
+    <conf name="PROJECTION_DECAY" value="0.1"/>
+    
+    <conf name="MAXIMUM_EVIDENTAL_BASE_LENGTH" value="20000"/>
+    
+    <conf name="TERMLINK_MAX_REASONED" value="3"/>
+    <conf name="TERM_LINK_RECORD_LENGTH" value="10"/>
+    
+    <conf name="CONCEPT_BELIEFS_MAX" value="28"/>
+    <conf name="CONCEPT_QUESTIONS_MAX" value="5"/>
+    <conf name="CONCEPT_GOALS_MAX" value="7"/>
+    
+    <conf name="reliance" value="0.9"/>
+    <conf name="DISCOUNT_RATE" value="0.5"/>
+    
+    <conf name="IMMEDIATE_ETERNALIZATION" value="true"/>
+    <conf name="SEQUENCE_BAG_ATTEMPTS" value="10"/>
+    <conf name="CONDITION_BAG_ATTEMPTS" value="10"/>
+    
+    <conf name="DERIVATION_PRIORITY_LEAK" value="0.4"/>
+    <conf name="DERIVATION_DURABILITY_LEAK" value="0.4"/>
+    
+    <conf name="CURIOSITY_BUSINESS_THRESHOLD" value="0.18"/>
+    <conf name="CURIOSITY_PRIORITY_THRESHOLD" value="0.3"/>
+    <conf name="CURIOSITY_CONFIDENCE_THRESHOLD" value="0.8"/>
+    <conf name="CURIOSITY_DESIRE_CONFIDENCE_MUL" value="0.1"/>
+    <conf name="CURIOSITY_DESIRE_PRIORITY_MUL" value="0.1"/>
+    <conf name="CURIOSITY_DESIRE_DURABILITY_MUL" value="0.3"/>
+    <conf name="CURIOSITY_FOR_OPERATOR_ONLY" value="false"/>
+    <conf name="CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF" value="false"/>
+    
+    <conf name="HAPPY_EVENT_HIGHER_THRESHOLD" value="0.75"/>
+    <conf name="HAPPY_EVENT_LOWER_THRESHOLD" value="0.25"/>
+    
+    <conf name="BUSY_EVENT_HIGHER_THRESHOLD" value="0.9"/>
+    <conf name="BUSY_EVENT_LOWER_THRESHOLD" value="0.1"/>
+    
+    <conf name="CONSIDER_REMIND" value="false"/>
+    <conf name="BREAK_NAL_HOL_BOUNDARY" value="false"/>
+    
+    <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
+    <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
+    
+    <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
+    <conf name="ANTICIPATION_TOLERANCE" value="50.0"/>
+    
+    <conf name="CONSIDER_NEW_OPERATION_BIAS" value="0.05"/>
+    <conf name="TEMPORAL_INDUCTION_PRIORITY_PENALTY" value="1.0"/>
+    <conf name="AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES" value="500"/>
+    <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
+    <conf name="COMPLEXITY_UNIT" value="1.0"/>
+    
+    <conf name="INTERVAL_ADAPT_SPEED" value="4.0"/>
+    <conf name="TASKLINK_PER_CONTENT" value="4"/>
+    
+    <conf name="DEFAULT_FEEDBACK_PRIORITY" value="0.9"/>
+    <conf name="DEFAULT_FEEDBACK_DURABILITY" value="0.5"/>
+    
+    <conf name="CONCEPT_FORGET_DURATIONS" value="2.0"/>
+    <conf name="TERMLINK_FORGET_DURATIONS" value="10.0"/>
+    <conf name="TASKLINK_FORGET_DURATIONS" value="4.0"/>
+    <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
+    
+    <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
+    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
+
+    <conf name="THREADS_AMOUNT" value="1"/>
+    <conf name="VOLUME" value="100"/>
+    <conf name="MILLISECONDS_PER_STEP" value="0"/>
+    <conf name="STEPS_CLOCK" value="true"/>
+
+    <!-- plugins -->
+    <plugins>
+    </plugins>
+</config>
+

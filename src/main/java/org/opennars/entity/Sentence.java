@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.entity;
 
@@ -21,16 +30,20 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
 
 /**
- * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
- * a Stamp.
- * <p>
- * It is used as the premises and conclusions of all inference rules.
+ * Sentence as defined by the NARS-theory
+ *
+ * A Sentence is used as the premises and conclusions of all inference rules.
+ *
+ * @author Pei Wang
+ * @author Patrick Hammer
  */
 public class Sentence<T extends Term> implements Cloneable, Serializable {
 
@@ -42,9 +55,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     public final T term;
     
     /**
-     * The punctuation also indicates the type of the Sentence: 
-     * Judgment, Question, Goal, or Quest.
-     * Represented by characters: '.', '?', '!', or '@'
+     * The punctuation indicates the type of the Sentence:
+     * Judgment '.', Question '?', Goal '!', or Quest '@'
      */
     public final char punctuation;
     
@@ -63,7 +75,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      */
     private boolean revisible;
 
-    /** caches the 'getKey()' result */
+    /**
+     * caches the 'getKey()' result
+     */
     private CharSequence key;
 
     private final int hash;
@@ -76,7 +90,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * Create a Sentence with the given fields
      *
-     * @param content The Term that forms the content of the sentence
+     * @param _content The Term that forms the content of the sentence
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
      * @param stamp The stamp of the sentence indicating its derivation time and
@@ -137,21 +151,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     truth.setConfidence(0.0f);
                 if (((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
                     truth.setConfidence(0.0f); //TODO:
-                if (_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                    _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
-                    if ((((Statement) _content).getSubject() instanceof Conjunction)) {
-                        final Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
-                        if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                            //when the last two are intervals, its not valid
-                            if (conj.term[conj.term.length - 1] instanceof Interval && conj.term[conj.term.length - 2] instanceof Interval) {
-                                truth.setConfidence(0.0f);
-                            }
-                        }
-                    }
-                }
             } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Parameters.DEBUG)
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES)
                     throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
 
@@ -161,17 +163,15 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Parameters.DEBUG)
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES)
                     throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
             }
 
-            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+            if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 if (!Term.valid(_content)) {
-                    truth.setConfidence(0.0f);
-                    if (Parameters.DEBUG) {
-                        System.err.println("Invalid Sentence term: " + _content);
-                        Thread.dumpStack();
-                    }
+                    final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered " + _content);
+                    ntc.printStackTrace();
+                    throw ntc;
                 }
             }
         }
@@ -193,7 +193,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         //TODO move this to Concept method, like cloneNormalized()
         if ( newTerm != null && normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
             
-            this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
+            this.term = newTerm;
             final CompoundTerm c = (CompoundTerm)term;
             final List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
 
@@ -225,7 +225,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             if (renamed) {
                 c.invalidateName();
 
-                if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_SENTENCES) {
                     if (!Term.valid(c)) {
                         final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
                         ntc.printStackTrace();
@@ -261,7 +261,6 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if (this == that) return true;
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            //return getKey().equals(t.getKey());
             
             if (hash!=t.hash) return false;
             
@@ -296,7 +295,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * To produce the hashcode of a sentence
      *
-     * @return A hashcode
+     * @return a hashcode
      */
     @Override
     public int hashCode() {
@@ -306,7 +305,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * Clone the Sentence
      *
-     * @return The clone
+     * @return The cloned Sentence
      */
     @Override
     public Sentence clone() {
@@ -322,7 +321,12 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         return clon;
     }
 
-    /** Clone with a different Term */    
+    /**
+     * clone with a different term
+     *
+     * @param t term which has to get cloned
+     * @return sentence with the cloned term as a property
+     */
     public final Sentence clone(final Term t) {
         return new Sentence(
             t,
@@ -338,9 +342,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
       * @param currentTime The current time as a reference
       * @return The projected belief
       */    
-    public Sentence projection(final long targetTime, final long currentTime) {
+    public Sentence projection(final long targetTime, final long currentTime, Memory mem) {
             
-        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final TruthValue newTruth = projectionTruth(targetTime, currentTime, mem);
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
                 
         final Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) :
@@ -355,17 +359,17 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     
-    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
+    public TruthValue projectionTruth(final long targetTime, final long currentTime, Memory mem) {
         TruthValue newTruth = null;
                         
         if (!stamp.isEternal()) {
-            newTruth = TruthFunctions.eternalize(truth);
+            newTruth = TruthFunctions.eternalize(truth, mem.narParameters);
             if (targetTime != Stamp.ETERNAL) {
                 final long occurrenceTime = stamp.getOccurrenceTime();
-                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime, mem.narParameters);
                 final float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence, mem.narParameters);
                 }
             }
         }
@@ -376,25 +380,35 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     /**
-     * Recognize a Judgment, question, goal, quest
-     *
-     * @return Whether the object is a Judgment
+     * @return property, whether the object is a judgment
      */
     public boolean isJudgment() {
         return (punctuation == Symbols.JUDGMENT_MARK);
     }
+    
+    /**
+     * @return property, whether the object is a question
+     */
     public boolean isQuestion() {
         return (punctuation == Symbols.QUESTION_MARK);
     }
+    
+    /**
+     * @return property, whether the sentence is a goal
+     */
     public boolean isGoal() {
         return (punctuation == Symbols.GOAL_MARK);
     }
+    
+    /**
+     * @return property, whether the sentence is a quest
+     */
     public boolean isQuest() {
         return (punctuation == Symbols.QUEST_MARK);
     }    
 
     /**
-     * Revisible?
+     * @return property of the ability to revise the sentence
      */
     public boolean getRevisible() {
         return revisible;
@@ -434,11 +448,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             final CharSequence contentName = term.name();
             
             final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
-            //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
-            
-            //final CharSequence truthString = truth != null ? truth.name() : null;
 
-            int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
+            int stringLength = 0;
             if (truth != null) {
                 stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
@@ -465,30 +476,28 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             }
 
             key = Texts.yarn( 
-                    contentName,//.toString(), 
-                    suffix); //.toString());
-            //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
-
+                    contentName,
+                    suffix);
         }
         return key;
     }
 
     /**
-     * Get a String representation of the sentence for display purpose
-     *
-     * @return The String
+     * @param nar Reasoner instance
+     * @param showStamp must the stamp get appended to the string?
+     * @return textural representation of the sentence for humans
      */
     public CharSequence toString(final Nar nar, final boolean showStamp) {
     
         final CharSequence contentName = term.name();
         
-        final long t = nar.memory.time();
+        final long t = nar.time();
 
-        final long diff=stamp.getOccurrenceTime()-nar.memory.time();
+        final long diff=stamp.getOccurrenceTime()-nar.time();
         final long diffabs = Math.abs(diff);
         
         String timediff = "";
-        if(diffabs < Parameters.DURATION) {
+        if(diffabs < nar.narParameters.DURATION) {
             timediff = "|";
         }
         else {
@@ -496,11 +505,11 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         
-        if(Parameters.TEST_RUNNING) {
+        if(MiscFlags.TEST) {
             timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
         }
         
-        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
+        String tenseString = ":"+timediff+":";
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
         
@@ -542,22 +551,33 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     
    
     /**
-     * Get the truth value (or desire value) of the sentence
+     * discounts the truth value of the sentence
      *
-     * @return Truth value, null for question
      */
-    public void discountConfidence() {
-        truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
+    public void discountConfidence(Parameters narParameters) {
+        truth.setConfidence(truth.getConfidence() * narParameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
+    /**
+     *
+     * @return classification if the sentence is true for ever
+     */
     public boolean isEternal() {
         return stamp.isEternal();
     }
-    
+
+    /**
+     *
+     * @return term of the sentence, terms are properties of sentences
+     */
     public T getTerm() {
         return term;
     }
 
+    /**
+     *
+     * @return truth of the sentence, truths are properties of sentences
+     */
     public TruthValue getTruth() {
         return truth;
     }

@@ -45,103 +45,34 @@ Beginners can start at the following online materials:
 
 Contents
 --------
- * **nars_core** - reasoning engine
- * **nars_gui** - java.swing GUI
- * **nars_web** - web server
- * **nars_lab** - experiments & demos
- * **nars_test** - unit tests
- * **nal** - examples
+ * **[core](https://github.com/opennars/opennars/tree/master/src/main/java/org/opennars)** - reasoning engine
+ * **[nal](https://github.com/opennars/opennars/tree/master/src/main/resources/nal)** - examples/unit tests
 
-In nars_core/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
-
-For an overview of reasoning features, see working examples explained in SingleStepTestingCases and MultiStepExamples.
+The core is derived from the code of Pei Wang.
 
 
 Run Requirements
 ----------------
  * Java 8+ (OpenJDK 10 recommended)
 
-
-Command Shell Usage
--------------------
-You can launch NARS in several ways from command window (shell):
-
-```
-- empty reasoner (reads from stdin and writes to stdout):
-    ./nars.sh
-
-- gui (Swing)
-    ./gui.sh [.nal input file]
-    
-- reasoner loaded from an experience file:
-    ./nars.sh Examples/Example-NAL1-edited.txt --silence 90
-
-- web server start for HTML GUI usage:
-    ./web.sh 9999 localhost 9100 1000
-     listen port^     ^IP    ^port ^time for each reasoning step in ms
-```
-
-
 Example Files
 -------------
-
-Example experience files are in directory nal/Examples
- * "Example-NALn-*.txt" contains single step examples for most of the inference rules defined in NAL level n. The "edited" version contains English translations, and with the unrelated information removed; the "unedited" version contains the actual input/output data recorded by the "Save Experience" function of the GUI. The files can be loaded using the "Load Experience" function of the GUI. 
- * "Example-MultiStep-edited" contains multi-step inference examples described in http://code.google.com/p/open-nars/wiki/MultiStepExamples
- * "Example-NLP-edited" contains an example of natural language processing described in the AGI-13 paper "Natural Language Processing by Reasoning and Learning".
-
-Unit tests are in nal/test.
+For an overview of reasoning features, see working examples (tests) in the nal folder, also explained in [SingleStepTestingCases](https://github.com/opennars/opennars/tree/master/src/main/resources/nal/single_step) and [MultiStepExamples](https://github.com/opennars/opennars/tree/master/src/main/resources/nal/multi_step).
 
 
 Development Requirements
 ------------------------
- * ant or IDE
-   * To build a complete OpenNARS.jar: build.sh
-   * To run unit tests: ant test
-
-
-History
--------
-Under the nars_java.0/ directory is the code Pei Wang originally moved into the project, which is still the base of his own programming. This is no active anymore, replaced by nars_java/ and nars_gui/ .
-
-Later Joe Geldart started the nars_java.geldart/ version of NARS, which contains many good ideas (many of which are accepted into 1.5), but it isn't fully consistent with Pei's plan, especially about the new layers (7,8,9), so Pei didn't continue on that code base.
-
-Jean-Marc Vanel continued work on this roadmap, mainly in GUI and software engineering tasks contributing a non-regression test suite and separating NARS into Core and GUI modules.
-
-
-Source Code status
-------------------
-See also http://code.google.com/p/open-nars/wiki/ProjectStatus
-
-Current version has been fully tested for single capability at a time; there may still be bugs when combining capabilities.
-
-
+ * Maven
 
 Links
 -----
-Website:
- * http://opennars.github.io/opennars/
- 
-All downloads:
-*  https://drive.google.com/drive/folders/0B8Z4Yige07tBUk5LSUtxSGY0eVk?usp=sharing
-
-An (outdated) HTML user manual:
- * http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
-
-The project home page:
- * https://code.google.com/p/open-nars/
-
-This version was however developed on Github:
- * https://github.com/opennars/opennars
-
-Discussion Group:
- * https://groups.google.com/forum/?fromgroups#!forum/open-nars
- 
- IRC:
- * http://webchat.freenode.net?channels=nars
- 
- Try online:
- * http://91.203.212.130/NARS
+ * [Website](http://opennars.github.io/opennars/)
+ * [All downloads](https://drive.google.com/drive/folders/0B8Z4Yige07tBUk5LSUtxSGY0eVk?usp=sharing)
+ * [An (outdated) HTML user manual](http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html)
+ * [The Project homepage](https://code.google.com/p/open-nars/)
+ * [google groups - Discussion Group](https://groups.google.com/forum/?fromgroups#!forum/open-nars)
+ * [IRC](http://webchat.freenode.net?channels=nars)
+ * [Try online](http://91.203.212.130/NARS)
 
 Credits:
 -------

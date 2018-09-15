@@ -1,16 +1,25 @@
-/**
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* 
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 The OpenNARS authors.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package org.opennars.language;
 
@@ -24,7 +33,8 @@ import java.util.*;
 
 /**
  * Static utility class for static methods related to Terms
- * @author me
+ *
+ * @author Patrick Hammer
  */
 public class Terms {
 
@@ -111,7 +121,6 @@ public class Terms {
      *
      * @param compound The template
      * @param components The term
-     * @param memory Reference to the memory
      * @return A compound term or null
      */
     public static Term term(final CompoundTerm compound, final Term[] components) {
@@ -135,85 +144,86 @@ public class Terms {
      * <p>
      * Called from StringParser
      *
-     * @param op Term operator
-     * @param arg Component list
+     * @param copula Term operator
+     * @param componentList Component list
      * @return A term or null
      */
-    public static Term term(final Symbols.NativeOperator op, final Term[] a) {
+    public static Term term(final Symbols.NativeOperator copula, final Term[] componentList) {
         
-        switch (op) {
+        switch (copula) {
             
             case SET_EXT_OPENER:
-                return SetExt.make(a);
+                return SetExt.make(componentList);
             case SET_INT_OPENER:
-                return SetInt.make(a);
+                return SetInt.make(componentList);
             case INTERSECTION_EXT:
-                return IntersectionExt.make(a);
+                return IntersectionExt.make(componentList);
             case INTERSECTION_INT:
-                return IntersectionInt.make(a);
+                return IntersectionInt.make(componentList);
             case DIFFERENCE_EXT:
-                return DifferenceExt.make(a);
+                return DifferenceExt.make(componentList);
             case DIFFERENCE_INT:
-                return DifferenceInt.make(a);
+                return DifferenceInt.make(componentList);
             case INHERITANCE:
-                return Inheritance.make(a[0], a[1]);
+                return Inheritance.make(componentList[0], componentList[1]);
             case PRODUCT:
-                return new Product(a);
+                return new Product(componentList);
             case IMAGE_EXT:
-                return ImageExt.make(a);
+                return ImageExt.make(componentList);
             case IMAGE_INT:
-                return ImageInt.make(a);
+                return ImageInt.make(componentList);
             case NEGATION:
-                return Negation.make(a);
+                return Negation.make(componentList);
             case DISJUNCTION:
-                return Disjunction.make(a);
+                return Disjunction.make(componentList);
             case CONJUNCTION:
-                return Conjunction.make(a);
+                return Conjunction.make(componentList);
             case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
+                return Conjunction.make(componentList, TemporalRules.ORDER_FORWARD);
             case SPATIAL:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, true);
+                return Conjunction.make(componentList, TemporalRules.ORDER_FORWARD, true);
             case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
+                return Conjunction.make(componentList, TemporalRules.ORDER_CONCURRENT);
             case IMPLICATION:
-                return Implication.make(a[0], a[1]);
+                return Implication.make(componentList[0], componentList[1]);
             case IMPLICATION_AFTER:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+                return Implication.make(componentList[0], componentList[1], TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
+                return Implication.make(componentList[0], componentList[1], TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+                return Implication.make(componentList[0], componentList[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1]);
+                return Equivalence.make(componentList[0], componentList[1]);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+                return Equivalence.make(componentList[0], componentList[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+                return Equivalence.make(componentList[0], componentList[1], TemporalRules.ORDER_FORWARD);
+            default:
+                throw new IllegalStateException("Unknown Term operator: " + copula + " (" + copula.name() + ")");
         }
-        throw new IllegalStateException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
-    
+
     /**
      * Try to remove a component from a compound
      *
-     * @param t1 The compound
-     * @param t2 The component
+     * @param compound The compound
+     * @param component The component
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponents(final CompoundTerm compound, final Term component, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+        if (compound.getClass() == component.getClass()) {
+            list = compound.cloneTermsExcept(true, ((CompoundTerm) component).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = compound.cloneTermsExcept(true, new Term[] { component });
         }
         if (list != null) {
             if (list.length > 1) {
-                return term(t1, list);
+                return term(compound, list);
             }
             if (list.length == 1) {
-                if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
+                if ((compound instanceof Conjunction) || (compound instanceof Disjunction) || (compound instanceof IntersectionExt) || (compound instanceof IntersectionInt) || (compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) {
                     return list[0];
                 }
             }
@@ -221,21 +231,21 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponentOneLayer(final CompoundTerm compound, final Term component, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+        if (compound.getClass() == component.getClass()) {
+            list = compound.cloneTermsExcept(true, ((CompoundTerm) component).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = compound.cloneTermsExcept(true, new Term[] { component });
         }
         if (list != null) {
             if (list.length > 1) {
-                return term(t1, list);
+                return term(compound, list);
             } else if (list.length == 1) {
                 return list[0];
             }
         }
-        return t1;
+        return compound;
     }
 
 
@@ -287,30 +297,10 @@ public class Terms {
             ta = subjA; sa = predA;
             tb = subjB; sb = predB;                
         }
-        //DUPLICATE?
-        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
-            ta = subjA; sa = predA;
-            tb = subjB; sb = predB;
-        }*/
         if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
             ta = predA; sa = subjA;
             tb = predB; sb = subjB;
         }
-        //ANOTHER DUPLICATE?
-        /*
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
-                Set<Term> componentsA = new HashSet();
-                Set<Term> componentsB = new HashSet();
-                componentsA.add(predA);
-                componentsB.add(predB);
-                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                if (componentsA.containsAll(componentsB)) {
-                    return true;
-                }
-
-        }
-        */
         if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
             ta = subjA; sa = predA;
             tb = predB; sb = subjB;                
@@ -320,49 +310,49 @@ public class Terms {
             tb = subjB; sb = predB;
         }
 
-        if (ta!=null) {
-            final Term[] sat = ((CompoundTerm)sa).term;
-            final Term[] sbt = ((CompoundTerm)sb).term;
+        if (ta==null) {
+            return false;
+        }
 
-            if(sa instanceof Image && sb instanceof Image) {
-                final Image im1=(Image) sa;
-                final Image im2=(Image) sb;
-                if(im1.relationIndex != im2.relationIndex) {
-                    return false;
-                }
+        final Term[] sat = ((CompoundTerm)sa).term;
+        final Term[] sbt = ((CompoundTerm)sb).term;
+
+        if(sa instanceof Image && sb instanceof Image) {
+            final Image im1=(Image) sa;
+            final Image im2=(Image) sb;
+            if(im1.relationIndex != im2.relationIndex) {
+                return false;
             }
-            
-            final Set<Term> componentsA = new HashSet(1+sat.length);
-            final Set<Term> componentsB = new HashSet(1+sbt.length);
+        }
 
-            componentsA.add(ta);
-            Collections.addAll(componentsA, sat);
+        final Set<Term> componentsA = new HashSet(1+sat.length);
+        final Set<Term> componentsB = new HashSet(1+sbt.length);
 
-            componentsB.add(tb);
-            Collections.addAll(componentsB, sbt);
+        componentsA.add(ta);
+        Collections.addAll(componentsA, sat);
 
-            for(final Term sA : componentsA) {
-                boolean had=false;
-                for(final Term sB : componentsB) {
-                    if(sA instanceof Variable && sB instanceof Variable) {
-                        if(sA.name.equals(sB.name)) {
-                            had=true;
-            }
-                    } 
-                    else
-                    if(sA.equals(sB)) {
+        componentsB.add(tb);
+        Collections.addAll(componentsB, sbt);
+
+        for(final Term sA : componentsA) {
+            boolean had=false;
+            for(final Term sB : componentsB) {
+                if(sA instanceof Variable && sB instanceof Variable) {
+                    if(sA.name().equals(sB.name())) {
                         had=true;
-                    }
+        }
                 }
-                if(!had) {
-                    return false;
+                else
+                if(sA.equals(sB)) {
+                    had=true;
                 }
             }
-            
-            return true;
+            if(!had) {
+                return false;
+            }
         }
             
-        return false;
+        return true;
     }
 
     /**
@@ -374,13 +364,13 @@ public class Terms {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm t) {
+    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm term) {
         
-        final boolean tEquivalence = (t instanceof Equivalence);
-        final boolean tImplication = (t instanceof Implication);
+        final boolean tEquivalence = (term instanceof Equivalence);
+        final boolean tImplication = (term instanceof Implication);
         
-        for (int i = 0; i < t.size(); i++) {
-            Term t1 = t.term[i];
+        for (int i = 0; i < term.size(); i++) {
+            Term t1 = term.term[i];
             t1=new Sentence(
                 t1,
                 Symbols.TERM_NORMALIZING_WORKAROUND_MARK,

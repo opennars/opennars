@@ -1,0 +1,12 @@
+'********** temporal analogy
+
+'If someone open door_101, he will enter room_101
+<<(*, $x, door_101) --> open> =/> <(*, $x, room_101) --> enter>>. %0.95%
+
+' If someone enter room_101, it means he leave corridor_100
+<<(*, $x, room_101) --> enter> <|> <(*, $x, corridor_100) --> leave>>.
+
+40
+
+'If someone open door_101, he will leave corridor_100
+''outputMustContain('<<(*,$1,door_101) --> open> =/> <(*,$1,corridor_100) --> leave>>. %0.95;0.81%')
