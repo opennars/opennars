@@ -115,29 +115,14 @@ public class DerivationContext {
         if(!overlapAllowed) { //todo reconsider
             //!single since the derivation shouldn't depend on whether there is a current belief or not!!
             final boolean shouldntDependOnCurrentBelief = !single && this.evidentalOverlap;
-
             if (shouldntDependOnCurrentBelief) {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
                 return false;
             }
 
-            boolean selfOverlap = false;
-
-            final int stampLength = stamp.baseLength;
-            for (int i = 0; i < stampLength; i++) {
-                final BaseEntry baseI = stamp.evidentialBase[i];
-                for (int j = 0; j < stampLength; j++) {
-
-                    if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
-                        selfOverlap = true;
-                        break;
-                    }
-                }
-            }
-
+            final boolean selfOverlap = checkSelfOverlap(stamp);
             if (selfOverlap) {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
-                //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                 return false;
             }
         }
@@ -162,6 +147,20 @@ public class DerivationContext {
             addTask(task, "Derived");
         }
         return true;
+    }
+
+    private boolean checkSelfOverlap(Stamp stamp) {
+        final int stampLength = stamp.baseLength;
+        for (int i = 0; i < stampLength; i++) {
+            final BaseEntry baseI = stamp.evidentialBase[i];
+            for (int j = 0; j < stampLength; j++) {
+
+                if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /* --------------- new task building --------------- */
