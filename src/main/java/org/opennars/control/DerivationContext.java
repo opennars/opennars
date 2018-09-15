@@ -120,18 +120,25 @@ public class DerivationContext {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
                 return false;
             }
-            
+
+            boolean selfOverlap = false;
+
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
                 final BaseEntry baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
 
                     if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
-                        memory.removeTask(task, "Overlapping Evidenctal Base");
-                        //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
-                        return false;
+                        selfOverlap = true;
+                        break;
                     }
                 }
+            }
+
+            if (selfOverlap) {
+                memory.removeTask(task, "Overlapping Evidenctal Base");
+                //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
+                return false;
             }
         }
         
