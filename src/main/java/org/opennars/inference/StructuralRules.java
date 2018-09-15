@@ -191,9 +191,9 @@ public final class StructuralRules {
         final Term pred = statement.getPredicate();
         
         if (component.equals(subj)) {
-            if (compound instanceof IntersectionExt) {
+            if (compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.EXTENSION) {
                 structuralStatement(compound, pred, order, truthDed, nal);
-            } else if (compound instanceof IntersectionInt) {
+            } else if (compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.INTENSION) {
             } else if ((compound instanceof DifferenceExt) && (index == 0)) {
                 structuralStatement(compound, pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
@@ -203,8 +203,8 @@ public final class StructuralRules {
                 }
             }
         } else if (component.equals(pred)) {
-            if (compound instanceof IntersectionExt) {
-            } else if (compound instanceof IntersectionInt) {
+            if (compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.EXTENSION) {
+            } else if (compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.INTENSION) {
                 structuralStatement(subj, compound, order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
@@ -248,7 +248,7 @@ public final class StructuralRules {
         final Term subj = statement.getSubject();
         final Term pred = statement.getPredicate();
         if (compound.equals(subj)) {
-            if (compound instanceof IntersectionInt) {
+            if (compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.INTENSION) {
                 structuralStatement(component, pred, order, truthDed, nal);
             } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
                 final Term[] t1 = new Term[]{component};
@@ -261,7 +261,7 @@ public final class StructuralRules {
                 }
             }
         } else if (compound.equals(pred)) {
-            if (compound instanceof IntersectionExt) {
+            if (compound instanceof Intersection  && ((Intersection)compound).type == Intersection.EnumType.EXTENSION) {
                 structuralStatement(subj, component, order, truthDed, nal);
             } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
                 structuralStatement(subj, new SetInt(component), order, truthDed, nal);

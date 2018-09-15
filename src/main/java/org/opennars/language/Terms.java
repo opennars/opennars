@@ -157,9 +157,9 @@ public class Terms {
             case SET_INT_OPENER:
                 return SetInt.make(componentList);
             case INTERSECTION_EXT:
-                return IntersectionExt.make(componentList);
+                return Intersection.make(componentList, Intersection.EnumType.EXTENSION);
             case INTERSECTION_INT:
-                return IntersectionInt.make(componentList);
+                return Intersection.make(componentList, Intersection.EnumType.INTENSION);
             case DIFFERENCE_EXT:
                 return DifferenceExt.make(componentList);
             case DIFFERENCE_INT:
@@ -223,7 +223,7 @@ public class Terms {
                 return term(compound, list);
             }
             if (list.length == 1) {
-                if ((compound instanceof Conjunction) || (compound instanceof Disjunction) || (compound instanceof IntersectionExt) || (compound instanceof IntersectionInt) || (compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) {
+                if ((compound instanceof Conjunction) || (compound instanceof Disjunction) || (compound instanceof Intersection) || (compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) {
                     return list[0];
                 }
             }

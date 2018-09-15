@@ -92,8 +92,8 @@ public final class CompositionalRules {
         Term termDif = null;
         if (index == 0) {
             if (taskContent instanceof Inheritance) {
-                termOr = IntersectionInt.make(componentT, componentB);
-                termAnd = IntersectionExt.make(componentT, componentB);
+                termOr = Intersection.make(componentT, componentB, Intersection.EnumType.INTENSION);
+                termAnd = Intersection.make(componentT, componentB, Intersection.EnumType.EXTENSION);
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
                         termDif = DifferenceExt.make(componentT, componentB);
@@ -114,8 +114,8 @@ public final class CompositionalRules {
             processComposed(taskContent, componentCommon, termDif, order, truthDif, nal);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
-                termOr = IntersectionExt.make(componentT, componentB);
-                termAnd = IntersectionInt.make(componentT, componentB);
+                termOr = Intersection.make(componentT, componentB, Intersection.EnumType.EXTENSION);
+                termAnd = Intersection.make(componentT, componentB, Intersection.EnumType.INTENSION);
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
                         termDif = DifferenceInt.make(componentT, componentB);
@@ -201,8 +201,8 @@ public final class CompositionalRules {
         if (index == 0) {
             if (oldContent instanceof Inheritance) {
                 truth = lookupTruthOrNull(v1, v2, nal.narParameters,
-                    compound instanceof IntersectionExt,               EnumType.REDUCECONJUNCTION,
-                    compound instanceof IntersectionInt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.EXTENSION,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.INTENSION,                       EnumType.REDUCEDISJUNCTION,
                     compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCECONJUNCTION,
                     compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCEDISJUNCTION);
 
@@ -223,8 +223,8 @@ public final class CompositionalRules {
         } else {
             if (oldContent instanceof Inheritance) {
                 truth = lookupTruthOrNull(v1, v2, nal.narParameters,
-                    compound instanceof IntersectionInt,               EnumType.REDUCECONJUNCTION,
-                    compound instanceof IntersectionExt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.INTENSION,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof Intersection && ((Intersection)compound).type == Intersection.EnumType.EXTENSION,                       EnumType.REDUCEDISJUNCTION,
                     compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCECONJUNCTION,
                     compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCEDISJUNCTION);
 
