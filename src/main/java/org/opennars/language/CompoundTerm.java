@@ -220,6 +220,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     static final Interval conceptival = new Interval(1);
     private static void ReplaceIntervals(final CompoundTerm comp) {
+        if (!comp.hasIntervals) {
+            return;
+        }
+
         comp.invalidateName();
         for(int i=0; i<comp.term.length; i++) {
             final Term t = comp.term[i];
