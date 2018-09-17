@@ -1,5 +1,12 @@
-********** [01 + 14 -> 15]
+'********** [01 + 14 -> 15]
+
+'The goal is to make t001 opened. 
 <{t001} --> [opened]>!  
+
+'If the robot go to t003 and pick t002, then go to t001 and open t001, t001 will be opened.
 <(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
+
 24
+
+'The goal may be to go to t003 and pick t002, then go to t001 and open t001.
 ''outputMustContain('(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001}))! %1.00;0.43%')

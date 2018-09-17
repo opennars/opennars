@@ -1,7 +1,15 @@
-********** [08 + 09 -> 10]:
+'********** [08 + 09 -> 10]:
+
+'The robot is holding key001. 
 <(*,Self,key001) --> hold>. :|: %1.00;0.73%
+
 6
+
+'The robot is holding key001
 <(*,Self,key001) --> hold>. :|: %1.00;0.90%
+
 10
+
+'The robot is holding key001
 ''outputMustContain('<(*,Self,key001) --> hold>. :!6: %1.00;0.92%')
 

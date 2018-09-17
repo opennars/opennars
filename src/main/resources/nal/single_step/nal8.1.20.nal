@@ -1,4 +1,9 @@
-********** [29 -> 31]
+'********** [29 -> 31]
+
+'The goal for the robot is to reach t001 and then open t001. 
 (&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))! 
+
 13
+
+'The goal for the robot is to reach t001. 
 ''outputMustContain('<(*,SELF,{t001}) --> at>! %1.00;0.81%')

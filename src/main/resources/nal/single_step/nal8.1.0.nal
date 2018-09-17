@@ -1,5 +1,11 @@
+'********** [01 + 03 -> 10]: 
+
+'The goal is to make t001 opened.
 <{t001} --> [opened]>!
+
+'If the robot hold t002, then go to t001 and open t001, then t001 will be opened. 
 <(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,<(*,{t001}) --> ^open>) =/> <{t001} --> [opened]>>.
+
 20
 
 ''outputMustContain('(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))! %1.00;0.81%')

@@ -1,5 +1,12 @@
-********** [34 + 29 -> 36]
- <(*,SELF,{t001}) --> at>. :|:
- (&/,<(*,SELF,{t001}) --> at>,(^open,{SELF},{t001}))! 
+'********** [34 + 29 -> 36]
+
+'The robot is at t001 now.
+<(*,SELF,{t001}) --> at>. :|:
+
+'The goal is to arrive t001 and then open t001. 
+(&/,<(*,SELF,{t001}) --> at>,(^open,{SELF},{t001}))! 
+
 25
+
+'The goal maybe to open t001.
 ''outputMustContain('(^open,{SELF},{t001})! %1.00;0.43%')

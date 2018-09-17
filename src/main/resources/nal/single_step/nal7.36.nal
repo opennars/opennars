@@ -1,9 +1,13 @@
 '********** deduction with interval summation
 
+' a + 1 = b
 <(&/, a, +1) =/> b>.
+
+' b + 1 = c
 <(&/, b, +1) =/> c>.
   
 10
 
+' a + 2 = c
 ''outputMustContain('<(&/,a,+2) =/> c>. %1.00;0.81%')
 
