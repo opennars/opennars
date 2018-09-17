@@ -1,5 +1,12 @@
-********** [26 + 27 -> 28]
+'********** [26 + 27 -> 28]
+
+'t002 is picked. 
 (^pick,{t002}). :\:
+
+'If the robot pick t002, it will hold t002.
 <(^pick,{t002})=/><(*,SELF,{t002}) --> hold>>. :\:
+
 20
+
+'The robot is holding t002. 
 ''outputMustContain('<(*,SELF,{t002}) --> hold>. :!0: %1.00;0.81%')

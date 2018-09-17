@@ -1,4 +1,9 @@
-********** [12 -> 13]:
+'********** [12 -> 13]:
+
+'The goal for the robot is to make t002 reachable and then pick it. 
 (&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!
+
 5
+
+'The goal for the robot is to make t002 reachable. 
 ''outputMustContain('<(*,SELF,{t002}) --> reachable>! %1.00;0.81%')

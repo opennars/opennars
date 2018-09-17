@@ -1,5 +1,12 @@
-********** [13 + 09 -> 14]
+'********** [13 + 09 -> 14]
+
+'If the robot is at t003 and pick t002, then go to t001 and open t001, t001 will be opened. 
 <(&/,<(*,Self,{t003}) --> at>,(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|: 
+
+'If go to somewhere, the robor will be at there.
 <(^go-to,$1) =/> <(*,Self,$1) --> at>>.  
+
 16
+
+'If the robot go to t003 and pick t002, then go to t001 and open t001, t001 may be opened.
 ''outputMustContain('<(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.43%')

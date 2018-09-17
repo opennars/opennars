@@ -1,9 +1,16 @@
+'********** [33 + 09 -> 34]
 
-********** [33 + 09 -> 34]
+'The robot went to t001. 
 (^go-to,{SELF},{t001}). :\: 
+
+'If go to somewhere, the robot will be at there.
 <(^go-to,{SELF},$1)=/><(*,{SELF},$1) --> at>>. 
+
 41
+
+'Was the robot at t001?
 'IN: <(*,{SELF},{t001}) --> at>? :\:
 '140
+'The robot was at t001.
 ''outputMustContain('<(*,{SELF},{t001}) --> at>. :!0: %1.00;0.81%')
 

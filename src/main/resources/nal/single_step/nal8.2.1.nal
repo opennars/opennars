@@ -1,5 +1,12 @@
-********** [10 + 05 -> 11]
+'********** [10 + 05 -> 11]
+
+'If the robot hold t002, then go to t001 and open it, t001 will be opened.
 <(&/,<(*,Self,{t002}) --> hold>,(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>.  
+
+'If the robot is able to reach t002 and pick it, the robot will hold t002. 
 <(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002})) =/> <(*,Self,{t002}) --> hold>>.  
+
 40
+
+'If the robot is able to reach t002 and pick t002, then go to t001 and open t001, t001 will be opened.
 ''outputMustContain('<(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.81%')

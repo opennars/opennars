@@ -1,6 +1,12 @@
+'********** [01 + 06 -> 10]: 
 
-********** [01 + 06 -> 10]: 
+'The goal is to make t001 opened.
 <{t001} --> [opened]>!  
+
+'If the robot is at t001 and break t001, t001 will be opened.
 <(&/,<(*,Self,{t001}) --> at>,(^break,{t001})) =/> <{t001} --> [opened]>>.
+
 28
+
+'The goal is to arrrive t001 and break t001.
 ''outputMustContain('(&/,<(*,Self,{t001}) --> at>,(^break,{t001}))! %1.00;0.81%')

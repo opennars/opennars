@@ -1,5 +1,12 @@
-********** [13 + 06 -> 14]:
+'********** [13 + 06 -> 14]:
+
+'The goal for the robot is to make t002 reachable. 
 <(*,SELF,{t002}) --> reachable>! 
+
+'If item 1 is on item 2 and the robot is also at item 2 at the same time, the robot will be able to reach item 1. 
 <(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>)=|><(*,SELF,$1) --> reachable>>.
+
 10
+
+'The goal is to make the robot at #1 and t002 is on #1 at the same time
 ''outputMustContain('(&|,<(*,SELF,#1) --> at>,<(*,{t002},#1) --> on>)! %1.00;0.81%')
