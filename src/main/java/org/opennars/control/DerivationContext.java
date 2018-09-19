@@ -115,13 +115,13 @@ public class DerivationContext {
             //!single since the derivation shouldn't depend on whether there is a current belief or not!!
             final boolean doublePremiseEvidentalBaseOverlap = !single && this.evidentalOverlap;
             if (doublePremiseEvidentalBaseOverlap) {
-                memory.removeTask(task, "Overlapping Evidenctal Base");
+                memory.removeTask(task, "overlapping evidential base");
                 return false;
             }
 
             final boolean selfOverlap = Stamp.checkOverlapWith(stamp, stamp);
             if (selfOverlap) {
-                memory.removeTask(task, "Overlapping Evidenctal Base");
+                memory.removeTask(task, "overlapping evidential base");
                 return false;
             }
         }
