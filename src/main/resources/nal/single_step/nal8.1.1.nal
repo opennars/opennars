@@ -1,4 +1,9 @@
-********** [10 -> 11]:
+'********** [10 -> 11]:
+
+'The goal is to hold t002, then arrive t001 and open t001
 (&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!
+
 10
+
+'The goal is to hold t002
 ''outputMustContain('<(*,SELF,{t002}) --> hold>! %1.00;0.81%')

@@ -1,5 +1,12 @@
-********** [35 + 37 -> 38]
+'********** [35 + 37 -> 38]
+
+'If the robot open t001, t001 will be opened.  
 <(^open,{SELF},{t001})=/><{t001} --> [opened]>>. :|: 
+
+'The robot open t001. 
 (^open,{SELF},{t001}). :|:
+
 1
+
+'t001 is opened.
 ''outputMustContain('<{t001} --> [opened]>. :!5: %1.00;0.81%')

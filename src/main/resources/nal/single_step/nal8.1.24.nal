@@ -1,5 +1,12 @@
-********** [34 + 30 -> 35]
+'********** [34 + 30 -> 35]
+
+'The robot is at t001 now. 
 <(*,SELF,{t001}) --> at>. :|: 
+
+'If the robot arrive t001 and open it, t001 will be opened. 
 <(&/,<(*,SELF,{t001}) --> at>,+100,(^open,{t001}))=/><{t001} --> [opened]>>. :|:
+
 20
+
+'If the robot open t001, t001 will be opened. 
 ''outputMustContain('<(^open,{t001}) =/> <{t001} --> [opened]>>. :!100: %1.00;0.81%')

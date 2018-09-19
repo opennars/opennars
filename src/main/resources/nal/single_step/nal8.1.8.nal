@@ -1,4 +1,9 @@
-********** [18 -> 19]
+'********** [18 -> 19]
+
+'The robot was at t003. 
 <SELF --> (/,at,_,{t003})>. :\:
+
 6
+
+'The robot was at t003. 
 ''outputMustContain('<{t003} --> (/,at,SELF,_)>. :!-5: %1.00;0.90%')

@@ -1,6 +1,12 @@
+'********** [04 + 03 -> 05]:
 
-********** [04 + 03 -> 05]:
+'The robot is able to reach the key001 now. 
 <(*,Self,key001) --> reachable>. :|: 
-<(&/,<(*,Self,key001) --> reachable>,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. 
+
+'If the robot is able to reach key001, and pick key001, the robot will hold key001. 
+<(&/,<(*,Self,key001) --> reachable>,(^pick,key001)) =/> <(*,Self,key001) --> hold>>.
+
 1
+
+'If the robot pick key001, it will hold key001. 
 ''outputMustContain('<(^pick,key001) =/> <(*,Self,key001) --> hold>>. :!0: %1.00;0.81%') 
