@@ -119,7 +119,7 @@ public class DerivationContext {
                 return false;
             }
 
-            final boolean selfOverlap = Stamp.checkOverlapWith(stamp, stamp);
+            final boolean selfOverlap = stamp.evidenceIsCyclic();
             if (selfOverlap) {
                 memory.removeTask(task, "overlapping evidential base");
                 return false;
