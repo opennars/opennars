@@ -102,7 +102,7 @@ public class LocalRules {
         return (s1.getRevisible() && 
                 matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) &&
                 CompoundTerm.replaceIntervals(s1.term).equals(CompoundTerm.replaceIntervals(s2.term)) &&
-                !Stamp.baseOverlap(s1.stamp.evidentialBase, s2.stamp.evidentialBase));
+                !Stamp.baseOverlap(s1.stamp, s2.stamp));
     }
 
     /**
