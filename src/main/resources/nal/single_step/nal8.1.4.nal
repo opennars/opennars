@@ -1,5 +1,12 @@
-********** [07 + 14 -> 15]:
+'********** [07 + 14 -> 15]:
+
+'t002 is on t003 now. 
 <(*,{t002},{t003}) --> on>. :|: 
+
+'The goal is to make t002 on #1 and #1 is at the robot at same time
 (&|,<(*,{t002},#1) --> on>,<(*,#1,SELF) --> at>)! 
+
 350
+
+'The goal maybe to make t003 at the robot
 ''outputMustContain('<(*,{t003},SELF) --> at>! %1.00;0.43%')

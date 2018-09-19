@@ -1,10 +1,21 @@
-********** [07 + 09 -> 11]:
+'********** [07 + 09 -> 11]:
+
+' 'a' is a type of 'A'
 <a --> A>. :|:
+
 10
+
+'The robot picks key001
 (^pick,{SELF},key001). :|: %1.00;0.90% 
+
 11
+
+'The robot holds key001
 <(*,Self,key001) --> hold>. :|: 
+
 16
+
+'If 'a' is a type of 'A', and the robot pick key001, the robot may hold key001. 
 ''outputMustContain('<(&/,<a --> A>,+10,(^pick,{SELF},key001),+11) =/> <(*,Self,key001) --> hold>>. :!21: %1.00;0.42%')
 'adjusted +3 to +4 ^
 

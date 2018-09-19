@@ -1,6 +1,12 @@
+'********** [06 + 07 -> 12]
 
-********** [06 + 07 -> 12]
+'If item 1 is on item 2 and the robot is at item 2 at the same time, the item 1 is reachable for the robot. 
 <(&|,<(*,$1,$2) --> on>,<(*,Self,$2) --> at>) =|> <(*,Self,$1) --> reachable>>.
+
+'t002 is on t003 now. 
 <(*,{t002},{t003}) --> on>. :|:
+
 80
+
+'If the robot is at t003, then t002 is reachable for the robot.
 ''outputMustContain('<<(*,Self,{t003}) --> at> =|> <(*,Self,{t002}) --> reachable>>. :!0: %1.00;0.81%')

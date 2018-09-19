@@ -1,5 +1,12 @@
-********** [15 + 09 -> 16]:
+'********** [15 + 09 -> 16]:
+
+'The goal for the robot is to arrive t003. 
 <(*,SELF,{t003}) --> at>!
+
+'If go to somewhere, the robot will be at there.
 <(^go-to,$1)=/><(*,SELF,$1) --> at>>.
+
 100
+
+'The goal is to go to t003.
 ''outputMustContain('(^go-to,{t003})! %1.00;0.81%')

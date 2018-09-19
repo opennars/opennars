@@ -1,7 +1,15 @@
-********** [12 + 11 -> 13]: 
+'********** [12 + 11 -> 13]: 
+
+'The goal is not to break t001. 
 (^break,{t001})! %0.00;0.86% 
+
 1
+
+'The goal is to break t001.
 (^break,{t001})! %1.00;0.73% 
+
 1
+
+'The goal may be not to break t001.
 ''outputMustContain('(^break,{t001})! %0.31;0.90%')
 

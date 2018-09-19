@@ -1,5 +1,12 @@
-********** [05 + 12 -> 13]:
+'********** [05 + 12 -> 13]:
+
+'If pick key001, the robot will hold key001. 
 <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :\: %1.00;0.90%
+
+'If pick key001, the robot may hold key001. 
 <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :\: %1.00;0.45% 
+
 35
+
+''If pick key001, the robot will hold key001. 
 ''outputMustContain('<(^pick,key001) =/> <(*,Self,key001) --> hold>>. :!-5: %1.00;0.91%') 

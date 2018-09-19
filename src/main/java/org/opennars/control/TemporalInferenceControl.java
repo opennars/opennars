@@ -93,8 +93,7 @@ public class TemporalInferenceControl {
                 }
 
                 if(already_attempted.contains(takeout) || 
-                        Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
-                                takeout.sentence.stamp.evidentialBase)) {
+                        Stamp.baseOverlap(newEvent.sentence.stamp, takeout.sentence.stamp)) {
                     nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }

@@ -1,5 +1,12 @@
-********** [23 + 06 -> 24]
+'********** [23 + 06 -> 24]
+
+'t002 is on something, and the robot is also at it at the same time. 
 (&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|: 
+
+'If item 1 is on item 2 and the robot is also at item 2 at the same time, the robot will be able to reach item 1. 
 <(&|,<(*,$1,$2) --> on>,<(*,SELF,$2) --> at>) =|> <(*,SELF,$1) --> reachable>>.
+
 260
+
+'The robot is able to reach t002. 
 ''outputMustContain('<(*,SELF,{t002}) --> reachable>. :!0: %1.00;0.81%')

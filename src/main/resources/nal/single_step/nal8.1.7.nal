@@ -1,4 +1,12 @@
+'********** [17 + 09 -> 18]
+
+'Now the robot is going to t003. 
 <(*,{t003}) --> ^go-to>. :|: 
+
+'If go to somewhere, the robor will be at there.
 <<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. 
+
 20
+
+'The robot will be at t003. 
 ''outputMustContain('<(*,SELF,{t003}) --> at>. :!5: %1.00;0.81%')
