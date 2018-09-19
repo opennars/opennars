@@ -1,10 +1,19 @@
+'********** [02 + 10 -> 11]:
 
-
-********** [02 + 10 -> 11]:
+'The robot is not holding key001. 
 <(*,Self,key001) --> hold>. :|: %0% 
+
 5
+
+'The robot is holding key001. 
 <(*,Self,key001) --> hold>. :|: %1.00;0.91% 
+
 5
+
+'Is the robot holding key001?
 <(*,Self,key001) --> hold>? :|: 
+
 50
+
+'The robot may be holding key001.
 ''outputMustContain('<(*,Self,key001) --> hold>. :!5: %0.53;0.95%') 

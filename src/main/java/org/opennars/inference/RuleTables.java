@@ -96,7 +96,7 @@ public class RuleTables {
             }*/
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
-            nal.evidentalOverlap = Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase);
+            nal.evidentalOverlap = Stamp.baseOverlap(task.sentence.stamp, belief.stamp);
             if(nal.evidentalOverlap && (!task.sentence.isEternal() || !belief.isEternal())) {
                 return; //only allow for eternal reasoning for now to prevent derived event floods
             }

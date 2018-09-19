@@ -356,9 +356,9 @@ public class ProcessGoal {
             //and the truth of the hypothesis:
             final TruthValue Hyp = t.sentence.truth;
             //overlap will almost never happen, but to make sure
-            if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase) ||
-               Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase) ||
-               Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
+            if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
+               Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
+               Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
                 continue;
             }
             //and the truth of the precondition:

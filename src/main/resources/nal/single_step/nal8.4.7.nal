@@ -1,8 +1,14 @@
+'********** [04 + 13 -> 14]:
 
-
-********** [04 + 13 -> 14]:
+'The key001 is reachable for the robot now. 
 <(*,Self,key001) --> reachable>. :|:
+
 11
+
+'If the pick key001, the robot will hold key001. 
 <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|: 
+
 20
+
+'If the key001 is reachable for the robot and the robot picks the key001, the robot may hold hey001.
 ''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+11,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :!11: %1.00;0.45%') 

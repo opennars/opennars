@@ -1,6 +1,12 @@
+'********** [07 + 05 -> 08]:
 
-********** [07 + 05 -> 08]:
+'The robot picks key001. 
 (^pick,key001). :|:
+
+'If pick the key001 ,the robot will hold the key001. 
 <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.81%
+
 8
+
+'The robot will hold the key001. 
 ''outputMustContain('<(*,Self,key001) --> hold>. :!5: %1.00;0.73%')
