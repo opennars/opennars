@@ -215,13 +215,12 @@ public class Stamp implements Cloneable, Serializable {
      * @param stamp tested stamp
      * @return is it self overlapping?
      */
-    public static boolean checkSelfOverlap(Stamp stamp) {
-        final int stampLength = stamp.baseLength;
-        for (int i = 0; i < stampLength; i++) {
+    public static boolean checkOverlapWith(Stamp stamp, Stamp other) {
+        for (int i = 0; i < stamp.baseLength; i++) {
             final BaseEntry baseI = stamp.evidentialBase[i];
-            for (int j = 0; j < stampLength; j++) {
+            for (int j = 0; j < other.baseLength; j++) {
 
-                if ((i != j) && (baseI.equals(stamp.evidentialBase[j]))) {
+                if ((i != j) && (baseI.equals(other.evidentialBase[j]))) {
                     return true;
                 }
             }

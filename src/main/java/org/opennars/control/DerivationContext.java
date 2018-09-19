@@ -34,7 +34,6 @@ import org.opennars.storage.Memory;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.opennars.entity.Stamp.BaseEntry;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
@@ -114,13 +113,13 @@ public class DerivationContext {
         //its revision, of course its cyclic, apply evidental base policy
         if(!overlapAllowed) { //todo reconsider
             //!single since the derivation shouldn't depend on whether there is a current belief or not!!
-            final boolean shouldntDependOnCurrentBelief = !single && this.evidentalOverlap;
-            if (shouldntDependOnCurrentBelief) {
+            final boolean doublePremiseEvidentalBaseOverlap = !single && this.evidentalOverlap;
+            if (doublePremiseEvidentalBaseOverlap) {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
                 return false;
             }
 
-            final boolean selfOverlap = Stamp.checkSelfOverlap(stamp);
+            final boolean selfOverlap = Stamp.checkOverlapWith(stamp, stamp);
             if (selfOverlap) {
                 memory.removeTask(task, "Overlapping Evidenctal Base");
                 return false;
