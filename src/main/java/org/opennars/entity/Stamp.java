@@ -228,22 +228,19 @@ public class Stamp implements Cloneable, Serializable {
     
     /** Detects evidental base overlaps **/
     public static boolean baseOverlap(final Stamp a, final Stamp b) {
-        final BaseEntry[] base1 = a.evidentialBase;
-        final BaseEntry[] base2 = b.evidentialBase;
+        final Set<BaseEntry> task_base = new HashSet<>(a.baseLength + b.baseLength);
+        for (Stamp iStamp : new Stamp[]{a, b}) {
+            for (int i = 0; i < iStamp.baseLength; i++) {
+                final long reasonerId = iStamp.evidentialBaseIds.getLong(i * 8);
+                final long baseId = iStamp.evidentialBaseReasonerIds.getLong(i * 8);
+                final BaseEntry iEntry = new BaseEntry(reasonerId, baseId);
+                if (task_base.contains(iEntry)) { //can have an overlap in itself already
+                    return true;
+                }
+                task_base.add(iEntry);
+            }
+        }
 
-        final Set<BaseEntry> task_base = new HashSet<>(base1.length + base2.length);
-        for (final BaseEntry aBase1 : base1) {
-            if (task_base.contains(aBase1)) { //can have an overlap in itself already
-                return true;
-            }
-            task_base.add(aBase1);
-        }
-        for (final BaseEntry aBase2 : base2) {
-            if (task_base.contains(aBase2)) {
-                return true;
-            }
-            task_base.add(aBase2); //also add to detect collision with itself
-        }
         return false;
      }
     
