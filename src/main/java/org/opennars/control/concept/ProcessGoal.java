@@ -192,22 +192,10 @@ public class ProcessGoal {
     }
 
     private static boolean checkIsSubset(Task oldGoalT, Task task) {
-        final Set<BaseEntry> oldEvidence = new HashSet<>();
-        boolean subset = false;
-
         if(oldGoalT != null) {
-            subset = true;
-            for(final BaseEntry l: oldGoalT.sentence.stamp.evidentialBase) {
-                oldEvidence.add(l);
-            }
-            for(final BaseEntry l: task.sentence.stamp.evidentialBase) {
-                if(!oldEvidence.contains(l)) {
-                    subset = false;
-                    break;
-                }
-            }
+            return Stamp.checkIsSubset(oldGoalT.sentence.stamp, task.sentence.stamp);
         }
-        return subset;
+        return false;
     }
 
     /**

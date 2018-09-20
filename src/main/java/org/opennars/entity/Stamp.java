@@ -243,6 +243,30 @@ public class Stamp implements Cloneable, Serializable {
 
         return false;
      }
+
+    public static boolean checkIsSubset(final Stamp base, final Stamp checkedSubset) {
+        final Set<BaseEntry> oldEvidence = new HashSet<>();
+        boolean subset = true;
+
+        for (int i = 0; i < base.baseLength; i++) {
+            final long reasonerId = base.evidentialBaseIds.getLong(i * 8);
+            final long baseId = base.evidentialBaseReasonerIds.getLong(i * 8);
+            final BaseEntry iEntry = new BaseEntry(reasonerId, baseId);
+            oldEvidence.add(iEntry);
+        }
+
+        for (int i = 0; i < checkedSubset.baseLength; i++) {
+            final long reasonerId = checkedSubset.evidentialBaseIds.getLong(i * 8);
+            final long baseId = checkedSubset.evidentialBaseReasonerIds.getLong(i * 8);
+            final BaseEntry iEntry = new BaseEntry(reasonerId, baseId);
+            if(!oldEvidence.contains(iEntry)) {
+                subset = false;
+                break;
+            }
+        }
+
+        return subset;
+    }
     
     public boolean evidenceIsCyclic() {
         final Set<BaseEntry> task_base = new HashSet<>(baseLength);
