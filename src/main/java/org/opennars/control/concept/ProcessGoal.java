@@ -182,27 +182,22 @@ public class ProcessGoal {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
-            final Set<BaseEntry> oldEvidence = new HashSet<>();
-            boolean Subset=false;
-            if(oldGoalT != null) {
-                Subset = true;
-                for(final BaseEntry l: oldGoalT.sentence.stamp.evidentialBase) {
-                    oldEvidence.add(l);
-                }
-                for(final BaseEntry l: task.sentence.stamp.evidentialBase) {
-                    if(!oldEvidence.contains(l)) {
-                        Subset = false;
-                        break;
-                    }
-                }
-            }
-            if(!Subset && !executeOperation(nal, task)) {
+
+            final boolean isSubset = checkIsSubset(oldGoalT, task);
+            if(!isSubset && !executeOperation(nal, task)) {
                 concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                 return; //it was made true by itself
             }
         }
     }
-    
+
+    private static boolean checkIsSubset(Task oldGoalT, Task task) {
+        if(oldGoalT != null) {
+            return Stamp.checkIsSubset(oldGoalT.sentence.stamp, task.sentence.stamp);
+        }
+        return false;
+    }
+
     /**
      * Generate &lt;?how =/&gt; g&gt;? question for g! goal.
      * only called by processGoal
