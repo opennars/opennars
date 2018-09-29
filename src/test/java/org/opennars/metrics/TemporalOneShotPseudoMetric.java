@@ -21,6 +21,8 @@ import java.util.Random;
 public class TemporalOneShotPseudoMetric extends AnswerHandler {
     public Reasoner reasonerUnderTest;
 
+    public int numberOfShots = 2;
+
     public int numberOfTermNames = 500;
 
     public int numberOfRandomEventsBeforeTest = 14;
@@ -35,7 +37,7 @@ public class TemporalOneShotPseudoMetric extends AnswerHandler {
         TemporalOneShotPseudoMetric metric = new TemporalOneShotPseudoMetric();
         metric.reasonerUnderTest = new Nar();
 
-        int numberOfRandomEventsBeforeTest=10;
+        int numberOfRandomEventsBeforeTest=5;
         for (;numberOfRandomEventsBeforeTest<30; numberOfRandomEventsBeforeTest++) {
             System.out.println("checking # of events=" + Integer.toString(numberOfRandomEventsBeforeTest));
 
@@ -72,11 +74,13 @@ public class TemporalOneShotPseudoMetric extends AnswerHandler {
             termNames.add(createRandomString(7, rng));
         }
 
-        // one shot learned knowledge
-        reasonerUnderTest.addInput("<flash --> [seen]>. :|:");
-        reasonerUnderTest.addInput("<b --> B>. :|:");
-        reasonerUnderTest.addInput("<spam --> [observed]>. :|:");
-        reasonerUnderTest.addInput("<thunder --> [heard]>. :|:");
+        // one/many shot learned knowledge
+        for (int i=0;i<numberOfShots;i++) {
+            reasonerUnderTest.addInput("<flash --> [seen]>. :|:");
+            reasonerUnderTest.addInput("<b --> B>. :|:");
+            reasonerUnderTest.addInput("<spam --> [observed]>. :|:");
+            reasonerUnderTest.addInput("<thunder --> [heard]>. :|:");
+        }
 
         // feed the reasoner with random events
 
