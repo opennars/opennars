@@ -253,25 +253,27 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         return false;
     }
     
-    /* There are several types of new tasks, all added into the
-     newTasks list, to be processed in the next cycleMemory.
-     Some of them are reported and/or logged. */
+
     /**
      * Input task processing. Invoked by the outside or inside environment.
- Outside: StringParser (addInput); Inside: InnateOperator (feedback). Input
- tasks with low priority are ignored, and the others are put into task
- buffer.
+     * Outside: StringParser (addInput);
+     * Inside: InnateOperator (feedback).
      *
      * @param time indirection to retrieve time
-     * @param t The addInput task
+     * @param task The addInput task
      */
-    public void inputTask(final Timable time, final Task t, final boolean emitIn) {
+    /* There are several types of new tasks, all added into the
+     * newTasks list, to be processed in the next cycleMemory.
+     * Some of them are reported and/or logged. */
+    /*
+     * Input tasks with low priority are ignored, and the others are put into task buffer.
+     */
+    public void inputTask(final Timable time, final Task task, final boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
         }
-        if (t instanceof Task) {
-            final Task task = t;
+        if (task != null) {
             final Stamp s = task.sentence.stamp;
             if (s.getCreationTime()==-1)
                 s.setCreationTime(time.time(), narParameters.DURATION);
