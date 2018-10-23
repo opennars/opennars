@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 package org.opennars.storage;
-
+ 
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
