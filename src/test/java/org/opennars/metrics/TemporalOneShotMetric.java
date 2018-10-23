@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * temporal metric to test and quantify the capability of a NARS implementation to retain a temporal relationship it had learned a long time ago with events.
  */
-public class TemporalOneShotPseudoMetric extends AnswerHandler {
+public class TemporalOneShotMetric extends AnswerHandler {
     public Reasoner reasonerUnderTest;
 
     public int numberOfShots = 2;
@@ -34,7 +34,7 @@ public class TemporalOneShotPseudoMetric extends AnswerHandler {
     private boolean wasAnswered = false;
 
     public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException, Parser.InvalidInputException {
-        TemporalOneShotPseudoMetric metric = new TemporalOneShotPseudoMetric();
+        TemporalOneShotMetric metric = new TemporalOneShotMetric();
         metric.reasonerUnderTest = new Nar();
 
         int numberOfRandomEventsBeforeTest=5;
