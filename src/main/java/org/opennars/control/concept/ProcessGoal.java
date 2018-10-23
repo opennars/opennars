@@ -30,13 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
+import org.opennars.entity.*;
 import org.opennars.entity.Stamp.BaseEntry;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
 import org.opennars.inference.LocalRules;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
@@ -90,8 +85,8 @@ public class ProcessGoal {
         if(task.aboveThreshold()) {
             beliefT = concept.selectCandidate(task, concept.beliefs, nal.time);
 
-            for (final Task iQuest : concept.quests ) {
-                trySolution(task.sentence, iQuest, nal, true);
+            for (final QuestionOrQuest iQuest : concept.quests ) {
+                trySolution(task.sentence, iQuest.task, nal, true);
             }
 
             // check if the Goal is already satisfied

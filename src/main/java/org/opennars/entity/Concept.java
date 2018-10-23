@@ -88,13 +88,13 @@ public class Concept extends Item<Term> implements Serializable {
      * Note: since this is iterated frequently, an array should be used. To
      * avoid iterator allocation, use .get(n) in a for-loop
      */
-    public final List<Task> questions;
+    public final List<QuestionOrQuest> questions;
 
     
     /**
      * Pending Quests to be answered by new desire values
      */
-    public final List<Task> quests;
+    public final List<QuestionOrQuest> quests;
 
     /**
      * Judgments directly made about the term Use List because of access
@@ -545,8 +545,8 @@ public class Concept extends Item<Term> implements Serializable {
 
     @Override
     public void end() {
-        for (final Task t : questions) t.end();
-        for (final Task t : quests) t.end();
+        for (final QuestionOrQuest q : questions) q.task.end();
+        for (final QuestionOrQuest q : quests) q.task.end();
         
         questions.clear();
         quests.clear();                
@@ -592,10 +592,10 @@ public class Concept extends Item<Term> implements Serializable {
      * Return the questions, called in ComposionalRules in
      * dedConjunctionByQuestion only
      */
-    public List<Task> getQuestions() {
+    public List<QuestionOrQuest> getQuestions() {
         return Collections.unmodifiableList(questions);
     }
-    public List<Task> getQuess() {
+    public List<QuestionOrQuest> getQuess() {
         return Collections.unmodifiableList(quests);
     }
 

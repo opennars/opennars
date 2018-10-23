@@ -27,10 +27,7 @@ import java.util.List;
 
 import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
+import org.opennars.entity.*;
 
 import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.trySolution;
@@ -51,24 +48,24 @@ public class ProcessQuestion {
      */
     protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
         Task quesTask = task;
-        List<Task> questions = concept.questions;
+        List<QuestionOrQuest> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
             questions = concept.quests;
         }
         if(task.sentence.isEternal()) {
-            final Optional<Task> eternalQuestionTask = tryFind(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
+            final Optional<QuestionOrQuest> eternalQuestionTask = tryFind(questions, iQuestionTask -> iQuestionTask.task.sentence.isEternal());
 
             // we can override the question task with the eternal question task if any was found
             if(eternalQuestionTask.isPresent()) {
-                quesTask = eternalQuestionTask.get();
+                quesTask = eternalQuestionTask.get().task;
             }
         }
         if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
-            final Task removed = questions.remove(0);    // FIFO
+            final QuestionOrQuest removed = questions.remove(0);    // FIFO
             concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
         }
 
-        questions.add(quesTask);
+        questions.add(new QuestionOrQuest(quesTask));
         concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
             
         final Sentence ques = quesTask.sentence;

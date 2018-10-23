@@ -96,7 +96,7 @@ public class ProcessJudgment {
         }
         final int nnq = concept.questions.size();
         for (int i = 0; i < nnq; i++) {
-            trySolution(judg, concept.questions.get(i), nal, true);
+            trySolution(judg, concept.questions.get(i).task, nal, true);
         }
         final int nng = concept.desires.size();
         for (int i = 0; i < nng; i++) {
