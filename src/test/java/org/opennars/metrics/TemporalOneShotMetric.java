@@ -18,8 +18,10 @@ import java.util.Random;
 /**
  * temporal metric to test and quantify the capability of a NARS implementation to retain a temporal relationship it had learned a long time ago with events.
  */
-public class TemporalOneShotPseudoMetric extends AnswerHandler {
+public class TemporalOneShotMetric extends AnswerHandler {
     public Reasoner reasonerUnderTest;
+
+    public int numberOfShots = 2;
 
     public int numberOfTermNames = 500;
 
@@ -32,10 +34,10 @@ public class TemporalOneShotPseudoMetric extends AnswerHandler {
     private boolean wasAnswered = false;
 
     public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException, Parser.InvalidInputException {
-        TemporalOneShotPseudoMetric metric = new TemporalOneShotPseudoMetric();
+        TemporalOneShotMetric metric = new TemporalOneShotMetric();
         metric.reasonerUnderTest = new Nar();
 
-        int numberOfRandomEventsBeforeTest=10;
+        int numberOfRandomEventsBeforeTest=5;
         for (;numberOfRandomEventsBeforeTest<30; numberOfRandomEventsBeforeTest++) {
             System.out.println("checking # of events=" + Integer.toString(numberOfRandomEventsBeforeTest));
 
@@ -72,11 +74,13 @@ public class TemporalOneShotPseudoMetric extends AnswerHandler {
             termNames.add(createRandomString(7, rng));
         }
 
-        // one shot learned knowledge
-        reasonerUnderTest.addInput("<flash --> [seen]>. :|:");
-        reasonerUnderTest.addInput("<b --> B>. :|:");
-        reasonerUnderTest.addInput("<spam --> [observed]>. :|:");
-        reasonerUnderTest.addInput("<thunder --> [heard]>. :|:");
+        // one/many shot learned knowledge
+        for (int i=0;i<numberOfShots;i++) {
+            reasonerUnderTest.addInput("<flash --> [seen]>. :|:");
+            reasonerUnderTest.addInput("<b --> B>. :|:");
+            reasonerUnderTest.addInput("<spam --> [observed]>. :|:");
+            reasonerUnderTest.addInput("<thunder --> [heard]>. :|:");
+        }
 
         // feed the reasoner with random events
 
