@@ -1,6 +1,8 @@
 package org.opennars.entity;
 
-public class QuestionOrQuest {
+import java.io.Serializable;
+
+public class QuestionOrQuest implements Serializable {
     public Task task;
 
     public QuestionOrQuest(final Task task) {
