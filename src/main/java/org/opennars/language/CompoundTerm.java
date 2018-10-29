@@ -629,17 +629,24 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * 
      * @param t The term
      * @param components The components
+     * @param addVariables Whether to use variables
+     * @param addStatementOrHigherOrder
      * @return 
      */
-    public static Set<Term> addComponentsRecursively(Term t, Set<Term> components) {
+    public static Set<Term> addComponentsRecursively(Term t, Set<Term> components, boolean addVariables, boolean addStatementOrHigherOrder, boolean addInterval) {
         if(components == null) {
             components = new HashSet<Term>();
         }
-        components.add(t);
+        boolean isHigherOrderOrStatement = t instanceof Statement || t instanceof Conjunction || t instanceof Disjunction || t instanceof Negation;
+        if((addVariables || !(t instanceof Variable)) &&
+           (addStatementOrHigherOrder || !isHigherOrderOrStatement) &&
+           (addInterval || !(t instanceof Interval))) {
+            components.add(t);
+        }
         if(t instanceof CompoundTerm) {
             CompoundTerm cTerm = (CompoundTerm) t;
             for(Term component : cTerm) {
-                addComponentsRecursively(component, components);
+                addComponentsRecursively(component, components, addVariables, addStatementOrHigherOrder, addInterval);
             }
         }
         return components;
