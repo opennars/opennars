@@ -156,32 +156,37 @@ public class LocalRules {
             final List<Long> ivalNew = extractIntervals(nal.memory, newBeliefTerm);
             long AbsDiffSumNew = 0;
             long AbsDiffSumOld = 0;
-            List<Float> recent_ivals = beliefConcept.recent_intervals;
-            synchronized(recent_ivals){
-                if(recent_ivals.isEmpty()) {
-                    for(final Long l : ivalOld) {
-                        recent_ivals.add((float) l);
+            float a = 1.0f;
+            if(beliefConcept != null)
+            {
+                List<Float> recent_ivals = beliefConcept.recent_intervals;
+                synchronized(recent_ivals){
+                    if(recent_ivals.isEmpty()) {
+                        for(final Long l : ivalOld) {
+                            recent_ivals.add((float) l);
+                        }
+                    }
+                    for(int i=0;i<ivalNew.size();i++) {
+                        final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
+                        final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
+                        recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
+                    }
+                    
+                    for(int i=0;i<ivalNew.size();i++) {
+                        AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
+                    }
+                    
+                    for(int i=0;i<ivalNew.size();i++) {
+                        AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
                     }
                 }
+                long AbsDiffSum = 0;
                 for(int i=0;i<ivalNew.size();i++) {
-                    final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
-                    recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
+                    AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
                 }
-                
-                for(int i=0;i<ivalNew.size();i++) {
-                    AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
-                }
-                
-                for(int i=0;i<ivalNew.size();i++) {
-                    AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
-                }
+                a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
             }
-            long AbsDiffSum = 0;
-            for(int i=0;i<ivalNew.size();i++) {
-                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
-            }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
+            
             //we won't count more confidence than
             //when the second premise would have been shifted
             //to the necessary time in the first place
@@ -298,8 +303,9 @@ public class LocalRules {
         }
         final boolean judgmentTask = task.sentence.isJudgment();
         final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
-        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem(), nal.time);
-        
+        Sentence solutionIntervalProjected = solution.clone();
+        //intervalProjection(nal, solution.getTerm(), problem.getTerm(), null, solutionIntervalProjected.truth);
+        final float quality = solutionQuality(rateByConfidence, problem, solutionIntervalProjected, nal.mem(), nal.time);
         if (problem.sentence.isGoal() && nal.memory.emotion != null) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
