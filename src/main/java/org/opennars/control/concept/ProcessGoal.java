@@ -319,15 +319,11 @@ public class ProcessGoal {
             result.maxtime = nal.time.time() + add_tolerance;
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-            Concept preconc = nal.memory.concept(precondition);
             long newesttime = -1;
             Task bestsofar = null;
             List<Float> prec_intervals = new ArrayList<Float>();
             for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
                 prec_intervals.add((float) l);
-            }
-            if(preconc == null) {
-                continue;
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
