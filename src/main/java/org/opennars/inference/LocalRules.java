@@ -123,7 +123,7 @@ public class LocalRules {
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         final TruthValue newTruth = newBelief.truth.clone();
         final TruthValue oldTruth = oldBelief.truth;
-        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept, newTruth);
+        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept.recent_intervals, newTruth);
         
         final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
@@ -149,14 +149,13 @@ public class LocalRules {
      * @param newTruth
      * @return 
      */
-    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final Concept beliefConcept, final TruthValue newTruth) {
+    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final List<Float> recent_ivals, final TruthValue newTruth) {
         boolean useNewBeliefTerm = false;
         if(newBeliefTerm.hasInterval()) {    
             final List<Long> ivalOld = extractIntervals(nal.memory, oldBeliefTerm);
             final List<Long> ivalNew = extractIntervals(nal.memory, newBeliefTerm);
             long AbsDiffSumNew = 0;
             long AbsDiffSumOld = 0;
-            List<Float> recent_ivals = beliefConcept.recent_intervals;
             synchronized(recent_ivals){
                 if(recent_ivals.isEmpty()) {
                     for(final Long l : ivalOld) {
@@ -164,17 +163,16 @@ public class LocalRules {
                     }
                 }
                 for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
+                }      
+                for(int i=0;i<ivalNew.size();i++) {
+                    AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
+                }
+                //adapt intervals in last step 
+                for(int i=0;i<ivalNew.size();i++) {
                     final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
                     final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
                     recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
-                }
-                
-                for(int i=0;i<ivalNew.size();i++) {
-                    AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
-                }
-                
-                for(int i=0;i<ivalNew.size();i++) {
-                    AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
                 }
             }
             long AbsDiffSum = 0;
