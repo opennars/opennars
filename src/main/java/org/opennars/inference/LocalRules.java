@@ -27,6 +27,7 @@ import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
+import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
@@ -213,7 +214,12 @@ public class LocalRules {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
             final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
-            if (oldQ >= newQ) {
+
+            final boolean isBetterSolution = newQ > oldQ;
+
+            memory.emit(Events.TrySolution.class, isBetterSolution, task, belief);
+
+            if (!isBetterSolution) {
                 if (problem.isGoal() && memory.emotion != null) {
                     memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }
