@@ -139,13 +139,12 @@ public class LocalRules {
      * Interval projection
      * 
      * Decides to use whether to use old or new term dependent on which one is more usual,
-     * also discounting the truth confidence according to the interval difference.
-     * called by Revision
+     * also discounting the truth confidence according to the interval difference.called by Revision
      * 
      * @param nal
      * @param newBeliefTerm
      * @param oldBeliefTerm
-     * @param beliefConcept
+     * @param recent_ivals recent intervals
      * @param newTruth
      * @return 
      */
