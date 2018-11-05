@@ -270,7 +270,7 @@ public class ProcessGoal {
     * @param task The goal task
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        //1. if there is no solution known yet, pull up variable based preconditions from component concepts without replacing them
+        //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
