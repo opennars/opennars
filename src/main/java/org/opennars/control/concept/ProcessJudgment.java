@@ -23,7 +23,6 @@
  */
 package org.opennars.control.concept;
 
-import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
@@ -31,7 +30,6 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 
-import static com.google.common.collect.Iterables.tryFind;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +44,6 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
-import org.opennars.language.Negation;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -187,11 +184,16 @@ public class ProcessJudgment {
             return;
         }
         //get the first eternal. the highest confident one (due to the sorted order):
-        Optional<Task> strongest_target = null;
+        Task strongest_target = null;
         synchronized(origin_concept) {
-            strongest_target = tryFind(origin_concept.beliefs, iTask -> iTask.sentence.isEternal());
+            for(Task t : origin_concept.beliefs) {
+                if(t.sentence.isEternal()) {
+                    strongest_target = t;
+                    break;
+                }
+            }
         }
-        if (!strongest_target.isPresent()) {
+        if (strongest_target == null) {
             return;
         }
         for(Term t : targets) { //the target sub concepts it needs to go to
@@ -201,13 +203,13 @@ public class ProcessJudgment {
             }
             // we do not add the target, instead the strongest belief in the target concept
             synchronized(target_concept) {       
-                List<Task> table = strongest_target.get().sentence.term.hasVar() ?  target_concept.general_executable_preconditions : 
+                List<Task> table = strongest_target.sentence.term.hasVar() ?  target_concept.general_executable_preconditions : 
                                                                                     target_concept.executable_preconditions;
                 //at first we have to remove the last one with same content from table
                 int i_delete = -1;
                 for(int i=0; i < table.size(); i++) {
                     if(CompoundTerm.replaceIntervals(table.get(i).getTerm()).equals(
-                            CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
+                            CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
                         i_delete = i; //even these with same term but different intervals are removed here
                         break;
                     }
@@ -215,14 +217,14 @@ public class ProcessJudgment {
                 if(i_delete != -1) {
                     table.remove(i_delete);
                 }
-                final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
+                final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
                 for (int i = 0; i<prec.length-2; i++) {
                     if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
                         return; //for now, these can be decomposed into smaller such statements anyway
                     }
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+                target_concept.addToTable(strongest_target, true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
             }
         }
     }
