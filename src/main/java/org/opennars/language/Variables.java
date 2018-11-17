@@ -243,7 +243,7 @@ public class Variables {
 
                         final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
-                        if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
+                        if(findSubstitute(type,ti,cTerm2.term[j],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
                             appendToMap(mapNew[1], map[1]);
                             succeeded = true;

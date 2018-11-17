@@ -768,7 +768,7 @@ public final class CompositionalRules {
      * @param subject
      */
     public static void addVariableCandidates(Set<Term> candidates, Term side, boolean subject) {
-        boolean junction = (side instanceof Conjunction || side instanceof Disjunction);
+        boolean junction = (side instanceof Conjunction || side instanceof Disjunction || side instanceof Negation);
         int n = junction ? ((CompoundTerm) side).size() : 1;
         for(int i=0; i<n; i++) {
             // we found an Inheritance
@@ -779,6 +779,9 @@ public final class CompositionalRules {
                 } else {
                     t = side;
                 }
+            }
+            if(t instanceof Conjunction || t instanceof Disjunction || t instanceof Negation) { //component itself is a conjunction/disjunction
+                addVariableCandidates(candidates, t, subject);
             }
             if(t instanceof Inheritance || t instanceof Similarity) {
                 Inheritance inh = (Inheritance) t;

@@ -270,7 +270,7 @@ public class ProcessGoal {
     * @param task The goal task
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        //1. if there is no solution known yet, pull up variable based preconditions from component concepts without replacing them
+        //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
@@ -310,7 +310,8 @@ public class ProcessGoal {
     private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions) {
         ExecutablePrecondition result = new ExecutablePrecondition();
         for(final Task t: execPreconditions) {
-            final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
+            final CompoundTerm precTerm = ((Conjunction) ((Implication) t.getTerm()).getSubject());
+            final Term[] prec = precTerm.term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
             final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*nal.narParameters.ANTICIPATION_TOLERANCE);
@@ -318,11 +319,11 @@ public class ProcessGoal {
             result.maxtime = nal.time.time() + add_tolerance;
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-            final Concept preconc = nal.memory.concept(precondition);
             long newesttime = -1;
             Task bestsofar = null;
-            if(preconc == null) {
-                continue;
+            List<Float> prec_intervals = new ArrayList<Float>();
+            for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
+                prec_intervals.add((float) l);
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
@@ -341,7 +342,7 @@ public class ProcessGoal {
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
                             Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
-                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, preconc, pNew.sentence.truth);
+                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
                         }
