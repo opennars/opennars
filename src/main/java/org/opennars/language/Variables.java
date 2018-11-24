@@ -157,7 +157,7 @@ public class Variables {
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
-            
+            //https://github.com/opennars/opennars/issues/482:
             int mapIdx = term1VarUnifyAllowed ? 0 : 1;
             final Term t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
             if (t != null) {
