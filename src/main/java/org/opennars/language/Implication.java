@@ -105,7 +105,7 @@ public class Implication extends Statement {
     }
     
     public static Implication make(final Term subject, final Term predicate, final int temporalOrder) {
-        if (invalidStatement(subject, predicate, temporalOrder != TemporalRules.ORDER_FORWARD && temporalOrder != TemporalRules.ORDER_CONCURRENT)) {
+        if (invalidStatement(subject, predicate, temporalOrder != TemporalRules.ORDER_FORWARD && temporalOrder != TemporalRules.ORDER_BACKWARD && temporalOrder != TemporalRules.ORDER_CONCURRENT)) {
             return null;
         }
         

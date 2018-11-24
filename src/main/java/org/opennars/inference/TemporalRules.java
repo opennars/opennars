@@ -151,7 +151,6 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
@@ -170,6 +169,8 @@ public class TemporalRules {
             }
         }
         final int order = order(timeDiff, durationCycles);
+        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, 
+                order != TemporalRules.ORDER_FORWARD && order != TemporalRules.ORDER_BACKWARD && order != TemporalRules.ORDER_CONCURRENT);
         final TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         
