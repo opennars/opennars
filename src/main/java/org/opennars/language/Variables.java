@@ -157,6 +157,12 @@ public class Variables {
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
+            
+            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
+            final Term t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
+            if (t != null) {
+                return findSubstitute(type, t, termB, map);
+            }
 
             if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
 
