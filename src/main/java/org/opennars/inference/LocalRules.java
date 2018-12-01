@@ -27,6 +27,7 @@ import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
+import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
@@ -37,7 +38,6 @@ import static org.opennars.inference.TemporalRules.matchingOrder;
 import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
 import static org.opennars.language.CompoundTerm.extractIntervals;
-import static org.opennars.language.CompoundTerm.replaceIntervals;
 import org.opennars.main.Parameters;
 
 /**
@@ -123,7 +123,7 @@ public class LocalRules {
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         final TruthValue newTruth = newBelief.truth.clone();
         final TruthValue oldTruth = oldBelief.truth;
-        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept, newTruth);
+        boolean useNewBeliefTerm = intervalProjection(nal, newBelief.getTerm(), oldBelief.getTerm(), beliefConcept.recent_intervals, newTruth);
         
         final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
@@ -145,18 +145,17 @@ public class LocalRules {
      * @param nal
      * @param newBeliefTerm
      * @param oldBeliefTerm
-     * @param beliefConcept
+     * @param recent_ivals recent intervals
      * @param newTruth
      * @return 
      */
-    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final Concept beliefConcept, final TruthValue newTruth) {
+    public static boolean intervalProjection(final DerivationContext nal, final Term newBeliefTerm, final Term oldBeliefTerm, final List<Float> recent_ivals, final TruthValue newTruth) {
         boolean useNewBeliefTerm = false;
         if(newBeliefTerm.hasInterval()) {    
             final List<Long> ivalOld = extractIntervals(nal.memory, oldBeliefTerm);
             final List<Long> ivalNew = extractIntervals(nal.memory, newBeliefTerm);
             long AbsDiffSumNew = 0;
             long AbsDiffSumOld = 0;
-            List<Float> recent_ivals = beliefConcept.recent_intervals;
             synchronized(recent_ivals){
                 if(recent_ivals.isEmpty()) {
                     for(final Long l : ivalOld) {
@@ -168,11 +167,9 @@ public class LocalRules {
                     final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
                     recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
                 }
-                
                 for(int i=0;i<ivalNew.size();i++) {
                     AbsDiffSumNew += Math.abs(ivalNew.get(i) - recent_ivals.get(i));
-                }
-                
+                }      
                 for(int i=0;i<ivalNew.size();i++) {
                     AbsDiffSumOld += Math.abs(ivalOld.get(i) - recent_ivals.get(i));
                 }
@@ -190,7 +187,7 @@ public class LocalRules {
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         return useNewBeliefTerm;
-    }
+}
 
 
     /**
@@ -208,7 +205,9 @@ public class LocalRules {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
             final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
-            if (oldQ >= newQ) {
+            final boolean isBetterSolution = newQ > oldQ;
+            memory.emit(Events.TrySolution.class, isBetterSolution, task, belief);
+            if (!isBetterSolution) {
                 if (problem.isGoal() && memory.emotion != null) {
                     memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }

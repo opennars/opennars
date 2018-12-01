@@ -270,7 +270,7 @@ public class ProcessGoal {
     * @param task The goal task
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        //1. if there is no solution known yet, pull up variable based preconditions from component concepts without replacing them
+        //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
@@ -287,13 +287,18 @@ public class ProcessGoal {
                 }
             }
         }
-        //2. For the more specific hypotheses first and then the general
-        for(List<Task> table : new List[] {concept.executable_preconditions, concept.general_executable_preconditions}) {
-            //3. Apply choice rule, using the highest truth expectation solution
-            ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, table);
-            //4. And executing it, also forming an expectation about the result
-            if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
-                return; //don't try the other table as a specific solution was already used
+        //2. Accumulate all preconditions
+        Map<Operation,List<ExecutablePrecondition>> anticipationsToMake = new HashMap<Operation,List<ExecutablePrecondition>>();
+        List<Task> allPreconditions = new ArrayList<Task>();
+        allPreconditions.addAll(concept.executable_preconditions);
+        allPreconditions.addAll(concept.general_executable_preconditions);
+        //3. Apply choice rule, using the highest truth expectation solution and anticipate the results
+        ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, allPreconditions, anticipationsToMake);
+        //4. And executing it, also forming an expectation about the result
+        if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
+            System.out.println(bestOpWithMeta.executable_precond);
+            for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
+                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
             }
         }
     }
@@ -307,22 +312,22 @@ public class ProcessGoal {
      * @param execPreconditions The procedural hypotheses with the executable preconditions
      * @return 
      */
-    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions) {
+    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions, Map<Operation,List<ExecutablePrecondition>> anticipationsToMake) {
         ExecutablePrecondition result = new ExecutablePrecondition();
         for(final Task t: execPreconditions) {
-            final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
+            final CompoundTerm precTerm = ((Conjunction) ((Implication) t.getTerm()).getSubject());
+            final Term[] prec = precTerm.term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
-            final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*nal.narParameters.ANTICIPATION_TOLERANCE);
-            result.mintime = nal.time.time();
-            result.maxtime = nal.time.time() + add_tolerance;
+            float timeOffset = (long) (((Interval)prec[prec.length-1]).time);
+            float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-            final Concept preconc = nal.memory.concept(precondition);
             long newesttime = -1;
             Task bestsofar = null;
-            if(preconc == null) {
-                continue;
+            List<Float> prec_intervals = new ArrayList<Float>();
+            for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
+                prec_intervals.add((float) l);
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
@@ -341,7 +346,7 @@ public class ProcessGoal {
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
                             Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
-                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, preconc, pNew.sentence.truth);
+                            LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
                         }
@@ -372,13 +377,22 @@ public class ProcessGoal {
             //in order to derive the operator desire value:
             final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
             final float expecdesire = opdesire.getExpectation();
+            Operation bestop = (Operation) ((CompoundTerm)op).applySubstitute(subsBest);
+            long mintime = (long) (nal.time.time() + timeOffset - timeWindowHalf);
+            long maxtime = (long) (nal.time.time() + timeOffset + timeWindowHalf);
             if(expecdesire > result.bestop_truthexp) {
-                result.bestop = (Operation) ((CompoundTerm)op).applySubstitute(subsBest);
+                result.bestop = bestop;
                 result.bestop_truthexp = expecdesire;
                 result.bestop_truth = opdesire;
                 result.executable_precond = t;
                 result.substitution = subsBest;
+                result.mintime = mintime;
+                result.maxtime = maxtime;
             }
+            if(anticipationsToMake.get(result.bestop) == null) {
+                anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
+            }
+            anticipationsToMake.get(result.bestop).add(result);
         }
         return result;
     }
@@ -408,7 +422,6 @@ public class ProcessGoal {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return false;
                 }
-                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
                 return true;
             }
         }

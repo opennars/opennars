@@ -157,6 +157,12 @@ public class Variables {
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
+            //https://github.com/opennars/opennars/issues/482:
+            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
+            final Term t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
+            if (t != null) {
+                return findSubstitute(type, t, termB, map);
+            }
 
             if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
 
@@ -243,7 +249,7 @@ public class Variables {
 
                         final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
-                        if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
+                        if(findSubstitute(type,ti,cTerm2.term[j],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
                             appendToMap(mapNew[1], map[1]);
                             succeeded = true;

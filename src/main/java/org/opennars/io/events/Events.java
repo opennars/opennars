@@ -126,7 +126,7 @@ public class Events {
     public static class Answer { }
     public static class Unsolved { }
     
-    
+    public static class TrySolution {}
     
     abstract public static class ConceptFire implements EventObserver { 
         

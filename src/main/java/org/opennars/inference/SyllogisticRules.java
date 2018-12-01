@@ -613,8 +613,10 @@ public final class SyllogisticRules {
                 content = premise1.getPredicate();
                 delta = ((Interval) newCondition).time;
                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
-                   mintime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time - 1;
-                   maxtime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time + 2;
+                   float timeOffset = ((Interval) newCondition).time;
+                   float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
+                   mintime = (long) Math.max(taskSentence.getOccurenceTime(), (taskSentence.getOccurenceTime() + timeOffset - timeWindowHalf));
+                   maxtime = (long) (taskSentence.getOccurenceTime() + timeOffset + timeWindowHalf);
                    predictedEvent = true;
                 }
              } else {

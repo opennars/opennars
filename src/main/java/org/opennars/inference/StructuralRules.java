@@ -721,7 +721,7 @@ public final class StructuralRules {
      * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
-        if(!(compound instanceof Conjunction)) {
+        if(!(compound instanceof Conjunction) || index >= compound.size()) {
             return;
         }
 
