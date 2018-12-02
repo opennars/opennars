@@ -238,7 +238,7 @@ public class Parameters implements Serializable {
     /** eternalized induction confidence to revise A =/&gt; B beliefs */
     public volatile float ANTICIPATION_CONFIDENCE = 0.33f;
 
-    public volatile float ANTICIPATION_TOLERANCE = 50.0f;
+    public volatile float ANTICIPATION_TOLERANCE = 25.0f;
     
     public volatile float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
