@@ -166,20 +166,16 @@ public class ProcessJudgment {
      * @param nal The derivation context
      * @param alternativeTarget The alternative concept to put the best candidate in
      */
-    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept alternativeTarget) {
+    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal) {
         Set<Term> targets = new HashSet<Term>();
-        if(alternativeTarget == null) { 
-            //add to all components, unless it doesn't have vars
-            if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
-                targets.add(((Implication)task.getTerm()).getPredicate());
-            } else {
-                Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);
-                for(Term r : ret.keySet()) {
-                    targets.add(r);
-                }
-            }
+        //add to all components, unless it doesn't have vars
+        if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
+            targets.add(((Implication)task.getTerm()).getPredicate());
         } else {
-            targets.add(alternativeTarget.getTerm());
+            Map<Term, Integer> ret = ((Implication)task.getTerm()).getPredicate().countTermRecursively(null);
+            for(Term r : ret.keySet()) {
+                targets.add(r);
+            }
         }
         //the concept of the implication task
         Concept origin_concept = nal.memory.concept(task.getTerm());
@@ -193,6 +189,12 @@ public class ProcessJudgment {
         }
         if (!strongest_target.isPresent()) {
             return;
+        }
+        final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
+        for (int i = 0; i<prec.length-2; i++) {
+            if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                return; //for now, these can be decomposed into smaller such statements anyway
+            }
         }
         for(Term t : targets) { //the target sub concepts it needs to go to
             final Concept target_concept = nal.memory.concept(t);
@@ -214,12 +216,6 @@ public class ProcessJudgment {
                 }
                 if(i_delete != -1) {
                     table.remove(i_delete);
-                }
-                final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
-                for (int i = 0; i<prec.length-2; i++) {
-                    if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                        return; //for now, these can be decomposed into smaller such statements anyway
-                    }
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
                 target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);

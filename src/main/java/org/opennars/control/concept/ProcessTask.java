@@ -73,7 +73,7 @@ public class ProcessTask {
             if (task.aboveThreshold()) {    // still need to be processed
                 TaskLink taskl = concept.linkToTask(task,nal);               
                 if(task.sentence.isJudgment() && ProcessJudgment.isExecutableHypothesis(task,nal)) { //after linkToTask
-                    ProcessJudgment.addToTargetConceptsPreconditions(task, nal, null); //because now the components are there
+                    ProcessJudgment.addToTargetConceptsPreconditions(task, nal); //because now the components are there
                 }
                 ProcessAnticipation.firePredictions(task, concept, nal, time, taskl);
             }
