@@ -47,6 +47,8 @@ public class ProcessQuestion {
     /**
      * To answer a question by existing beliefs
      *
+     * @param concept The concept of the question
+     * @param nal The derivation context
      * @param task The task to be processed
      */
     protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {

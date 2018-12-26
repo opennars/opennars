@@ -177,6 +177,7 @@ public class ProcessGoal {
      * @param nal The derivation context
      * @param concept The concept of the current goal
      * @param oldGoalT The best goal in the goal table
+     * @param task The goal task
      */
     protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
@@ -312,7 +313,7 @@ public class ProcessGoal {
      * @param concept The goal concept
      * @param projectedGoal The goal projected to the current time
      * @param execPreconditions The procedural hypotheses with the executable preconditions
-     * @return 
+     * @return The procedural hypothesis with the highest result truth expectation
      */
     private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions, Map<Operation,List<ExecutablePrecondition>> anticipationsToMake) {
         ExecutablePrecondition result = new ExecutablePrecondition();

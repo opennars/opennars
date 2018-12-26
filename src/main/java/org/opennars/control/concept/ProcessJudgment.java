@@ -46,7 +46,6 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
-import org.opennars.language.Negation;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -164,7 +163,6 @@ public class ProcessJudgment {
      * 
      * @param task The potential implication task
      * @param nal The derivation context
-     * @param alternativeTarget The alternative concept to put the best candidate in
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal) {
         Set<Term> targets = new HashSet<Term>();
