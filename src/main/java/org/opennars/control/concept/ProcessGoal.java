@@ -391,11 +391,11 @@ public class ProcessGoal {
                 result.substitution = subsBest;
                 result.mintime = mintime;
                 result.maxtime = maxtime;
-            }
-            if(anticipationsToMake.get(result.bestop) == null) {
-                anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
-            }
-            anticipationsToMake.get(result.bestop).add(result);
+                if(anticipationsToMake.get(result.bestop) == null) {
+                    anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
+                }
+                anticipationsToMake.get(result.bestop).add(result);
+            }  
         }
         return result;
     }

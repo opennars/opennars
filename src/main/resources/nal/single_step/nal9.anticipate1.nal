@@ -4,4 +4,4 @@
 //ok start:
 <a --> A>. :|:
 10
-''outputMustContain('(^anticipate,{SELF},<b --> B>). :!9: %1.00;0.90%')
+''outputMustContain('(^anticipate,{SELF},<b --> B>). :!0: %1.00;0.90%')
