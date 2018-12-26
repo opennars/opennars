@@ -240,6 +240,9 @@ public class Parameters implements Serializable {
 
     public volatile float ANTICIPATION_TOLERANCE = 25.0f;
     
+    /** Retrospective anticipation, allow to check memory for content in case of anticipation (potential issue with forgetting) */
+    public boolean RETROSPECTIVE_ANTICIPATIONS = false;
+    
     public volatile float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
     public volatile float COMPLEXITY_UNIT=1.0f; //1.0 - oo
@@ -284,4 +287,5 @@ public class Parameters implements Serializable {
     
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
+    
 }

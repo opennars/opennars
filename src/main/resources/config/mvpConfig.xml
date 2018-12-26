@@ -96,6 +96,7 @@
     
     <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
     <conf name="ANTICIPATION_TOLERANCE" value="25.0"/>
+    <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
     <conf name="CONSIDER_NEW_OPERATION_BIAS" value="0.05"/>
     <conf name="TEMPORAL_INDUCTION_PRIORITY_PENALTY" value="1.0"/>

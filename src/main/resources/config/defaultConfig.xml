@@ -92,6 +92,7 @@
     
     <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
     <conf name="ANTICIPATION_TOLERANCE" value="25.0"/>
+    <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
     <conf name="COMPLEXITY_UNIT" value="1.0"/>

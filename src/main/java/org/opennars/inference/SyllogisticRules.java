@@ -617,7 +617,7 @@ public final class SyllogisticRules {
                    float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
                    mintime = (long) Math.max(taskSentence.getOccurenceTime(), (taskSentence.getOccurenceTime() + timeOffset - timeWindowHalf));
                    maxtime = (long) (taskSentence.getOccurenceTime() + timeOffset + timeWindowHalf);
-                   predictedEvent = true;
+                   predictedEvent = nal.narParameters.RETROSPECTIVE_ANTICIPATIONS || (taskSentence.getOccurenceTime() >= nal.time.time());
                 }
              } else {
                 while ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
