@@ -57,7 +57,7 @@ public class GeneralInferenceControl {
         boolean putBackConcept = false;
         float forgetCycles = 0.0f;
         synchronized(currentConcept) { //use current concept (current concept is the resource)  
-            ProcessAnticipation.maintainDisappointedAnticipations(currentConcept, time);
+            ProcessAnticipation.maintainDisappointedAnticipations(narParameters, currentConcept, time);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
                 mem.concepts.take(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
