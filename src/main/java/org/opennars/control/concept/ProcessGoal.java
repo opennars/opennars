@@ -151,9 +151,6 @@ public class ProcessGoal {
             return;
         }
 
-        final TruthValue T=goal.truth.clone();
-        final double Satisfaction=1.0-AntiSatisfaction;
-        T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
         final boolean isFullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
         final Sentence projectedGoal = goal.projection(nal.time.time(), nal.time.time(), nal.memory);
         if (!(projectedGoal != null && task.aboveThreshold() && !isFullfilled)) {
@@ -270,7 +267,7 @@ public class ProcessGoal {
     * @param projectedGoal The current goal
     * @param task The goal task
     */
-    protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
+    public static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
         //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         List<Task> allPreconditions = new ArrayList<Task>();

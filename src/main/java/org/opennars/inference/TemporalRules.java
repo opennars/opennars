@@ -28,9 +28,9 @@ import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.operator.Operation;
 
 import java.util.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
@@ -205,13 +205,15 @@ public class TemporalRules {
         
         List<Term> t11s = new ArrayList<>();
         List<Term> t22s = new ArrayList<>();
+        List<Float> penalties = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
             for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Term> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
-                for(Term res : ress) { //ok we applied it, all we have to do now is to use it
-                    t11s.add(((Statement)res).getPredicate());
-                    t22s.add(((Statement)res).getSubject());
+                Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
+                for(Pair<Term,Float> content_penalty : ress) { //ok we applied it, all we have to do now is to use it
+                    t11s.add(((Statement)content_penalty.getLeft()).getPredicate());
+                    t22s.add(((Statement)content_penalty.getLeft()).getSubject());
+                    penalties.add(content_penalty.getRight());
                 }
             }
         }
@@ -221,12 +223,13 @@ public class TemporalRules {
             for(int i=0; i<t11s.size(); i++) {
                 Term t11 = t11s.get(i);
                 Term t22 = t22s.get(i);
+                Float penalty = penalties.get(i);
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendConclusion(nal, truth1.clone(), budget1.clone(), statement11, derivations);
-                appendConclusion(nal, truth2.clone(), budget2.clone(), statement22, derivations);
-                appendConclusion(nal, truth3.clone(), budget3.clone(), statement33, derivations);
+                appendConclusion(nal, truth1.clone().mulConfidence(penalty), budget1.clone(), statement11, derivations);
+                appendConclusion(nal, truth2.clone().mulConfidence(penalty), budget2.clone(), statement22, derivations);
+                appendConclusion(nal, truth3.clone().mulConfidence(penalty), budget3.clone(), statement33, derivations);
             }
 
             appendConclusion(nal, truth1, budget1, statement1, derivations);

@@ -90,7 +90,7 @@
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
-    <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
+    <conf name="ANTICIPATION_CONFIDENCE" value="0.01"/>
     <conf name="ANTICIPATION_TOLERANCE" value="25.0"/>
     <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
@@ -109,6 +109,7 @@
     <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
     
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
+    <conf name="VARIABLE_INTRODUCTION_CONFIDENCE_MUL" value="0.9"/>
     <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
     
     <conf name="THREADS_AMOUNT" value="1"/>

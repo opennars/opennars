@@ -24,6 +24,7 @@
 package org.opennars.control;
 
 import org.opennars.control.concept.ProcessAnticipation;
+import org.opennars.control.concept.ProcessGoal;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
@@ -110,6 +111,10 @@ public class GeneralInferenceControl {
         nal.setCurrentTask(task); // one of the two places where this variable is set
         if(nal.memory.emotion != null) {
             nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        }
+        Concept taskConcept = nal.memory.concept(task.getTerm());
+        if(taskConcept != null) { //attempt to act on goals in current attentional focus if they are desired enough
+            ProcessGoal.bestReactionForGoal(nal.memory.concept(task.getTerm()), nal, task.sentence.projection(nal.time.time(), nal.time.time(), nal.memory), task);
         }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);

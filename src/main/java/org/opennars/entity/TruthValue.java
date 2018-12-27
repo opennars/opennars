@@ -140,6 +140,13 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return this;
     }
     
+    public TruthValue mulConfidence(final float mul) {
+        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
+        final float c = this.confidence * mul;
+        this.confidence = (c < max_confidence) ? c : max_confidence;
+        return this;
+    }
+    
     /**
      * @return is it a analytic truth value?
      */
