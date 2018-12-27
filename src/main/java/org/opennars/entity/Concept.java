@@ -33,7 +33,6 @@ import org.opennars.language.Term;
 import org.opennars.main.Shell;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
-import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
 
 import java.io.Serializable;
@@ -141,8 +140,8 @@ public class Concept extends Item<Term> implements Serializable {
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
-        this.taskLinks = new LevelBag<>(memory.narParameters.TASK_LINK_BAG_LEVELS, memory.narParameters.TASK_LINK_BAG_SIZE, memory.narParameters);
-        this.termLinks = new LevelBag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
+        this.taskLinks = new Bag<>(memory.narParameters.TASK_LINK_BAG_LEVELS, memory.narParameters.TASK_LINK_BAG_SIZE, memory.narParameters);
+        this.termLinks = new Bag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
@@ -343,7 +342,7 @@ public class Concept extends Item<Term> implements Serializable {
                     lowest = tl;
                 }
                 if(nSameContent > nal.narParameters.TASKLINK_PER_CONTENT) { //ok we reached the maximum so lets delete the lowest
-                    taskLinks.take(lowest);
+                    taskLinks.pickOut(lowest);
                     memory.emit(TaskLinkRemove.class, lowest, this);
                     break;
                 }
@@ -569,7 +568,7 @@ public class Concept extends Item<Term> implements Serializable {
         final int toMatch = narParameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
-            final TermLink termLink = termLinks.takeNext();
+            final TermLink termLink = termLinks.takeOut();
             if (termLink==null)
                 break;
             

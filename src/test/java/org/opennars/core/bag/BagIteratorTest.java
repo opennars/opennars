@@ -26,7 +26,6 @@ package org.opennars.core.bag;
 import org.junit.Test;
 import org.opennars.perf.BagPerf.NullItem;
 import org.opennars.storage.Bag;
-import org.opennars.storage.LevelBag;
 import static org.junit.Assert.assertTrue;
 import org.opennars.main.Nar;
 
@@ -55,14 +54,15 @@ public class BagIteratorTest {
         assertTrue(count==b.size());
     }
     
-    public int numEmptyLevels(LevelBag bag) {
-        int empty = 0;
+    public int numEmptyLevels(Bag bag) {
+        /*int empty = 0;
         for (int i = 0; i < bag.level.length; i++) {
             if (bag.level[i].isEmpty()) {
                 empty++;
             }
         }
-        return empty;
+        return empty;*/
+        return 0;
     }
     
     public void testBagIterator(final Bag<NullItem,CharSequence> b) {
@@ -76,7 +76,7 @@ public class BagIteratorTest {
         b.putIn(new NullItem(0.7f));
         b.putIn(new NullItem(0.8f));
 
-        assert !(b instanceof LevelBag) || (numEmptyLevels((LevelBag) b) < L);
+        assert !(b instanceof Bag) || (numEmptyLevels((Bag) b) < L);
         
         testIterator(b);
         
@@ -93,7 +93,7 @@ public class BagIteratorTest {
     @Test
     public void testBags() throws Exception {
         Nar nar = new Nar();
-        testBagIterator(new LevelBag(L, L*2, nar.narParameters));
+        testBagIterator(new Bag(L, L*2, nar.narParameters));
         assert(true);
     }
     

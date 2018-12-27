@@ -191,7 +191,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         Concept concept;
 
         synchronized (concepts) {
-            concept = concepts.take(term);
+            concept = concepts.pickOut(term);
 
             //see if concept is active
             if (concept == null) {
@@ -437,7 +437,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param time indirection to retrieve time
      */
     public void processNovelTask(Parameters narParameters, final Timable time) {
-        final Task task = novelTasks.takeNext();
+        final Task task = novelTasks.takeOut();
         if (task != null) {            
             localInference(task, narParameters, time);
         }

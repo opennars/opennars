@@ -45,7 +45,7 @@ import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
-import org.opennars.storage.LevelBag;
+import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 import org.xml.sax.SAXException;
 
@@ -195,10 +195,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         final Memory m = new Memory(this.narParameters,
-                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
+                new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
         this.usedConfigFilePath = relativeConfigFilePath;
@@ -218,10 +218,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         overrideParameters(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
-            new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
+            new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
         this.usedConfigFilePath = relativeConfigFilePath;

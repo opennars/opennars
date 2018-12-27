@@ -48,7 +48,7 @@ public class GeneralInferenceControl {
     public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Timable time) {
         final Concept currentConcept;
         synchronized (mem.concepts) { //modify concept bag
-            currentConcept = mem.concepts.takeNext();
+            currentConcept = mem.concepts.takeOut();
             if (currentConcept==null) {
                 return;
             }
@@ -60,12 +60,12 @@ public class GeneralInferenceControl {
         synchronized(currentConcept) { //use current concept (current concept is the resource)  
             ProcessAnticipation.maintainDisappointedAnticipations(narParameters, currentConcept, time);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-                mem.concepts.take(currentConcept.getTerm());
+                mem.concepts.pickOut(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
                 return;
             }
             if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-                mem.concepts.take(currentConcept.getTerm());
+                mem.concepts.pickOut(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
                 return;
             }
@@ -91,7 +91,7 @@ public class GeneralInferenceControl {
             if (nal.currentConcept.taskLinks.size() == 0) {
                 return false;
             }
-            nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
+            nal.currentTaskLink = nal.currentConcept.taskLinks.takeOut();                    
             if (nal.currentTaskLink == null) {
                 return false;
             }
@@ -114,7 +114,7 @@ public class GeneralInferenceControl {
         }
         Concept taskConcept = nal.memory.concept(task.getTerm());
         if(taskConcept != null) { //attempt to act on goals in current attentional focus if they are desired enough
-            ProcessGoal.bestReactionForGoal(nal.memory.concept(task.getTerm()), nal, task.sentence.projection(nal.time.time(), nal.time.time(), nal.memory), task);
+            ProcessGoal.bestReactionForGoal(taskConcept, nal, task.sentence.projection(nal.time.time(), nal.time.time(), nal.memory), task);
         }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);

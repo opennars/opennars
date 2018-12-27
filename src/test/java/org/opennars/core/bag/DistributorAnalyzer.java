@@ -37,11 +37,11 @@ public class DistributorAnalyzer {
     @Test public void testDistributorProbabilities() {
         
         final int levels = 20;
-        final Distributor d = Distributor.get(levels);
+        final Distributor d = new Distributor(levels);
         final int[] count = new int[levels];
         
         double total = 0;
-        for (final short x : d.order) {
+        for (final int x : d.order) {
             count[x]++;
             total++;
         }

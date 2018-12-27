@@ -30,7 +30,6 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
 import org.opennars.main.Nar;
 import org.opennars.storage.Bag;
-import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 
@@ -80,31 +79,33 @@ public class BagPerf {
     int randomAccesses;
     final double insertRatio = 0.9;
     
-    public int getLevelSize(LevelBag lb, final int level) {
+    /*public int getLevelSize(Bag lb, final int level) {
         return (lb.level[level] == null) ? 0 : lb.level[level].size();
-    }
+    }*/
 
     
-    public float getMaxItemsPerLevel(LevelBag b) {
-        int max = getLevelSize(b,0);
+    public float getMaxItemsPerLevel(Bag b) {
+        /*int max = getLevelSize(b,0);
         for (int i = 1; i < b.levels; i++) {
             final int s = getLevelSize(b,i);
             if (s > max) {
                 max = s;
             }
         }
-        return max;
+        return max;*/
+        return 0.0f;
     }
 
-    public float getMinItemsPerLevel(LevelBag b) {
-        int min = getLevelSize(b,0);
+    public float getMinItemsPerLevel(Bag b) {
+        /*int min = getLevelSize(b,0);
         for (int i = 1; i < b.levels; i++) {
             final int s = getLevelSize(b,i);
             if (s < min) {
                 min = s;
             }
         }
-        return min;
+        return min; */
+        return 0;
     }
     
     public float totalPriority, totalMinItemsPerLevel, totalMaxItemsPerLevel;
@@ -142,7 +143,7 @@ public class BagPerf {
                 } catch (ParseException ex) {
                     Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                final LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity, nar.narParameters) {
+                final Bag<NullItem,CharSequence> b = new Bag(levels, capacity, nar.narParameters) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
@@ -200,7 +201,7 @@ public class BagPerf {
         for (int i = 0; i < accesses; i++) {
             if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
-                b.takeNext();
+                b.takeOut();
             }
             else {
                 //insert
@@ -307,8 +308,8 @@ public class BagPerf {
                 final int iterations = iterationsPerItem * items;
                 final int randomAccesses = accessesPerItem * items;
 
-                final Bag[] bags = new LevelBag[1];
-                bags[0] = new LevelBag(levels, items, narParameters);
+                final Bag[] bags = new Bag[1];
+                bags[0] = new Bag(levels, items, narParameters);
 
 
                 final Map<Bag, Double> t = BagPerf.compare(
