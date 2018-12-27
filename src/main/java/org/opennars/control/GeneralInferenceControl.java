@@ -112,10 +112,6 @@ public class GeneralInferenceControl {
         if(nal.memory.emotion != null) {
             nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
         }
-        Concept taskConcept = nal.memory.concept(task.getTerm());
-        if(taskConcept != null) { //attempt to act on goals in current attentional focus if they are desired enough
-            ProcessGoal.bestReactionForGoal(taskConcept, nal, task.sentence.projection(nal.time.time(), nal.time.time(), nal.memory), task);
-        }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
             //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
