@@ -472,6 +472,14 @@ public class Concept extends Item<Term> implements Serializable {
                 append(" ").append(title).append(':').append(itemString).toString();
     }
     
+    
+    public float acquiredQuality = 0.0f;
+    public void incAcquiredQuality() {
+        acquiredQuality+=0.1f;
+        if(acquiredQuality > 1.0f) {
+            acquiredQuality = 1.0f;
+        }
+    }
     /**
      * Recalculate the quality of the concept [to be refined to show
      * extension/intension balance]
@@ -482,12 +490,11 @@ public class Concept extends Item<Term> implements Serializable {
     public float getQuality() {
         final float linkPriority = termLinks.getAveragePriority();
         final float termComplexityFactor = 1.0f / (term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT);
-        final float result = or(linkPriority, termComplexityFactor);
+        final float result = or(acquiredQuality, linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new IllegalStateException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
         }
         return result;
-
     }
 
     /**

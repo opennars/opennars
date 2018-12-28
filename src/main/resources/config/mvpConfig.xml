@@ -32,7 +32,7 @@
     <conf name="DEFAULT_QUEST_DURABILITY" value="0.9"/>
     
     <conf name="BAG_THRESHOLD" value="1.0"/>
-    <conf name="FORGET_QUALITY_RELATIVE" value="0.1"/>
+    <conf name="FORGET_QUALITY_RELATIVE" value="0.4"/>
     <conf name="REVISION_MAX_OCCURRENCE_DISTANCE" value="10"/>
     
     <conf name="TASK_LINK_BAG_SIZE" value="100"/>

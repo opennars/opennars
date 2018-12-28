@@ -111,7 +111,7 @@ public class Parameters implements Serializable {
     public float BAG_THRESHOLD = 1.0f;
 
     /** (see its use in budgetfunctions iterative forgetting) */
-    public volatile float QUALITY_RESCALED = 0.1f;
+    public volatile float FORGET_QUALITY_RELATIVE = 0.4f;
 
     public volatile int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 

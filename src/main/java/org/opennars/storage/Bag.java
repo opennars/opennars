@@ -150,7 +150,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
      * @return the item which was removed, or null if none removed
      */    
     public Type putBack(final Type oldItem, final float forgetCycles, final Memory m) {
-        final float relativeThreshold = m.narParameters.QUALITY_RESCALED;
+        final float relativeThreshold = m.narParameters.FORGET_QUALITY_RELATIVE;
         BudgetFunctions.applyForgetting(oldItem.budget, forgetCycles, relativeThreshold);
         return putIn(oldItem);
     }

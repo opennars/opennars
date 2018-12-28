@@ -268,6 +268,7 @@ public class ProcessGoal {
     * @param task The goal task
     */
     public static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
+        concept.incAcquiredQuality(); //useful as it is represents a goal concept that can hold important procedure knowledge
         //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
         List<Task> allPreconditions = new ArrayList<Task>();
@@ -278,13 +279,18 @@ public class ProcessGoal {
             }
             //pull variable based preconditions from component concepts
             synchronized(get_concept) {
+                boolean useful_component = false;
                 for(Task precon : get_concept.general_executable_preconditions) {
                     //check whether the conclusion matches
                     if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new HashMap<>(), new HashMap<>())) {
                         for(Task prec : get_concept.general_executable_preconditions) {
-                            allPreconditions.add(prec);           
+                            allPreconditions.add(prec);   
+                            useful_component = true;
                         }
                     }
+                }
+                if(useful_component) {
+                    get_concept.incAcquiredQuality(); //useful as it contributed predictive hypotheses
                 }
             }
         }
