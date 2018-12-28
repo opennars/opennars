@@ -174,6 +174,11 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
             }
         }
         Type selected = takeOutFirst(currentLevel); // take out the first item in the level
+        int belongingLevel = getLevel(selected);
+        if(currentLevel != belongingLevel) {
+            intoBase(selected);
+            return takeOut();
+        }
         currentCounter--;
         nameTable.remove(selected.name());
         return selected;

@@ -18,4 +18,4 @@
 <{?who} --> murder>?
 10000
 ''outputMustContain('<{tim} --> murder>. %0.50;0.43%')
-''outputMustContain('<{tom} --> murder>. %1.00;0.59%')
+''outputMustContain('<{tom} --> murder>. %1.00;0.25%')

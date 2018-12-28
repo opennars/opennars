@@ -11,4 +11,4 @@
 (&&,<#1 --> object>,<#1 --> [unscrewing]>)!
 200000
 ''outputMustContain('(^lighter,{SELF},cup)! %1.00;0.39%')
-''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.25%')
+''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.24%')
