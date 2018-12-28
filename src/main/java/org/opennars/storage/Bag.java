@@ -39,8 +39,6 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
     private final int TOTAL_LEVEL;
     /** firing threshold */
     private final int THRESHOLD;
-    /** relative threshold, only calculate once */
-    private final float RELATIVE_THRESHOLD;
     /** shared DISTRIBUTOR that produce the probability distribution */
     private Distributor DISTRIBUTOR;
     /** mapping from key to item */
@@ -68,7 +66,6 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         this.TOTAL_LEVEL = levels;
         DISTRIBUTOR = new Distributor(TOTAL_LEVEL); 
         this.THRESHOLD = thresholdLevel;
-        this.RELATIVE_THRESHOLD = (float) THRESHOLD / (float) TOTAL_LEVEL;
         this.capacity = capacity;
         clear();
     }

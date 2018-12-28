@@ -2,7 +2,7 @@
 <0 --> number>.
 <(/,successor,(/,successor,0,_),_) --> number>?
 
-100
+20000
 
 ''outputMustContain('<(/,successor,0,_) --> number>.')
 ''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')

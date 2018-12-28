@@ -10,9 +10,9 @@
 
 ''outputMustContain('<boy --> (/,taller_than,{Tom},_)>. %0.00;0.45%')
 
-''outputMustContain('<{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62%')
+''outputMustContain('<{Tom} --> (/,taller_than,_,boy)>. %1.00;0.62%')
 1
 <{Karl} --> boy>. 
 <{Karl} --> (/,taller_than,{Tom},_)>.
-3000
+50000
 ''outputMustContain('<boy --> (/,taller_than,{Tom},_)>. %0.67;0.71%')
