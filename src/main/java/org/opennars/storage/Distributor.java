@@ -23,10 +23,12 @@
  */
 package org.opennars.storage;
 
+import java.io.Serializable;
+
 /**
  * A pseudo-random number generator, used in Bag.
  */
-public class Distributor {
+public class Distributor implements Serializable {
 
     /** Shuffled sequence of index numbers */
     public int order[];
