@@ -50,7 +50,7 @@ import java.util.*;
  */
 public class Term implements AbstractTerm, Serializable {
     public ImaginationSpace imagination;
-    private static final Map<CharSequence,Term> atoms = new HashMap();
+    private static final Map<CharSequence,Term> atoms = new LinkedHashMap();
 
     final public static Term SELF = SetExt.make(Term.get("SELF"));
     final public static Term SEQ_SPATIAL = Term.get("#");
@@ -326,7 +326,7 @@ public class Term implements AbstractTerm, Serializable {
      */
     public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
         if(map == null) {
-            map = new HashMap<Term, Integer>();
+            map = new LinkedHashMap<Term, Integer>();
         }
         map.put(this, map.getOrDefault(this, 0) + 1);
         return map;

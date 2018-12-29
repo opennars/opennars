@@ -30,10 +30,10 @@ import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.operator.Operation;
-import org.opennars.storage.LevelBag;
+import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -82,12 +82,12 @@ public class TemporalInferenceControl {
             return false;
        }
 
-        final Set<Task> already_attempted = new HashSet<>();
-        final Set<Task> already_attempted_ops = new HashSet<>();
+        final Set<Task> already_attempted = new LinkedHashSet<>();
+        final Set<Task> already_attempted_ops = new LinkedHashSet<>();
         //Sequence formation:
         for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             synchronized(nal.memory.seq_current) {
-                final Task takeout = nal.memory.seq_current.takeNext();
+                final Task takeout = nal.memory.seq_current.takeOut();
                 if(takeout == null) {
                     break; //there were no elements in the bag to try
                 }
@@ -108,7 +108,7 @@ public class TemporalInferenceControl {
             already_attempted_ops.clear();
             for(int k = 0; k<nal.narParameters.OPERATION_SAMPLES;k++) {
                 already_attempted.clear(); //todo move into k loop
-                final Task Toperation = k == 0 ? nal.memory.lastDecision : nal.memory.recent_operations.takeNext();
+                final Task Toperation = k == 0 ? nal.memory.lastDecision : nal.memory.recent_operations.takeOut();
                 if(Toperation == null) {
                     break; //there were no elements in the bag to try
                 }
@@ -122,10 +122,10 @@ public class TemporalInferenceControl {
                 final Concept opc = nal.memory.concept(Toperation.getTerm());
                 if(opc != null) {
                     if(opc.seq_before == null) {
-                        opc.seq_before = new LevelBag<>(nal.narParameters.SEQUENCE_BAG_LEVELS, nal.narParameters.SEQUENCE_BAG_SIZE, nal.narParameters);
+                        opc.seq_before = new Bag<>(nal.narParameters.SEQUENCE_BAG_LEVELS, nal.narParameters.SEQUENCE_BAG_SIZE, nal.narParameters);
                     }
                     for(int i = 0; i<nal.narParameters.CONDITION_BAG_ATTEMPTS; i++) {
-                        final Task takeout = opc.seq_before.takeNext();
+                        final Task takeout = opc.seq_before.takeOut();
                         if(takeout == null) {
                             break; //there were no elements in the bag to try
                         }
@@ -191,7 +191,7 @@ public class TemporalInferenceControl {
                 }
             }
             if (removal != null) {
-                nal.memory.seq_current.take(removal);
+                nal.memory.seq_current.pickOut(removal);
             }
 
             //ok now add the new one:
@@ -222,7 +222,7 @@ public class TemporalInferenceControl {
             }
         }
         for(final Task t : toRemove) {
-            mem.recent_operations.take(t);
+            mem.recent_operations.pickOut(t);
         }
         task.setPriority(BudgetFunctions.or(task.getPriority(), priorityGain)); //this way operations priority of previous exections
         mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
@@ -231,7 +231,7 @@ public class TemporalInferenceControl {
         synchronized(mem.seq_current) {
             if(c != null) {
                 if(c.seq_before == null) {
-                    c.seq_before = new LevelBag<>(mem.narParameters.SEQUENCE_BAG_LEVELS, mem.narParameters.SEQUENCE_BAG_SIZE, mem.narParameters);
+                    c.seq_before = new Bag<>(mem.narParameters.SEQUENCE_BAG_LEVELS, mem.narParameters.SEQUENCE_BAG_SIZE, mem.narParameters);
                 }
                 for(final Task t : mem.seq_current) {
                     if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {

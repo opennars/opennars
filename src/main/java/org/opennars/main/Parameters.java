@@ -111,7 +111,7 @@ public class Parameters implements Serializable {
     public float BAG_THRESHOLD = 1.0f;
 
     /** (see its use in budgetfunctions iterative forgetting) */
-    public volatile float QUALITY_RESCALED = 0.1f;
+    public volatile float FORGET_QUALITY_RELATIVE = 0.4f;
 
     public volatile int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 
@@ -236,9 +236,12 @@ public class Parameters implements Serializable {
     public volatile boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
     /** eternalized induction confidence to revise A =/&gt; B beliefs */
-    public volatile float ANTICIPATION_CONFIDENCE = 0.33f;
+    public volatile float ANTICIPATION_CONFIDENCE = 0.05f;
 
-    public volatile float ANTICIPATION_TOLERANCE = 50.0f;
+    public volatile float ANTICIPATION_TOLERANCE = 100.0f;
+    
+    /** Retrospective anticipation, allow to check memory for content in case of anticipation (potential issue with forgetting) */
+    public boolean RETROSPECTIVE_ANTICIPATIONS = false;
     
     public volatile float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
@@ -270,6 +273,9 @@ public class Parameters implements Serializable {
     /** Maximum attempted combinations in variable introduction.*/
     public volatile int VARIABLE_INTRODUCTION_COMBINATIONS_MAX = 8;
     
+    /** How much confidence should be penalized per introduced var */
+    public volatile float VARIABLE_INTRODUCTION_CONFIDENCE_MUL = 0.9f;
+    
     /** Maximum anticipations about its content stored in a concept */
     public volatile int ANTICIPATIONS_PER_CONCEPT_MAX = 8;
     
@@ -284,4 +290,5 @@ public class Parameters implements Serializable {
     
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
+    
 }

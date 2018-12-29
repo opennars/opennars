@@ -32,7 +32,7 @@
     <conf name="DEFAULT_QUEST_DURABILITY" value="0.9"/>
     
     <conf name="BAG_THRESHOLD" value="1.0"/>
-    <conf name="FORGET_QUALITY_RELATIVE" value="0.1"/>
+    <conf name="FORGET_QUALITY_RELATIVE" value="0.4"/>
     <conf name="REVISION_MAX_OCCURRENCE_DISTANCE" value="10"/>
     
     <conf name="TASK_LINK_BAG_SIZE" value="100"/>
@@ -94,12 +94,10 @@
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
-    <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
-    <conf name="ANTICIPATION_TOLERANCE" value="50.0"/>
+    <conf name="ANTICIPATION_CONFIDENCE" value="0.05"/>
+    <conf name="ANTICIPATION_TOLERANCE" value="100.0"/>
+    <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
-    <conf name="CONSIDER_NEW_OPERATION_BIAS" value="0.05"/>
-    <conf name="TEMPORAL_INDUCTION_PRIORITY_PENALTY" value="1.0"/>
-    <conf name="AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES" value="500"/>
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
     <conf name="COMPLEXITY_UNIT" value="1.0"/>
     
@@ -115,6 +113,7 @@
     <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
     
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
+    <conf name="VARIABLE_INTRODUCTION_CONFIDENCE_MUL" value="0.9"/>
     <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
 
     <conf name="THREADS_AMOUNT" value="1"/>

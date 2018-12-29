@@ -45,7 +45,7 @@ import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
-import org.opennars.storage.LevelBag;
+import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 import org.xml.sax.SAXException;
 
@@ -84,7 +84,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v3.0.0";
+    public static final String VERSION = "Open-NARS v3.0.1";
 
     /**
      * The project web sites.
@@ -96,7 +96,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
     private transient Thread[] threads = null;
-    protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
+    protected transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
@@ -121,7 +121,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
-        ret.sensoryChannels = new HashMap<>();
+        ret.sensoryChannels = new LinkedHashMap<>();
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
         for(Plugin p : pluginsToAdd) {
             ret.addPlugin(p);
@@ -195,10 +195,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         final Memory m = new Memory(this.narParameters,
-                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
-                new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
+                new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
         this.usedConfigFilePath = relativeConfigFilePath;
@@ -218,10 +218,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         overrideParameters(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
-            new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
-            new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
+            new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+            new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
         this.usedConfigFilePath = relativeConfigFilePath;
@@ -527,7 +527,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     /** remove event handler */
     public void off(final Class c, final EventObserver o) {
-        memory.event.on(c, o);
+        memory.event.off(c, o);
     }
 
     /** set an event handler. useful for multiple events. */

@@ -24,6 +24,7 @@
 package org.opennars.control;
 
 import org.opennars.control.concept.ProcessAnticipation;
+import org.opennars.control.concept.ProcessGoal;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
@@ -47,7 +48,7 @@ public class GeneralInferenceControl {
     public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Timable time) {
         final Concept currentConcept;
         synchronized (mem.concepts) { //modify concept bag
-            currentConcept = mem.concepts.takeNext();
+            currentConcept = mem.concepts.takeOut();
             if (currentConcept==null) {
                 return;
             }
@@ -57,14 +58,14 @@ public class GeneralInferenceControl {
         boolean putBackConcept = false;
         float forgetCycles = 0.0f;
         synchronized(currentConcept) { //use current concept (current concept is the resource)  
-            ProcessAnticipation.maintainDisappointedAnticipations(currentConcept, time);
+            ProcessAnticipation.maintainDisappointedAnticipations(narParameters, currentConcept, time);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-                mem.concepts.take(currentConcept.getTerm());
+                mem.concepts.pickOut(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
                 return;
             }
             if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-                mem.concepts.take(currentConcept.getTerm());
+                mem.concepts.pickOut(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
                 return;
             }
@@ -90,7 +91,7 @@ public class GeneralInferenceControl {
             if (nal.currentConcept.taskLinks.size() == 0) {
                 return false;
             }
-            nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
+            nal.currentTaskLink = nal.currentConcept.taskLinks.takeOut();                    
             if (nal.currentTaskLink == null) {
                 return false;
             }

@@ -46,6 +46,7 @@ import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 
@@ -110,9 +111,11 @@ public class ProcessAnticipation {
      * Process outdated anticipations within the concept,
      * these which are outdated generate negative feedback
      * 
+     * @param narParameters The reasoner parameters
      * @param concept The concept which potentially outdated anticipations should be processed
+     * @param time The time
      */
-    public static void maintainDisappointedAnticipations(final Concept concept, final Timable time) {
+    public static void maintainDisappointedAnticipations(final Parameters narParameters, final Concept concept, final Timable time) {
         //here we can check the expiration of the feedback:
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         List<Concept.AnticipationEntry> disappointed = new ArrayList<>();
@@ -122,14 +125,16 @@ public class ProcessAnticipation {
             }
             //at first search beliefs for input tasks:
             boolean gotConfirmed = false;
-            for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
-                final Task t = tl.targetTask;
-                if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                        CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
-                    if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
-                        confirmed.add(entry);
-                        gotConfirmed = true;
-                        break;
+            if(narParameters.RETROSPECTIVE_ANTICIPATIONS) {
+                for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
+                    final Task t = tl.targetTask;
+                    if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
+                            CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
+                        if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
+                            confirmed.add(entry);
+                            gotConfirmed = true;
+                            break;
+                        }
                     }
                 }
             }

@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -58,10 +58,10 @@ public class AttentionTest {
         final int c = Iterables.size(n.memory.concepts);
         assertTrue(c > 32);
         
-        final Set<Concept> uniqueconcepts = new HashSet();
+        final Set<Concept> uniqueconcepts = new LinkedHashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            final Concept s = n.memory.concepts.takeNext();
+            final Concept s = n.memory.concepts.takeOut();
             n.memory.concepts.putIn(s);
             uniqueconcepts.add(s);
         }

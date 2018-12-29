@@ -25,7 +25,7 @@ package org.opennars.language;
 
 import org.opennars.io.Texts;
 import java.nio.CharBuffer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.opennars.io.Symbols.*;
@@ -315,7 +315,7 @@ public class Variable extends Term {
     @Override
     public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
         if(map == null) {
-            map = new HashMap<Term, Integer>();
+            map = new LinkedHashMap<Term, Integer>();
         }
         return map; //don't count vars
     }

@@ -27,9 +27,10 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.storage.Memory;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -39,8 +40,8 @@ import java.util.Set;
  */
 public class Variables {
     
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2) {
-        return findSubstitute(type, term1, term2, new Map[] { map1, map2 });
+    public static boolean findSubstitute(Random rnd, final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2) {
+        return findSubstitute(rnd, type, term1, term2, new Map[] { map1, map2 });
     }
     
     public static boolean allowUnification(final char type, final char uniType)
@@ -70,10 +71,10 @@ public class Variables {
      * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
      */
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
-        return findSubstitute(type, term1, term2, map, false);
+    public static boolean findSubstitute(Random rnd, final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
+        return findSubstitute(rnd, type, term1, term2, map, false);
     }
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final boolean allowPartial) {
+    public static boolean findSubstitute(Random rnd, final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final boolean allowPartial) {
 
         boolean term1HasVar = term1.hasVar(type);
         if(type == Symbols.VAR_INDEPENDENT) {
@@ -101,10 +102,10 @@ public class Variables {
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
 
                         if(map[0] == null) {
-                            map[0] = new HashMap<>();
+                            map[0] = new LinkedHashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<>();
+                            map[1] = new LinkedHashMap<>();
                         }
 
                         final Map<Term, Term>[] mapk = copyMapFrom(map);
@@ -113,7 +114,7 @@ public class Variables {
                             final int i = j-k;
                             final Map<Term, Term>[] mapNew = copyMapFrom(map);
                             //attempt unification:
-                            if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
+                            if(findSubstitute(rnd, type,c1.term[i],c2.term[j],mapNew)) {
                                 appendToMap(mapNew[0], mapk[0]);
                                 appendToMap(mapNew[1], mapk[1]);
                             } else { //another shift k is needed
@@ -142,7 +143,7 @@ public class Variables {
             final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
                 final Variable CommonVar = makeCommonVariable(term1, term2);
-                if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
+                if (map[0] == null) {  map[0] = new LinkedHashMap<>(); map[1] = new LinkedHashMap<>(); }
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
                 return true;
@@ -157,8 +158,14 @@ public class Variables {
             Term termA = term1VarUnifyAllowed ? term1 : term2;
             Term termB = term1VarUnifyAllowed ? term2 : term1;
             Variable termAAsVariable = (Variable)termA;
+            //https://github.com/opennars/opennars/issues/482:
+            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
+            final Term t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
+            if (t != null) {
+                return findSubstitute(rnd, type, t, termB, map);
+            }
 
-            if (map[0] == null) {  map[0] = new HashMap<>(); map[1] = new HashMap<>(); }
+            if (map[0] == null) {  map[0] = new LinkedHashMap<>(); map[1] = new LinkedHashMap<>(); }
 
             if (term1VarUnifyAllowed) {
 
@@ -219,12 +226,12 @@ public class Variables {
             }
             final Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
-                CompoundTerm.shuffle(list, Memory.randomNumber);
+                CompoundTerm.shuffle(list, rnd);
                 //ok attempt unification
                 if(list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
+                final Set<Integer> matchedJ = new LinkedHashSet<>(list.length * 2);
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
@@ -235,15 +242,15 @@ public class Variables {
                         //clone map also:
 
                         if(map[0] == null) {
-                            map[0] = new HashMap<>();
+                            map[0] = new LinkedHashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<>();
+                            map[1] = new LinkedHashMap<>();
                         }
 
                         final Map<Term, Term>[] mapNew = copyMapFrom(map);
                         //attempt unification:
-                        if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
+                        if(findSubstitute(rnd, type,ti,cTerm2.term[j],mapNew)) {
                             appendToMap(mapNew[0], map[0]);
                             appendToMap(mapNew[1], map[1]);
                             succeeded = true;
@@ -260,7 +267,7 @@ public class Variables {
             for (int i = 0; i < cTerm1.size(); i++) {
                 final Term t1 = list[i];
                 final Term t2 = cTerm2.term[i];
-                if (!findSubstitute(type, t1, t2, map)) {
+                if (!findSubstitute(rnd, type, t1, t2, map)) {
                     return false;
                 }
             }
@@ -275,10 +282,10 @@ public class Variables {
      * @return copied maps
      */
     private static Map<Term, Term>[] copyMapFrom(Map<Term, Term>[] source) {
-        final Map<Term, Term>[] destination = (Map<Term, Term>[]) new HashMap<?,?>[2];
+        final Map<Term, Term>[] destination = (Map<Term, Term>[]) new LinkedHashMap<?,?>[2];
 
-        destination[0] = new HashMap<>();
-        destination[1] = new HashMap<>();
+        destination[0] = new LinkedHashMap<>();
+        destination[1] = new LinkedHashMap<>();
 
         appendToMap(source[0], destination[0]);
         appendToMap(source[1], destination[1]);
@@ -328,8 +335,8 @@ public class Variables {
      * @param t The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term[] t) {
-        return unify(type, t[0], t[1], t);
+    public static boolean unify(Random rnd, final char type, final Term[] t) {
+        return unify(rnd, type, t[0], t[1], t);
     }
 
  
@@ -342,13 +349,13 @@ public class Variables {
      * @param compound The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) { 
-        return unify(type, t1, t2, compound, false);
+    public static boolean unify(Random rnd, final char type, final Term t1, final Term t2, final Term[] compound) { 
+        return unify(rnd, type, t1, t2, compound, false);
     }
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound, final boolean allowPartial) {
+    public static boolean unify(Random rnd, final char type, final Term t1, final Term t2, final Term[] compound, final boolean allowPartial) {
         final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
         
-        final boolean hasSubs = findSubstitute(type, t1, t2, map, allowPartial);
+        final boolean hasSubs = findSubstitute(rnd, type, t1, t2, map, allowPartial);
         if (hasSubs) {
             final Term a = (compound[0] instanceof Variable && map[0].containsKey(compound[0])) ? 
                             map[0].get(compound[0]) : 
@@ -430,8 +437,8 @@ public class Variables {
      * @param term2 The second term to be unified
      * @return Whether there is a substitution
      */
-    public static boolean hasSubstitute(final char type, final Term term1, final Term term2) {
-        return findSubstitute(type, term1, term2, new HashMap<>(), new HashMap<>());
+    public static boolean hasSubstitute(Random rnd, final char type, final Term term1, final Term term2) {
+        return findSubstitute(rnd, type, term1, term2, new LinkedHashMap<>(), new LinkedHashMap<>());
     }
     
 }

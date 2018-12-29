@@ -325,8 +325,8 @@ public class Terms {
             }
         }
 
-        final Set<Term> componentsA = new HashSet(1+sat.length);
-        final Set<Term> componentsB = new HashSet(1+sbt.length);
+        final Set<Term> componentsA = new LinkedHashSet(1+sat.length);
+        final Set<Term> componentsB = new LinkedHashSet(1+sbt.length);
 
         componentsA.add(ta);
         Collections.addAll(componentsA, sat);

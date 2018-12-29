@@ -721,7 +721,7 @@ public final class StructuralRules {
      * @author Robert Wünsche
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
-        if(!(compound instanceof Conjunction)) {
+        if(!(compound instanceof Conjunction) || index >= compound.size()) {
             return;
         }
 
@@ -734,7 +734,7 @@ public final class StructuralRules {
         final boolean hasRight = index < (compound.size() - 1);
 
         if (hasLeft) {
-            final int sliceStartIndexInclusive = Memory.randomNumber.nextInt(index - 1 + 1 /* inclusive */); //if index-1 it would have length 1, no group
+            final int sliceStartIndexInclusive = nal.memory.randomNumber.nextInt(index - 1 + 1 /* inclusive */); //if index-1 it would have length 1, no group
             final int sliceEndIndexInclusive = index;
 
             final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);
@@ -749,7 +749,7 @@ public final class StructuralRules {
             {
                 final int randminInclusive = index + 1;
                 final int randmaxInclusive = compound.size() - 1;
-                sliceEndIndexInclusive = Memory.randomNumber.nextInt(randmaxInclusive - randminInclusive + 1 /*inclusive*/) + randminInclusive;
+                sliceEndIndexInclusive = nal.memory.randomNumber.nextInt(randmaxInclusive - randminInclusive + 1 /*inclusive*/) + randminInclusive;
             }
 
             final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);

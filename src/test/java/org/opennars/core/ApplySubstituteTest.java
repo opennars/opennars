@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
@@ -58,7 +58,7 @@ public class ApplySubstituteTest {
         final String xyS ="<x --> y>";
         final Term xy = np.parseTerm(xyS);
         
-        final Map<Term,Term> h = new HashMap();
+        final Map<Term,Term> h = new LinkedHashMap();
         h.put(np.parseTerm("b"), xy);
         final CompoundTerm c = ab.applySubstituteToCompound(h);
                 
@@ -76,7 +76,7 @@ public class ApplySubstituteTest {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         final Nar n = new Nar();
             
-        final Map<Term,Term> h = new HashMap();
+        final Map<Term,Term> h = new LinkedHashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        
         final CompoundTerm c = ((CompoundTerm)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
         

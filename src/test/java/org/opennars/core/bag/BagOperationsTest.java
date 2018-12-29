@@ -30,7 +30,6 @@ import org.opennars.entity.Item;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.storage.Bag;
-import org.opennars.storage.LevelBag;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -85,7 +84,7 @@ public class BagOperationsTest {
     public void testConcept() throws Exception {
         Nar nar = new Nar();
         this.narParameters = nar.narParameters;
-        testBagSequence(new LevelBag(2, 2, nar.narParameters));    
+        testBagSequence(new Bag(2, 2, nar.narParameters));    
     }
 
     public static float getMinPriority(Bag<Concept,Term> bag) {
@@ -134,12 +133,12 @@ public class BagOperationsTest {
         assertEquals(0.4f, getMaxPriority(b),0.001f);
         
         
-        final Item tb = b.take(new Term("b"));
+        final Item tb = b.pickOut(new Term("b"));
         assertTrue(tb!=null);
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
-        final Item tc = b.takeNext();
+        final Item tc = b.takeOut();
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         
@@ -148,7 +147,7 @@ public class BagOperationsTest {
         assertEquals(null, b.putIn(makeConcept("a", 0.2f)));
         assertEquals(null, b.putIn(makeConcept("b", 0.3f)));
         
-        if (b instanceof LevelBag) {
+        if (b instanceof Bag) {
             assertEquals("a", b.putIn(makeConcept("c", 0.1f)).name().toString()); //replaces item on level
         }
         

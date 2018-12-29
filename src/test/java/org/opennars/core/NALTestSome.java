@@ -46,7 +46,7 @@ public class NALTestSome extends NALTest {
     
    public static boolean include(final String filename) {
        //return true; //filename.startsWith("nal6.8.nal");
-       return filename.startsWith("nal1.0.nal");
+       return filename.startsWith("nal4");
    }
 
    
@@ -56,7 +56,7 @@ public class NALTestSome extends NALTest {
 
         File folder = null;
         try {
-            folder = new File(NALTestSome.class.getResource("/nal/single_step").toURI());
+            folder = new File(NALTestSome.class.getResource("/nal/multi_step").toURI());
         } catch (final URISyntaxException e) {
             throw new IllegalStateException("Could not parse URI to nal test files.", e);
         }
