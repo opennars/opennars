@@ -23,8 +23,6 @@
  */
 package org.opennars.entity;
 
-import org.opennars.storage.Memory;
-
 import java.io.Serializable;
 import java.util.Comparator;
 
@@ -258,30 +256,8 @@ public abstract class Item<K> implements Serializable {
             totalPriority+=i.getPriority();
         return totalPriority;
     }
-    
-    /** randomly selects an item from a collection, weighted by priority */
-    public static <E extends Item> E selectRandomByPriority(final Iterable<E> c) {
-        final float totalPriority = getPrioritySum(c);
-        
-        if (totalPriority == 0) return null;
-        
-        float r = Memory.randomNumber.nextFloat() * totalPriority;
-                
-        E s = null;
-        for (final E i : c) {
-            s = i;
-            r -= s.getPriority();
-            if (r < 0)
-                return s;
-        }
-        
-        return s;
-        
-    }
 
     public BudgetValue getBudget() {
         return budget;
     }
-    
-    
 }

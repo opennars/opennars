@@ -29,7 +29,7 @@ public class TemporalOneShotMetric extends AnswerHandler {
 
     private List<String> termNames = new ArrayList<>();
 
-    private Random rng = new Random();
+    private Random rng = new Random(42);
 
     private boolean wasAnswered = false;
 

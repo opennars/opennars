@@ -44,14 +44,14 @@ public class EventEmitter {
         /*if (Parameters.THREADS > 1)
             events = new ConcurrentHashMap<>();
         else*/
-            //events = new HashMap<>();
-        events = new HashMap<>();
+            //events = new LinkedHashMap<>();
+        events = new LinkedHashMap<>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map
      *  can then be made unmodifiable and non-concurrent for speed.    */
     public EventEmitter(final Class... knownEventClasses) {
-        events = new HashMap(knownEventClasses.length);
+        events = new LinkedHashMap(knownEventClasses.length);
         for (final Class c : knownEventClasses) {
             events.put(c, newObserverList());
         }

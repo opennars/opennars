@@ -32,7 +32,7 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 
 import static com.google.common.collect.Iterables.tryFind;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -165,7 +165,7 @@ public class ProcessJudgment {
      * @param nal The derivation context
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal) {
-        Set<Term> targets = new HashSet<Term>();
+        Set<Term> targets = new LinkedHashSet<Term>();
         //add to all components, unless it doesn't have vars
         if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
             targets.add(((Implication)task.getTerm()).getPredicate());

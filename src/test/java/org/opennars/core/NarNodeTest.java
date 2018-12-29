@@ -45,6 +45,7 @@ public class NarNodeTest {
     @Test
     public void testNarToNar() throws UnknownHostException, IOException, SocketException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException, InterruptedException {
+        a = 0; //just in case of a re-test
         int nar1port = 64001;
         int nar2port = 64002;
         String localIP = "127.0.0.1";

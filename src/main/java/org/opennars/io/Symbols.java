@@ -27,7 +27,7 @@ import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.io.events.OutputHandler.IN;
 import org.opennars.io.events.OutputHandler.OUT;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -107,9 +107,9 @@ public class Symbols {
 
 
     protected static final Map<String,NativeOperator> stringToOperator
-        = new HashMap(NativeOperator.values().length * 2);
+        = new LinkedHashMap(NativeOperator.values().length * 2);
     protected static final Map<Character,NativeOperator> charToOperator
-        = new HashMap(NativeOperator.values().length * 2);
+        = new LinkedHashMap(NativeOperator.values().length * 2);
     
     public enum NativeOperator {
         

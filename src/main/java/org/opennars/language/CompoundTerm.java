@@ -432,7 +432,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** Gives a set of all contained term, recursively */
     public Set<Term> getContainedTerms() {
-        final Set<Term> s = new HashSet(getComplexity());
+        final Set<Term> s = new LinkedHashSet(getComplexity());
         for (final Term t : term) {
             s.add(t);
             if (t instanceof CompoundTerm)
@@ -615,7 +615,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     @Override
     public Map<Term, Integer> countTermRecursively(Map<Term,Integer> map) { 
         if(map == null) {
-            map = new HashMap<Term, Integer>();
+            map = new LinkedHashMap<Term, Integer>();
         }
         map.put(this, map.getOrDefault(this, 0) + 1);
         for (final Term term : term) {            
@@ -633,7 +633,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      */
     public static Set<Term> addComponentsRecursively(Term t, Set<Term> components) {
         if(components == null) {
-            components = new HashSet<Term>();
+            components = new LinkedHashSet<Term>();
         }
         components.add(t);
         if(t instanceof CompoundTerm) {

@@ -99,7 +99,7 @@ public class ProcessQuestion {
             boolean newAnswer = false;
             for(final TaskLink t : concept.taskLinks) {
                 final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                if(!t.getTerm().hasVarQuery() && Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, u)) {
                     final Concept c = nal.memory.concept(t.getTerm());
                     if(c == null) {
                         continue; //target concept is already gone
@@ -138,7 +138,7 @@ public class ProcessQuestion {
                     (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
                     boolean newAnswer = false;
                     final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                    if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                    if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, u)) {
                         final Concept c = nal.memory.concept(t.getTerm());
                         if(c == null) {
                             continue; //target doesn't exist anymore

@@ -33,7 +33,7 @@ import org.opennars.operator.Operation;
 import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -82,8 +82,8 @@ public class TemporalInferenceControl {
             return false;
        }
 
-        final Set<Task> already_attempted = new HashSet<>();
-        final Set<Task> already_attempted_ops = new HashSet<>();
+        final Set<Task> already_attempted = new LinkedHashSet<>();
+        final Set<Task> already_attempted_ops = new LinkedHashSet<>();
         //Sequence formation:
         for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             synchronized(nal.memory.seq_current) {

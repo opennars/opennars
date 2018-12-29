@@ -31,8 +31,8 @@ import org.opennars.io.Symbols;
 import org.opennars.language.*;
 import org.opennars.main.MiscFlags;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -481,22 +481,22 @@ public final class CompositionalRules {
         Term P2 = T1.getPredicate();
 
         final Map<Term, Term>
-            res1 = new HashMap<>(),
-            res2 = new HashMap<>(),
-            res3 = new HashMap<>(),
-            res4 = new HashMap<>();
+            res1 = new LinkedHashMap<>(),
+            res2 = new LinkedHashMap<>(),
+            res3 = new LinkedHashMap<>(),
+            res4 = new LinkedHashMap<>();
 
         if (figure == 21) {
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2);
+            Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, P1, S2, res1, res2);
         }
         else if (figure == 12) {
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2);
+            Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, S1, P2, res1, res2);
         }
         else if (figure == 11) {
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2);
+            Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, S1, S2, res1, res2);
         }
         else if (figure == 22) {
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2);
+            Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, P1, P2, res1, res2);
         }
 
         // this part is independent, the rule works if it unifies
@@ -541,7 +541,7 @@ public final class CompositionalRules {
                 for (final Term s1 : ((CompoundTerm) S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
+                    if (Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S1).term) {
                             if (!(s2 instanceof CompoundTerm)) {
                                 continue;
@@ -564,7 +564,7 @@ public final class CompositionalRules {
                 for (final Term s1 : ((CompoundTerm) S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
+                    if (Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
                         for (Term s2 : ((CompoundTerm) S2).term) {
                             if (!(s2 instanceof CompoundTerm)) {
                                 continue;
@@ -601,7 +601,7 @@ public final class CompositionalRules {
         for (final Term s1 : p2.term) {
             res3.clear();
             res4.clear(); //here the dependent part matters, see example of Issue40
-            if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, p1, res3, res4)) {
+            if (Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, s1, p1, res3, res4)) {
                 eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, p2, res3, s1);
             }
         }
@@ -676,16 +676,16 @@ public final class CompositionalRules {
      * @return 
      */
     public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
-        Set<Set<T>> sets = new HashSet<Set<T>>();
+        Set<Set<T>> sets = new LinkedHashSet<Set<T>>();
         if (originalSet.isEmpty()) {
-            sets.add(new HashSet<T>());
+            sets.add(new LinkedHashSet<T>());
             return sets;
         }
         List<T> list = new ArrayList<T>(originalSet);
         T head = list.get(0);
-        Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+        Set<T> rest = new LinkedHashSet<T>(list.subList(1, list.size())); 
         for (Set<T> set : powerSet(rest)) {
-            Set<T> newSet = new HashSet<T>();
+            Set<T> newSet = new LinkedHashSet<T>();
             newSet.add(head);
             newSet.addAll(set);
             sets.add(newSet);
@@ -703,7 +703,7 @@ public final class CompositionalRules {
      * @return The terms of the variable introduction variants plus the penalty from the amount of vars introduced
      */
     public static Set<Pair<Term,Float>> introduceVariables(DerivationContext nal, Term implicationEquivalenceOrJunction, boolean subject) {
-        HashSet<Pair<Term, Float>> result = new HashSet<>();
+        Set<Pair<Term, Float>> result = new LinkedHashSet<>();
         boolean validForIntroduction =  implicationEquivalenceOrJunction instanceof Conjunction ||
                                         implicationEquivalenceOrJunction instanceof Disjunction ||
                                         implicationEquivalenceOrJunction instanceof Equivalence ||
@@ -711,8 +711,8 @@ public final class CompositionalRules {
         if(!validForIntroduction) {
             return result;
         }
-        final Map<Term,Term> app = new HashMap<>();
-        Set<Term> candidates = new HashSet<>();
+        final Map<Term,Term> app = new LinkedHashMap<>();
+        Set<Term> candidates = new LinkedHashSet<>();
         if(implicationEquivalenceOrJunction instanceof Implication || implicationEquivalenceOrJunction instanceof Equivalence) {
             addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getSubject(),   subject);
             addVariableCandidates(candidates, ((Statement)implicationEquivalenceOrJunction).getPredicate(), subject);
@@ -743,8 +743,8 @@ public final class CompositionalRules {
         for(Term t : app.keySet()) {
             shuffledVariables.add(t);
         }
-        Collections.shuffle(shuffledVariables, Memory.randomNumber);
-        HashSet<Term> selected = new HashSet<Term>();
+        Collections.shuffle(shuffledVariables, nal.memory.randomNumber);
+        Set<Term> selected = new LinkedHashSet<Term>();
         int i = 1;
         for(Term t : shuffledVariables) {
             selected.add(t);
@@ -755,7 +755,7 @@ public final class CompositionalRules {
         }
         Set<Set<Term>> powerset = powerSet(selected);
         for(Set<Term> combo : powerset) {
-            Map<Term,Term> mapping = new HashMap<>();
+            Map<Term,Term> mapping = new LinkedHashMap<>();
             for(Term vIntro : combo) {
                 mapping.put(vIntro, app.get(vIntro));
             }
@@ -795,7 +795,7 @@ public final class CompositionalRules {
                 Term subjT = inh.getSubject();
                 Term predT = inh.getPredicate();
                 boolean addSubject = subject || subjT instanceof ImageInt; //also allow for images due to equivalence transform
-                Set<Term> removals = new HashSet<Term>();
+                Set<Term> removals = new LinkedHashSet<Term>();
                 if(addSubject && !subjT.hasVar()) {
                     Set<Term> ret = CompoundTerm.addComponentsRecursively(subjT, null);
                     for(Term ct : ret) {

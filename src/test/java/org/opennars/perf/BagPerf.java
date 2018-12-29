@@ -176,13 +176,14 @@ public class BagPerf {
     }
             
     public static int itemID = 0;
+    public static Random rnd = new Random(42);
     
     /** Empty Item implementation useful for testing */
     public static class NullItem extends Item.StringKeyItem {
         public final String key;
     
         public NullItem() {
-            this(Memory.randomNumber.nextFloat() * (1.0f - narParameters.TRUTH_EPSILON));
+            this(rnd.nextFloat() * (1.0f - narParameters.TRUTH_EPSILON));
         }
 
         public NullItem(final float priority) {
@@ -199,7 +200,7 @@ public class BagPerf {
     
     public static void randomBagIO(final Bag<NullItem,CharSequence> b, final int accesses, final double insertProportion) {
         for (int i = 0; i < accesses; i++) {
-            if (Memory.randomNumber.nextFloat() > insertProportion) {
+            if (rnd.nextFloat() > insertProportion) {
                 //remove
                 b.takeOut();
             }
@@ -226,9 +227,6 @@ public class BagPerf {
     }
 
     public static double getTime(final String label, final BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, final int repeats, final int warmups) {
-        
-        Memory.resetStatic();
-        
         final Performance p = new Performance(label, repeats, warmups) {
 
             @Override public void init() { }

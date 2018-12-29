@@ -180,7 +180,7 @@ public class RuleTables {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
                                 final Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
+                                if (Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
                                     final Sentence newBelief = belief.clone(u[0]);                                                //allows partial match
                                     final Sentence newTaskSentence = taskSentence.clone(u[1]);
                                     detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
@@ -433,7 +433,7 @@ public class RuleTables {
         final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
-        if (!Variables.unify(VAR_INDEPENDENT, taskStatement.retBySide(figureLeft), beliefStatement.retBySide(figureRight), u)) {
+        if (!Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, taskStatement.retBySide(figureLeft), beliefStatement.retBySide(figureRight), u)) {
             return;
         }
 
@@ -483,7 +483,7 @@ public class RuleTables {
             t1 = isDeduction ? beliefStatement.getSubject() : taskStatement.getSubject();
             t2 = isDeduction ? taskStatement.getPredicate() : beliefStatement.getPredicate();
 
-            if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
+            if (Variables.unify(nal.memory.randomNumber, VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
                 LocalRules.matchReverse(nal);
             } else {
                 SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
@@ -512,7 +512,7 @@ public class RuleTables {
         final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         final Term[] u = new Term[] { asymSt, symSt };
-        if (!Variables.unify(VAR_INDEPENDENT, asymSt.retBySide(figureLeft), symSt.retBySide(figureRight), u)) {
+        if (!Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, asymSt.retBySide(figureLeft), symSt.retBySide(figureRight), u)) {
             return;
         }
 
@@ -521,7 +521,7 @@ public class RuleTables {
         final Term t1 = asymSt.retBySide(retOppositeSide(figureLeft));
         final Term t2 = symSt.retBySide(retOppositeSide(figureRight));
 
-        if (Variables.unify(VAR_QUERY, t1, t2, u)) {
+        if (Variables.unify(nal.memory.randomNumber, VAR_QUERY, t1, t2, u)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
         } else {
             switch (figure) {
@@ -596,7 +596,7 @@ public class RuleTables {
         Term rt2 = s2.retBySide(retOppositeSide(figureRight));
         
         final Term[] u = new Term[] { s1, s2 };
-        if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {
+        if (Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, ut1, ut2, u)) {
             //recalculate rt1, rt2 from above:
             switch (figure) {
                 case 11: rt1 = s1.getPredicate();   rt2 = s2.getPredicate(); break;
@@ -647,7 +647,7 @@ public class RuleTables {
             
             if (!component.hasVarIndep() && !component.hasVarDep()) { //because of example: <<(*,w1,#2) --> [good]> ==> <w1 --> TRANSLATE>>. <(*,w1,w2) --> [good]>.
                 SyllogisticRules.detachment(mainSentence, subSentence, index, checkTermAgain, nal);
-            } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) { //happens through syllogisms
+            } else if (Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, component, content, u)) { //happens through syllogisms
                 mainSentence = mainSentence.clone(u[0]);
                 subSentence = subSentence.clone(u[1]);
                 SyllogisticRules.detachment(mainSentence, subSentence, index, false, nal);
@@ -699,7 +699,7 @@ public class RuleTables {
 
         if (component2 != null) {
             final Term[] u = new Term[] { conditional, statement };
-            if (Variables.unify(VAR_INDEPENDENT, component, component2, u)) {
+            if (Variables.unify(nal.memory.randomNumber, VAR_INDEPENDENT, component, component2, u)) {
                 conditional = (Implication) u[0];
                 statement = (Statement) u[1];
                 SyllogisticRules.conditionalDedInd(conditionalSentence, conditional, index, statement, side, nal);
@@ -773,7 +773,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 final Conjunction conj = (Conjunction) compound;
                 final Term[] u = new Term[] { compound, statement };
-                if (Variables.unify(VAR_DEPENDENT, component, statement, u) && u[0] instanceof Conjunction && u[1] instanceof Statement) {
+                if (Variables.unify(nal.memory.randomNumber, VAR_DEPENDENT, component, statement, u) && u[0] instanceof Conjunction && u[1] instanceof Statement) {
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination

@@ -204,7 +204,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                 }
             });
 
-            final Map<CharSequence, CharSequence> rename = new HashMap();
+            final Map<CharSequence, CharSequence> rename = new LinkedHashMap();
             boolean renamed = false;
 
             for (final Variable v : vars) {

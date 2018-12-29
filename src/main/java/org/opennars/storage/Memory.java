@@ -81,8 +81,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
-    public static final long randomSeed = 1;
-    public static final Random randomNumber = new Random(randomSeed);
+    public final long randomSeed = 1;
+    public final Random randomNumber = new Random(randomSeed);
     
     //todo make sense of this class and de-obfuscate
     public final Bag<Concept,Term> concepts;
@@ -110,10 +110,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     boolean checked=false;
     boolean isjUnit=false;
     
-    public static void resetStatic() {
-        randomNumber.setSeed(randomSeed);    
-    }
-    
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
@@ -128,7 +124,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.newTasks = new ArrayDeque<>();
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
-        this.operators = new HashMap<>();
+        this.operators = new LinkedHashMap<>();
         reset();
     }
     
@@ -148,7 +144,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             emotion.resetEmotions();
         }
         this.lastDecision = null;
-        resetStatic();
+        randomNumber.setSeed(randomSeed);
         event.emit(ResetEnd.class);
     }
 

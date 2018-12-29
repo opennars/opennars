@@ -236,9 +236,9 @@ public class Parameters implements Serializable {
     public volatile boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
     /** eternalized induction confidence to revise A =/&gt; B beliefs */
-    public volatile float ANTICIPATION_CONFIDENCE = 0.01f;
+    public volatile float ANTICIPATION_CONFIDENCE = 0.05f;
 
-    public volatile float ANTICIPATION_TOLERANCE = 25.0f;
+    public volatile float ANTICIPATION_TOLERANCE = 100.0f;
     
     /** Retrospective anticipation, allow to check memory for content in case of anticipation (potential issue with forgetting) */
     public boolean RETROSPECTIVE_ANTICIPATIONS = false;

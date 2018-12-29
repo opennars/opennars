@@ -73,7 +73,7 @@ public class LocalRules {
         } else {
             if (matchingOrder(sentence, belief)) {
                 final Term[] u = new Term[] { sentence.term, belief.term };
-                if (Variables.unify(Symbols.VAR_QUERY, u)) {
+                if (Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, u)) {
                     trySolution(belief, task, nal, true);
                 }
             }

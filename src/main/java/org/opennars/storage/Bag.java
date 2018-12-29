@@ -40,14 +40,13 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
     /** firing threshold */
     private final int THRESHOLD;
     /** shared DISTRIBUTOR that produce the probability distribution */
-    private Distributor DISTRIBUTOR;
+    private final Distributor DISTRIBUTOR;
     /** mapping from key to item */
-    
     private HashMap<K, Type> nameTable;
     /** array of lists of items, for items on different level */
     private ArrayList<ArrayList<Type>> itemTable;
     /** defined in different bags */
-    private int capacity;
+    private final int capacity;
     /** current sum of occupied level */
     private int mass;
     /** index to get next level, kept in individual objects */
@@ -75,7 +74,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         for (int i = 0; i < TOTAL_LEVEL; i++) {
             itemTable.add(new ArrayList<Type>());
         }
-        nameTable = new HashMap<K, Type>();
+        nameTable = new LinkedHashMap<K, Type>();
         currentLevel = TOTAL_LEVEL - 1;
         levelIndex = capacity % TOTAL_LEVEL; // so that different bags start at different point
         mass = 0;
@@ -207,7 +206,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
      * @return Whether that level is empty
      */
     protected boolean emptyLevel(int n) {
-        return ((itemTable.get(n) == null) || itemTable.get(n).isEmpty());
+        return itemTable.get(n).isEmpty();
     }
 
     /**

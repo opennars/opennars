@@ -94,8 +94,8 @@
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
-    <conf name="ANTICIPATION_CONFIDENCE" value="0.01"/>
-    <conf name="ANTICIPATION_TOLERANCE" value="25.0"/>
+    <conf name="ANTICIPATION_CONFIDENCE" value="0.05"/>
+    <conf name="ANTICIPATION_TOLERANCE" value="100.0"/>
     <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>

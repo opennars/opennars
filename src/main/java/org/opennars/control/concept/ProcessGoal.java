@@ -24,8 +24,8 @@
 package org.opennars.control.concept;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -180,7 +180,7 @@ public class ProcessGoal {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
-            final Set<BaseEntry> oldEvidence = new HashSet<>();
+            final Set<BaseEntry> oldEvidence = new LinkedHashSet<>();
             boolean Subset=false;
             if(oldGoalT != null) {
                 Subset = true;
@@ -282,7 +282,7 @@ public class ProcessGoal {
                 boolean useful_component = false;
                 for(Task precon : get_concept.general_executable_preconditions) {
                     //check whether the conclusion matches
-                    if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new HashMap<>(), new HashMap<>())) {
+                    if(Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new LinkedHashMap<>(), new LinkedHashMap<>())) {
                         for(Task prec : get_concept.general_executable_preconditions) {
                             allPreconditions.add(prec);   
                             useful_component = true;
@@ -295,7 +295,7 @@ public class ProcessGoal {
             }
         }
         //2. Accumulate all preconditions of itself too
-        Map<Operation,List<ExecutablePrecondition>> anticipationsToMake = new HashMap<Operation,List<ExecutablePrecondition>>();
+        Map<Operation,List<ExecutablePrecondition>> anticipationsToMake = new LinkedHashMap<>();
         allPreconditions.addAll(concept.executable_preconditions);
         allPreconditions.addAll(concept.general_executable_preconditions);
         //3. Apply choice rule, using the highest truth expectation solution and anticipate the results
@@ -337,17 +337,17 @@ public class ProcessGoal {
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
-            Map<Term,Term> subsBest = new HashMap<>();
+            Map<Term,Term> subsBest = new LinkedHashMap<>();
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
-                    Map<Term,Term> subs = new HashMap<>();
+                    Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
-                        boolean preconditionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(precondition), 
-                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new HashMap<>());
-                        boolean conclusionMatches = Variables.findSubstitute(Symbols.VAR_INDEPENDENT, 
+                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
+                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
                                     CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
-                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new HashMap<>());
+                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
@@ -422,7 +422,7 @@ public class ProcessGoal {
             final Task t = new Task(createdSentence,
                                     new BudgetValue(1.0f,1.0f,1.0f, nal.narParameters),
                                     Task.EnumType.DERIVED);
-            //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+            //System.out.println("used " +t.getTerm().toString() + String.valueOf(nal.memory.randomNumber.nextInt()));
             if(!task.sentence.stamp.evidenceIsCyclic()) {
                 if(!executeOperation(nal, t)) { //this task is just used as dummy
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);

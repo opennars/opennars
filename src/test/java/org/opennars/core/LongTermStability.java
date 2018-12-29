@@ -43,7 +43,7 @@ public class LongTermStability {
 
     public final ObjectIdCounter counter = new ObjectIdCounter();
 
-    public final Random rng = new Random();
+    public final Random rng = new Random(42);
 
     public LongTermStability(Reasoner reasoner) {
         this.reasoner = reasoner;

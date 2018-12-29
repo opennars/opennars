@@ -33,7 +33,6 @@ import org.junit.runners.Parameterized;
 import org.opennars.io.events.TextOutputHandler;
 import org.opennars.main.Nar;
 import org.opennars.main.MiscFlags;
-import org.opennars.storage.Memory;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
 import org.xml.sax.SAXException;
@@ -59,11 +58,11 @@ public class NALTest  {
     static public final boolean showReport = true;
     static public final boolean requireSuccess = true;
     static public final int similarsToSave = 5;
-    protected static final Map<String, String> examples = new HashMap<>(); //path -> script data
-    public static final Map<String, Boolean> tests = new HashMap<>();
+    protected static final Map<String, String> examples = new LinkedHashMap<>(); //path -> script data
+    public static final Map<String, Boolean> tests = new LinkedHashMap<>();
 
     // we store a list of scores to keep track of each sample
-    public static final Map<String, List<Double>> scores = new HashMap<>();
+    public static final Map<String, List<Double>> scores = new LinkedHashMap<>();
     final String scriptPath;
 
     /** how many times should one test be run (to collect run scores) */
@@ -159,11 +158,6 @@ public class NALTest  {
 
     public void testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         for (int iSample = 0; iSample < numberOfSamples; iSample++) {
-            // we do it here because drawing multiple samples with the same seed doesn't make any sense
-            // one is the offset because all tests were done this way
-            Memory.randomNumber.setSeed(1 + iSample);
-            Memory.resetStatic();
-
             sample(path);
         }
     }

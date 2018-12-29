@@ -23,7 +23,7 @@
  */
 package org.opennars.inference;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -539,7 +539,7 @@ public final class SyllogisticRules {
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         final boolean deduction = (side != 0);
-        final boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
+        final boolean conditionalTask = Variables.hasSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, premise2, belief.term);
         final Term commonComponent;
         Term newComponent = null;
         if (side == 0 || side == 1) {
@@ -562,7 +562,7 @@ public final class SyllogisticRules {
             index = (short) index2;
         } else {
             Term[] u = new Term[] { premise1, premise2 };            
-            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
+            boolean match = Variables.unify(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
             premise1 = (Implication) u[0]; premise2 = u[1];
             
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
@@ -571,7 +571,7 @@ public final class SyllogisticRules {
                 
                 if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
                     u = new Term[] { premise1, premise2 };
-                    match = Variables.unify(Symbols.VAR_INDEPENDENT, 
+                    match = Variables.unify(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
                             oldCondition.term[index], 
                             compoundCommonComponent.term[index], 
                             u);
@@ -680,7 +680,7 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new HashMap<Term,Term>());
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new LinkedHashMap<Term,Term>());
         }
     }
 
@@ -701,7 +701,7 @@ public final class SyllogisticRules {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        final boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
+        final boolean conditionalTask = Variables.hasSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, premise2, belief.term);
         final Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -721,12 +721,12 @@ public final class SyllogisticRules {
         final Conjunction oldCondition = (Conjunction) tm;
 
         Term[] u = new Term[] { premise1, premise2 };
-        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
+        boolean match = Variables.unify(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
         premise1 = (Equivalence) u[0]; premise2 = u[1];
         
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
             u = new Term[] { premise1, premise2 };
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], u);
+            match = Variables.unify(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
@@ -820,7 +820,7 @@ public final class SyllogisticRules {
         final TruthValue value1 = sentence.truth;
         final TruthValue value2 = belief.truth;
 
-        final boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm());
+        final boolean keepOrder = Variables.hasSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, st1, task.getTerm());
 
         // we folded the logic to use loops for more compact code
         for (int loop=0;loop<2;loop++) {
@@ -877,11 +877,11 @@ public final class SyllogisticRules {
         Term comp = null;
         for(final Term t : compound) {
             final Term[] unify = new Term[] { t, component };
-            if(Variables.unify(Symbols.VAR_DEPENDENT, unify)) {
+            if(Variables.unify(nal.memory.randomNumber, Symbols.VAR_DEPENDENT, unify)) {
                 comp = t;
                 break;
             }
-            if(Variables.unify(Symbols.VAR_QUERY, unify)) {
+            if(Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, unify)) {
                 comp = t;
                 break;
             }

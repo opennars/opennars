@@ -33,7 +33,7 @@ import org.opennars.storage.Memory;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.opennars.inference.TemporalRules.*;
@@ -197,7 +197,7 @@ public class Stamp implements Cloneable, Serializable {
         final BaseEntry[] base1 = a.evidentialBase;
         final BaseEntry[] base2 = b.evidentialBase;
 
-        final Set<BaseEntry> task_base = new HashSet<>(base1.length + base2.length);
+        final Set<BaseEntry> task_base = new LinkedHashSet<>(base1.length + base2.length);
         for (final BaseEntry aBase1 : base1) {
             if (task_base.contains(aBase1)) { //can have an overlap in itself already
                 return true;
@@ -214,7 +214,7 @@ public class Stamp implements Cloneable, Serializable {
      }
     
     public boolean evidenceIsCyclic() {
-        final Set<BaseEntry> task_base = new HashSet<>(this.evidentialBase.length);
+        final Set<BaseEntry> task_base = new LinkedHashSet<>(this.evidentialBase.length);
         for (final BaseEntry anEvidentialBase : this.evidentialBase) {
             if (task_base.contains(anEvidentialBase)) { //can have an overlap in itself already
                 return true;

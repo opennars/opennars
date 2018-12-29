@@ -96,7 +96,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
     private transient Thread[] threads = null;
-    protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
+    protected transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
@@ -121,7 +121,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
-        ret.sensoryChannels = new HashMap<>();
+        ret.sensoryChannels = new LinkedHashMap<>();
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
         for(Plugin p : pluginsToAdd) {
             ret.addPlugin(p);

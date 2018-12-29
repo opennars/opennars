@@ -50,7 +50,6 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class StabilityTest {
     static {
-        Memory.randomNumber.setSeed(1);
         MiscFlags.DEBUG = false;
         MiscFlags.TEST = true;
     }
@@ -64,9 +63,9 @@ public class StabilityTest {
     static public final boolean requireSuccess = true;
     static public final int similarsToSave = 5;
     private static final boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
-    protected static final Map<String, String> examples = new HashMap(); //path -> script data
-    public static final Map<String, Boolean> tests = new HashMap();
-    public static final Map<String, Double> scores = new HashMap();
+    protected static final Map<String, String> examples = new LinkedHashMap(); //path -> script data
+    public static final Map<String, Boolean> tests = new LinkedHashMap();
+    public static final Map<String, Double> scores = new LinkedHashMap();
     final String scriptPath;
 
     public static String getExample(final String path) {
@@ -181,8 +180,6 @@ public class StabilityTest {
     }
 
     protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        Memory.resetStatic();
-
         final List<OutputCondition> expects = new ArrayList();
 
         Nar n = null;

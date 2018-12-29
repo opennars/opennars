@@ -278,7 +278,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         
         final Term content=task.getTerm();
         // to prevent infinite recursions
-        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+        if (content instanceof Operation/* ||  nal.memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return true;
         }
         final Sentence sentence = task.sentence;
@@ -320,11 +320,11 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         
         final Memory memory = nal.memory;
     
-        if (Memory.randomNumber.nextDouble() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
+        if (nal.memory.randomNumber.nextDouble() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
             
             //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
-            final Operator op=memory.getOperator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
+            final Operator op=memory.getOperator(nonInnateBeliefOperators[nal.memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             
             final Product prod=new Product(belief.term);
             
@@ -349,7 +349,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             }
         }
 
-        if (beliefTerm instanceof Implication && Memory.randomNumber.nextDouble()<=INTERNAL_EXPERIENCE_PROBABILITY) {
+        if (beliefTerm instanceof Implication && nal.memory.randomNumber.nextDouble()<=INTERNAL_EXPERIENCE_PROBABILITY) {
             final Implication imp=(Implication) beliefTerm;
             if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                 //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
