@@ -95,6 +95,13 @@ public abstract class Operator extends Term implements Plugin {
             if(MiscFlags.SHOW_EXECUTION_ERRORS) {
                 memory.event.emit(ERR.class, ex);
             }
+
+            // inform the terminal environment about the error
+            if(MiscFlags.TERMINAL_SHOW_EXECUTION_ERRORS) {
+                // o stands for operator
+                System.out.println("[o ] op failed name=" + name().toString());
+            }
+
             if(!MiscFlags.EXECUTION_ERRORS_CONTINUE) {
                 throw new IllegalStateException("Execution error:\n", ex);
             }

@@ -52,4 +52,7 @@ public class MiscFlags {
     
     /** Set to true by the test system, leave false */
     public static boolean TEST = false;
+
+    /** put execution errors into the console */
+    public static boolean TERMINAL_SHOW_EXECUTION_ERRORS = true;
 }
