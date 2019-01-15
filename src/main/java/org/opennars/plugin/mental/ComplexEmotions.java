@@ -60,13 +60,13 @@ public class ComplexEmotions implements Plugin {
                         final float true_expectation = 0.5f;
                         final float false_expectation = 0.5f;
                         if(c != null) {
-                            if(c.desires.size() > 0 && c.beliefs.size() > 0) {
+                            if(c.desires.content.size() > 0 && c.beliefs.content.size() > 0) {
                                 //Fear:
                                 if(future_task.sentence.truth.getExpectation() > true_expectation &&
-                                   c.desires.get(0).sentence.truth.getExpectation() < false_expectation) {
+                                   c.desires.content.get(0).sentence.truth.getExpectation() < false_expectation) {
                                     //n.addInput("<(*,{SELF},fear) --> ^feel>. :|:");
                                     final float weight = future_task.getPriority();
-                                    float fear = solutionQuality(true, c.desires.get(0), future_task.sentence, memory, n);
+                                    float fear = solutionQuality(true, c.desires.content.get(0), future_task.sentence, memory, n);
                                     final float newValue = fear*weight;
                                     fear += newValue * weight;
                                     fear /= 1.0f + weight;

@@ -75,7 +75,7 @@ public class ProcessGoal {
      */
     protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
-        final Task oldGoalT = concept.selectCandidate(task, concept.desires, nal.time); // revise with the existing desire values
+        final Task oldGoalT = concept.selectCandidate(task, concept.desires.content, nal.time); // revise with the existing desire values
         Sentence oldGoal = null;
         final Stamp newStamp = goal.stamp;
         if (oldGoalT != null) {
@@ -88,7 +88,7 @@ public class ProcessGoal {
 
         Task beliefT = null;
         if(task.aboveThreshold()) {
-            beliefT = concept.selectCandidate(task, concept.beliefs, nal.time);
+            beliefT = concept.selectCandidate(task, concept.beliefs.content, nal.time);
 
             for (final Task iQuest : concept.quests ) {
                 trySolution(task.sentence, iQuest, nal, true);
@@ -158,7 +158,7 @@ public class ProcessGoal {
         }
         bestReactionForGoal(concept, nal, projectedGoal, task);
         questionFromGoal(task, nal);
-        concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+        concept.desires.add(task, false, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, concept.memory);
         InternalExperience.InternalExperienceFromTask(concept.memory, task, false, nal.time);
         if(!(task.sentence.getTerm() instanceof Operation)) {
             return;
@@ -280,10 +280,10 @@ public class ProcessGoal {
             //pull variable based preconditions from component concepts
             synchronized(get_concept) {
                 boolean useful_component = false;
-                for(Task precon : get_concept.general_executable_preconditions) {
+                for(Task precon : get_concept.general_executable_preconditions.content) {
                     //check whether the conclusion matches
                     if(Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new LinkedHashMap<>(), new LinkedHashMap<>())) {
-                        for(Task prec : get_concept.general_executable_preconditions) {
+                        for(Task prec : get_concept.general_executable_preconditions.content) {
                             allPreconditions.add(prec);   
                             useful_component = true;
                         }
@@ -296,8 +296,8 @@ public class ProcessGoal {
         }
         //2. Accumulate all preconditions of itself too
         Map<Operation,List<ExecutablePrecondition>> anticipationsToMake = new LinkedHashMap<>();
-        allPreconditions.addAll(concept.executable_preconditions);
-        allPreconditions.addAll(concept.general_executable_preconditions);
+        allPreconditions.addAll(concept.executable_preconditions.content);
+        allPreconditions.addAll(concept.general_executable_preconditions.content);
         //3. Apply choice rule, using the highest truth expectation solution and anticipate the results
         ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, allPreconditions, anticipationsToMake);
         //4. And executing it, also forming an expectation about the result

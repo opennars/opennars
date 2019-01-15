@@ -194,7 +194,7 @@ public class ProcessAnticipation {
             for(TermLink tl : concept.termLinks) {
                 Term term = tl.getTarget();
                 Concept tc = nal.memory.concept(term);
-                if(tc != null && !tc.beliefs.isEmpty() && term instanceof Implication) {
+                if(tc != null && !tc.beliefs.content.isEmpty() && term instanceof Implication) {
                     Implication imp = (Implication) term;
                     if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                         Term precon = imp.getSubject();

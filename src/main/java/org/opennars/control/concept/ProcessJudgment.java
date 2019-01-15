@@ -72,7 +72,7 @@ public class ProcessJudgment {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
-        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, nal.time);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs.content, nal.time);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -97,11 +97,11 @@ public class ProcessJudgment {
         for (int i = 0; i < nnq; i++) {
             trySolution(judg, concept.questions.get(i), nal, true);
         }
-        final int nng = concept.desires.size();
+        final int nng = concept.desires.content.size();
         for (int i = 0; i < nng; i++) {
-            trySolution(judg, concept.desires.get(i), nal, true);
+            trySolution(judg, concept.desires.content.get(i), nal, true);
         }
-        concept.addToTable(task, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
+        concept.beliefs.add(task, false, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, concept.memory);
     }
 
     /**
@@ -183,7 +183,7 @@ public class ProcessJudgment {
         //get the first eternal. the highest confident one (due to the sorted order):
         Optional<Task> strongest_target = null;
         synchronized(origin_concept) {
-            strongest_target = tryFind(origin_concept.beliefs, iTask -> iTask.sentence.isEternal());
+            strongest_target = tryFind(origin_concept.beliefs.content, iTask -> iTask.sentence.isEternal());
         }
         if (!strongest_target.isPresent()) {
             return;
@@ -201,22 +201,22 @@ public class ProcessJudgment {
             }
             // we do not add the target, instead the strongest belief in the target concept
             synchronized(target_concept) {       
-                List<Task> table = strongest_target.get().sentence.term.hasVar() ?  target_concept.general_executable_preconditions : 
+                Concept.Table table = strongest_target.get().sentence.term.hasVar() ?  target_concept.general_executable_preconditions :
                                                                                     target_concept.executable_preconditions;
                 //at first we have to remove the last one with same content from table
                 int i_delete = -1;
-                for(int i=0; i < table.size(); i++) {
-                    if(CompoundTerm.replaceIntervals(table.get(i).getTerm()).equals(
+                for(int i=0; i < table.content.size(); i++) {
+                    if(CompoundTerm.replaceIntervals(table.content.get(i).getTerm()).equals(
                             CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
                         i_delete = i; //even these with same term but different intervals are removed here
                         break;
                     }
                 }
                 if(i_delete != -1) {
-                    table.remove(i_delete);
+                    table.content.remove(i_delete);
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+                table.add(strongest_target.get(), true, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class, nal.memory);
             }
         }
     }

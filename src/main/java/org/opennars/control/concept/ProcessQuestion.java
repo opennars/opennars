@@ -75,8 +75,8 @@ public class ProcessQuestion {
             
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? concept.selectCandidate(quesTask, concept.beliefs, nal.time)
-                : concept.selectCandidate(quesTask, concept.desires, nal.time);
+                ? concept.selectCandidate(quesTask, concept.beliefs.content, nal.time)
+                : concept.selectCandidate(quesTask, concept.desires.content, nal.time);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
@@ -105,7 +105,7 @@ public class ProcessQuestion {
                         continue; //target concept is already gone
                     }
                     synchronized(c) { //changing target concept, lock it
-                        final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                        final List<Task> answers = ques.sentence.isQuest() ? c.desires.content : c.beliefs.content;
                         if(c != null && answers.size() > 0) {
                             final Task taskAnswer = answers.get(0);
                             if(taskAnswer!=null) {
@@ -144,7 +144,7 @@ public class ProcessQuestion {
                             continue; //target doesn't exist anymore
                         }
                         synchronized(c) { //changing target concept, lock it
-                            final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                            final List<Task> answers = ques.sentence.isQuest() ? c.desires.content : c.beliefs.content;
                             if(c != null && answers.size() > 0) {
                                 final Task taskAnswer = answers.get(0);
                                 if(taskAnswer!=null) {

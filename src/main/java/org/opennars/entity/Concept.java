@@ -99,14 +99,14 @@ public class Concept extends Item<Term> implements Serializable {
      * Judgments directly made about the term Use List because of access
      * and insertion in the middle
      */
-    public final List<Task> beliefs;
-    public List<Task> executable_preconditions;
-    public List<Task> general_executable_preconditions;
+    public final Table beliefs;
+    public Table executable_preconditions;
+    public Table general_executable_preconditions;
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public final List<Task> desires;
+    public final Table desires;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -134,11 +134,11 @@ public class Concept extends Item<Term> implements Serializable {
         this.memory = memory;
 
         this.questions = new ArrayList<>();
-        this.beliefs = new ArrayList<>();
-        this.executable_preconditions = new ArrayList<>();
-        this.general_executable_preconditions = new ArrayList<>();
+        this.beliefs = new Table();
+        this.executable_preconditions = new Table();
+        this.general_executable_preconditions = new Table();
         this.quests = new ArrayList<>();
-        this.desires = new ArrayList<>();
+        this.desires = new Table();
 
         this.taskLinks = new Bag<>(memory.narParameters.TASK_LINK_BAG_LEVELS, memory.narParameters.TASK_LINK_BAG_SIZE, memory.narParameters);
         this.termLinks = new Bag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
@@ -165,25 +165,36 @@ public class Concept extends Item<Term> implements Serializable {
         return term;
     }
 
+    public static class Table {
+        public List<Task> content = new ArrayList<>();
+
+        public long pressure = 0;
 
 
-    public void addToTable(final Task task, final boolean rankTruthExpectation, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
-        
-        final int preSize = table.size();
-        final Task removedT;
-        Sentence removed = null;
-        removedT = addToTable(task, table, max, rankTruthExpectation);
-        if(removedT != null) {
-            removed=removedT.sentence;
-        }
+        public void add(final Task task, final boolean rankTruthExpectation, final int max, final Class eventAdd, final Class eventRemove, final Memory memory, final Object... extraEventArguments) {
 
-        if (removed != null) {
-            memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
-        }
-        if ((preSize != table.size()) || (removed != null)) {
-            memory.event.emit(eventAdd, this, task, extraEventArguments);
+            final int preSize = content.size();
+            final Task removedT;
+            Sentence removed = null;
+            removedT = addToTable(task, content, max, rankTruthExpectation);
+
+            if(removedT != null) {
+                pressure++;
+            }
+
+            if(removedT != null) {
+                removed=removedT.sentence;
+            }
+
+            if (removed != null) {
+                memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
+            }
+            if ((preSize != content.size()) || (removed != null)) {
+                memory.event.emit(eventAdd, this, task, extraEventArguments);
+            }
         }
     }
+
     
     /**
      * Link to a new task from all relevant concepts for continued processing in
@@ -241,7 +252,7 @@ public class Concept extends Item<Term> implements Serializable {
     public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, final boolean rankTruthExpectation) {
         final Sentence newSentence = newTask.sentence;
         final float rank1 = rankBelief(newSentence, rankTruthExpectation);    // for the new isBelief
-        float rank2;        
+        float rank2;
         int i;
         for (i = 0; i < table.size(); i++) {
             final Sentence judgment2 = table.get(i).sentence;
@@ -253,9 +264,9 @@ public class Concept extends Item<Term> implements Serializable {
                 }
                 table.add(i, newTask);
                 break;
-            }            
+            }
         }
-        
+
         if (table.size() == capacity) {
             // nothing
         }
@@ -266,7 +277,7 @@ public class Concept extends Item<Term> implements Serializable {
         else if (i == table.size()) { // branch implies implicit table.size() < capacity
             table.add(newTask);
         }
-        
+
         return null;
     }
 
@@ -448,8 +459,8 @@ public class Concept extends Item<Term> implements Serializable {
                 toStringExternal() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
-                + toStringIfNotNull(beliefs.size(), "beliefs")
-                + toStringIfNotNull(desires.size(), "desires")
+                + toStringIfNotNull(beliefs.content.size(), "beliefs")
+                + toStringIfNotNull(desires.content.size(), "desires")
                 + toStringIfNotNull(questions.size(), "questions")
                 + toStringIfNotNull(quests.size(), "quests");
         
@@ -521,7 +532,7 @@ public class Concept extends Item<Term> implements Serializable {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = nal.time.time();
 
-        for (final Task beliefT : beliefs) {  
+        for (final Task beliefT : beliefs.content) {
             final Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
@@ -540,10 +551,10 @@ public class Concept extends Item<Term> implements Serializable {
      * Get the current overall desire value. TODO to be refined
      */
     public TruthValue getDesire() {
-        if (desires.isEmpty()) {
+        if (desires.content.isEmpty()) {
             return null;
         }
-        final TruthValue topValue = desires.get(0).sentence.truth;
+        final TruthValue topValue = desires.content.get(0).sentence.truth;
         return topValue;
     }
 
@@ -556,11 +567,11 @@ public class Concept extends Item<Term> implements Serializable {
         
         questions.clear();
         quests.clear();                
-        desires.clear();
+        desires.content.clear();
         //evidentalDiscountBases.clear();
         termLinks.clear();
         taskLinks.clear();        
-        beliefs.clear();
+        beliefs.content.clear();
         termLinkTemplates.clear();
     }
     
@@ -607,11 +618,11 @@ public class Concept extends Item<Term> implements Serializable {
 
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
-            for (final Task t : beliefs) {
+            for (final Task t : beliefs.content) {
                 t.sentence.discountConfidence(memory.narParameters);
             }
         } else {
-            for (final Task t : desires) {
+            for (final Task t : desires.content) {
                 t.sentence.discountConfidence(memory.narParameters);
             }
         }
@@ -627,11 +638,11 @@ public class Concept extends Item<Term> implements Serializable {
 
     /** returns unmodifidable collection wrapping beliefs */
     public List<Task> getBeliefs() {
-        return Collections.unmodifiableList(beliefs);
+        return Collections.unmodifiableList(beliefs.content);
     }
     
     /** returns unmodifidable collection wrapping beliefs */
     public List<Task> getDesires() {
-        return Collections.unmodifiableList(desires);
+        return Collections.unmodifiableList(desires.content);
     }
 }
