@@ -418,11 +418,11 @@ public class Concept extends Item<Term> implements Serializable {
         if (removed!=null) {
             if (removed == termLink) {
                 memory.emit(TermLinkRemove.class, termLink, this);
-                return false;
             }
             else {
                 memory.emit(TermLinkRemove.class, removed, this);
             }
+            return false;
         }
         memory.emit(TermLinkAdd.class, termLink, this);
         return true;        
