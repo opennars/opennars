@@ -421,6 +421,7 @@ public class Concept extends Item<Term> implements Serializable {
                 return false;
             }
             else {
+                //emit remove and add for this case
                 memory.emit(TermLinkRemove.class, removed, this);
             }
         }
