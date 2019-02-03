@@ -1,5 +1,5 @@
-<cup --> [bendable]>.
 <cup --> object>.
+<cup --> [bendable]>.
 <(*,cup,plastic) --> made_of>.
 <toothbrush --> object>.
 <toothbrush --> [bendable]>.
@@ -10,5 +10,5 @@
 <<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
 (&&,<#1 --> object>,<#1 --> [unscrewing]>)!
 200000
-''outputMustContain('(^lighter,{SELF},cup)! %1.00;0.10%')
-''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.07%')
+''outputMustContain('(^lighter,{SELF},cup)! %1.00;0.20%')
+''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.23%')

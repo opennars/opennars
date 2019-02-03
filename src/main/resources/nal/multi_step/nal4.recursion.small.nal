@@ -6,4 +6,4 @@
 
 50000
 
-''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.59%')
+''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.53%')
