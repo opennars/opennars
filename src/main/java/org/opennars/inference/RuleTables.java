@@ -141,9 +141,6 @@ public class RuleTables {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
                         } //else {
-                        if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
-                            StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
-                        }
                         goalFromQuestion(task, taskTerm, nal);
                         //}
                         break;
@@ -730,6 +727,8 @@ public class RuleTables {
             if (compoundTask) {
                 if (compound.term[0] instanceof CompoundTerm)
                     StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
+            } else {
+                StructuralRules.transformNegation(compound, nal);
             }
         }
     }

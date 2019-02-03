@@ -52,4 +52,4 @@
 //What was observed?
 <{M3} --> (/,called,_,?what)>?
 //A circle
-''outputMustContain('<{M3} --> (/,called,_,circle)>. %0.83;0.36%')
+''outputMustContain('<{M3} --> (/,called,_,circle)>. %0.83;0.53%')
