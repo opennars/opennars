@@ -159,7 +159,10 @@ public class TemporalRules {
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
         final long timeDiff = time2 - time1;
-        Interval interval = new Interval(Math.abs(timeDiff));
+        Interval interval = null;
+        if (!concurrent(time1, time2, durationCycles)) {
+            interval = new Interval(Math.abs(timeDiff));
+        }
 
         final int order = order(timeDiff, durationCycles);
         final TruthValue givenTruth1 = s1.truth;
