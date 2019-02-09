@@ -159,16 +159,8 @@ public class TemporalRules {
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
         final long timeDiff = time2 - time1;
-        Interval interval=null;
-        
-        if (!concurrent(time1, time2, durationCycles)) {
-            interval = new Interval(Math.abs(timeDiff));
-            if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
-            } else {
-                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
-            }
-        }
+        Interval interval = new Interval(Math.abs(timeDiff));
+
         final int order = order(timeDiff, durationCycles);
         final TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
