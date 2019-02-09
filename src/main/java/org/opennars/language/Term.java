@@ -266,10 +266,10 @@ public class Term implements AbstractTerm, Serializable {
     }
          
     /**
-     * @return The complexity of the term, an integer
+     * @return The complexity of the term
      */
     // the syntactic complexity, for constant atomic Term, is 1
-    public short getComplexity() {
+    public float getComplexity() {
         return 1;
     }
 

@@ -103,12 +103,13 @@ public class Variable extends Term {
     }
 
     /**
-     * The syntactic complexity of a variable is 0, because it does not refer to
-     * any concept.
-     *
-     * @return The complexity of the term, an integer
+     * @return The complexity of the term
      */
-    @Override public short getComplexity() {
+    @Override public float getComplexity() {
+        /*
+         * The syntactic complexity of a variable is 0, because it does not refer to
+         * any concept.
+         */
         return 0;
     }
 

@@ -57,7 +57,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * syntactic complexity of the compound, the sum of those of its term plus 1
      */
     // TODO make final again
-    public short complexity;
+    public float complexity;
     
     
     /** Whether contains a variable */
@@ -400,7 +400,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      *
      * @return the complexity value
      */    
-    @Override public short getComplexity() {
+    @Override public float getComplexity() {
         return complexity;
     }
 
@@ -432,7 +432,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** Gives a set of all contained term, recursively */
     public Set<Term> getContainedTerms() {
-        final Set<Term> s = new LinkedHashSet(getComplexity());
+        final Set<Term> s = new LinkedHashSet( Math.round(getComplexity()));
         for (final Term t : term) {
             s.add(t);
             if (t instanceof CompoundTerm)
@@ -787,7 +787,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public List<TermLink> prepareComponentLinks() {
         //complexity seems like an upper bound for the resulting number of componentLinks. 
         //so use it as an initial size for the array list
-        final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );
+        final List<TermLink> componentLinks = new ArrayList<>(  Math.round(getComplexity()) );
         return Terms.prepareComponentLinks(componentLinks, this);
     }
 
