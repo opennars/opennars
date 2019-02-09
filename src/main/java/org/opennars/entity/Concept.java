@@ -167,12 +167,12 @@ public class Concept extends Item<Term> implements Serializable {
 
 
 
-    public void addToTable(final Task task, final boolean rankTruthExpectation, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    public void addToTable(final Task task, final boolean rankTruthExpectation, final boolean takeVarIntoAccount, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         
         final int preSize = table.size();
         final Task removedT;
         Sentence removed = null;
-        removedT = addToTable(task, table, max, rankTruthExpectation);
+        removedT = addToTable(task, table, max, rankTruthExpectation, takeVarIntoAccount);
         if(removedT != null) {
             removed=removedT.sentence;
         }
@@ -238,14 +238,14 @@ public class Concept extends Item<Term> implements Serializable {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, final boolean rankTruthExpectation) {
+    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, final boolean rankTruthExpectation, final boolean takeVarIntoAccount) {
         final Sentence newSentence = newTask.sentence;
-        final float rank1 = rankBelief(newSentence, rankTruthExpectation);    // for the new isBelief
+        final float rank1 = rankBelief(newSentence, rankTruthExpectation, takeVarIntoAccount);    // for the new isBelief
         float rank2;        
         int i;
         for (i = 0; i < table.size(); i++) {
             final Sentence judgment2 = table.get(i).sentence;
-            rank2 = rankBelief(judgment2, rankTruthExpectation);
+            rank2 = rankBelief(judgment2, rankTruthExpectation, takeVarIntoAccount);
             if (rank1 >= rank2) {
                 if (newSentence.truth.equals(judgment2.truth) && newSentence.stamp.equals(judgment2.stamp,false,true,true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);

@@ -158,7 +158,7 @@ public class ProcessGoal {
         }
         bestReactionForGoal(concept, nal, projectedGoal, task);
         questionFromGoal(task, nal);
-        concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+        concept.addToTable(task, false, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
         InternalExperience.InternalExperienceFromTask(concept.memory, task, false, nal.time);
         if(!(task.sentence.getTerm() instanceof Operation)) {
             return;

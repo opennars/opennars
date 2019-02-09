@@ -101,7 +101,7 @@ public class ProcessJudgment {
         for (int i = 0; i < nng; i++) {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
-        concept.addToTable(task, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
+        concept.addToTable(task, false, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
     }
 
     /**
@@ -216,7 +216,7 @@ public class ProcessJudgment {
                     table.remove(i_delete);
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+                target_concept.addToTable(strongest_target.get(), true, true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
             }
         }
     }
