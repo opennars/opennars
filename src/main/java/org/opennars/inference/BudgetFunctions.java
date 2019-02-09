@@ -24,7 +24,9 @@
 package org.opennars.inference;
 
 import org.opennars.entity.*;
+import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
+import org.opennars.language.Variable;
 import org.opennars.storage.Memory;
 
 import static java.lang.Math.*;
@@ -62,13 +64,29 @@ public final class BudgetFunctions extends UtilityFunctions {
     public final static float rankBelief(final Sentence judg, final boolean rankTruthExpectation, final boolean takeVarIntoAccount) {
         if(rankTruthExpectation) {
             float base = 1.05f;
-            
-            float complexity = takeVarIntoAccount && judg.term.hasVar() ? 1 : 0;
+
+            float complexity = takeVarIntoAccount && judg.term.hasVar() ? countNumberOfVars(judg.term) : 0;
             return judg.getTruth().getExpectation() / (float)Math.pow(base, complexity);
         }
         final float confidence = judg.truth.getConfidence();
         //final float originality = judg.stamp.getOriginality();
         return confidence; //or(confidence, originality);
+    }
+
+    private static int countNumberOfVars(final Term term) {
+        if (term instanceof Variable) {
+            return 1;
+        }
+        else if(term instanceof CompoundTerm) {
+            int count = 0;
+
+            CompoundTerm compoundTerm = (CompoundTerm)term;
+            for(final Term iChild : compoundTerm.term) {
+                count += countNumberOfVars(iChild);
+            }
+            return count;
+        }
+        return 0;
     }
 
 
