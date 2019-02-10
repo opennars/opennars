@@ -128,7 +128,9 @@ public class Concept extends Item<Term> implements Serializable {
      * @param memory A reference to the memory
      */
     public Concept(final BudgetValue b, final Term tm, final Memory memory) {
-        super(b);        
+        super(b);
+
+        this.anticipations = new ArrayList<>();
         
         this.term = tm;
         this.memory = memory;
@@ -310,7 +312,7 @@ public class Concept extends Item<Term> implements Serializable {
             this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
         }
     }
-    public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
+    public List<AnticipationEntry> anticipations;
     
     
     /* ---------- insert Links for indirect processing ---------- */
