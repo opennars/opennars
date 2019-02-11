@@ -319,6 +319,8 @@ public class ProcessGoal {
      * @return The procedural hypothesis with the highest result truth expectation
      */
     private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions, Map<Operation,List<ExecutablePrecondition>> anticipationsToMake) {
+        float debugTimeWindowHalf = 0.0f;
+
         ExecutablePrecondition result = new ExecutablePrecondition();
         for(final Task t: execPreconditions) {
             final CompoundTerm precTerm = ((Conjunction) ((Implication) t.getTerm()).getSubject());
@@ -326,7 +328,7 @@ public class ProcessGoal {
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
             float timeOffset = (long) (((Interval)prec[prec.length-1]).time);
-            float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
+
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
             long newesttime = -1;
@@ -342,11 +344,11 @@ public class ProcessGoal {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
-                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
-                                    CompoundTerm.replaceIntervals(precondition), 
+                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                                    CompoundTerm.replaceIntervals(precondition),
                                     CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
-                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
-                                    CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
+                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                                    CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
                                     CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
                             newesttime = p.sentence.getOccurenceTime();
@@ -355,52 +357,83 @@ public class ProcessGoal {
                             LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
+
+
+
+                            //ok now we can take the desire value:
+                            final TruthValue A = projectedGoal.getTruth();
+                            //and the truth of the hypothesis:
+                            final TruthValue Hyp = t.sentence.truth;
+                            //overlap will almost never happen, but to make sure
+                            if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
+                                Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
+                                Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
+                                continue;
+                            }
+                            //and the truth of the precondition:
+                            final Sentence projectedPrecon = bestsofar.sentence.projection(nal.time.time() /*- distance*/, nal.time.time(), concept.memory);
+                            if(projectedPrecon.isEternal()) {
+                                continue; //projection wasn't better than eternalization, too long in the past
+                            }
+                            final TruthValue precon = projectedPrecon.truth;
+                            //and derive the conjunction of the left side:
+                            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
+                            //in order to derive the operator desire value:
+                            final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
+                            final float expecdesire = opdesire.getExpectation();
+                            Operation bestop = (Operation) ((CompoundTerm)op).applySubstitute(subsBest);
+
+                            float timeWindowHalf = calcTimeWindow(timeOffset, Hyp.getExpectation(), nal.narParameters.DECISION_THRESHOLD);
+
+                            //System.out.println("[dN] " + opdesire);
+                            //System.out.println("[dN] timeWindowHalf=" + Float.toString(timeWindowHalf));
+
+                            long mintime = (long) (nal.time.time() + timeOffset - timeWindowHalf);
+                            long maxtime = (long) (nal.time.time() + timeOffset + timeWindowHalf);
+                            if(expecdesire > result.bestop_truthexp) {
+                                debugTimeWindowHalf = timeWindowHalf;
+
+                                result.bestop = bestop;
+                                result.bestop_truthexp = expecdesire;
+                                result.bestop_truth = opdesire;
+                                result.executable_precond = t;
+                                result.substitution = subsBest;
+                                result.mintime = mintime;
+                                result.maxtime = maxtime;
+                                if(anticipationsToMake.get(result.bestop) == null) {
+                                    anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
+                                }
+                                anticipationsToMake.get(result.bestop).add(result);
+                            }
                         }
                     }
                 }
             }
-            if(bestsofar == null) {
-                continue;
-            }
-            //ok now we can take the desire value:
-            final TruthValue A = projectedGoal.getTruth();
-            //and the truth of the hypothesis:
-            final TruthValue Hyp = t.sentence.truth;
-            //overlap will almost never happen, but to make sure
-            if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
-               Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
-               Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
-                continue;
-            }
-            //and the truth of the precondition:
-            final Sentence projectedPrecon = bestsofar.sentence.projection(nal.time.time() /*- distance*/, nal.time.time(), concept.memory);
-            if(projectedPrecon.isEternal()) {
-                continue; //projection wasn't better than eternalization, too long in the past
-            }
-            final TruthValue precon = projectedPrecon.truth;
-            //and derive the conjunction of the left side:
-            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
-            //in order to derive the operator desire value:
-            final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
-            final float expecdesire = opdesire.getExpectation();
-            Operation bestop = (Operation) ((CompoundTerm)op).applySubstitute(subsBest);
-            long mintime = (long) (nal.time.time() + timeOffset - timeWindowHalf);
-            long maxtime = (long) (nal.time.time() + timeOffset + timeWindowHalf);
-            if(expecdesire > result.bestop_truthexp) {
-                result.bestop = bestop;
-                result.bestop_truthexp = expecdesire;
-                result.bestop_truth = opdesire;
-                result.executable_precond = t;
-                result.substitution = subsBest;
-                result.mintime = mintime;
-                result.maxtime = maxtime;
-                if(anticipationsToMake.get(result.bestop) == null) {
-                    anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
-                }
-                anticipationsToMake.get(result.bestop).add(result);
-            }  
         }
+
+
+        if (result.executable_precond != null) {
+            //float debugTimeWindowHalf = calcTimeWindow(result.bestop_truthexp, nal.narParameters.DECISION_THRESHOLD);
+
+            System.out.println("[dN] CHOSEN ACTION timeWindowHalf=" + Float.toString(debugTimeWindowHalf));
+
+            System.out.println( result.executable_precond );
+        }
+
         return result;
+    }
+
+    public static float calcTimeWindow(float timeOffset, float expectation, float decisionThreshold) {
+        float lambda = 0.0015f; // 0.0005f; //0.0015f; //0.005f; // half life time of decay of response of projection
+
+        double lnThresholdDivExp = Math.log((double)decisionThreshold / (double)expectation);
+
+        float timeWindowHalf = (float)(-lnThresholdDivExp/lambda);
+
+        // 2000.0f
+        timeWindowHalf += 1500.0f; // add base width of the window - else the size of the window would reduce to zero if it is very confident
+
+        return timeWindowHalf;
     }
     
     /**
