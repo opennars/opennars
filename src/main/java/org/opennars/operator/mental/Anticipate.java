@@ -24,6 +24,7 @@
 package org.opennars.operator.mental;
 
 import org.opennars.control.DerivationContext;
+import org.opennars.control.concept.ProcessGoal;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.interfaces.Timable;
@@ -115,12 +116,10 @@ public class Anticipate extends Operator implements EventObserver {
             //also this way it is not applied to early, it seems to be the perfect time to me,
             //making hopeExpirationWindow parameter entirely osbolete
             final Interval Int=new Interval(aTime-predictionstarted);
-            //ok we know the magnitude now, let's now construct a interval with magnitude one higher
-            //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
-            //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            final double expiredate=predictionstarted+Int.time*nal.narParameters.ANTICIPATION_TOLERANCE;
-            //
-            
+
+            // compute maximal interval bound with the time window
+            final double expiredate=predictionstarted+ ProcessGoal.calcTimeWindow(Int.time, ae.getKey().expectation, nal.narParameters.DECISION_THRESHOLD);
+
             final boolean didntHappen = (now>=expiredate);
             final boolean maybeHappened = hasNewTasks && !didntHappen;
                 
@@ -219,6 +218,12 @@ public class Anticipate extends Operator implements EventObserver {
             return;
         }
 
+        // compute truth expecatation for window estimation
+        float expectation = 0.0f;
+        if(t!=null) {
+            expectation = t.sentence.truth.getExpectation();
+        }
+
        if(t != null) {
            memory.emit(ANTICIPATE.class, t);
        } else  {
@@ -226,7 +231,7 @@ public class Anticipate extends Operator implements EventObserver {
        }
 
         final LinkedHashSet<Term> ae = new LinkedHashSet();
-        anticipations.put(new Prediction(time.time(),occurenceTime), ae);
+        anticipations.put(new Prediction(time.time(),occurenceTime, expectation), ae);
 
         ae.add(content);
         anticipationFeedback(content, t, memory, time);
@@ -286,9 +291,11 @@ public class Anticipate extends Operator implements EventObserver {
     class Prediction {
         public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
         public final long predictedOccurenceTime;
-        public Prediction(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
+        public final float expectation;
+        public Prediction(final long predictionCreationTime, final long predictedOccurenceTime, final float expectation) { //rest of the crap:
             this.predictionCreationTime=predictionCreationTime; //when the prediction happened
             this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
+            this.expectation = expectation; // what was the truth expectation - 0.0 if not used/known
         }
     }
 }
