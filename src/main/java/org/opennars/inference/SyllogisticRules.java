@@ -25,6 +25,7 @@ package org.opennars.inference;
 
 import java.util.LinkedHashMap;
 import org.opennars.control.DerivationContext;
+import org.opennars.control.concept.ProcessGoal;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
@@ -604,8 +605,6 @@ public final class SyllogisticRules {
         final Term content;
         
         long delta = 0;
-        long mintime = 0;
-        long maxtime = 0;
         boolean predictedEvent = false;
         
         if (newCondition != null) {
@@ -613,10 +612,6 @@ public final class SyllogisticRules {
                 content = premise1.getPredicate();
                 delta = ((Interval) newCondition).time;
                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
-                   float timeOffset = ((Interval) newCondition).time;
-                   float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
-                   mintime = (long) Math.max(taskSentence.getOccurenceTime(), (taskSentence.getOccurenceTime() + timeOffset - timeWindowHalf));
-                   maxtime = (long) (taskSentence.getOccurenceTime() + timeOffset + timeWindowHalf);
                    predictedEvent = nal.narParameters.RETROSPECTIVE_ANTICIPATIONS || (taskSentence.getOccurenceTime() >= nal.time.time());
                 }
              } else {
@@ -674,12 +669,21 @@ public final class SyllogisticRules {
         } else {
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
+
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
         final List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
+
+            float timeOffset = ((Interval) newCondition).time;
+
+            float timeWindowHalf = ProcessGoal.calcTimeWindow(timeOffset, truth.getExpectation(), nal.narParameters.DECISION_THRESHOLD);
+
+            //float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
+            final long mintime = (long) Math.max(taskSentence.getOccurenceTime(), (taskSentence.getOccurenceTime() + timeOffset - timeWindowHalf));
+            final long maxtime = (long) (taskSentence.getOccurenceTime() + timeOffset + timeWindowHalf);
+
             ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new LinkedHashMap<Term,Term>());
         }
     }
