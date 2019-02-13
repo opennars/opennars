@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2018 The OpenNARS authors.
@@ -36,9 +36,8 @@ import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 import org.opennars.control.concept.ProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
@@ -55,12 +54,12 @@ import static org.opennars.inference.UtilityFunctions.or;
  */
 public class Concept extends Item<Term> implements Serializable {
 
-    
+
     /**
      * The term is the unique ID of the concept
      */
     public final Term term;
-    
+
     //recent events that happened before the operation the
     //concept represents was executed
     public Bag<Task<Term>,Sentence<Term>> seq_before;
@@ -89,7 +88,7 @@ public class Concept extends Item<Term> implements Serializable {
      */
     public final List<Task> questions;
 
-    
+
     /**
      * Pending Quests to be answered by new desire values
      */
@@ -112,7 +111,7 @@ public class Concept extends Item<Term> implements Serializable {
      * Reference to the memory to which the Concept belongs
      */
     public final Memory memory;
-    
+
 
     //use to create averaging stats of occurring intervals
     //so that revision can decide whether to use the new or old term
@@ -128,8 +127,8 @@ public class Concept extends Item<Term> implements Serializable {
      * @param memory A reference to the memory
      */
     public Concept(final BudgetValue b, final Term tm, final Memory memory) {
-        super(b);        
-        
+        super(b);
+
         this.term = tm;
         this.memory = memory;
 
@@ -142,7 +141,7 @@ public class Concept extends Item<Term> implements Serializable {
 
         this.taskLinks = new Bag<>(memory.narParameters.TASK_LINK_BAG_LEVELS, memory.narParameters.TASK_LINK_BAG_SIZE, memory.narParameters);
         this.termLinks = new Bag<>(memory.narParameters.TERM_LINK_BAG_LEVELS, memory.narParameters.TERM_LINK_BAG_SIZE, memory.narParameters);
-                
+
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         } else {
@@ -159,7 +158,7 @@ public class Concept extends Item<Term> implements Serializable {
 
     @Override public int hashCode() { return name().hashCode();     }
 
-    
+
     @Override
     public Term name() {
         return term;
@@ -168,7 +167,7 @@ public class Concept extends Item<Term> implements Serializable {
 
 
     public void addToTable(final Task task, final boolean rankTruthExpectation, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
-        
+
         final int preSize = table.size();
         final Task removedT;
         Sentence removed = null;
@@ -184,7 +183,7 @@ public class Concept extends Item<Term> implements Serializable {
             memory.event.emit(eventAdd, this, task, extraEventArguments);
         }
     }
-    
+
     /**
      * Link to a new task from all relevant concepts for continued processing in
      * the near future for unspecified time.
@@ -206,7 +205,7 @@ public class Concept extends Item<Term> implements Serializable {
         if (termLinkTemplates.isEmpty()) {
             return retLink;
         }
-                
+
         final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), content.narParameters);
         if (subBudget.aboveThreshold()) {
 
@@ -241,7 +240,7 @@ public class Concept extends Item<Term> implements Serializable {
     public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, final boolean rankTruthExpectation) {
         final Sentence newSentence = newTask.sentence;
         final float rank1 = rankBelief(newSentence, rankTruthExpectation);    // for the new isBelief
-        float rank2;        
+        float rank2;
         int i;
         for (i = 0; i < table.size(); i++) {
             final Sentence judgment2 = table.get(i).sentence;
@@ -253,9 +252,9 @@ public class Concept extends Item<Term> implements Serializable {
                 }
                 table.add(i, newTask);
                 break;
-            }            
+            }
         }
-        
+
         if (table.size() == capacity) {
             // nothing
         }
@@ -266,7 +265,7 @@ public class Concept extends Item<Term> implements Serializable {
         else if (i == table.size()) { // branch implies implicit table.size() < capacity
             table.add(newTask);
         }
-        
+
         return null;
     }
 
@@ -278,7 +277,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @return The best candidate selected
      */
     public Task selectCandidate(final Task query, final List<Task> list, final Timable time) {
- //        if (list == null) {
+        //        if (list == null) {
         //            return null;
         //        }
         float currentBest = 0;
@@ -297,7 +296,7 @@ public class Concept extends Item<Term> implements Serializable {
         }
         return candidate;
     }
-    
+
     public static class AnticipationEntry implements Serializable {
         public float negConfirmationPriority = 0.0f;
         public Task negConfirmation = null;
@@ -311,8 +310,53 @@ public class Concept extends Item<Term> implements Serializable {
         }
     }
     public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
-    
-    
+
+    public static class Covariant {
+        // hashable int array
+        public static class IntArr {
+            public IntArr(int[] arr) {
+                this.arr = arr;
+            }
+
+            public int[] arr;
+
+            @Override
+            public int hashCode() {
+                int h = 1227;
+                for (int i : arr) {
+                    h ^= i;
+                }
+                return h;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                IntArr oArr = (IntArr) o;
+                if (oArr.arr.length != arr.length) {
+                    return false;
+                }
+
+                for (int idx = 0; idx < arr.length; idx++) {
+                    if (arr[idx] != oArr.arr[idx]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        // counter for the occurrences of the (quantized) intervals
+        // array has a length of one for a single time interval,
+        // two for two time intervals
+        public Map<IntArr, Integer> covariantCounter = new HashMap<>();
+    }
+
+    // covariant anticipations - term is either a sequence of terms or just the term
+    public Map<Term, Covariant> covariantAnticipations = new HashMap<>();
+
+
     /* ---------- insert Links for indirect processing ---------- */
     /**
      * Insert a TaskLink into the TaskLink bag
@@ -349,7 +393,7 @@ public class Concept extends Item<Term> implements Serializable {
             }
         }
         //END HANDLE MAX PER CONTENT
-        final TaskLink removed = taskLinks.putIn(taskLink);      
+        final TaskLink removed = taskLinks.putIn(taskLink);
         if (removed!=null) {
             if (removed == taskLink) {
                 memory.emit(TaskLinkRemove.class, taskLink, this);
@@ -358,7 +402,7 @@ public class Concept extends Item<Term> implements Serializable {
             else {
                 memory.emit(TaskLinkRemove.class, removed, this);
             }
-            
+
             removed.end();
         }
         memory.emit(TaskLinkAdd.class, taskLink, this);
@@ -377,7 +421,7 @@ public class Concept extends Item<Term> implements Serializable {
         if (termLinkTemplates.size() == 0) {
             return;
         }
-        
+
         final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), narParameters);
 
         if (!subBudget.aboveThreshold()) {
@@ -426,7 +470,7 @@ public class Concept extends Item<Term> implements Serializable {
             }
         }
         memory.emit(TermLinkAdd.class, termLink, this);
-        return true;        
+        return true;
     }
 
     /**
@@ -446,15 +490,15 @@ public class Concept extends Item<Term> implements Serializable {
     @Override
     public String toStringLong() {
         final String res =
-                toStringExternal() + " " + term.name()
+            toStringExternal() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
                 + toStringIfNotNull(beliefs.size(), "beliefs")
                 + toStringIfNotNull(desires.size(), "desires")
                 + toStringIfNotNull(questions.size(), "questions")
                 + toStringIfNotNull(quests.size(), "quests");
-        
-                //+ toStringIfNotNull(null, "questions");
+
+        //+ toStringIfNotNull(null, "questions");
         /*for (Task t : questions) {
             res += t.toString();
         }*/
@@ -470,10 +514,10 @@ public class Concept extends Item<Term> implements Serializable {
         final String itemString = item.toString();
 
         return new StringBuilder(2 + title.length() + itemString.length() + 1).
-                append(" ").append(title).append(':').append(itemString).toString();
+            append(" ").append(title).append(':').append(itemString).toString();
     }
-    
-    
+
+
     public float acquiredQuality = 0.0f;
     public void incAcquiredQuality() {
         acquiredQuality+=0.1f;
@@ -522,16 +566,16 @@ public class Concept extends Item<Term> implements Serializable {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = nal.time.time();
 
-        for (final Task beliefT : beliefs) {  
+        for (final Task beliefT : beliefs) {
             final Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
-            
+
             final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), nal.time.time(), nal.memory);
             /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                nal.singlePremiseTask(projectedBelief, task.budget);
             }*/
-            
+
             return projectedBelief;     // return the first satisfying belief
         }
         return null;
@@ -554,17 +598,17 @@ public class Concept extends Item<Term> implements Serializable {
     public void end() {
         for (final Task t : questions) t.end();
         for (final Task t : quests) t.end();
-        
+
         questions.clear();
-        quests.clear();                
+        quests.clear();
         desires.clear();
         //evidentalDiscountBases.clear();
         termLinks.clear();
-        taskLinks.clear();        
+        taskLinks.clear();
         beliefs.clear();
         termLinkTemplates.clear();
     }
-    
+
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
      *
@@ -575,11 +619,11 @@ public class Concept extends Item<Term> implements Serializable {
     public TermLink selectTermLink(final TaskLink taskLink, final long time, final Parameters narParameters) {
         final int toMatch = narParameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
-            
+
             final TermLink termLink = termLinks.takeOut();
             if (termLink==null)
                 break;
-            
+
             if (taskLink.novel(termLink, time, narParameters)) {
                 //return, will be re-inserted in caller method when finished processing it
                 return termLink;
@@ -630,7 +674,7 @@ public class Concept extends Item<Term> implements Serializable {
     public List<Task> getBeliefs() {
         return Collections.unmodifiableList(beliefs);
     }
-    
+
     /** returns unmodifidable collection wrapping beliefs */
     public List<Task> getDesires() {
         return Collections.unmodifiableList(desires);

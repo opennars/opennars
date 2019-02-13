@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2018 The OpenNARS authors.
@@ -55,10 +55,51 @@ import org.opennars.operator.mental.Anticipate;
  * @author Patrick Hammer
  */
 public class ProcessAnticipation {
+    private static int[] retQuantizedIntervals(final Conjunction term, int quantization) {
+        assert (term.term.length % 2) == 0;
 
-    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
-            final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
+        int[] res = new int[term.term.length / 2];
+        for(int i = 0; i < res.length; i++) {
+            res[res.length-1-i] = (int)((Interval)term.term[term.term.length-1-i*2]).time / quantization;
+        }
+
+        return res;
+    }
+
+    private static Conjunction zeroIntervals(final Conjunction term) {
+        Term[] arr = new Term[term.term.length];
+        for(int i = 0; i < term.term.length/2;i++) {
+            arr[i*2] = term.term[i*2];
+        }
+        for(int i=0; i < term.term.length/2;i++) {
+            arr[i*2+1] = new Interval(0);
+        }
+        return (Conjunction)Conjunction.make(arr, term.temporalOrder, term.isSpatial);
+    }
+
+    private static String conv2Str(int[] arr) {
+        String res = "";
+
+        int idx=0;
+        for(int i : arr) {
+            boolean isLast = idx == arr.length-1;
+            res += i + (isLast ? "": ",");
+            idx++;
+        }
+
+        return "[" + res + "]";
+    }
+
+    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
+                                  final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
+
+        System.out.println("anticipate() " + mainSentence);
+
+        if (mainSentence.toString().contains("^")) {
+            int debug5 = 5;
+        }
+
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
@@ -70,8 +111,42 @@ public class ProcessAnticipation {
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
         Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
-                mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) &&
+            mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+
+
+            { // maintain covariance
+                Term conditionalTerm = ((CompoundTerm)((Statement) mainSentence.term).getSubject()).applySubstitute(substitution);
+                Term conditionalTermWithZeroIntervals = zeroIntervals((Conjunction) conditionalTerm);
+
+                final int quantization = 10;
+                int[] quantizedIntervals =retQuantizedIntervals((Conjunction)conditionalTerm, quantization);
+
+                Concept.Covariant covariant;
+
+                if( c.covariantAnticipations.containsKey(conditionalTermWithZeroIntervals) ) {
+                    covariant = c.covariantAnticipations.get(conditionalTermWithZeroIntervals);
+                }
+                else {
+                    covariant = new Concept.Covariant();
+                    c.covariantAnticipations.put(conditionalTermWithZeroIntervals.clone(), covariant);
+                }
+
+                { // increment counter
+                    if (!covariant.covariantCounter.containsKey(new Concept.Covariant.IntArr(quantizedIntervals))) {
+                        covariant.covariantCounter.put(new Concept.Covariant.IntArr(quantizedIntervals), 0);
+                    }
+
+                    int counter = covariant.covariantCounter.get(new Concept.Covariant.IntArr(quantizedIntervals));
+                    counter++;
+                    covariant.covariantCounter.put(new Concept.Covariant.IntArr(quantizedIntervals), counter);
+
+                    System.out.println(conditionalTermWithZeroIntervals + "   " +  conv2Str(quantizedIntervals) + " " + counter);
+                }
+            }
+
+
+
             Concept.AnticipationEntry toDelete = null;
             Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
             boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
@@ -104,13 +179,13 @@ public class ProcessAnticipation {
             }
             nal.memory.emit(OutputHandler.ANTICIPATE.class, specificAnticipationTerm); //disappoint/confirm printed anyway
         }
-   
+
     }
 
     /**
      * Process outdated anticipations within the concept,
      * these which are outdated generate negative feedback
-     * 
+     *
      * @param narParameters The reasoner parameters
      * @param concept The concept which potentially outdated anticipations should be processed
      * @param time The time
@@ -129,7 +204,7 @@ public class ProcessAnticipation {
                 for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
                     final Task t = tl.targetTask;
                     if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                            CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
+                        CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
                         if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
                             confirmed.add(entry);
                             gotConfirmed = true;
@@ -156,10 +231,10 @@ public class ProcessAnticipation {
             concept.anticipations.remove(entry);
         }
     }
-    
+
     /**
      * Whether a processed judgement task satisfies the anticipations within concept
-     * 
+     *
      * @param task The judgement task be checked
      * @param concept The concept that is processed
      * @param nal The derivation context
@@ -178,10 +253,10 @@ public class ProcessAnticipation {
         }
         concept.anticipations.removeAll(confirmed);
     }
-    
+
     /**
      * Fire predictictive inference based on beliefs that are known to the concept's neighbours
-     * 
+     *
      * @param judgementTask judgement task
      * @param concept concept that is processed
      * @param nal derivation context
