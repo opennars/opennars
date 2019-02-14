@@ -150,6 +150,23 @@ public class ProcessAnticipation {
                     float timeDelta = lastInterval.time;
                     Concept.Predicted newPredicted = new Concept.Predicted(conditioned, timeDelta);
                     predicted.add(newPredicted);
+
+                    // keep under AIKR by limiting memory
+                    // heuristic: we kick out the item with the lowest number of events
+                    {
+                        int COVARIANCETABLE_ENTRIES = 300;
+                        if (predicted.size() > COVARIANCETABLE_ENTRIES) {
+                            int idxWithLowest = 0;
+
+                            for(int idx=0;idx<predicted.size();idx++) {
+                                if( predicted.get(idx).dist.n < predicted.get(idxWithLowest).dist.n ) {
+                                    idxWithLowest = idx;
+                                }
+                            }
+
+                            predicted.remove(idxWithLowest);
+                        }
+                    }
                 }
             }
         }
