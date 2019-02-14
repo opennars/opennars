@@ -111,12 +111,8 @@ public class ProcessTask {
         }
 
         Implication implication = (Implication)term;
-        if (implication.getTemporalOrder() != TemporalRules.ORDER_FORWARD || implication.hasVar()) {
+        if (implication.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
             return;
-        }
-
-        if (lastDerivationTerm == null) {
-            System.out.println("---");
         }
 
         if (lastDerivationTerm != null && lastDerivationTerm.equals(term)) {
