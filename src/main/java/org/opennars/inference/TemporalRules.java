@@ -140,7 +140,7 @@ public class TemporalRules {
     protected static boolean termForTemporalInduction(final Term t) {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
-    
+
     //TODO maybe split &/ case into own function
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
         

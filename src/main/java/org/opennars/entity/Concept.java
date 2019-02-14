@@ -311,6 +311,7 @@ public class Concept extends Item<Term> implements Serializable {
     }
     public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
 
+    /*
     public static class Covariant {
         // hashable int array
         public static class IntArr {
@@ -347,14 +348,53 @@ public class Concept extends Item<Term> implements Serializable {
             }
         }
 
-        // counter for the occurrences of the (quantized) intervals
-        // array has a length of one for a single time interval,
-        // two for two time intervals
-        public Map<IntArr, Integer> covariantCounter = new HashMap<>();
+
+        public Map<Term, IncrementalCentralDistribution> covarianceDist = new HashMap<>();
+    }
+    */
+
+    // see http://datagenetics.com/blog/november22017/index.html
+    public static class IncrementalCentralDistribution {
+        public void next(final double x) {
+            double nextMean = mean + (x - mean)/(n+1);
+            double nextS = s + (x - mean)*(x - nextMean);
+
+            mean = nextMean;
+            s = nextS;
+            n++;
+        }
+
+        public double calcVariance() {
+            return Math.sqrt(s/n);
+        }
+
+        public long n = 0;
+        public double mean = 0.0;
+        public double s = 0.0;
     }
 
-    // covariant anticipations - term is either a sequence of terms or just the term
-    public Map<Term, Covariant> covariantAnticipations = new HashMap<>();
+    public static class Predicted {
+        public Term term;
+        public IncrementalCentralDistribution dist;
+
+        public Predicted(Term term, double sample) {
+            this.term = term.cloneDeep();
+            dist = new IncrementalCentralDistribution();
+            dist.next(sample);
+        }
+    }
+
+    // covariant predictions - used for anticipation estimation
+    // key is a term which is either a single event or a sequence of events where the intervals are quantized
+
+    // ex: (with quantization = 10
+    //    (&/, a, +19) =/> b   has key = a, predicted = b with the distribution which contains only 19
+
+    // ex: (with quantization = 10
+    //     (&/, a, +50, b, +19) => c
+    //     (&/, a, +51, b, +50) => c
+    //   has key = (&/, a, +50, b), predicted = c with distribution which contains 19 and 50
+    public Map<Term, List<Predicted>> covariantPredictions = new HashMap<>();
 
 
     /* ---------- insert Links for indirect processing ---------- */

@@ -26,8 +26,13 @@ package org.opennars.control.concept;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
+import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
+import org.opennars.language.Conjunction;
+import org.opennars.language.Implication;
+import org.opennars.language.Term;
+
 
 /**
  * Encapsulates the dispatching task processing
@@ -73,7 +78,13 @@ public class ProcessTask {
             }
             
             if (task.aboveThreshold()) {    // still need to be processed
-                TaskLink taskl = concept.linkToTask(task,nal);               
+                TaskLink taskl = concept.linkToTask(task,nal);
+
+                if(task.sentence.isJudgment()) {
+                    Term term = task.sentence.term;
+                    processPrediction(term, nal);
+                }
+
                 if(task.sentence.isJudgment() && ProcessJudgment.isExecutableHypothesis(task,nal)) { //after linkToTask
                     ProcessJudgment.addToTargetConceptsPreconditions(task, nal); //because now the components are there
                 }
@@ -81,5 +92,46 @@ public class ProcessTask {
             }
         }
         return true;
-    }     
+    }
+
+    private static Term lastDerivationTerm = null;
+
+    private static boolean isInUsefulPredictiveForm(Implication term) {
+        if( term.getSubject() instanceof Conjunction) {
+            return ((Conjunction)term.getSubject()).term.length == 4 || ((Conjunction)term.getSubject()).term.length == 2;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static void processPrediction(final Term term, final DerivationContext nal) {
+        if(!(term instanceof Implication)) {
+            return;
+        }
+
+        Implication implication = (Implication)term;
+        if (implication.getTemporalOrder() != TemporalRules.ORDER_FORWARD || implication.hasVar()) {
+            return;
+        }
+
+        if (lastDerivationTerm == null) {
+            System.out.println("---");
+        }
+
+        if (lastDerivationTerm != null && lastDerivationTerm.equals(term)) {
+            return;
+        }
+
+        if (!isInUsefulPredictiveForm(implication)) {
+            return;
+        }
+
+        lastDerivationTerm = term;
+
+        //System.out.println("proceed " + implication);
+        ProcessAnticipation.addCovariantAnticipationEntry(implication, nal);
+
+        int debug = 5;
+    }
 }
