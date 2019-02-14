@@ -158,7 +158,8 @@ public class ProcessAnticipation {
                         if (predicted.size() > COVARIANCETABLE_ENTRIES) {
                             int idxWithLowest = 0;
 
-                            for(int idx=0;idx<predicted.size();idx++) {
+                            // size()-1 because we don't want to kick out the added item
+                            for(int idx=0;idx<predicted.size()-1;idx++) {
                                 if( predicted.get(idx).dist.n < predicted.get(idxWithLowest).dist.n ) {
                                     idxWithLowest = idx;
                                 }
