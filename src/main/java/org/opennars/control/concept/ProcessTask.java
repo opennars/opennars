@@ -97,7 +97,7 @@ public class ProcessTask {
     private static Term lastDerivationTerm = null;
 
     private static boolean isInUsefulPredictiveForm(Implication term) {
-        if( term.getSubject() instanceof Conjunction) {
+        if( term.getSubject() instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             return ((Conjunction)term.getSubject()).term.length == 4 || ((Conjunction)term.getSubject()).term.length == 2;
         }
         else {
