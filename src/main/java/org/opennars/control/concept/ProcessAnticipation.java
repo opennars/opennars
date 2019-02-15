@@ -70,26 +70,42 @@ public class ProcessAnticipation {
         return Conjunction.make(arr, term.temporalOrder, term.isSpatial);
     }
 
-    private static Term extractSeqQuantized(Conjunction term) {
-        Term[] arr = new Term[term.term.length-1];
-        for(int i=0;i<(term.term.length-1)/2;i++) {
-            arr[i*2] = term.term[i*2];
+    private static Conjunction quantizeSeq(Conjunction term, int quantization) {
+        Term[] arr = new Term[term.term.length];
+        for(int i=0;i<term.term.length;i++) {
+            arr[i] = term.term[i];
 
-            if (!(term.term[i*2+1] instanceof Interval)) {
-                int debgHere = 5;
+            if (!(term.term[i] instanceof Interval)) {
+                continue;
             }
 
-            Interval interval = (Interval)term.term[i*2+1];
+            Interval interval = (Interval)term.term[i];
             long intervalTime = interval.time;
             // quanitze
-            intervalTime = (intervalTime / 3000) * 3000;
+            intervalTime = (intervalTime / quantization) * quantization;
 
-            arr[i*2+1] = new Interval(intervalTime);
+            arr[i] = new Interval(intervalTime);
         }
-        arr[arr.length-1] = term.term[term.term.length-2];
 
-        if(term.term.length == 2) {
-            return term.term[0];
+        return (Conjunction)Conjunction.make(arr, term.temporalOrder, term.isSpatial);
+    }
+
+    private static Term extractSeqQuantized(Conjunction term) {
+        int quantization = 1000;
+        Conjunction quantized = quantizeSeq(term, quantization);
+
+        int cutoff = 0; // we want to cutt of the last interval
+        if (quantized.term[quantized.term.length-1] instanceof Interval) {
+            cutoff = 1;
+        }
+
+        Term[] arr = new Term[quantized.term.length-cutoff];
+        for(int i=0;i<(quantized.term.length-cutoff);i++) {
+            arr[i] = quantized.term[i];
+        }
+
+        if(arr.length == 1) {
+            return arr[0]; // return term if it is the only content of the conjunction
         }
         return Conjunction.make(arr, term.temporalOrder, term.isSpatial);
     }
