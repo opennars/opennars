@@ -24,6 +24,7 @@
 package org.opennars.control.concept;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +74,10 @@ public class ProcessAnticipation {
         Term[] arr = new Term[term.term.length-1];
         for(int i=0;i<(term.term.length-1)/2;i++) {
             arr[i*2] = term.term[i*2];
+
+            if (!(term.term[i*2+1] instanceof Interval)) {
+                int debgHere = 5;
+            }
 
             Interval interval = (Interval)term.term[i*2+1];
             long intervalTime = interval.time;
@@ -134,62 +139,59 @@ public class ProcessAnticipation {
         }
 
         synchronized(conceptOfConditional) {
-            List<Concept.Predicted> predicted;
+            Map<Term, Concept.Predicted> predicted;
 
             if( conceptOfConditional.covariantPredictions.containsKey(conditionalWithQuantizedIntervals) ) {
                 predicted = conceptOfConditional.covariantPredictions.get(conditionalWithQuantizedIntervals);
             }
             else {
-                predicted = new ArrayList<>();
+                predicted = new HashMap<>();
                 conceptOfConditional.covariantPredictions.put(conditionalWithQuantizedIntervals.cloneDeep(), predicted);
             }
 
             // add to predicted
             {
-                boolean found = false;
-
-                for (Concept.Predicted iPredicted : predicted) {
-                    if (iPredicted.term.equals(conditioned)) {
-                        found = true;
-
-                        // add
-                        Interval lastInterval = retLastInterval((Conjunction) conditional);
-                        if (lastInterval == null) {
-                            return; // doesn't have a interval at the last place - return
-                        }
-                        float timeDelta = lastInterval.time;
-                        iPredicted.dist.next(timeDelta);
-
-                        break;
-                    }
-                }
-
-                if (!found) {
+                boolean found = predicted.containsKey(conditioned);
+                if (found) {
+                    // add
                     Interval lastInterval = retLastInterval((Conjunction) conditional);
                     if (lastInterval == null) {
                         return; // doesn't have a interval at the last place - return
                     }
                     float timeDelta = lastInterval.time;
-                    Concept.Predicted newPredicted = new Concept.Predicted(conditioned, timeDelta);
-                    predicted.add(newPredicted);
+                    predicted.get(conditioned).dist.next(timeDelta);
+                }
+                else {
+                    Interval lastInterval = retLastInterval((Conjunction) conditional);
+                    if (lastInterval == null) {
+                        return; // doesn't have a interval at the last place - return
+                    }
+                    float timeDelta = lastInterval.time;
+                    Concept.Predicted newPredicted = new Concept.Predicted(timeDelta);
+
 
                     // keep under AIKR by limiting memory
                     // heuristic: we kick out the item with the lowest number of events
                     {
                         int COVARIANCETABLE_ENTRIES = 300;
                         if (predicted.size() > COVARIANCETABLE_ENTRIES) {
-                            int idxWithLowest = 0;
+                            Map.Entry<Term, Concept.Predicted> entryWithLowest = null;
 
-                            // size()-1 because we don't want to kick out the added item
-                            for(int idx=0;idx<predicted.size()-1;idx++) {
-                                if( predicted.get(idx).dist.n < predicted.get(idxWithLowest).dist.n ) {
-                                    idxWithLowest = idx;
+                            for(Map.Entry<Term, Concept.Predicted> iPredictedEntry : predicted.entrySet()) {
+                                if(entryWithLowest == null) {
+                                    entryWithLowest = iPredictedEntry;
+                                }
+
+                                if(entryWithLowest.getValue().dist.n < iPredictedEntry.getValue().dist.n) {
+                                    entryWithLowest = iPredictedEntry;
                                 }
                             }
 
-                            predicted.remove(idxWithLowest);
+                            predicted.remove(entryWithLowest.getKey());
                         }
                     }
+
+                    predicted.put(conditioned, newPredicted);
                 }
             }
         }
@@ -210,6 +212,11 @@ public class ProcessAnticipation {
         Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional);
 
         Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
+
+        if (conceptOfConditional == null) {
+            return; // TODO
+        }
+
         synchronized (conceptOfConditional) {
 
             /*
@@ -241,9 +248,7 @@ public class ProcessAnticipation {
         }
         */
 
-            if (conceptOfConditional == null) {
-                return; // TODO
-            }
+
 
             //Term firstConditional = ((Conjunction)conditional).term[0];
 
@@ -256,7 +261,7 @@ public class ProcessAnticipation {
         }
         else {
             */
-            List<Concept.Predicted> predicted = null;
+            Map<Term, Concept.Predicted> predicted = null;
 
             boolean useDefaultEstimation = false;
 
@@ -273,23 +278,15 @@ public class ProcessAnticipation {
                 boolean found = false;
                 Concept.Predicted matchingPredicted = null; // predicted which matches to the predicted term
 
-                for (Concept.Predicted iPredicted : predicted) {
-                    if (iPredicted.term.equals(conditioned)) {
-                        matchingPredicted = iPredicted;
-                        found = true;
-
-                        // add
-                        //float timeDelta = (retLastInterval((Conjunction)conditional)).time;
-                        //iPredicted.dist.next(timeDelta);
-
-                        break;
-                    }
+                found = predicted.containsKey(conditioned);
+                if(found) {
+                    matchingPredicted = predicted.get(conditioned);
                 }
+
 
                 if (!found) {
                     useDefaultEstimation = true;
                 }
-
                 if (found) {
                     { // sample from distribution
                         float mean = (float) matchingPredicted.dist.mean;
