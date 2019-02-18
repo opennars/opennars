@@ -23,10 +23,9 @@
  */
 package org.opennars.inference;
 
+import com.sun.istack.internal.Pool;
 import org.opennars.entity.*;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Term;
-import org.opennars.language.Variable;
+import org.opennars.language.*;
 import org.opennars.storage.Memory;
 
 import static java.lang.Math.*;
@@ -63,10 +62,21 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float rankBelief(final Sentence judg, final boolean rankTruthExpectation) {
         if(rankTruthExpectation) {
+            long sumIntermediateintervals = 0;
+            if(judg.term instanceof Implication && ((Implication)judg.term).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                Implication impl = (Implication)judg.term;
+                if( impl.getSubject() instanceof CompoundTerm && impl.getSubject().getTemporalOrder() == TemporalRules.ORDER_FORWARD ) {
+                    CompoundTerm seq = (CompoundTerm)impl.getSubject();
+                    sumIntermediateintervals = calcSumIntermediateIntervals(seq);
+                }
+            }
+
+            float intervalBias = (7000.0f - Math.min((float)sumIntermediateintervals, 7000.0f)) * 0.001f;
+
             float complexityBias = (float)judg.term.getComplexity();
             complexityBias += countNumberOfVars(judg.term) * 1.25f; //1.25f because it should prefer non-var terms for decision making - so must be > 1.0
             float complexityBiasFactor = 100.0f / complexityBias;
-            float result = judg.getTruth().getExpectation() * complexityBiasFactor;
+            float result = judg.getTruth().getExpectation() * (complexityBiasFactor + intervalBias);
             return result;
         }
         final float confidence = judg.truth.getConfidence();
@@ -88,6 +98,18 @@ public final class BudgetFunctions extends UtilityFunctions {
             return count;
         }
         return 0;
+    }
+
+    // computes the sum of all except the last intervals
+    private static long calcSumIntermediateIntervals(final CompoundTerm compoundTerm) {
+        long sum=0;
+        for(int i=0;i<compoundTerm.term.length-1;i++) {
+            if( compoundTerm.term[i] instanceof Interval ) {
+                final Interval interval = (Interval)compoundTerm.term[i];
+                sum+=interval.time;
+            }
+        }
+        return sum;
     }
 
 
