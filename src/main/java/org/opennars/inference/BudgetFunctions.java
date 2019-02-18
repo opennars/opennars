@@ -23,7 +23,6 @@
  */
 package org.opennars.inference;
 
-import com.sun.istack.internal.Pool;
 import org.opennars.entity.*;
 import org.opennars.language.*;
 import org.opennars.storage.Memory;
