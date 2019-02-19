@@ -7,6 +7,26 @@
 
 How to build OpenNARS
 ---------------------
+Using mvn:
+
+for each of the projects: 
+
+	https://github.com/opennars/opennars-parent.git     
+	https://github.com/opennars/opennars.git     
+	https://github.com/opennars/opennars-lab.git     
+	https://github.com/opennars/opennars-applications.git     
+	https://github.com/opennars/opennars-gui.git
+
+	git clone 'project'
+	cd 'project_dir'
+	mvn clean install 
+
+optionally append -Dmaven.javadoc.skip=true to skip documentation generation
+
+	cd 'project_dir'
+	mvn exec:java
+
+Alternatively, using IntelliJ IDE:
 
 Install git https://git-scm.com/downloads
 
