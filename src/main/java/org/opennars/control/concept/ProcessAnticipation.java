@@ -235,48 +235,6 @@ public class ProcessAnticipation {
 
         synchronized (conceptOfConditional) {
 
-            /*
-            if(((Conjunction)conditional).term.length == 2) {
-                Term firstConditional = ((Conjunction)conditional).term[0];
-
-                conceptOfConditional = nal.memory.concepts.get(firstConditional);
-            }
-            */
-
-
-
-        /*
-        if (((Conjunction)conditional).term.length == 4) {
-            conceptOfConditional = nal.memory.concepts.get(conditionalWithoutIntervals);
-            if (conceptOfConditional == null) {
-                conceptOfConditional = nal.memory.conceptualize(new BudgetValue(1.0f, 0.98f, 1.0f, nal.narParameters), conditionalWithoutIntervals);
-            }
-        }
-        else if(((Conjunction)conditional).term.length == 2) {
-            Term firstConditional = ((Conjunction)conditional).term[0];
-
-            conceptOfConditional = nal.memory.concepts.get(firstConditional);
-            if(conceptOfConditional == null) {
-                // estimate min and max with standard OpenNARS interval estimation
-                timeOffset = ((Interval) ((Conjunction) conditional).term[1]).time;
-                timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
-            }
-        }
-        */
-
-
-
-            //Term firstConditional = ((Conjunction)conditional).term[0];
-
-        /*
-        conceptOfConditional = nal.memory.concepts.get(firstConditional);
-        if(conceptOfConditional == null) {
-            // estimate min and max with standard OpenNARS interval estimation
-            timeOffset = ((Interval) ((Conjunction)conditional).term[1]).time;
-            timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
-        }
-        else {
-            */
             Map<Term, Concept.Predicted> predicted = null;
 
             boolean useDefaultEstimation = false;
@@ -365,40 +323,6 @@ public class ProcessAnticipation {
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) &&
             mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-
-
-            /*
-            { // maintain covariance
-                Term conditionalTerm = ((CompoundTerm)((Statement) mainSentence.term).getSubject()).applySubstitute(substitution);
-                Term conditionalTermWithZeroIntervals = zeroIntervals((Conjunction) conditionalTerm);
-
-                final int quantization = 10;
-                int[] quantizedIntervals =retQuantizedIntervals((Conjunction)conditionalTerm, quantization);
-
-                Concept.Covariant covariant;
-
-                if( c.covariantPredictions.containsKey(conditionalTermWithZeroIntervals) ) {
-                    covariant = c.covariantPredictions.get(conditionalTermWithZeroIntervals);
-                }
-                else {
-                    covariant = new Concept.Covariant();
-                    c.covariantPredictions.put(conditionalTermWithZeroIntervals.clone(), covariant);
-                }
-
-                { // increment counter
-                    if (!covariant.covariantCounter.containsKey(new Concept.Covariant.IntArr(quantizedIntervals))) {
-                        covariant.covariantCounter.put(new Concept.Covariant.IntArr(quantizedIntervals), 0);
-                    }
-
-                    int counter = covariant.covariantCounter.get(new Concept.Covariant.IntArr(quantizedIntervals));
-                    counter++;
-                    covariant.covariantCounter.put(new Concept.Covariant.IntArr(quantizedIntervals), counter);
-
-                    System.out.println(conditionalTermWithZeroIntervals + "   " +  conv2Str(quantizedIntervals) + " " + counter);
-                }
-            }*/
-
-
 
             Concept.AnticipationEntry toDelete = null;
             Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);

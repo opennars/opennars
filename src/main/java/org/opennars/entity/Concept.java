@@ -311,48 +311,6 @@ public class Concept extends Item<Term> implements Serializable {
     }
     public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
 
-    /*
-    public static class Covariant {
-        // hashable int array
-        public static class IntArr {
-            public IntArr(int[] arr) {
-                this.arr = arr;
-            }
-
-            public int[] arr;
-
-            @Override
-            public int hashCode() {
-                int h = 1227;
-                for (int i : arr) {
-                    h ^= i;
-                }
-                return h;
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
-                IntArr oArr = (IntArr) o;
-                if (oArr.arr.length != arr.length) {
-                    return false;
-                }
-
-                for (int idx = 0; idx < arr.length; idx++) {
-                    if (arr[idx] != oArr.arr[idx]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-
-
-        public Map<Term, IncrementalCentralDistribution> covarianceDist = new HashMap<>();
-    }
-    */
-
     // see http://datagenetics.com/blog/november22017/index.html
     public static class IncrementalCentralDistribution {
         public void next(final double x) {
