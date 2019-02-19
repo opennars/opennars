@@ -156,11 +156,3 @@ Links
  * [google groups - Discussion Group](https://groups.google.com/forum/?fromgroups#!forum/open-nars)
  * [IRC](http://webchat.freenode.net?channels=nars)
  * [Try online](http://91.203.212.130/NARS)
-
-Credits:
--------
-We also thank the involved other projects, for example
-http://www.marioai.org/LevelGeneration/source-code
-https://processing.org/
-Hyperassociative Map code adapted from dANN:
-http://wiki.syncleus.com/index.php/dANN
