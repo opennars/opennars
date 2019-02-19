@@ -239,6 +239,10 @@ public class Parameters implements Serializable {
     public volatile float ANTICIPATION_CONFIDENCE = 0.05f;
 
     public volatile float ANTICIPATION_TOLERANCE = 100.0f;
+
+    public volatile int COVARIANCE_TABLE_ENTRIES = 300;
+    public volatile float COVARIANCE_WINDOW = 3.0f; // standard dev's used for covariance estimation
+    public volatile int COVARIANCE_QUANTIZATION = 1000; // interval quantization of covariance (except last interval)
     
     /** Retrospective anticipation, allow to check memory for content in case of anticipation (potential issue with forgetting) */
     public boolean RETROSPECTIVE_ANTICIPATIONS = false;

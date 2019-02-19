@@ -90,8 +90,7 @@ public class ProcessAnticipation {
         return (Conjunction)Conjunction.make(arr, term.temporalOrder, term.isSpatial);
     }
 
-    private static Term extractSeqQuantized(Conjunction term) {
-        int quantization = 1000;
+    private static Term extractSeqQuantized(Conjunction term, final int quantization) {
         Conjunction quantized = quantizeSeq(term, quantization);
 
         int cutoff = 0; // we want to cutt of the last interval
@@ -145,7 +144,7 @@ public class ProcessAnticipation {
         Term conditional = ((CompoundTerm)impl.getSubject());//.applySubstitute(substitution);
         Term conditioned = impl.getPredicate();
 
-        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional);
+        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional, nal.narParameters.COVARIANCE_QUANTIZATION);
 
         Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
 
@@ -189,8 +188,7 @@ public class ProcessAnticipation {
                     // keep under AIKR by limiting memory
                     // heuristic: we kick out the item with the lowest number of events
                     {
-                        int COVARIANCETABLE_ENTRIES = 300;
-                        if (predicted.size() > COVARIANCETABLE_ENTRIES) {
+                        if (predicted.size() > nal.narParameters.COVARIANCE_TABLE_ENTRIES) {
                             Map.Entry<Term, Concept.Predicted> entryWithLowest = null;
 
                             for(Map.Entry<Term, Concept.Predicted> iPredictedEntry : predicted.entrySet()) {
@@ -225,7 +223,7 @@ public class ProcessAnticipation {
         Term conditioned = impl.getPredicate();
 
         Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
-        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional);
+        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional, nal.narParameters.COVARIANCE_QUANTIZATION);
 
         Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
 
@@ -266,7 +264,7 @@ public class ProcessAnticipation {
                         float mean = (float) matchingPredicted.dist.mean;
                         float variance = (float) matchingPredicted.dist.calcVariance();
 
-                        float scaledVariance = variance * 1.2f; // TODO< make parameter >
+                        float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
                         timeWindowHalf = scaledVariance * 0.5f;
                         timeOffset = mean;
                     }
