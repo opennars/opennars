@@ -122,7 +122,7 @@ public class ProcessAnticipation {
 
         Concept conceptOfConditional = null;
 
-        if (((Conjunction)conditional).term.length == 4) {
+        if (((Conjunction)conditional).term.length > 2) {
             Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
 
             conceptOfConditional = nal.memory.concepts.get(conditionalWithoutIntervals);
@@ -308,7 +308,7 @@ public class ProcessAnticipation {
                         float mean = (float) matchingPredicted.dist.mean;
                         float variance = (float) matchingPredicted.dist.calcVariance();
 
-                        float scaledVariance = variance * 0.7f; // TODO< make parameter >
+                        float scaledVariance = variance * 1.2f; // TODO< make parameter >
                         timeWindowHalf = scaledVariance * 0.5f;
                         timeOffset = mean;
                     }

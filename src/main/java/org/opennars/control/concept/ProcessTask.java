@@ -98,11 +98,9 @@ public class ProcessTask {
 
     private static boolean isInUsefulPredictiveForm(Implication term) {
         if( term.getSubject() instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD && term.getSubject().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            return ((Conjunction)term.getSubject()).term.length == 4 || ((Conjunction)term.getSubject()).term.length == 2;
+            return ((Conjunction)term.getSubject()).term.length >= 2;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     private static void processPrediction(final Term term, final DerivationContext nal) {
