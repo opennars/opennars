@@ -88,6 +88,16 @@ opennars-applications
 
 Opennars Core is run directly by the Lab and Applications Launchers.
 
+Example Narsese files
+--------------------
+Here is a link to some Narses examples including:
+
+    Toothbrush example - how to use a toothbrush to undo a screw?
+    
+    Detective example - who is the criminal?
+    
+https://github.com/opennars/opennars/tree/master/src/main/resources/nal/application    
+
 Theory Overview
 ---------------
 
