@@ -150,18 +150,23 @@ public class ProcessAnticipation {
         }
         for(Concept.AnticipationEntry entry : disappointed) {
             final Term term = entry.negConfirmation.getTerm();
-            final TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
-            final TruthValue truth = new TruthValue(0.0f, defaultTruth.getConfidence(), narParameters); // frequency of negative confirmation is 0.0
 
-            final Sentence sentenceForNewTask = new Sentence(
-                term,
-                Symbols.JUDGMENT_MARK,
-                truth,
-                new Stamp(nar, nar.memory, Tense.Eternal));
-            final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
-            final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+            TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
+            TruthValue eternalizedDefaultTruth = TruthFunctions.eternalize(defaultTruth, narParameters);
+            final TruthValue truth = new TruthValue(0.0f, eternalizedDefaultTruth.getConfidence(), narParameters); // frequency of negative confirmation is 0.0
 
-            concept.memory.inputTask(nar, t, false);
+            if (defaultTruth != null) {
+                final Sentence sentenceForNewTask = new Sentence(
+                    term,
+                    Symbols.JUDGMENT_MARK,
+                    truth,
+                    new Stamp(nar, nar.memory, Tense.Eternal));
+                final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
+                final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+
+                concept.memory.inputTask(nar, t, false);
+            }
+
             concept.anticipations.remove(entry);
         }
     }
@@ -169,11 +174,11 @@ public class ProcessAnticipation {
     // computes "default" truth of term if all terms have default confidence
     // return null if truth can be ignored
     private static TruthValue calcDefaultTruth(final Term term, final Parameters reasonerParameters) {
-        if (term instanceof Operation) {
+        if (term instanceof Operation || term instanceof Inheritance || term instanceof Similarity) {
             return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
         }
-        else if (term instanceof Interval) {
-            return null;
+        else if (term instanceof Interval || term instanceof Variable) {
+            return null; // ignore for truth-value computation
         }
         else if ((term instanceof Implication) && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Implication termAsCompound = (Implication)term;
@@ -189,7 +194,7 @@ public class ProcessAnticipation {
                 for(int idx=1;idx<termAsCompound.term.length;idx++) {
                     final TruthValue componentTv = calcDefaultTruth(termAsCompound.term[idx], reasonerParameters);
                     if (componentTv == null) {
-                        continue; // ignore
+                        continue; // ignored for truth-value computation
                     }
 
                     tv = TruthFunctions.intersection(tv, componentTv, reasonerParameters);
