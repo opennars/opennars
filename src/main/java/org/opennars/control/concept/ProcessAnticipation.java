@@ -279,9 +279,13 @@ public class ProcessAnticipation {
             }
 
             if(useDefaultEstimation) {
+                return; // we don't support default estimation anymore!
+
+                /*
                 // estimate min and max with standard OpenNARS interval estimation
                 timeOffset = (retLastInterval((Conjunction)conditional)).time;
                 timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
+                */
             }
         }
 
