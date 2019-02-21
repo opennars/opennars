@@ -39,7 +39,6 @@ import org.opennars.inference.RuleTables;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.interfaces.Timable;
-import org.opennars.io.events.AnswerHandler;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
@@ -211,91 +210,8 @@ public class ProcessAnticipation {
             adjustedTv,
             beliefToAdjust.sentence.stamp
         );
-
-        /*
-        final Sentence sentenceForNewTask = new Sentence(
-            term,
-            Symbols.QUESTION_MARK,
-            null,
-            new Stamp(nar, mem, Tense.Eternal));
-        final BudgetValue budget = new BudgetValue(
-            nar.narParameters.DEFAULT_QUESTION_PRIORITY,
-            nar.narParameters.DEFAULT_QUESTION_DURABILITY,
-            1, nar.narParameters);
-        final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
-
-        nar.addInput(t, nar);
-
-        QaHandler2 qa = new QaHandler2(nar);
-        qa.start(t, nar);
-        */
-
-
-
-
-
-        /*
-        try {
-            nar.ask(term.toString(), new QaHandler2(nar));
-        } catch (Parser.InvalidInputException e) {
-            e.printStackTrace();
-        }
-        */
-
-        /*
-
-        final Parameters reasonerParameters = mem.narParameters;
-
-        QaHandler qaHandler = new QaHandler();
-        askImmediate(term, qaHandler, nar, mem, reasonerParameters, time);
-
-        float beliefConfidence = 0.0f;
-
-        // answer must be present immediatly
-        if (qaHandler.solutionBelief != null) {
-            beliefConfidence = qaHandler.solutionBelief.truth.getConfidence();
-        }
-
-        // Negative because we subtract because we have less evidence for the negative confirmation.
-        // It has less evidence, because it will be used for revision - and we don't want to revise to much toward freq=0
-        float amountOfConfirmationEvidence = -0.8f;
-
-        float negConfirmationBeliefConfidence = adjustEvidence(beliefConfidence, amountOfConfirmationEvidence, reasonerParameters);
-
-        // build new truthvalue - frequency is zero because it is a negative confirmation (disapointment)
-        final TruthValue tv = new TruthValue(0.0f, negConfirmationBeliefConfidence, reasonerParameters);
-
-        // add new belief to let it revise the old one
-        {
-            final BudgetValue budget = new BudgetValue(0.99f,0.1f,0.1f, reasonerParameters); // budget for one-time processing
-            final Stamp stamp = new Stamp(time, mem);
-            final Sentence s = new Sentence(
-                term,
-                '.',
-                tv,
-                stamp);
-            final Task t = new Task(s, budget, Task.EnumType.DERIVED);
-            mem.inputTask(time, t, false);
-        }*/
     }
 
-
-    // TODO< move into Reasoner/Nar? >
-    private static void askImmediate(final Term term, AnswerHandler handler,  final Nar nar, final Memory mem, final Parameters reasonerParameters, final Timable time) {
-        final BudgetValue budget = new BudgetValue(0.99f,0.1f,0.1f, reasonerParameters); // budget for one-time processing
-        final Stamp stamp = new Stamp(time, mem);
-        final Sentence s = new Sentence(
-            term,
-            '?',
-            null,
-            stamp);
-        final Task t = new Task(s, budget, Task.EnumType.DERIVED);
-
-        handler.start(t, nar);
-
-        mem.localInference(t, reasonerParameters, time);
-    }
-    
     /**
      * Whether a processed judgement task satisfies the anticipations within concept
      * 
@@ -355,66 +271,6 @@ public class ProcessAnticipation {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private static class QaHandler extends AnswerHandler {
-        public Sentence solutionBelief = null;
-
-        @Override
-        public void onSolution(Sentence belief) {
-            this.solutionBelief = belief;
-        }
-    }
-
-    private static class QaHandler2 extends AnswerHandler {
-        private final Nar nar;
-
-        public QaHandler2(Nar nar) {
-            this.nar = nar;
-        }
-
-        public boolean wasTriggered = false;
-
-        @Override
-        public void onSolution(Sentence belief) {
-            Memory mem = nar.memory;
-            Timable time = nar;
-            Parameters reasonerParameters = nar.memory.narParameters;
-
-            if (wasTriggered) {
-                return;
-            }
-            wasTriggered = true;
-
-            final Term term = belief.term;
-            float beliefConfidence = belief.truth.getConfidence();
-
-            // Negative because we subtract because we have less evidence for the negative confirmation.
-            // It has less evidence, because it will be used for revision - and we don't want to revise to much toward freq=0
-            float amountOfConfirmationEvidence = -0.2f;//-0.8f;
-
-            float negConfirmationBeliefConfidence = 0.0f; //adjustEvidence(beliefConfidence, amountOfConfirmationEvidence, reasonerParameters);
-
-            // build new truthvalue - frequency is zero because it is a negative confirmation (disapointment)
-            final TruthValue tv = new TruthValue(0.0f, negConfirmationBeliefConfidence, reasonerParameters);
-
-            // add new belief to let it revise the old one
-            {
-                final BudgetValue budget = new BudgetValue(0.99f,0.1f,0.1f, reasonerParameters); // budget for one-time processing
-                final Stamp stamp = new Stamp(time, mem);
-                final Sentence s = new Sentence(
-                    term,
-                    '.',
-                    tv,
-                    stamp);
-                final Task t = new Task(s, budget, Task.EnumType.INPUT);
-                mem.inputTask(time, t);
-
-                System.out.println(s);
-
-                int debugHere = 5;
             }
         }
     }
