@@ -42,7 +42,7 @@ import java.io.Serializable;
 public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 
     /* The sentence of the Task*/
-    public final Sentence<T> sentence;
+    public Sentence<T> sentence;
     /* Belief from which the Task is derived, or null if derived from a theorem*/
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
