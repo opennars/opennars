@@ -157,18 +157,16 @@ public class ProcessAnticipation {
         }
     }
 
-    private static TruthValue adjustEvidence(final TruthValue beliefTv, final float amountOfConfirmationEvidence, final Parameters reasonerParameters) {
+    private static float adjustEvidence(final TruthValue beliefTv, final float amountOfConfirmationEvidence, final Parameters reasonerParameters) {
         // compute amount of evidence
         // see draft of book "Non-Axiomatic Logic: A Model of Intelligent Reasoning" page 30
         final float wBefore = c2w(beliefTv.getConfidence(), reasonerParameters);//k * c / (1.0f - c);
 
         // adjust amount of evidence.
-        final float wAfter = Math.max(wBefore + amountOfConfirmationEvidence, 0.0f);
+        final float wAfter = Math.max(wBefore + amountOfConfirmationEvidence, 0.07f);
 
         final float cAfter = w2c(wAfter, reasonerParameters);//wAfter / (wAfter + k);
-        float fAfter = wBefore / wAfter;
-        fAfter *= beliefTv.getFrequency();
-        return new TruthValue(fAfter, cAfter, reasonerParameters);
+        return cAfter;
     }
 
     private static void negConfirmationAdjustTruth(final Term term, final Nar nar, final Memory mem, final Timable time) {
@@ -191,16 +189,17 @@ public class ProcessAnticipation {
 
         // Negative because we subtract because we have less evidence for the negative confirmation.
         // It has less evidence, because it will be used for revision - and we don't want to revise to much toward freq=0
-        float amountOfConfirmationEvidence = -0.4f;//0.8f;
+        float amountOfConfirmationEvidence = -1.0f;//;-0.4f;//0.8f;
 
-        float negConfirmationBeliefConfidence = adjustEvidence(beliefToAdjust.sentence.truth, amountOfConfirmationEvidence, nar.narParameters).getConfidence();
-        //float negConfirmationBeliefFrequency =
+        float negConfirmationBeliefConfidence = adjustEvidence(beliefToAdjust.sentence.truth, amountOfConfirmationEvidence, nar.narParameters);
 
         // build new truthvalue - frequency is zero because it is a negative confirmation (disapointment)
         final TruthValue tv = new TruthValue(0.0f, negConfirmationBeliefConfidence, nar.narParameters);
 
         // revise
-        final TruthValue adjustedTv = TruthFunctions.revision(beliefToAdjust.sentence.truth, tv, nar.narParameters);
+        TruthValue adjustedTv = TruthFunctions.revision(beliefToAdjust.sentence.truth, tv, nar.narParameters);
+        // set conf to orginal conf
+        adjustedTv = new TruthValue(adjustedTv.getFrequency(), beliefToAdjust.sentence.truth.getConfidence(), nar.narParameters);
 
         //final TruthValue adjustedTv = adjustEvidence(beliefToAdjust.sentence.truth, amountOfConfirmationEvidence, nar.narParameters);
 
