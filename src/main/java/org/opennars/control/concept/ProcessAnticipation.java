@@ -37,16 +37,14 @@ import org.opennars.entity.TermLink;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.RuleTables;
 import org.opennars.inference.TemporalRules;
+import org.opennars.inference.TruthFunctions;
 import org.opennars.interfaces.Timable;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.OutputHandler;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
+import org.opennars.language.*;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
+import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 
@@ -113,14 +111,13 @@ public class ProcessAnticipation {
      * 
      * @param narParameters The reasoner parameters
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @param time The time
      */
-    public static void maintainDisappointedAnticipations(final Parameters narParameters, final Concept concept, final Timable time) {
+    public static void maintainDisappointedAnticipations(final Parameters narParameters, final Concept concept, final Nar nar) {
         //here we can check the expiration of the feedback:
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         List<Concept.AnticipationEntry> disappointed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
-            if(entry.negConfirmation == null || time.time() <= entry.negConfirm_abort_maxtime) {
+            if(entry.negConfirmation == null || nar.time() <= entry.negConfirm_abort_maxtime) {
                 continue;
             }
             //at first search beliefs for input tasks:
@@ -152,9 +149,60 @@ public class ProcessAnticipation {
             concept.memory.emit(OutputHandler.DISAPPOINT.class,concept.getTerm());
         }
         for(Concept.AnticipationEntry entry : disappointed) {
-            concept.memory.inputTask(time, entry.negConfirmation, false);
+            final Term term = entry.negConfirmation.getTerm();
+            final TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
+            final TruthValue truth = new TruthValue(0.0f, defaultTruth.getConfidence(), narParameters); // frequency of negative confirmation is 0.0
+
+            final Sentence sentenceForNewTask = new Sentence(
+                term,
+                Symbols.JUDGMENT_MARK,
+                truth,
+                new Stamp(nar, nar.memory, Tense.Eternal));
+            final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
+            final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+
+            concept.memory.inputTask(nar, t, false);
             concept.anticipations.remove(entry);
         }
+    }
+
+    // computes "default" truth of term if all terms have default confidence
+    // return null if truth can be ignored
+    private static TruthValue calcDefaultTruth(final Term term, final Parameters reasonerParameters) {
+        if (term instanceof Operation) {
+            return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
+        }
+        else if (term instanceof Interval) {
+            return null;
+        }
+        else if ((term instanceof Implication) && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            Implication termAsCompound = (Implication)term;
+            final TruthValue tvOfSubject = calcDefaultTruth(termAsCompound.getSubject(), reasonerParameters);
+            final TruthValue tvOfPredicate = calcDefaultTruth(termAsCompound.getPredicate(), reasonerParameters);
+            return TruthFunctions.induction(tvOfSubject, tvOfPredicate, reasonerParameters);
+        }
+        else if (term instanceof Conjunction) {
+            final CompoundTerm termAsCompound = (CompoundTerm)term;
+
+            if (termAsCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                TruthValue tv = new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
+                for(int idx=1;idx<termAsCompound.term.length;idx++) {
+                    final TruthValue componentTv = calcDefaultTruth(termAsCompound.term[idx], reasonerParameters);
+                    if (componentTv == null) {
+                        continue; // ignore
+                    }
+
+                    tv = TruthFunctions.intersection(tv, componentTv, reasonerParameters);
+                }
+                return tv;
+            }
+            else {
+                return null; // TODO
+            }
+        }
+
+
+        return null; // TODO
     }
     
     /**
