@@ -174,10 +174,7 @@ public class ProcessAnticipation {
     // computes "default" truth of term if all terms have default confidence
     // return null if truth can be ignored
     private static TruthValue calcDefaultTruth(final Term term, final Parameters reasonerParameters) {
-        if (term instanceof Operation || term instanceof Inheritance || term instanceof Similarity) {
-            return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
-        }
-        else if (term instanceof Interval || term instanceof Variable) {
+        if (term instanceof Interval || term instanceof Variable) {
             return null; // ignore for truth-value computation
         }
         else if ((term instanceof Implication) && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
@@ -206,8 +203,7 @@ public class ProcessAnticipation {
             }
         }
 
-
-        return null; // TODO
+        return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
     }
     
     /**
