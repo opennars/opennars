@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2018 The OpenNARS authors.
@@ -24,7 +24,9 @@
 package org.opennars.inference;
 
 import org.opennars.entity.*;
+import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
+import org.opennars.language.Variable;
 import org.opennars.storage.Memory;
 
 import static java.lang.Math.*;
@@ -54,18 +56,38 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     /**
      * Determine the rank of a judgment by its quality and originality (stamp
- baseLength), called from Concept
+     baseLength), called from Concept
      *
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public final static float rankBelief(final Sentence judg, final boolean rankTruthExpectation) {        
+    public final static float rankBelief(final Sentence judg, final boolean rankTruthExpectation) {
         if(rankTruthExpectation) {
-            return judg.getTruth().getExpectation();
+            float complexityBias = (float)judg.term.getComplexity();
+            complexityBias += countNumberOfVars(judg.term) * 1.25f; //1.25f because it should prefer non-var terms for decision making - so must be > 1.0
+            float complexityBiasFactor = 100.0f / complexityBias;
+            float result = judg.getTruth().getExpectation() * complexityBiasFactor;
+            return result;
         }
         final float confidence = judg.truth.getConfidence();
         //final float originality = judg.stamp.getOriginality();
         return confidence; //or(confidence, originality);
+    }
+
+    private static int countNumberOfVars(final Term term) {
+        if (term instanceof Variable) {
+            return 1;
+        }
+        else if(term instanceof CompoundTerm) {
+            int count = 0;
+
+            CompoundTerm compoundTerm = (CompoundTerm)term;
+            for(final Term iChild : compoundTerm.term) {
+                count += countNumberOfVars(iChild);
+            }
+            return count;
+        }
+        return 0;
     }
 
 
@@ -113,7 +135,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             quality = 0;
         }
         */
-        
+
         return new BudgetValue(priority, durability, quality, nal.narParameters);
     }
 
@@ -149,8 +171,8 @@ public final class BudgetFunctions extends UtilityFunctions {
     public enum Activating {
         Max, TaskLink
     }
-    
-    
+
+
     /* ----------------------- Concept ----------------------- */
     /**
      * Activate a concept by an incoming TaskLink
@@ -163,14 +185,14 @@ public final class BudgetFunctions extends UtilityFunctions {
             case Max:
                 BudgetFunctions.merge(receiver, amount);
                 break;
-            case TaskLink:                
+            case TaskLink:
                 final float oldPri = receiver.getPriority();
                 receiver.setPriority( or(oldPri, amount.getPriority()) );
                 receiver.setDurability( aveAri(receiver.getDurability(), amount.getDurability()) );
                 receiver.setQuality( receiver.getQuality() );
                 break;
         }
-        
+
     }
 
     /* ---------------- Bag functions, on all Items ------------------- */
@@ -195,7 +217,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         budget.setPriority(quality);
     }
 
-    
+
     /**
      * Merge an item into another one in a bag, when the two are identical
      * except in budget values
@@ -203,7 +225,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param b The budget baseValue to be modified
      * @param a The budget adjustValue doing the adjusting
      */
-    public static void merge(final BudgetValue b, final BudgetValue a) {        
+    public static void merge(final BudgetValue b, final BudgetValue a) {
         b.setPriority(max(b.getPriority(), a.getPriority()));
         b.setDurability(max(b.getDurability(), a.getDurability()));
         b.setQuality(max(b.getQuality(), a.getQuality()));
@@ -288,7 +310,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         final Concept c = mem.concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
-    
+
     /**
      * Common processing for all inference step
      *
@@ -318,7 +340,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, final Task task, final Memory memory) {
         throw new IllegalStateException("Moved to TemporalRules.java");
-    }    
+    }
 
     public static BudgetValue budgetTermLinkConcept(final Concept c, final BudgetValue taskBudget, final TermLink termLink) {
         return taskBudget.clone();
