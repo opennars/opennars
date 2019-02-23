@@ -303,8 +303,9 @@ public class ProcessGoal {
         //4. And executing it, also forming an expectation about the result
         if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
             System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
+
             for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
+                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence.term, precon.mintime, precon.maxtime, 2, precon.substitution);
             }
         }
     }

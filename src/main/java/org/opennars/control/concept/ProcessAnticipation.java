@@ -462,10 +462,10 @@ public class ProcessAnticipation {
 
         //System.out.println("call anticipate for term=" + mainSentence.term + " (" + (timeOffset-timeWindowHalf) + ";" + (timeOffset+timeWindowHalf) + ")");
 
-        anticipate(nal, mainSentence, budget, mintime, maxtime, priority, substitution);
+        anticipate(nal, mainSentence.term, mintime, maxtime, priority, substitution);
     }
 
-    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
+    public static void anticipate(final DerivationContext nal, final Term term,
                                   final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
 
@@ -475,7 +475,7 @@ public class ProcessAnticipation {
 
         //System.out.println("anticipate() " + mainSentence);
 
-        if (mainSentence.toString().contains("^")) {
+        if (term.toString().contains("^")) {
             int debug5 = 5;
         }
 
@@ -483,15 +483,15 @@ public class ProcessAnticipation {
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
         final Sentence s = new Sentence(
-            mainSentence.term,
-            mainSentence.punctuation,
+            term,
+            '.',
             new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
-        Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
+        Term specificAnticipationTerm = ((CompoundTerm)((Statement) term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) &&
-            mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (term instanceof Implication || term instanceof Equivalence) &&
+            term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
 
             Concept.AnticipationEntry toDelete = null;
             Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
