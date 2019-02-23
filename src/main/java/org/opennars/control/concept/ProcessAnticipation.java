@@ -642,6 +642,7 @@ public class ProcessAnticipation {
             }
         }
 
+        // TODO< return default for known variations so that we land only here if we haven't implemented a variation
         return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
     }
 
