@@ -50,6 +50,9 @@ import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 
+import static org.opennars.inference.UtilityFunctions.c2w;
+import static org.opennars.inference.UtilityFunctions.w2c;
+
 /**
  *
  * @author Patrick Hammer
@@ -610,7 +613,20 @@ public class ProcessAnticipation {
 
             TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
             TruthValue eternalizedDefaultTruth = TruthFunctions.eternalize(defaultTruth, narParameters);
-            final TruthValue truth = new TruthValue(0.0f, eternalizedDefaultTruth.getConfidence(), narParameters); // frequency of negative confirmation is 0.0
+
+            int numberOfIntervals = 1; // TODO< count >
+            float ANTICIPATION_NEG_FACTOR = 0.85f;
+
+            // fix up confidence
+            // This is engineered this way because the truth of the orginal statement (which was the basis of the anticipated event)
+            // is not known - and it was modified with projection.
+            // So we somehow need to "simulate" the truth loss from the projection.
+            // we do this by scaling the weight of the truth
+            float w = c2w(eternalizedDefaultTruth.getConfidence(), narParameters);
+            w *= (float)Math.pow(ANTICIPATION_NEG_FACTOR, numberOfIntervals);
+            float c = w2c(w, narParameters);
+
+            final TruthValue truth = new TruthValue(0.0f, c, narParameters); // frequency of negative confirmation is 0.0
 
             if (defaultTruth != null) {
                 final Sentence sentenceForNewTask = new Sentence(
@@ -634,6 +650,9 @@ public class ProcessAnticipation {
     private static TruthValue calcDefaultTruth(final Term term, final Parameters reasonerParameters) {
         if (term instanceof Interval || term instanceof Variable) {
             return null; // ignore for truth-value computation
+        }
+        else if(term instanceof Inheritance) {
+            return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
         }
         else if ((term instanceof Implication) && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Implication termAsCompound = (Implication)term;
