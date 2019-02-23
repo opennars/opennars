@@ -297,14 +297,17 @@ public class ProcessGoal {
             // This leads to a wrong accounting of evidence (because it will get revised with a freq=0 sentence on anticipation failuire).
             Map<Term, Boolean> alreadyAnticipatedUnifiedPrecondition = new HashMap<>();
 
-            for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                final Term unifiedPrecondition = ((CompoundTerm)((Statement) precon.executable_precond.sentence.term).getSubject()).applySubstitute( precon.substitution);
+            if (anticipationsToMake.containsKey(bestOpWithMeta.bestop)) {
+                for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
+                    final Term unifiedPrecondition = ((CompoundTerm)((Statement) precon.executable_precond.sentence.term).getSubject()).applySubstitute( precon.substitution);
 
-                if(alreadyAnticipatedUnifiedPrecondition.containsKey(unifiedPrecondition)) {
-                    continue;
+                    if(alreadyAnticipatedUnifiedPrecondition.containsKey(unifiedPrecondition)) {
+                        continue;
+                    }
+                    alreadyAnticipatedUnifiedPrecondition.put(unifiedPrecondition, true);
+
+                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence.term, precon.mintime, precon.maxtime, 2, precon.substitution);
                 }
-                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence.term, precon.mintime, precon.maxtime, 2, precon.substitution);
-                alreadyAnticipatedUnifiedPrecondition.put(unifiedPrecondition, true);
             }
         }
 
