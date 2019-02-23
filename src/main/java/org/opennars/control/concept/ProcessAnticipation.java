@@ -349,7 +349,6 @@ public class ProcessAnticipation {
         return result;
     }
 
-    // TODO< refactor to invoke anticipationEstimateMinAndMaxTimes() >
     public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
                                            final float priority, Map<Term,Term> substitution) {
 
@@ -358,110 +357,14 @@ public class ProcessAnticipation {
             // for now it's fine to just return
         }
 
-        Implication impl = (Implication)mainSentence.term;
-        impl = (Implication)impl.applySubstitute(substitution);
-
-        if (false){ // debug
-            boolean isPredictiveBySeq =
-                impl instanceof Implication &&
-                    impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                    ((Implication)impl).getSubject() instanceof CompoundTerm &&
-                    ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
-            if (isPredictiveBySeq) {
-                System.out.println("ProcessAnticipation: call anticipate for term=" + impl);
-
-                int debugHere = 5;
-            }
+        AnticipationTimes anticipationTimes = anticipationEstimateMinAndMaxTimes(nal, mainSentence, substitution);
+        if (anticipationTimes == null) {
+            return;
         }
 
 
-        float timeOffset = 0, timeWindowHalf = 0;
-
-
-        Term conditional = ((CompoundTerm)impl.getSubject());//commented because we apply the substitute at the beginning   .applySubstitute(substitution);
-        Term conditioned = impl.getPredicate();
-
-        Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
-        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional, nal.narParameters.COVARIANCE_QUANTIZATION);
-
-        Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
-
-        if (conceptOfConditional == null) {
-            return; // TODO
-        }
-
-        synchronized (conceptOfConditional) {
-
-            Map<Term, Concept.Predicted> predicted = null;
-
-            boolean useDefaultEstimation = false;
-
-            if( conceptOfConditional.covariantPredictions.containsKey(conditionalWithQuantizedIntervals) ) {
-                predicted = conceptOfConditional.covariantPredictions.get(conditionalWithQuantizedIntervals);
-            }
-            else {
-                useDefaultEstimation = true;
-                //predicted = new ArrayList<>();
-                //conceptOfConditional.covariantPredictions.put(conditionalWithoutIntervals.cloneDeep(), predicted);
-            }
-
-            if (!useDefaultEstimation) {
-                boolean found = false;
-                Concept.Predicted matchingPredicted = null; // predicted which matches to the predicted term
-
-                found = predicted.containsKey(conditioned);
-                if(found) {
-                    matchingPredicted = predicted.get(conditioned);
-                }
-
-
-                if (!found) {
-                    useDefaultEstimation = true;
-                }
-                if (found) {
-                    if (matchingPredicted.dist.n <= 1) {
-                        return; // to few samples for any usable anticipation
-                        // one is definitly to less because it is a almost infinitisimal time for a proto-AGI!
-                    }
-
-                    { // sample from distribution
-                        float mean = (float) matchingPredicted.dist.mean;
-                        float variance = (float) matchingPredicted.dist.calcVariance();
-
-                        float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
-                        timeWindowHalf = scaledVariance * 0.5f;
-                        timeOffset = mean + sumOfIntervalsExceptLastOne((Conjunction) conditional);
-                    }
-
-                    // debug
-                    {
-                        if (matchingPredicted.dist.calcVariance() > 0.00001 || true) {
-
-                            boolean isPredictiveBySeq =
-                                impl instanceof Implication &&
-                                impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                                ((Implication)impl).getSubject() instanceof CompoundTerm &&
-                                ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
-                            if (isPredictiveBySeq) {
-                                System.out.println("ProcessAnticipation: successfull call anticipate for term=" + impl + " (" + (timeOffset - timeWindowHalf) + ";" + (timeOffset + timeWindowHalf) + ")");
-
-                                int debugHere = 5;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(useDefaultEstimation) {
-                return; // we don't support default estimation anymore!
-
-                /*
-                // estimate min and max with standard OpenNARS interval estimation
-                timeOffset = (retLastInterval((Conjunction)conditional)).time;
-                timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
-                */
-            }
-        }
+        float timeOffset = anticipationTimes.timeOffset;
+        float timeWindowHalf = anticipationTimes.timeWindow * 0.5f;
 
         // assert timeOffset != 0 and timeWindowHalf != 0
 
