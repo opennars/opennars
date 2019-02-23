@@ -286,6 +286,11 @@ public class ProcessAnticipation {
                     useDefaultEstimation = true;
                 }
                 if (found) {
+                    if (matchingPredicted.dist.n <= 1) {
+                        return null; // to few samples for any usable anticipation
+                                     // one is definitly to less because it is a almost infinitisimal time for a proto-AGI!
+                    }
+
                     { // sample from distribution
                         float mean = (float) matchingPredicted.dist.mean;
                         float variance = (float) matchingPredicted.dist.calcVariance();
@@ -331,10 +336,12 @@ public class ProcessAnticipation {
         result.timeWindow = timeWindowHalf * 2.0f;
         result.timeOffset = timeOffset;
 
-        System.out.println("anticipationEstimateMinAndMaxTimes()");
-        System.out.println("   term = " + impl);
-        System.out.println("   mainSentence.term = " + mainSentence.term);
-        System.out.println("   ===> timeWindow=" + result.timeWindow);
+        if(false) {
+            System.out.println("anticipationEstimateMinAndMaxTimes()");
+            System.out.println("   term = " + impl);
+            System.out.println("   mainSentence.term = " + mainSentence.term);
+            System.out.println("   ===> timeWindow=" + result.timeWindow);
+        }
 
         return result;
     }
@@ -409,6 +416,11 @@ public class ProcessAnticipation {
                     useDefaultEstimation = true;
                 }
                 if (found) {
+                    if (matchingPredicted.dist.n <= 1) {
+                        return; // to few samples for any usable anticipation
+                        // one is definitly to less because it is a almost infinitisimal time for a proto-AGI!
+                    }
+
                     { // sample from distribution
                         float mean = (float) matchingPredicted.dist.mean;
                         float variance = (float) matchingPredicted.dist.calcVariance();
@@ -488,6 +500,9 @@ public class ProcessAnticipation {
             new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
+
+        System.out.println("anticipate() " + t.sentence.term);
+
         Term specificAnticipationTerm = ((CompoundTerm)((Statement) term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (term instanceof Implication || term instanceof Equivalence) &&
@@ -548,12 +563,16 @@ public class ProcessAnticipation {
             if(narParameters.RETROSPECTIVE_ANTICIPATIONS) {
                 for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
                     final Task t = tl.targetTask;
-                    if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                        CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
-                        if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
-                            confirmed.add(entry);
-                            gotConfirmed = true;
-                            break;
+
+                    final boolean isExpectationAboveThreshold = t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
+
+                    if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && isExpectationAboveThreshold) {
+                        if (CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
+                            if(t.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
+                                confirmed.add(entry);
+                                gotConfirmed = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -659,6 +678,14 @@ public class ProcessAnticipation {
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
             if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
+
+                if (entry.negConfirmation.sentence.term.toString().length() > 60) {
+                    System.out.println("confirm (neg)anticipation " + entry.negConfirmation);
+
+                    int debugHere = 5;
+
+                }
+
                 confirmed.add(entry);
             }
         }

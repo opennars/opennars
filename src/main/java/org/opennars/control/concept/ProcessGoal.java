@@ -23,12 +23,8 @@
  */
 package org.opennars.control.concept;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
@@ -45,15 +41,7 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Product;
-import org.opennars.language.Term;
-import org.opennars.language.Variable;
-import org.opennars.language.Variables;
+import org.opennars.language.*;
 import org.opennars.main.MiscFlags;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
@@ -304,10 +292,23 @@ public class ProcessGoal {
         if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
             System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
 
+
+            // Every unified precondition must be unique - else we anticipate the same event multiple times.
+            // This leads to a wrong accounting of evidence (because it will get revised with a freq=0 sentence on anticipation failuire).
+            Map<Term, Boolean> alreadyAnticipatedUnifiedPrecondition = new HashMap<>();
+
             for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
+                final Term unifiedPrecondition = ((CompoundTerm)((Statement) precon.executable_precond.sentence.term).getSubject()).applySubstitute( precon.substitution);
+
+                if(alreadyAnticipatedUnifiedPrecondition.containsKey(unifiedPrecondition)) {
+                    continue;
+                }
                 ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence.term, precon.mintime, precon.maxtime, 2, precon.substitution);
+                alreadyAnticipatedUnifiedPrecondition.put(unifiedPrecondition, true);
             }
         }
+
+        int debugHere = 5;
     }
 
     /**
