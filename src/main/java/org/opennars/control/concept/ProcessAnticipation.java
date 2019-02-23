@@ -114,6 +114,20 @@ public class ProcessAnticipation {
         return null;
     }
 
+    private static long sumOfIntervalsExceptLastOne(Conjunction term) {
+        long sum = 0;
+        for(int i=0;i<term.term.length-1;i++) {
+            if (!(term.term[i] instanceof Interval)) {
+                continue;
+            }
+
+            Interval interval = (Interval) term.term[i];
+            long intervalTime = interval.time;
+            sum += intervalTime;
+        }
+        return sum;
+    }
+
     private static Concept getConceptOfConditional(Term conditional, final DerivationContext nal) {
 
 
@@ -210,14 +224,151 @@ public class ProcessAnticipation {
 
     }
 
-    public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
-                                           final float priority, Map<Term,Term> substitution) {
+    public static AnticipationTimes anticipationEstimateMinAndMaxTimes(final DerivationContext nal, final Sentence mainSentence, Map<Term,Term> substitution) {
+        Implication impl = (Implication)mainSentence.term;
+        impl = (Implication)impl.applySubstitute(substitution);
+
+        if (false){ // debug
+            boolean isPredictiveBySeq =
+                impl instanceof Implication &&
+                    impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                    ((Implication)impl).getSubject() instanceof CompoundTerm &&
+                    ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
+            if (isPredictiveBySeq) {
+                System.out.println("ProcessAnticipation: call anticipate for term=" + impl);
+
+                int debugHere = 5;
+            }
+        }
+
 
         float timeOffset = 0, timeWindowHalf = 0;
 
-        Implication impl = (Implication)mainSentence.term;
 
-        Term conditional = ((CompoundTerm)impl.getSubject()).applySubstitute(substitution);
+        Term conditional = ((CompoundTerm)impl.getSubject());//commented because we apply the substitute at the beginning   .applySubstitute(substitution);
+        Term conditioned = impl.getPredicate();
+
+        Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
+        Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional, nal.narParameters.COVARIANCE_QUANTIZATION);
+
+        Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
+
+        if (conceptOfConditional == null) {
+            return null; // TODO
+        }
+
+        synchronized (conceptOfConditional) {
+
+            Map<Term, Concept.Predicted> predicted = null;
+
+            boolean useDefaultEstimation = false;
+
+            if( conceptOfConditional.covariantPredictions.containsKey(conditionalWithQuantizedIntervals) ) {
+                predicted = conceptOfConditional.covariantPredictions.get(conditionalWithQuantizedIntervals);
+            }
+            else {
+                useDefaultEstimation = true;
+                //predicted = new ArrayList<>();
+                //conceptOfConditional.covariantPredictions.put(conditionalWithoutIntervals.cloneDeep(), predicted);
+            }
+
+            if (!useDefaultEstimation) {
+                boolean found = false;
+                Concept.Predicted matchingPredicted = null; // predicted which matches to the predicted term
+
+                found = predicted.containsKey(conditioned);
+                if(found) {
+                    matchingPredicted = predicted.get(conditioned);
+                }
+
+
+                if (!found) {
+                    useDefaultEstimation = true;
+                }
+                if (found) {
+                    { // sample from distribution
+                        float mean = (float) matchingPredicted.dist.mean;
+                        float variance = (float) matchingPredicted.dist.calcVariance();
+
+                        float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
+                        timeWindowHalf = scaledVariance * 0.5f;
+                        timeOffset = mean + sumOfIntervalsExceptLastOne((Conjunction) conditional);
+                    }
+
+                    // debug
+                    {
+                        if (false && matchingPredicted.dist.calcVariance() > 0.00001) {
+
+                            boolean isPredictiveBySeq =
+                                impl instanceof Implication &&
+                                    impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                                    ((Implication)impl).getSubject() instanceof CompoundTerm &&
+                                    ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
+                            if (isPredictiveBySeq) {
+                                System.out.println("ProcessAnticipation.anticipationEstimateMinAndMaxTimes(): successfull call anticipate for term=" + impl + " (" + (timeOffset - timeWindowHalf) + ";" + (timeOffset + timeWindowHalf) + ")");
+
+                                int debugHere = 5;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(useDefaultEstimation) {
+                return null; // we don't support default estimation anymore!
+
+                /*
+                // estimate min and max with standard OpenNARS interval estimation
+                timeOffset = (retLastInterval((Conjunction)conditional)).time;
+                timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
+                */
+            }
+        }
+
+        // assert timeOffset != 0 and timeWindowHalf != 0
+
+        AnticipationTimes result = new AnticipationTimes();
+        result.timeWindow = timeWindowHalf * 2.0f;
+        result.timeOffset = timeOffset;
+
+        System.out.println("anticipationEstimateMinAndMaxTimes()");
+        System.out.println("   term = " + impl);
+        System.out.println("   mainSentence.term = " + mainSentence.term);
+        System.out.println("   ===> timeWindow=" + result.timeWindow);
+
+        return result;
+    }
+
+    // TODO< refactor to invoke anticipationEstimateMinAndMaxTimes() >
+    public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
+                                           final float priority, Map<Term,Term> substitution) {
+
+        if (mainSentence.isEternal()) {
+            return; // is actually not allow and a BUG when we land here
+            // for now it's fine to just return
+        }
+
+        Implication impl = (Implication)mainSentence.term;
+        impl = (Implication)impl.applySubstitute(substitution);
+
+        if (false){ // debug
+            boolean isPredictiveBySeq =
+                impl instanceof Implication &&
+                    impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                    ((Implication)impl).getSubject() instanceof CompoundTerm &&
+                    ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
+            if (isPredictiveBySeq) {
+                System.out.println("ProcessAnticipation: call anticipate for term=" + impl);
+
+                int debugHere = 5;
+            }
+        }
+
+
+        float timeOffset = 0, timeWindowHalf = 0;
+
+
+        Term conditional = ((CompoundTerm)impl.getSubject());//commented because we apply the substitute at the beginning   .applySubstitute(substitution);
         Term conditioned = impl.getPredicate();
 
         Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
@@ -264,13 +415,23 @@ public class ProcessAnticipation {
 
                         float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
                         timeWindowHalf = scaledVariance * 0.5f;
-                        timeOffset = mean;
+                        timeOffset = mean + sumOfIntervalsExceptLastOne((Conjunction) conditional);
                     }
 
                     // debug
                     {
-                        if (matchingPredicted.dist.calcVariance() > 0.00001) {
-                            //System.out.println("call anticipate for term=" + mainSentence.term + " (" + (timeOffset - timeWindowHalf) + ";" + (timeOffset + timeWindowHalf) + ")");
+                        if (matchingPredicted.dist.calcVariance() > 0.00001 || true) {
+
+                            boolean isPredictiveBySeq =
+                                impl instanceof Implication &&
+                                impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                                ((Implication)impl).getSubject() instanceof CompoundTerm &&
+                                ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
+                            if (isPredictiveBySeq) {
+                                System.out.println("ProcessAnticipation: successfull call anticipate for term=" + impl + " (" + (timeOffset - timeWindowHalf) + ";" + (timeOffset + timeWindowHalf) + ")");
+
+                                int debugHere = 5;
+                            }
                         }
                     }
                 }
@@ -293,6 +454,10 @@ public class ProcessAnticipation {
         long mintime = (long) Math.max(mainSentence.getOccurenceTime(), (mainSentence.getOccurenceTime() + timeOffset - timeWindowHalf - 1));
         long maxtime = (long) (mainSentence.getOccurenceTime() + timeOffset + timeWindowHalf + 1);
 
+        if (maxtime < 0) {
+            int debug6 = 5; // must never happen!
+        }
+
         int debugHere = 5;
 
         //System.out.println("call anticipate for term=" + mainSentence.term + " (" + (timeOffset-timeWindowHalf) + ";" + (timeOffset+timeWindowHalf) + ")");
@@ -303,6 +468,10 @@ public class ProcessAnticipation {
     public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
                                   final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
+
+        if (maxtime < 0) {
+            int debug6 = 5; // must never happen!
+        }
 
         //System.out.println("anticipate() " + mainSentence);
 
@@ -404,6 +573,21 @@ public class ProcessAnticipation {
         }
         for(Concept.AnticipationEntry entry : disappointed) {
             final Term term = entry.negConfirmation.getTerm();
+
+            { // debug
+                boolean isPredictiveBySeq =
+                    term instanceof Implication &&
+                        term.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                        ((Implication)term).getSubject() instanceof CompoundTerm &&
+                        ((CompoundTerm)((Implication)term).getSubject()).term.length > 2;
+                if (isPredictiveBySeq) {
+                    long currentTime = nar.time();
+
+                    System.out.println("ProcessAnticipation: disappoint for term=" + term + " (" + (currentTime-entry.negConfirm_abort_mintime) + "-" + (currentTime-entry.negConfirm_abort_maxtime) + ")");
+
+                    int debugHere = 5;
+                }
+            }
 
             TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
             TruthValue eternalizedDefaultTruth = TruthFunctions.eternalize(defaultTruth, narParameters);
@@ -522,5 +706,10 @@ public class ProcessAnticipation {
                 }
             }
         }
+    }
+
+    public static class AnticipationTimes {
+        public float timeOffset;
+        public float timeWindow;
     }
 }

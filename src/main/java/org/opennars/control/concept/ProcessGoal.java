@@ -304,7 +304,7 @@ public class ProcessGoal {
         if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
             System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
             for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                ProcessAnticipation.anticipateEstimate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, 2, precon.substitution);
+                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
             }
         }
     }
@@ -380,6 +380,11 @@ public class ProcessGoal {
                             final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
                             final float expecdesire = opdesire.getExpectation();
                             Operation bestop = (Operation) ((CompoundTerm)op).applySubstitute(subsBest);
+
+                            // estimate anticipation range
+                            ProcessAnticipation.AnticipationTimes anticipationTimes = ProcessAnticipation.anticipationEstimateMinAndMaxTimes(nal, t.sentence, subsBest);
+                            final boolean successfulAnticipation = anticipationTimes != null;
+
                             long mintime = (long) (nal.time.time() + timeOffset - timeWindowHalf);
                             long maxtime = (long) (nal.time.time() + timeOffset + timeWindowHalf);
                             if(expecdesire > result.bestop_truthexp) {
@@ -388,12 +393,19 @@ public class ProcessGoal {
                                 result.bestop_truth = opdesire;
                                 result.executable_precond = t;
                                 result.substitution = subsBest;
-                                result.mintime = mintime;
-                                result.maxtime = maxtime;
-                                if(anticipationsToMake.get(result.bestop) == null) {
-                                    anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
+
+                                if (successfulAnticipation) {
+                                    // overwrite estimate by estimate from anticipation
+                                    timeWindowHalf = anticipationTimes.timeWindow * 0.5f;
+                                    timeOffset = anticipationTimes.timeOffset;
+                                    result.mintime = (long) (nal.time.time() + timeOffset - timeWindowHalf);
+                                    result.maxtime = (long) (nal.time.time() + timeOffset + timeWindowHalf);
+
+                                    if(anticipationsToMake.get(result.bestop) == null) {
+                                        anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
+                                    }
+                                    anticipationsToMake.get(result.bestop).add(result);
                                 }
-                                anticipationsToMake.get(result.bestop).add(result);
                             }
                         }
                     }
