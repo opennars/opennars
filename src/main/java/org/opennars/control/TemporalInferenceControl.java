@@ -23,6 +23,7 @@
  */
 package org.opennars.control;
 
+import org.opennars.control.concept.ProcessTask;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
@@ -144,9 +145,18 @@ public class TemporalInferenceControl {
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
-                                /*DEBUG: for(Task seq_op_cons : res) {
-                                    System.out.println(seq_op_cons.toString());
-                                }*/
+
+                                for(final Task iSeqOpCon : res) {
+                                    ProcessTask.processPrediction2(iSeqOpCon.sentence.term, nal);
+                                }
+
+                                // debug
+                                boolean debugSeqOpCons = false;
+                                if (debugSeqOpCons) {
+                                    for(Task seq_op_cons : res) {
+                                        System.out.println(seq_op_cons.toString());
+                                    }
+                                }
                             }
                         }
 
