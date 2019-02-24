@@ -201,14 +201,14 @@ public class ProcessAnticipation {
         }
 
 
-        System.out.println("addCovariantAnticipationEntry()");
+        //System.out.println("addCovariantAnticipationEntry()");
 
         //if (conditionalWithQuantizedIntervalsWithVars.toString().equals("(&/,(--,<{switch0} --> [on]>),+0,(^go-to,{SELF},{light1}))")) {
         //    int here = 5;
         //}
 
-        System.out.println("   cond  = " + conditionalWithQuantizedIntervalsWithVars);
-        System.out.println("   eff   = " + conditionedWithVars);
+        //System.out.println("   cond  = " + conditionalWithQuantizedIntervalsWithVars);
+        //System.out.println("   eff   = " + conditionedWithVars);
 
         for(Term iTarget : targets) { // iterate over sub-terms
             final Concept targetConcept = nal.memory.concept(iTarget);
@@ -216,7 +216,7 @@ public class ProcessAnticipation {
                 continue;
             }
 
-            System.out.println("  c=" + iTarget);
+            //System.out.println("  c=" + iTarget);
 
 
             synchronized (targetConcept) {
@@ -381,7 +381,7 @@ public class ProcessAnticipation {
             // TODO< speed up when finalized >
             for(int idx=0;idx<implConcept.covariantPredictions2.size();idx++) {
                 Concept.Predicted iPredicted = implConcept.covariantPredictions2.get(idx);
-                if (iPredicted.conditionedTerm.equals(conditionalWithQuantizedIntervalsWithVars) && iPredicted.conditionedTerm.equals(conditionedWithVars)) {
+                if (iPredicted.conditionalTerm.equals(conditionalWithQuantizedIntervalsWithVars) && iPredicted.conditionedTerm.equals(conditionedWithVars)) {
                     matchingCovarianceEntry = iPredicted;
                     break;
                 }
