@@ -435,6 +435,7 @@ public class ProcessAnticipation {
         if(true) {
             System.out.println("anticipationEstimateMinAndMaxTimes()");
             System.out.println("   term = " + impl);
+            System.out.println("   n    = " + matchingCovarianceEntry.dist.n);
             System.out.println("   ===> timeWindow=" + result.timeWindow);
         }
 

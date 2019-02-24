@@ -241,7 +241,8 @@ public class Parameters implements Serializable {
     public volatile float ANTICIPATION_TOLERANCE = 100.0f;
 
     public volatile int COVARIANCE_TABLE_ENTRIES = 300;
-    public volatile float COVARIANCE_WINDOW = 50.0f; // standard dev's used for covariance estimation
+    public volatile float COVARIANCE_WINDOW = 30.0f; // standard dev's used for covariance estimation
+    // plays pong in application with 176 hits of 228 balls with 50
     // plays pong in lab goodish with 100    300
 
     public volatile int COVARIANCE_QUANTIZATION = 10000000; // interval quantization of covariance (except last interval)
