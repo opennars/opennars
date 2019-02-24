@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
@@ -677,7 +678,13 @@ public final class SyllogisticRules {
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
 
-            ProcessAnticipation.anticipateEstimate(nal, premise1Sentence, budget, 1, new LinkedHashMap<>());
+            boolean isValidConclusionForAnticipation = content instanceof Implication;
+            if (isValidConclusionForAnticipation) { // only estimate window of the conclusion if it is a valid sequence - we can't estimate it if it is not an implication
+                // estimate window from content
+                ProcessAnticipation.AnticipationTimes anticipationTimes = ProcessAnticipation.anticipationEstimateMinAndMaxTimes(nal, (Implication)content, new HashMap<>(), taskSentence.getOccurenceTime());
+
+                ProcessAnticipation.anticipateEstimate(nal, premise1Sentence, budget, 1, new LinkedHashMap<>(), anticipationTimes);
+            }
         }
     }
 

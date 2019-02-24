@@ -332,11 +332,13 @@ public class Concept extends Item<Term> implements Serializable {
     }
 
     public static class Predicted {
-        //public Term term;
+        public Term conditionalTerm;
+        public Term conditionedTerm;
         public IncrementalCentralDistribution dist;
 
-        public Predicted(/*Term term, */double sample) {
-            //this.term = term.cloneDeep();
+        public Predicted(Term conditionalTerm, Term conditionedTerm, double sample) {
+            this.conditionalTerm = conditionalTerm;
+            this.conditionedTerm = conditionedTerm;
             dist = new IncrementalCentralDistribution();
             dist.next(sample);
         }
@@ -352,7 +354,9 @@ public class Concept extends Item<Term> implements Serializable {
     //     (&/, a, +50, b, +19) => c
     //     (&/, a, +51, b, +50) => c
     //   has key = (&/, a, +50, b), predicted = c with distribution which contains 19 and 50
-    public Map<Term, Map<Term, Predicted>> covariantPredictions = new HashMap<>();
+    //public Map<Term, Map<Term, Predicted>> covariantPredictions = new HashMap<>();
+    // TODO< rename to covariantPredictions >
+    public List<Predicted> covariantPredictions2 = new ArrayList<>();
 
 
     /* ---------- insert Links for indirect processing ---------- */
