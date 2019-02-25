@@ -538,33 +538,75 @@ public class ProcessAnticipation {
                 }
             }
 
-            TruthValue defaultTruth = calcDefaultTruth(term, narParameters);
-            TruthValue eternalizedDefaultTruth = TruthFunctions.eternalize(defaultTruth, narParameters);
+            { // revise with negative evidence
+                TruthValue truthOfBeliefWithTerm = null;
+                {
 
-            int numberOfIntervals = 1; // TODO< count >
-            float ANTICIPATION_NEG_FACTOR = 0.85f;
+                    Set<Term> targets = new LinkedHashSet<>();
+                    {
+                        //add to all components, unless it doesn't have vars
+                        Map<Term, Integer> ret = CompoundTerm.replaceIntervals(term).countTermRecursively(null);
+                        for (Term r : ret.keySet()) {
+                            targets.add(r);
+                        }
+                    }
 
-            // fix up confidence
-            // This is engineered this way because the truth of the orginal statement (which was the basis of the anticipated event)
-            // is not known - and it was modified with projection.
-            // So we somehow need to "simulate" the truth loss from the projection.
-            // we do this by scaling the weight of the truth
-            float w = c2w(eternalizedDefaultTruth.getConfidence(), narParameters);
-            w *= (float)Math.pow(ANTICIPATION_NEG_FACTOR, numberOfIntervals);
-            float c = w2c(w, narParameters);
+                    for (Term iTarget : targets) { // iterate over sub-terms
+                        final Concept targetConcept = nar.memory.concept(iTarget);
+                        if (targetConcept == null) { // target concept does not exist
+                            continue;
+                        }
 
-            final TruthValue truth = new TruthValue(0.0f, c, narParameters); // frequency of negative confirmation is 0.0
 
-            if (defaultTruth != null) {
-                final Sentence sentenceForNewTask = new Sentence(
-                    term,
-                    Symbols.JUDGMENT_MARK,
-                    truth,
-                    new Stamp(nar, nar.memory, Tense.Eternal));
-                final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
-                final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+                        synchronized (targetConcept) {
+                            for( final Task iBeliefTask : targetConcept.beliefs ) {
+                                Map<Term, Term>[] subst = new Map[2];
+                                Term iBeliefTerm = iBeliefTask.getTerm();
 
-                concept.memory.inputTask(nar, t, false);
+                                boolean substFound = Variables.findSubstitute(nar.memory.randomNumber, Symbols.VAR_INDEPENDENT, iBeliefTerm, term, subst);
+
+                                if (substFound) {
+                                    if (truthOfBeliefWithTerm != null) {
+                                        // a other truth was found before
+                                        // TODO< grab the one with the highest confidence ! >
+                                        int debug5 = 5;
+                                    }
+
+                                    truthOfBeliefWithTerm = iBeliefTask.sentence.truth;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+
+
+
+                if(truthOfBeliefWithTerm != null) {
+                    // compute amount of negative evidence based on current evidence (plus one for the negative event)
+                    long countWithNegativeEvidence = truthOfBeliefWithTerm.getCount() + 1;
+                    double negativeEvidenceRatio = 1.0 / (double) countWithNegativeEvidence;
+
+                    // compute confidence by negative evidence
+                    double w = c2w(truthOfBeliefWithTerm.getConfidence(), narParameters);
+                    w *= negativeEvidenceRatio;
+                    float c = w2c((float) w, narParameters);
+
+                    final TruthValue truth = new TruthValue(0.0f, c, narParameters); // frequency of negative confirmation is 0.0
+
+                    final Sentence sentenceForNewTask = new Sentence(
+                        term,
+                        Symbols.JUDGMENT_MARK,
+                        truth,
+                        new Stamp(nar, nar.memory, Tense.Eternal));
+                    final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
+                    final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+
+                    concept.memory.inputTask(nar, t, false);
+                }
             }
 
             concept.anticipations.remove(entry);
