@@ -613,46 +613,6 @@ public class ProcessAnticipation {
         }
     }
 
-
-    // computes "default" truth of term if all terms have default confidence
-    // return null if truth can be ignored
-    private static TruthValue calcDefaultTruth(final Term term, final Parameters reasonerParameters) {
-        if (term instanceof Interval || term instanceof Variable) {
-            return null; // ignore for truth-value computation
-        }
-        else if(term instanceof Inheritance) {
-            return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
-        }
-        else if ((term instanceof Implication) && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            Implication termAsCompound = (Implication)term;
-            final TruthValue tvOfSubject = calcDefaultTruth(termAsCompound.getSubject(), reasonerParameters);
-            final TruthValue tvOfPredicate = calcDefaultTruth(termAsCompound.getPredicate(), reasonerParameters);
-            return TruthFunctions.induction(tvOfSubject, tvOfPredicate, reasonerParameters);
-        }
-        else if (term instanceof Conjunction) {
-            final CompoundTerm termAsCompound = (CompoundTerm)term;
-
-            if (termAsCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                TruthValue tv = new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
-                for(int idx=1;idx<termAsCompound.term.length;idx++) {
-                    final TruthValue componentTv = calcDefaultTruth(termAsCompound.term[idx], reasonerParameters);
-                    if (componentTv == null) {
-                        continue; // ignored for truth-value computation
-                    }
-
-                    tv = TruthFunctions.intersection(tv, componentTv, reasonerParameters);
-                }
-                return tv;
-            }
-            else {
-                return null; // TODO
-            }
-        }
-
-        // TODO< return default for known variations so that we land only here if we haven't implemented a variation
-        return new TruthValue(1.0f, reasonerParameters.DEFAULT_JUDGMENT_CONFIDENCE, reasonerParameters);
-    }
-
     /**
      * Whether a processed judgement task satisfies the anticipations within concept
      *
