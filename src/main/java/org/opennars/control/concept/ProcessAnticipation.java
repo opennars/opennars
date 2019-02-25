@@ -321,7 +321,7 @@ public class ProcessAnticipation {
 
             float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
             timeWindowHalf = scaledVariance * 0.5f;
-            timeOffset = mean + sumOfIntervalsExceptLastOne((Conjunction) conditionalWithVars);
+            timeOffset = sumOfIntervalsExceptLastOne((Conjunction) conditionalWithVars) + mean;
         }
 
         // debug
@@ -727,6 +727,6 @@ public class ProcessAnticipation {
     public static class AnticipationTimes {
         public float timeOffset;
         public float timeWindow;
-        public long occurrenceTime;
+        public long occurrenceTime; // occurence time of the sentence - is the time of the first event in the sentence
     }
 }
