@@ -51,6 +51,9 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * character that separates the factors in a truth value
      */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
+
+
+
     /**
      * frequency factor of the truth value
      */
@@ -63,7 +66,9 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * Whether the truth value is derived from a definition
      */
     private boolean analytic = false;
-    
+
+    public long count;
+
     private Parameters narParameters;
 
     /**
@@ -72,7 +77,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     public TruthValue(Parameters narParameters) {
         this(0,0, narParameters);
     }
-    
+
     /**
      * Constructor
      *
@@ -81,7 +86,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param narParameters parameters of the reasoner
      */
     public TruthValue(final float f, final float c, Parameters narParameters) {
-        this(f, c, false, narParameters);
+        this(f, c, 1, false, narParameters);
     }
 
     /**
@@ -89,14 +94,28 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      *
      * @param f frequency value
      * @param c confidence value
+     * @param count evidential counter
+     * @param narParameters parameters of the reasoner
+     */
+    public TruthValue(final float f, final float c, final long count, Parameters narParameters) {
+        this(f, c, count, false, narParameters);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param f frequency value
+     * @param c confidence value
+     * @param count evidential counter
      * @param isAnalytic is the truth value an analytic one?
      * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c, final boolean isAnalytic, Parameters narParameters) {
+    public TruthValue(final float f, final float c, final long count, final boolean isAnalytic, Parameters narParameters) {
         this.narParameters = narParameters;
         setFrequency(f);                
         setConfidence(c);        
         setAnalytic(isAnalytic);
+        this.count = count;
     }
 
     /**
@@ -109,6 +128,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         frequency = v.getFrequency();
         confidence = v.getConfidence();
         analytic = v.getAnalytic();
+        count = v.count;
     }
 
     /**
@@ -127,6 +147,10 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      */
     public float getConfidence() {
         return confidence;
+    }
+
+    public long getCount() {
+        return count;
     }
 
     public TruthValue setFrequency(final float f) {
@@ -224,7 +248,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
 
     @Override
     public TruthValue clone() {
-        return new TruthValue(frequency, confidence, getAnalytic(), this.narParameters);
+        return new TruthValue(frequency, confidence, count, getAnalytic(), this.narParameters);
     }
     
     

@@ -129,7 +129,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final float w = and(f1, c1);
         final float c = w2c(w, narParameters);
-        return new TruthValue(1, c, narParameters);
+        return new TruthValue(1, c, v1.getCount(), narParameters);
     }
 
     /* ----- Single argument functions, called in StructuralRules ----- */
@@ -141,7 +141,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue negation(final TruthValue v1, Parameters narParameters) {
         final float f = 1 - v1.getFrequency();
         final float c = v1.getConfidence();
-        return new TruthValue(f, c, narParameters);
+        return new TruthValue(f, c, v1.getCount(), narParameters);
     }
 
     /**
@@ -154,7 +154,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final float w = and(1 - f1, c1);
         final float c = w2c(w, narParameters);
-        return new TruthValue(0, c, narParameters);
+        return new TruthValue(0, c, v1.getCount(), narParameters);
     }
 
     /* ----- double argument functions, called in MatchingRules ----- */
@@ -176,6 +176,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float w = w1 + w2;
         result.setFrequency( (w1 * f1 + w2 * f2) / w );
         result.setConfidence( w2c(w, narParameters) );
+        result.count = v1.getCount() + v2.getCount(); // add because we accumulate (not overlapping) evidence
         return result;
     }
     
@@ -193,7 +194,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -206,7 +208,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final float c = and(f1, c1, reliance);
-        return new TruthValue(f1, c, true, narParameters);
+        return new TruthValue(f1, c, v1.getCount(), true, narParameters);
     }
 
     /**
@@ -222,7 +224,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -238,7 +241,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, or(f1, f2));
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -257,7 +261,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w, narParameters);
-        return new TruthValue(f1, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f1, c, count, narParameters);
     }
 
     /**
@@ -274,7 +279,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final float w = and(c1, reliance);
         final float c = w2c(w, narParameters);
-        return new TruthValue(f1, c, true, narParameters);
+        final long count = v1.getCount();
+        return new TruthValue(f1, c, count, true, narParameters);
     }
 
     /**
@@ -303,7 +309,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float w = and(f1, f2, c1, c2);
         final float c = w2c(w, narParameters);
-        return new TruthValue(1, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(1, c, count, narParameters);
     }
 
     /**
@@ -321,7 +328,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float f = (f0 == 0) ? 0 : (and(f1, f2) / f0);
         final float w = and(f0, c1, c2);
         final float c = w2c(w, narParameters);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /* ----- desire-value functions, called in SyllogisticRules ----- */
@@ -338,7 +346,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -354,7 +363,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2, w2c(1.0f, narParameters));
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -370,7 +380,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -386,7 +397,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w, narParameters);
-        return new TruthValue(f1, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f1, c, count, narParameters);
     }
 
     /* ----- double argument functions, called in CompositionalRules ----- */
@@ -403,7 +415,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = or(f1, f2);
         final float c = and(c1, c2);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
@@ -419,7 +432,8 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return new TruthValue(f, c, narParameters);
+        final long count = Math.max(v1.getCount(), v2.getCount());
+        return new TruthValue(f, c, count, narParameters);
     }
 
     /**
