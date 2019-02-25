@@ -147,7 +147,7 @@ public class TemporalInferenceControl {
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
 
                                 for(final Task iSeqOpCon : res) {
-                                    ProcessTask.processPrediction2(iSeqOpCon.sentence.term, nal);
+                                    ProcessTask.processPrediction(iSeqOpCon.sentence.term, nal);
                                 }
 
                                 // debug

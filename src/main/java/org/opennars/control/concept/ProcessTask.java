@@ -98,34 +98,8 @@ public class ProcessTask {
         return false;
     }
 
-    public static void processPrediction(final Term term, final DerivationContext nal) {
-        if(!(term instanceof Implication)) {
-            return;
-        }
-
-        Implication implication = (Implication)term;
-        if (implication.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
-            return;
-        }
-
-        if (lastDerivationTerm != null && lastDerivationTerm.equals(term)) {
-            return;
-        }
-
-        if (!isInUsefulPredictiveForm(implication)) {
-            return;
-        }
-
-        lastDerivationTerm = term;
-
-        //System.out.println("proceed " + implication);
-        ProcessAnticipation.addCovariantAnticipationEntry(implication, nal);
-
-        int debug = 5;
-    }
-
     // duplicated function because we want to debug by callsite
-    public static void processPrediction2(final Term term, final DerivationContext nal) {
+    public static void processPrediction(final Term term, final DerivationContext nal) {
         if(!(term instanceof Implication)) {
             return;
         }
@@ -148,7 +122,7 @@ public class ProcessTask {
         //System.out.println("proceed " + implication);
 
         if (implication.toString().contains("--> [good]")) {
-            //System.out.println("processPrediction2() candidate= " + implication);
+            //System.out.println("processPrediction() candidate= " + implication);
 
             int debug5 = 1;
         }
