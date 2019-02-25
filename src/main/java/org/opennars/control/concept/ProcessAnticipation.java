@@ -55,19 +55,6 @@ import static org.opennars.inference.UtilityFunctions.w2c;
  * @author Patrick Hammer
  */
 public class ProcessAnticipation {
-
-    private static Term extractSeq(Conjunction term) {
-        Term[] arr = new Term[term.term.length/2];
-        for(int i=0;i<term.term.length/2;i++) {
-            arr[i] = term.term[i*2];
-        }
-
-        if(arr.length == 1) {
-            return arr[0];
-        }
-        return Conjunction.make(arr, term.temporalOrder, term.isSpatial);
-    }
-
     private static Conjunction quantizeSeq(Conjunction term, int quantization) {
         Term[] arr = new Term[term.term.length];
         for(int i=0;i<term.term.length;i++) {
@@ -79,7 +66,7 @@ public class ProcessAnticipation {
 
             Interval interval = (Interval)term.term[i];
             long intervalTime = interval.time;
-            // quanitze
+            // quantize
             intervalTime = (intervalTime / quantization) * quantization;
 
             arr[i] = new Interval(intervalTime);
@@ -128,28 +115,6 @@ public class ProcessAnticipation {
         return sum;
     }
 
-    private static Concept getConceptOfConditional(Term conditional, final DerivationContext nal) {
-
-
-        Concept conceptOfConditional = null;
-
-        if (((Conjunction)conditional).term.length > 2) {
-            Term conditionalWithoutIntervals = extractSeq((Conjunction)conditional);
-
-            conceptOfConditional = nal.memory.concepts.get(conditionalWithoutIntervals);
-            if (conceptOfConditional == null) {
-                conceptOfConditional = nal.memory.conceptualize(new BudgetValue(1.0f, 0.98f, 1.0f, nal.narParameters), conditionalWithoutIntervals);
-            }
-        }
-        else if(((Conjunction)conditional).term.length == 2) {
-            Term firstConditional = ((Conjunction)conditional).term[0];
-
-            conceptOfConditional = nal.memory.concepts.get(firstConditional);
-        }
-
-        return conceptOfConditional;
-    }
-
     private static void keepCovariantTableUnderAikr(Concept c, Parameters reasonerParameters) {
         // keep under AIKR by limiting memory
         // heuristic: we kick out the item with the lowest number of events
@@ -173,20 +138,6 @@ public class ProcessAnticipation {
     }
 
     public static void addCovariantAnticipationEntry(Implication impl, final DerivationContext nal) {
-
-
-        //Term conditional = ((CompoundTerm)impl.getSubject());//.applySubstitute(substitution);
-        //Term conditioned = impl.getPredicate();
-
-        //Term conditionalWithQuantizedIntervals = extractSeqQuantized((Conjunction)conditional, nal.narParameters.COVARIANCE_QUANTIZATION);
-
-        //Concept conceptOfConditional = getConceptOfConditional(conditional, nal);
-
-
-        //if (conceptOfConditional == null) {
-        //    return; // TODO
-        //}
-
         Term conditionalWithVars = impl.getSubject();
         Term conditionalWithQuantizedIntervalsWithVars = extractSeqQuantized((Conjunction)conditionalWithVars, nal.narParameters.COVARIANCE_QUANTIZATION);
         Term conditionedWithVars = impl.getPredicate();
@@ -202,11 +153,6 @@ public class ProcessAnticipation {
 
 
         //System.out.println("addCovariantAnticipationEntry()");
-
-        //if (conditionalWithQuantizedIntervalsWithVars.toString().equals("(&/,(--,<{switch0} --> [on]>),+0,(^go-to,{SELF},{light1}))")) {
-        //    int here = 5;
-        //}
-
         //System.out.println("   cond  = " + conditionalWithQuantizedIntervalsWithVars);
         //System.out.println("   eff   = " + conditionedWithVars);
 
@@ -268,23 +214,6 @@ public class ProcessAnticipation {
     }
 
     public static AnticipationTimes anticipationEstimateMinAndMaxTimes(final DerivationContext nal, final Implication impl, Map<Term,Term> substitution, long occurenceTime) {
-        //Implication impl = (Implication)mainSentence.term;
-
-        if (false){ // debug
-            boolean isPredictiveBySeq =
-                impl instanceof Implication &&
-                    impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                    ((Implication)impl).getSubject() instanceof CompoundTerm &&
-                    ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
-            if (isPredictiveBySeq) {
-                System.out.println("ProcessAnticipation: call anticipate for term=" + impl);
-
-                int debugHere = 5;
-            }
-        }
-
-
-
         Concept implConcept = nal.memory.conceptualize(new BudgetValue(1.0f, 0.98f, 1.0f, nal.narParameters), CompoundTerm.replaceIntervals(impl));
 
         Term conditionalWithVars = impl.getSubject();
@@ -359,14 +288,6 @@ public class ProcessAnticipation {
         return result;
     }
 
-
-    /* commented because not used
-    public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
-                                          final float priority, Map<Term,Term> substitution) {
-        anticipateEstimate(nal, mainSentence, budget, priority, substitution, null);
-    }
-     */
-
     public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
                                            final float priority, Map<Term,Term> substitution, AnticipationTimes anticipationTimes) {
 
@@ -404,8 +325,6 @@ public class ProcessAnticipation {
         if (maxtime < 0) {
             int debug6 = 5; // must never happen!
         }
-
-        int debugHere = 5;
 
         //System.out.println("call anticipate for term=" + mainSentence.term + " (" + (timeOffset-timeWindowHalf) + ";" + (timeOffset+timeWindowHalf) + ")");
 
@@ -579,10 +498,7 @@ public class ProcessAnticipation {
                             }
                         }
                     }
-
-
                 }
-
 
 
 
