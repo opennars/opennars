@@ -359,6 +359,7 @@ public class ProcessAnticipation {
         return result;
     }
 
+
     /* commented because not used
     public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
                                           final float priority, Map<Term,Term> substitution) {
