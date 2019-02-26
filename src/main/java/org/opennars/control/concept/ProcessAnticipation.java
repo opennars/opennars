@@ -36,16 +36,15 @@ import org.opennars.entity.TermLink;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.RuleTables;
 import org.opennars.inference.TemporalRules;
-import org.opennars.inference.TruthFunctions;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
-import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
+import org.opennars.util.Debug;
 
 import static org.opennars.inference.UtilityFunctions.c2w;
 import static org.opennars.inference.UtilityFunctions.w2c;
@@ -152,9 +151,9 @@ public class ProcessAnticipation {
         }
 
 
-        //System.out.println("addCovariantAnticipationEntry()");
-        //System.out.println("   cond  = " + conditionalWithQuantizedIntervalsWithVars);
-        //System.out.println("   eff   = " + conditionedWithVars);
+        Debug.debug(false, "addCovariantAnticipationEntry", "");
+        Debug.debug(false, "addCovariantAnticipationEntry","   cond  = " + conditionalWithQuantizedIntervalsWithVars);
+        Debug.debug(false, "addCovariantAnticipationEntry","   eff   = " + conditionedWithVars);
 
         for(Term iTarget : targets) { // iterate over sub-terms
             final Concept targetConcept = nal.memory.concept(iTarget);
@@ -162,7 +161,7 @@ public class ProcessAnticipation {
                 continue;
             }
 
-            //System.out.println("  c=" + iTarget);
+            Debug.debug(false, "addCovariantAnticipationEntry", "  c=" + iTarget);
 
 
             synchronized (targetConcept) {
@@ -278,12 +277,10 @@ public class ProcessAnticipation {
         result.timeWindow = timeWindowHalf * 2.0f;
         result.timeOffset = timeOffset;
 
-        if(true) {
-            System.out.println("anticipationEstimateMinAndMaxTimes()");
-            System.out.println("   term = " + impl);
-            System.out.println("   n    = " + matchingCovarianceEntry.dist.n);
-            System.out.println("   ===> timeWindow=" + result.timeWindow);
-        }
+        Debug.debug(false, "anticipationEstimateMinAndMaxTimes","");
+        Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   term = " + impl);
+        Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   n    = " + matchingCovarianceEntry.dist.n);
+        Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   ===> timeWindow=" + result.timeWindow);
 
         return result;
     }
@@ -292,7 +289,7 @@ public class ProcessAnticipation {
                                            final float priority, Map<Term,Term> substitution, AnticipationTimes anticipationTimes) {
 
 
-        System.out.println("ProcessAnticipation:estimate() ENTRY");
+        Debug.debug(false, "ProcessAnticipation:estimate()", "ENTRY");
 
         if (anticipationTimes == null) { // if we need to estimate the anticipation time from the sentence
             if (mainSentence.isEternal()) {
@@ -305,7 +302,7 @@ public class ProcessAnticipation {
                 return;
             }
 
-            System.out.println("ProcessAnticipation:estimate() successfully estimated min/max");
+            Debug.debug(false, "ProcessAnticipation:estimate()", "ProcessAnticipation:estimate() successfully estimated min/max");
         }
 
 
@@ -350,8 +347,6 @@ public class ProcessAnticipation {
             new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
-
-        System.out.println("anticipate() " + t.sentence.term);
 
         Term specificAnticipationTerm = ((CompoundTerm)((Statement) term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
