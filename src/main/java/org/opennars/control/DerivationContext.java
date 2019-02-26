@@ -157,11 +157,22 @@ public class DerivationContext {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
+    public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, final long counter) {
         final Stamp derived_stamp = getTheNewStamp().clone();
         this.resetOccurrenceTime(); //stamp was already obsorbed
+
+        final boolean isCounterValid = counter != -1;
+        Term conclusionTerm = newContent;
+        if (isCounterValid) {
+            // assert newContent is implication
+
+            Term conclusionSubject = ((Implication)conclusionTerm).getSubject();
+            Term conclusionPredicate = ((Implication)conclusionTerm).getPredicate();
+            conclusionTerm = new Implication(new Term[]{conclusionSubject, conclusionPredicate}, newContent.getTemporalOrder(), counter);
+        }
+
         final Sentence newSentence = new Sentence(
-            newContent,
+            conclusionTerm,
             getCurrentTask().sentence.punctuation,
             newTruth,
             derived_stamp);
