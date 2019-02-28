@@ -366,21 +366,21 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param narParameters parameters for the Reasoner instance
      * @param time indirection to retrieve time
      */
-    public void localInference(final Task task, Parameters narParameters, final Timable time) {
+    public void localInference(final Task task, Parameters narParameters, final Nar nar) {
         //synchronized (localInferenceMutex) {
-            final DerivationContext cont = new DerivationContext(this, narParameters, time);
+            final DerivationContext cont = new DerivationContext(this, narParameters, nar);
             cont.setCurrentTask(task);
             cont.setCurrentTerm(task.getTerm());
             cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
             if (cont.getCurrentConcept() != null) {
-                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task, time);
+                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task, nar);
                 if (processed) {
                     event.emit(Events.ConceptDirectProcessedTask.class, task);
                 }
             }
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                TemporalInferenceControl.eventInference(task, cont);
+                TemporalInferenceControl.eventInference(task, cont, nar);
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
@@ -396,7 +396,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param narParameters parameters for the Reasoner instance
      * @param time indirection to retrieve time
      */
-    public void processNewTasks(Parameters narParameters, final Timable time) {
+    public void processNewTasks(Parameters narParameters, final Nar nar) {
         synchronized (tasksMutex) {
             Task task;
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
@@ -404,7 +404,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 task = newTasks.removeFirst();
                 if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
                         task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                    localInference(task, narParameters, time);
+                    localInference(task, narParameters, nar);
                 } else {
                     final Sentence s = task.sentence;
                     if (s.isJudgment() || s.isGoal()) {
@@ -432,10 +432,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param narParameters parameters for the Reasoner instance
      * @param time indirection to retrieve time
      */
-    public void processNovelTask(Parameters narParameters, final Timable time) {
+    public void processNovelTask(Parameters narParameters, final Nar nar) {
         final Task task = novelTasks.takeOut();
         if (task != null) {            
-            localInference(task, narParameters, time);
+            localInference(task, narParameters, nar);
         }
     }
 

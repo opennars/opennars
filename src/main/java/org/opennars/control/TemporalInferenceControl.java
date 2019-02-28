@@ -26,9 +26,12 @@ package org.opennars.control;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
+import org.opennars.io.Parser;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
+import org.opennars.main.Nar;
 import org.opennars.operator.Operation;
 import org.opennars.plugin.mental.Abbreviation;
 import org.opennars.storage.Bag;
@@ -68,7 +71,7 @@ public class TemporalInferenceControl {
         return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
     }
 
-    public static boolean eventInference(final Task newEvent, final DerivationContext nal) {
+    public static boolean eventInference(final Task newEvent, final DerivationContext nal, Timable time) {
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
@@ -250,15 +253,33 @@ public class TemporalInferenceControl {
                                                                 //System.out.println("abbreviatedTerm = " + abbreviatedTerm);
 
                                                                 // add abbreviated term to memory
-                                                                nal.setCurrentTask(newEvent);
-                                                                nal.setTheNewStamp(newEvent.sentence.stamp);
-                                                                Task t2 = nal.singlePremiseTask2(abbreviatedTerm, '.', seq_op_cons.sentence.truth,  BudgetFunctions.forward(seq_op_cons.sentence.truth, nal), true);
+                                                                {
+                                                                    final Stamp stamp = new  Stamp(time, nal.memory, Tense.Present);
 
-                                                                if(
 
-                                                                    t2 != null) {
-                                                                    TemporalInferenceControl.addToSequenceTasks(nal, t2);
+                                                                    final Sentence sentence = new Sentence(
+                                                                        abbreviatedTerm,
+                                                                        '.',
+                                                                        seq_op_cons.sentence.truth,
+                                                                        stamp);
+
+                                                                    //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
+                                                                    //    sentence.setRevisible(false);
+                                                                    //}
+                                                                    final BudgetValue budget = new BudgetValue(1.0f, 0.8f, 0.5f, nal.narParameters);
+                                                                    Task task = new Task(sentence, budget, Task.EnumType.DERIVED);
+                                                                    nal.memory.inputTask(time, task, false);
                                                                 }
+
+                                                                //nal.setCurrentTask(newEvent);
+                                                                //nal.setTheNewStamp(newEvent.sentence.stamp);
+                                                                //Task t2 = nal.singlePremiseTask2(abbreviatedTerm, '.', seq_op_cons.sentence.truth,  BudgetFunctions.forward(seq_op_cons.sentence.truth, nal), true);
+
+                                                                //if(
+
+                                                                //    t2 != null) {
+                                                                //    TemporalInferenceControl.addToSequenceTasks(nal, t2);
+                                                                //}
 
                                                                 break; // end sampling
                                                             }
