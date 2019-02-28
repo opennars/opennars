@@ -28,15 +28,13 @@ import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
-import org.opennars.language.CompoundTerm;
+import org.opennars.language.*;
 import org.opennars.operator.Operation;
+import org.opennars.plugin.mental.Abbreviation;
 import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -144,9 +142,146 @@ public class TemporalInferenceControl {
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
-                                /*DEBUG: for(Task seq_op_cons : res) {
-                                    System.out.println(seq_op_cons.toString());
-                                }*/
+
+                                //DEBUG:
+                                if(res.size() > 0) {
+                                    for(Task seq_op_cons : res) {
+
+                                        if(seq_op_cons.sentence.term.toString().contains("ABV_")) {
+                                            int hwew = 334454;
+                                        }
+
+                                        if(seq_op_cons.sentence.term instanceof Implication) {
+                                            Implication impl = (Implication)seq_op_cons.sentence.term;
+                                            Term implSubject = impl.getSubject();
+
+                                            if( implSubject.getTemporalOrder() == TemporalRules.ORDER_FORWARD ) {
+                                                Conjunction conj = (Conjunction)implSubject;
+
+                                                if (conj.term.length > 2) { // must have at least an interval and op
+                                                    if (conj.term[conj.term.length-1] instanceof Interval && conj.term[conj.term.length-2].isExecutable(nal.memory)) { // last must be interval and previous must be op
+                                                        int conjLengthWithoutOpAndInterval = conj.term.length-2;
+                                                        if(conjLengthWithoutOpAndInterval > 2) {
+                                                            //System.out.println(seq_op_cons.toString());
+
+                                                            int debugHere = 5;
+
+
+                                                            // TODO< sample indices which do not hit intervals at the edges>
+
+                                                            int numberOfAbbreverationSampleTries = 6;
+                                                            for(int iTry = 0; iTry < numberOfAbbreverationSampleTries; iTry++) {
+
+
+
+                                                                // sample
+
+
+                                                                int startIdx = nal.memory.randomNumber.nextInt(conjLengthWithoutOpAndInterval);
+                                                                if (conj.term[startIdx] instanceof Interval) {
+                                                                    continue; // we hit interval and retry
+                                                                }
+
+                                                                Conjunction subConj = subConjuction(conj, startIdx, startIdx+2+1);
+
+                                                                if (conjectionContainsOps(subConj, nal.memory)) {
+                                                                    continue; // we do not allow to abbreviate op's - retry
+                                                                }
+
+                                                                if (abbreviations.containsKey(subConj)) {
+                                                                    abbreviations.get(subConj).occurrenceCounter++;
+
+                                                                    // abbreverate
+
+
+                                                                }
+                                                                else {
+                                                                    AbbreviationItem abv = new AbbreviationItem();
+                                                                    abv.term = subConj;
+                                                                    abv.id = abbreviationIdCounter++;
+
+                                                                    abbreviations.put(subConj, abv);
+                                                                }
+
+
+                                                                //System.out.println("subConj = " + subConj);
+
+                                                                AbbreviationItem abv = abbreviations.get(subConj);
+
+                                                                //System.out.println("abvid = " + abv.id);
+
+
+                                                                Term abbreviatedTerm = null;
+                                                                {
+                                                                    int lengthOfAbvConj = conj.term.length - subConj.term.length + 1;
+                                                                    Term[] abvConjArr = new Term[lengthOfAbvConj];
+
+                                                                    int runningIdx = 0;
+                                                                    for(int idx=0;idx<startIdx;idx++) {
+                                                                        abvConjArr[runningIdx] = conj.term[idx]; // copy in content before the abbreveration
+                                                                        runningIdx++;
+                                                                    }
+
+                                                                    abvConjArr[runningIdx++] = new Term("ABV_"+Long.toString(abv.id));
+
+                                                                    for(int idx=startIdx+2+1; idx < conj.term.length; idx++) {
+                                                                        abvConjArr[runningIdx++] = conj.term[idx]; // copy in content after the abbreveration
+                                                                    }
+
+                                                                    for(int idx=0;idx<abvConjArr.length;idx++) {
+                                                                        if(abvConjArr[idx] == null) {
+                                                                            int debugErrro = 5;
+                                                                        }
+                                                                    }
+
+                                                                    Term rewrittenConj = Conjunction.make(abvConjArr, TemporalRules.ORDER_FORWARD);
+
+                                                                    // TODO< check for variables inside the abbreviation and pull them out >
+                                                                    // TODO< introduce intervals as variables >
+                                                                    // TODO< add to memory as event >
+
+                                                                    Term rewrittenImpl = new Implication(rewrittenConj, impl.getPredicate(), impl.getTemporalOrder());
+                                                                    abbreviatedTerm = rewrittenImpl;
+
+
+                                                                    int here5545 = 5;
+                                                                }
+
+                                                                //System.out.println("abbreviatedTerm = " + abbreviatedTerm);
+
+                                                                // add abbreviated term to memory
+                                                                nal.setCurrentTask(newEvent);
+                                                                nal.setTheNewStamp(newEvent.sentence.stamp);
+                                                                Task t2 = nal.singlePremiseTask2(abbreviatedTerm, '.', seq_op_cons.sentence.truth,  BudgetFunctions.forward(seq_op_cons.sentence.truth, nal), true);
+
+                                                                if(
+
+                                                                    t2 != null) {
+                                                                    TemporalInferenceControl.addToSequenceTasks(nal, t2);
+                                                                }
+
+                                                                break; // end sampling
+                                                            }
+
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            //if (impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                                            //    System.out.println(seq_op_cons.toString());
+                                            //}
+                                        }
+
+
+
+
+                                    }
+
+                                    int debugHere = 5;
+                                }
+
                             }
                         }
 
@@ -162,6 +297,32 @@ public class TemporalInferenceControl {
         
         addToSequenceTasks(nal, newEvent);
         return true;
+    }
+
+    private static class AbbreviationItem {
+        public long id = -1; // unique id
+        public long occurrenceCounter = 1; // we start with one occurence
+        public Term term;
+    }
+
+    private static long abbreviationIdCounter = 0;
+    private static Map<Term, AbbreviationItem> abbreviations = new HashMap<>();
+
+    private static Conjunction subConjuction(Conjunction c, int startIdx, int exclusiveEndIdx) {
+        Term[] arr = new Term[exclusiveEndIdx - startIdx];
+        for(int i=0;i < arr.length; i++) {
+            arr[i] = c.term[i + startIdx];
+        }
+        return (Conjunction)Conjunction.make(arr, c.temporalOrder, c.isSpatial);
+    }
+
+    private static boolean conjectionContainsOps(Conjunction c, Memory mem) {
+        for(final Term iTerm : c.term) {
+            if( iTerm.isExecutable(mem) ) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {

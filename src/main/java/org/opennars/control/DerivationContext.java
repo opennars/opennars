@@ -262,9 +262,22 @@ public class DerivationContext {
      * @param newBudget The budget value in task
      */
     public boolean singlePremiseTask( Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
+        return singlePremiseTask(newContent, punctuation, newTruth, newBudget, false);
+    }
+
+    /**
+     * Shared final operations by all single-premise rules, called in
+     * StructuralRules
+     *
+     * @param newContent The content of the sentence in task
+     * @param punctuation The punctuation of the sentence in task
+     * @param newTruth The truth value of the sentence in task
+     * @param newBudget The budget value in task
+     */
+    public Task singlePremiseTask2( Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction) {
         if (!newBudget.aboveThreshold())
-            return false;
-        
+            return null;
+
         final Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isGoal() || taskSentence.isJudgment() || getCurrentBelief() == null) {
             setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
@@ -272,15 +285,15 @@ public class DerivationContext {
             // to answer a question with negation in NAL-5 --- move to activated task?
             setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
-        
+
         if(newContent.subjectOrPredicateIsIndependentVar()) {
-            return false;
+            return null;
         }
-        
+
         if(newContent instanceof Interval) {
-            return false;
+            return null;
         }
-        
+
         final Stamp derive_stamp = this.getTheNewStamp().clone();
         this.resetOccurrenceTime(); //stamp was already obsorbed into task
 
@@ -290,11 +303,18 @@ public class DerivationContext {
             newTruth,
             derive_stamp);
 
+        newSentence.producedByTemporalInduction=temporalInduction;
+
         final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         if (newTask!=null) {
-            return derivedTask(newTask, false, true, false);
+            if( derivedTask(newTask, false, true, false) ) {
+                return newTask;
+            }
         }
-        return false;
+        return null;
+    }
+    public boolean singlePremiseTask( Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction) {
+        return singlePremiseTask2(newContent, punctuation, newTruth, newBudget, temporalInduction) != null;
     }
 
     public boolean singlePremiseTask(final Sentence newSentence, final BudgetValue newBudget) {
