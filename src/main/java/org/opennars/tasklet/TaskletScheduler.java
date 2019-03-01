@@ -12,6 +12,7 @@ import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -35,14 +36,22 @@ public class TaskletScheduler {
     }
 
     public void iterate(DerivationContext nal) {
-        for(int iteration=0;iteration < 20; iteration++) {
+        for(int iteration=0;iteration < 50; iteration++) {
             sample(nal);
         }
 
-        // TODO< recalc utilities >
+        // recalc utilities
+        for(int idx=0;idx<secondary.size();idx++) {
+            secondary.get(idx).calcUtility(nal.time);
+        }
+
         // TODO< find items which utility is not sorted and inseert them again in the right places >
+        Collections.sort(secondary, (s1, s2) -> { return s1.cachedUtility < s2.cachedUtility ? 1 : -1; });
 
         // TODO< limit size of secondary >
+        while (secondary.size() > 20000) {
+            secondary.remove(20000-1);
+        }
 
         int debugHere = 5;
     }
