@@ -19,7 +19,7 @@ public class TaskletScheduler {
     public Bag<Tasklet, Term> primary;
     public List<Tasklet> secondary;
 
-    private Random rng = new Random();
+    private Random rng = new Random(43); // with seed for debugging and testing of core - we hit a lot of unsupported cases in temporal induction because the preconditions are loosened
 
     public TaskletScheduler(Parameters reasonerParameters) {
         int levels = 50;
