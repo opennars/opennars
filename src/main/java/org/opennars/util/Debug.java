@@ -21,6 +21,10 @@ public class Debug {
             return;
         }
 
+        if (name.equals("exec")) {
+            System.out.println("instrumentation " + name + " " + text);
+        }
+
         // add debug code here <===
     }
 }
