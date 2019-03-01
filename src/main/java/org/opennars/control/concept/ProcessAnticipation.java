@@ -537,13 +537,7 @@ public class ProcessAnticipation {
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
             if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
-
-                if (entry.negConfirmation.sentence.term.toString().length() > 60) {
-                    System.out.println("confirm (neg)anticipation " + entry.negConfirmation);
-
-                    int debugHere = 5;
-
-                }
+                Debug.instrumentate(true, "confirm anticipation", entry.negConfirmation.toString());
 
                 confirmed.add(entry);
             }
