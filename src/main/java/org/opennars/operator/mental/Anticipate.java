@@ -256,7 +256,7 @@ public class Anticipate extends Operator implements EventObserver {
                 BudgetFunctions.truthToQuality(truth), memory.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
-            memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");
+            memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)", time);
         }
     }
 

@@ -107,7 +107,7 @@ public class Counting implements Plugin {
 
                             final Task newTask = new Task(j, budg, Task.EnumType.INPUT);
 
-                            memory.addNewTask(newTask, "Derived (Cardinality)");
+                            memory.addNewTask(newTask, "Derived (Cardinality)", null);
                         }
                     }
                 }

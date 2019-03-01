@@ -307,7 +307,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
 
         final Task newTask = new Task(j, newbudget, Task.EnumType.INPUT);
 
-        memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
+        memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)", time);
         return false;
     }
 

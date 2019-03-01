@@ -55,6 +55,7 @@ import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.tasklet.TaskletScheduler;
 
 
 /**
@@ -106,6 +107,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     //Boolean localInferenceMutex = false;
 
+    public TaskletScheduler taskletScheduler;
+
 
     boolean checked=false;
     boolean isjUnit=false;
@@ -125,6 +128,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
+
+        taskletScheduler = new TaskletScheduler(narParameters);
         reset();
     }
     
@@ -229,7 +234,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /**
      * add new task that waits to be processed in the next cycleMemory
      */
-    public void addNewTask(final Task t, final String reason) {
+    public void addNewTask(final Task t, final String reason, Timable timable) {
+
+        taskletScheduler.addTaskletByTask(t, TaskletScheduler.EnumAddedToMemory.YES, timable);
+
         synchronized (tasksMutex) {
             newTasks.add(t);
         }
@@ -279,7 +287,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (task.budget.aboveThreshold()) {
-                addNewTask(task, "Perceived");
+                addNewTask(task, "Perceived", time);
             } else {
                 removeTask(task, "Neglected");
             }
@@ -321,7 +329,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         final Task newTask = new Task(sentence, budgetForNewTask, Task.EnumType.INPUT);
 
         newTask.setElemOfSequenceBuffer(true);
-        addNewTask(newTask, "Executed");
+        addNewTask(newTask, "Executed", time);
     }
 
     public void output(final Task t) {

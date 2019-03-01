@@ -57,7 +57,7 @@ public class TemporalInferenceControl {
         
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return null; //temporal inductions for judgements only
-        
+
         nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.time.time());
         nal.setCurrentTask(controllerTask);
 
@@ -71,6 +71,9 @@ public class TemporalInferenceControl {
     }
 
     public static boolean eventInference(final Task newEvent, final DerivationContext nal) {
+
+
+        nal.memory.taskletScheduler.iterate(nal);
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;

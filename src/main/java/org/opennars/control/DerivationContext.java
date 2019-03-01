@@ -448,7 +448,7 @@ public class DerivationContext {
         if(t.sentence.term==null) {
             return;
         }
-        memory.addNewTask(t, reason);
+        memory.addNewTask(t, reason, time);
     }
     
     /**
