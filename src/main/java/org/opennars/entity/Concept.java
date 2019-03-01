@@ -335,10 +335,12 @@ public class Concept extends Item<Term> implements Serializable {
         public Term conditionalTerm;
         public Term conditionedTerm;
         public IncrementalCentralDistribution dist;
+        public long timestampOfLastUpdate;
 
-        public Predicted(Term conditionalTerm, Term conditionedTerm, double sample) {
+        public Predicted(Term conditionalTerm, Term conditionedTerm, long timestampOfLastUpdate, double sample) {
             this.conditionalTerm = conditionalTerm;
             this.conditionedTerm = conditionedTerm;
+            this.timestampOfLastUpdate = timestampOfLastUpdate;
             dist = new IncrementalCentralDistribution();
             dist.next(sample);
         }
