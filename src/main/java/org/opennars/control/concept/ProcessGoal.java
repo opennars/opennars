@@ -47,6 +47,7 @@ import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.util.Debug;
 
 /**
  *
@@ -290,7 +291,7 @@ public class ProcessGoal {
         ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, allPreconditions, anticipationsToMake);
         //4. And executing it, also forming an expectation about the result
         if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
-            System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
+            Debug.instrumentate(true, "exec", "Executed based on= " + bestOpWithMeta.executable_precond);
 
 
             // Every unified precondition must be unique - else we anticipate the same event multiple times.
@@ -416,11 +417,6 @@ public class ProcessGoal {
                     }
                 }
             }
-        }
-
-
-        if (result.executable_precond != null) {
-            System.out.println( result.executable_precond );
         }
 
         return result;
