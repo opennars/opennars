@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2018 The OpenNARS authors.
@@ -56,7 +56,7 @@ public class TemporalRules {
     public final static boolean matchingOrder(final Sentence a, final Sentence b) {
         return matchingOrder(a.getTemporalOrder(), b.getTemporalOrder());
     }
-    
+
     public final static boolean matchingOrder(final int order1, final int order2) {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
@@ -106,7 +106,7 @@ public class TemporalRules {
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
         final int order1Reverse = reverseOrder(order1);
-        
+
         if ((order2 == TemporalRules.ORDER_NONE)) {
             order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
@@ -130,37 +130,37 @@ public class TemporalRules {
         }
         return order;
     }
-    
+
     /** whether temporal induction can generate a task by avoiding producing wrong terms; only one temporal operator is allowed */
     public final static boolean tooMuchTemporalStatements(final Term t) {
         return (t == null) || (t.containedTemporalRelations() > 1);
     }
-    
+
     /** whether a term can be used in temoralInduction(,,) */
     protected static boolean termForTemporalInduction(final Term t) {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
-    
+
     //TODO maybe split &/ case into own function
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
-        
+
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
-                || s1.isEternal() || s2.isEternal())
+            || s1.isEternal() || s2.isEternal())
             return Collections.emptyList();
-        
+
         Term t1 = s1.term;
         Term t2 = s2.term;
-               
+
         final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
-        
+
         final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
-        final long timeDiff = time2 - time1;
+        final long timeDiff = (time2+seqIntervalSum(s2.term)) - (time1+seqIntervalSum(s1.term));
         Interval interval=null;
-        
+
         if (!concurrent(time1, time2, durationCycles)) {
             interval = new Interval(Math.abs(timeDiff));
             if (timeDiff > 0) {
@@ -172,11 +172,11 @@ public class TemporalRules {
         final int order = order(timeDiff, durationCycles);
         final TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
-        
+
         //This code adds a penalty for large time distance (TODO probably revise)
         final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.time.time(), nal.memory);
-        givenTruth2 = s3.truth; 
-        
+        givenTruth2 = s3.truth;
+
         //Truth and priority calculations
         final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2, nal.narParameters);
         final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1, nal.narParameters);
@@ -186,7 +186,7 @@ public class TemporalRules {
         final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
-        
+
         final Statement statement1 = Implication.make(t1, t2, order);
         final Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         final Statement statement3 = Equivalence.make(t1, t2, order);
@@ -202,7 +202,7 @@ public class TemporalRules {
                 statement4 = Conjunction.make(t1, s2.term, order);
                 break;
         }
-        
+
         List<Term> t11s = new ArrayList<>();
         List<Term> t22s = new ArrayList<>();
         List<Float> penalties = new ArrayList<>();
@@ -217,7 +217,7 @@ public class TemporalRules {
                 }
             }
         }
-        
+
         final List<Task> derivations= new ArrayList<>();
         if (!deriveSequenceOnly ) {
             for(int i=0; i<t11s.size(); i++) {
@@ -246,11 +246,11 @@ public class TemporalRules {
                 for(final Task t : tl) {
                     //fill sequenceTask buffer due to the new derived sequence
                     if(addToMemory &&
-                            t.sentence.isJudgment() &&
-                            !t.sentence.isEternal() && 
-                            t.sentence.term instanceof Conjunction && 
-                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
+                        t.sentence.isJudgment() &&
+                        !t.sentence.isEternal() &&
+                        t.sentence.term instanceof Conjunction &&
+                        t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                        t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
                         TemporalInferenceControl.addToSequenceTasks(nal, t);
                     }
 
@@ -260,6 +260,20 @@ public class TemporalRules {
         }
 
         return derivations;
+    }
+
+    public static long seqIntervalSum(Term term) {
+        if (term instanceof Conjunction) {
+            Conjunction conj = (Conjunction)term;
+            long sum = 0;
+            for(Term iTerm : conj.term) {
+                if(iTerm instanceof Interval) {
+                    sum += ((Interval)iTerm).time;
+                }
+            }
+            return sum;
+        }
+        return 0;
     }
 
     private static void appendConclusion(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
@@ -285,17 +299,17 @@ public class TemporalRules {
      *                event B before       then order=backward
      *                occur at the same time, relative to duration: order = concurrent
      */
-    public static int order(final long a, final long b, final int durationCycles) {        
+    public static int order(final long a, final long b, final int durationCycles) {
         if ((a == Stamp.ETERNAL) || (b == Stamp.ETERNAL))
             throw new IllegalStateException("order() does not compare ETERNAL times");
-        
+
         return order(b - a, durationCycles);
     }
-    
-    public static boolean concurrent(final long a, final long b, final int durationCycles) {        
+
+    public static boolean concurrent(final long a, final long b, final int durationCycles) {
         //since Stamp.ETERNAL is Integer.MIN_VALUE, 
         //avoid any overflow errors by checking eternal first
-        
+
         if (a == Stamp.ETERNAL) {
             //if both are eternal, consider concurrent.  this is consistent with the original
             //method of calculation which compared equivalent integer values only
@@ -304,9 +318,9 @@ public class TemporalRules {
         else if (b == Stamp.ETERNAL) {
             return false; //a==b was compared above
         }
-        else {        
+        else {
             return order(a, b, durationCycles) == ORDER_CONCURRENT;
         }
     }
-    
+
 }
