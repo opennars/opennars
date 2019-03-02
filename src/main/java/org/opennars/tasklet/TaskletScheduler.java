@@ -22,6 +22,8 @@ public class TaskletScheduler {
 
     private Random rng = new Random(43); // with seed for debugging and testing of core - we hit a lot of unsupported cases in temporal induction because the preconditions are loosened
 
+    private long dbgStep = 0; // for debugging - current step number
+
     public TaskletScheduler(Parameters reasonerParameters) {
         int levels = 50;
         int bagSize = 1000;
@@ -36,6 +38,8 @@ public class TaskletScheduler {
     }
 
     public void iterate(DerivationContext nal) {
+        System.out.println("step=" + dbgStep);
+
         for(int iteration=0;iteration < 50; iteration++) {
             sample(nal);
         }
@@ -54,6 +58,8 @@ public class TaskletScheduler {
         }
 
         int debugHere = 5;
+
+        dbgStep++;
     }
 
     public void sample(DerivationContext nal) {
