@@ -88,6 +88,16 @@ opennars-applications
 
 Opennars Core is run directly by the Lab and Applications Launchers.
 
+Example Narsese files
+--------------------
+Here is a link to some Narses examples including:
+
+    Toothbrush example - how to use a toothbrush to undo a screw?
+    
+    Detective example - who is the criminal?
+    
+https://github.com/opennars/opennars/tree/master/src/main/resources/nal/application    
+
 Theory Overview
 ---------------
 
@@ -156,11 +166,3 @@ Links
  * [google groups - Discussion Group](https://groups.google.com/forum/?fromgroups#!forum/open-nars)
  * [IRC](http://webchat.freenode.net?channels=nars)
  * [Try online](http://91.203.212.130/NARS)
-
-Credits:
--------
-We also thank the involved other projects, for example
-http://www.marioai.org/LevelGeneration/source-code
-https://processing.org/
-Hyperassociative Map code adapted from dANN:
-http://wiki.syncleus.com/index.php/dANN

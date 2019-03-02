@@ -271,7 +271,7 @@ public class ProcessGoal {
         concept.incAcquiredQuality(); //useful as it is represents a goal concept that can hold important procedure knowledge
         //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
-        List<Task> allPreconditions = new ArrayList<>();
+        List<Task> generalPreconditions = new ArrayList<>();
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
             if(get_concept == null || get_concept == concept) { //target concept does not exist or is the same as the goal concept
@@ -284,7 +284,7 @@ public class ProcessGoal {
                     //check whether the conclusion matches
                     if(Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, ((Implication)precon.sentence.term).getPredicate(), projectedGoal.term, new LinkedHashMap<>(), new LinkedHashMap<>())) {
                         for(Task prec : get_concept.general_executable_preconditions) {
-                            allPreconditions.add(prec);
+                            generalPreconditions.add(prec);
                             useful_component = true;
                         }
                     }
@@ -294,17 +294,20 @@ public class ProcessGoal {
                 }
             }
         }
-        //2. Accumulate all preconditions of itself too
+        //2. Accumulate all general preconditions of itself too and create list for anticipations
+        generalPreconditions.addAll(concept.general_executable_preconditions);
         Map<Operation,List<ExecutablePrecondition>> anticipationsToMake = new LinkedHashMap<>();
-        allPreconditions.addAll(concept.executable_preconditions);
-        allPreconditions.addAll(concept.general_executable_preconditions);
-        //3. Apply choice rule, using the highest truth expectation solution and anticipate the results
-        ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, allPreconditions, anticipationsToMake);
-        //4. And executing it, also forming an expectation about the result
-        if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
-            System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
-            for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
+        //3. For the more specific hypotheses first and then the general
+        for(List<Task> table : new List[] {concept.executable_preconditions, generalPreconditions}) {
+            //4. Apply choice rule, using the highest truth expectation solution and anticipate the results
+            ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, table, anticipationsToMake);
+            //5. And executing it, also forming an expectation about the result
+            if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
+                System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
+                for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
+                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
+                }
+                return; //don't try the other table as a specific solution was already used
             }
         }
     }
