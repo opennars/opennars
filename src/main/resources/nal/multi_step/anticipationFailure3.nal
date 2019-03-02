@@ -1,20 +1,24 @@
 <a-->A>. :|:
 20
 <b-->B>. :|:
-50
+20
+<c-->C>. :|:
+200
 
 <a-->A>. :|:
 20
 <b-->B>. :|:
-50
+20
+<c-->C>. :|:
+20
 
 <a-->A>. :|:
 20
-3000
+<b-->B>. :|:
+20
+5000
 
-<(&/,<a --> A>,+22) =/> <b --> B>>?
-10
-//expected solution ''outputMustContain('<(&/,<a --> A>,+22) =/> <b --> B>>. %0.67;0.57%')
 
-// solution as reported by test (is correct enough for now)
-''outputMustContain('<(&/,<a --> A>,+20) =/> <b --> B>>. %0.78;0.67%')
+<(&/,<a --> A>,+22,<b --> B>,+22) =/> <c --> C>>?
+''outputMustContain('%0.33;')
+

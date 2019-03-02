@@ -116,20 +116,18 @@ public class ProcessAnticipation {
 
     private static void keepCovariantTableUnderAikr(Concept c, Parameters reasonerParameters) {
         // keep under AIKR by limiting memory
-        // heuristic: we kick out the item with the lowest number of events
-
-        // TODO< use latest time of modification as heuristic - is much better >
+        // heuristic: use latest time of modification as heuristic
 
         if (c.covariantPredictions2.size() <= reasonerParameters.COVARIANCE_TABLE_ENTRIES) {
             return;
         }
 
         int idxWithLowest = 0;
-        long lowestCounter = c.covariantPredictions2.get(0).dist.n;
+        long latestTimestamp = c.covariantPredictions2.get(0).timestampOfLastUpdate;
         for(int idx=0;idx<c.covariantPredictions2.size();idx++) {
             Concept.Predicted iPredicted = c.covariantPredictions2.get(idx);
-            if (iPredicted.dist.n < lowestCounter) {
-                lowestCounter = iPredicted.dist.n;
+            if (iPredicted.timestampOfLastUpdate < latestTimestamp) {
+                latestTimestamp = iPredicted.timestampOfLastUpdate;
                 idxWithLowest = idx;
             }
         }
@@ -187,6 +185,7 @@ public class ProcessAnticipation {
                     float timeDelta = lastInterval.time;
 
                     matchingCovarianceEntry.dist.next(timeDelta);
+                    matchingCovarianceEntry.timestampOfLastUpdate = nal.time.time();
                 }
                 else {
                     keepCovariantTableUnderAikr(targetConcept, nal.narParameters);
@@ -199,7 +198,7 @@ public class ProcessAnticipation {
                     }
                     float timeDelta = lastInterval.time;
 
-                    Concept.Predicted newPredicted = new Concept.Predicted(conditionalWithQuantizedIntervalsWithVars, conditionedWithVars, timeDelta);
+                    Concept.Predicted newPredicted = new Concept.Predicted(conditionalWithQuantizedIntervalsWithVars, conditionedWithVars, nal.time.time(), timeDelta);
                     targetConcept.covariantPredictions2.add(newPredicted);
                 }
             }
@@ -538,13 +537,7 @@ public class ProcessAnticipation {
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
             if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
-
-                if (entry.negConfirmation.sentence.term.toString().length() > 60) {
-                    System.out.println("confirm (neg)anticipation " + entry.negConfirmation);
-
-                    int debugHere = 5;
-
-                }
+                Debug.instrumentate(true, "confirm anticipation", entry.negConfirmation.toString());
 
                 confirmed.add(entry);
             }
