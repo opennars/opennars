@@ -158,7 +158,7 @@ public class TemporalRules {
         final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
-        final long timeDiff = time2 - time1;
+        final long timeDiff = (time2+seqIntervalSum(s2.term)) - (time1+seqIntervalSum(s1.term));
         Interval interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
@@ -260,6 +260,20 @@ public class TemporalRules {
         }
 
         return derivations;
+    }
+
+    public static long seqIntervalSum(Term term) {
+        if (term instanceof Conjunction) {
+            Conjunction conj = (Conjunction)term;
+            long sum = 0;
+            for(Term iTerm : conj.term) {
+                if(iTerm instanceof Interval) {
+                    sum += ((Interval)iTerm).time;
+                }
+            }
+            return sum;
+        }
+        return 0;
     }
 
     private static void appendConclusion(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
