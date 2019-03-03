@@ -84,6 +84,8 @@ public class Stamp implements Cloneable, Serializable {
     /** cache of hashcode of evidential base */
     private int evidentialHash;
 
+    public long counter;
+
     
     public boolean before(final Stamp s, final int duration) {
         if (isEternal() || s.isEternal())
@@ -101,12 +103,13 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
-    protected Stamp(final Tense tense, final BaseEntry serial) {
+    protected Stamp(final Tense tense, final BaseEntry serial, final long counter) {
         this.baseLength = 1;
         this.evidentialBase = new BaseEntry[baseLength];
         this.evidentialBase[0] = serial;
         this.tense = tense;
         this.creationTime = -1;
+        this.counter = counter;
     }
     
     /**
@@ -115,7 +118,7 @@ public class Stamp implements Cloneable, Serializable {
      * @param time Creation time of the stamp
      */
     public Stamp(final long time, final Tense tense, final BaseEntry serial, final int duration) {    
-        this(tense, serial);    
+        this(tense, serial, 1);
         setCreationTime(time, duration);        
     }
 
@@ -125,7 +128,7 @@ public class Stamp implements Cloneable, Serializable {
      * @param old The stamp to be cloned
      */
     private Stamp(final Stamp old) {
-        this(old, old.creationTime);
+        this(old, old.creationTime, old.counter);
     }
 
     /**
@@ -138,13 +141,18 @@ public class Stamp implements Cloneable, Serializable {
      * @param creationTime The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
-        this(old, creationTime, old);
+        this(old, creationTime, old, old.counter);
     }
 
-    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
+    public Stamp(final Stamp old, final long creationTime, final long counter) {
+        this(old, creationTime, old, counter);
+    }
+
+    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase, final long counter) {
         this.evidentialBase = useEvidentialBase.evidentialBase;
         this.baseLength = useEvidentialBase.baseLength;
         this.creationTime = creationTime;
+        this.counter = counter;
 
         this.occurrenceTime = old.getOccurrenceTime();
     }
@@ -171,6 +179,8 @@ public class Stamp implements Cloneable, Serializable {
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
+
+        counter = first.counter + second.counter; // evidence adds up
         
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (j < baseLength) {
