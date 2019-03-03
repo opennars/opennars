@@ -310,7 +310,7 @@ public class Concept extends Item<Term> implements Serializable {
             this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
         }
     }
-    public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
+    public List<AnticipationEntry> anticipations = new ArrayList<>();
     
     
     /* ---------- insert Links for indirect processing ---------- */

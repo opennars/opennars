@@ -271,7 +271,7 @@ public class ProcessGoal {
         concept.incAcquiredQuality(); //useful as it is represents a goal concept that can hold important procedure knowledge
         //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
-        List<Task> generalPreconditions = new ArrayList<Task>();
+        List<Task> generalPreconditions = new ArrayList<>();
         for(Term t : ret.keySet()) {
             final Concept get_concept = nal.memory.concept(t); //the concept to pull preconditions from
             if(get_concept == null || get_concept == concept) { //target concept does not exist or is the same as the goal concept
@@ -334,7 +334,7 @@ public class ProcessGoal {
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
             long newesttime = -1;
             Task bestsofar = null;
-            List<Float> prec_intervals = new ArrayList<Float>();
+            List<Float> prec_intervals = new ArrayList<>();
             for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
                 prec_intervals.add((float) l);
             }
