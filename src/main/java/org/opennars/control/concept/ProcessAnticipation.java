@@ -169,8 +169,7 @@ public class ProcessAnticipation {
         final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
-            if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime &&
-              ((Statement) entry.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+            if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
                 confirmed.add(entry);
             }
         }

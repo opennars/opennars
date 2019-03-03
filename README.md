@@ -5,6 +5,99 @@
 [![codecov](https://codecov.io/gh/opennars/opennars/branch/master/graph/badge.svg)](https://codecov.io/gh/opennars/opennars)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fce375943907463fa53dc5bebcefebbd)](https://www.codacy.com/app/freemo/opennars?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=opennars/opennars&amp;utm_campaign=Badge_Grade)
 
+How to build OpenNARS
+---------------------
+Using mvn:
+
+for each of the projects: 
+
+	https://github.com/opennars/opennars-parent.git     
+	https://github.com/opennars/opennars.git     
+	https://github.com/opennars/opennars-lab.git     
+	https://github.com/opennars/opennars-applications.git     
+	https://github.com/opennars/opennars-gui.git
+
+	git clone 'project'
+	cd 'project_dir'
+	mvn clean install 
+
+optionally append -Dmaven.javadoc.skip=true to skip documentation generation
+
+	cd 'project_dir'
+	mvn exec:java
+
+Alternatively, using IntelliJ IDE:
+
+Install git https://git-scm.com/downloads
+
+Install OpenJDK 11 https://jdk.java.net/11/
+
+Install community edition IntelliJ https://www.jetbrains.com/idea/download/
+
+Checkout https://github.com/opennars/opennars.git
+
+Checkout https://github.com/opennars/opennars-lab.git
+
+Checkout https://github.com/opennars/opennars-applications.git
+
+You can either checkout within Intellij or use the Github desktop (available from the github clone button in the repo)
+
+Build opennars
+
+If this is a fresh install you will be prompted to enter the jdk path (where you installed it above)
+You may be prompted to update maven dependencies - do this if prompted
+
+Build opennars-lab
+
+Select org.opennars.lab.launcher.Launcher as the main entry point
+
+Build opennars-applications
+
+Select org.opennars.applications.Launcher
+
+Application Launchers
+---------------------
+The launchers are the easiest way to run the various apps
+
+opennars-lab 
+
+    Main GUI - Main user interface for NARS
+
+    Test Chamber - Simulation environment for testing behaviours
+
+    Micro world	- Behaviour learning by simple insect like creature
+
+    NAR Pong - The classic pong game
+
+    Language Lab - For experimenting with parts of speech (POS) and grammar learning
+
+    Perception Test - Pattern matching experiment
+
+    Prediction Test - Predicts a waveform - Can be run directly from Intellij (Current issue with running with launcher)
+
+    Vision - Vision experiment - Can be run direcly from Intellij (Current issue with running with launcher)
+
+opennars-applications
+
+    Main GUI - A simple MIT license GUI
+
+    Crossing - A smart city traffic intersection simulation
+
+    Identity mapping - An experimental setup for testing aspects of Relations Frame Theory (RFT)
+
+
+Opennars Core is run directly by the Lab and Applications Launchers.
+
+Example Narsese files
+--------------------
+Here is a link to some Narses examples including:
+
+    Toothbrush example - how to use a toothbrush to undo a screw?
+    
+    Detective example - who is the criminal?
+    
+https://github.com/opennars/opennars/tree/master/src/main/resources/nal/application    
+
 Theory Overview
 ---------------
 
@@ -73,11 +166,3 @@ Links
  * [google groups - Discussion Group](https://groups.google.com/forum/?fromgroups#!forum/open-nars)
  * [IRC](http://webchat.freenode.net?channels=nars)
  * [Try online](http://91.203.212.130/NARS)
-
-Credits:
--------
-We also thank the involved other projects, for example
-http://www.marioai.org/LevelGeneration/source-code
-https://processing.org/
-Hyperassociative Map code adapted from dANN:
-http://wiki.syncleus.com/index.php/dANN

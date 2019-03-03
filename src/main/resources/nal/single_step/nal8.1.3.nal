@@ -9,4 +9,4 @@
 10
 
 'The goal is to make the robot at #1 and t002 is on #1 at the same time
-''outputMustContain('(&|,<(*,SELF,#1) --> at>,<(*,{t002},#1) --> on>)! %1.00;0.81%')
+''outputMustContain('(&|,<(*,SELF,#1) --> at>,<(*,{t002},#1) --> on>)! :!0: %1.00;0.73%')
