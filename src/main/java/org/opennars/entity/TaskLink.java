@@ -216,11 +216,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
     @Override public Task getTarget() {
         return targetTask;
     }
-
-    @Override
-    public void end() {
-        records.clear();
-    }
     
     public Term getTerm() {
         return getTarget().getTerm();

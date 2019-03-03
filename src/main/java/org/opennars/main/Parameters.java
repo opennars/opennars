@@ -236,7 +236,7 @@ public class Parameters implements Serializable {
     public volatile boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
     /** eternalized induction confidence to revise A =/&gt; B beliefs */
-    public volatile float ANTICIPATION_CONFIDENCE = 0.05f;
+    public volatile float ANTICIPATION_CONFIDENCE = 0.1f;
 
     public volatile float ANTICIPATION_TOLERANCE = 100.0f;
     
@@ -278,6 +278,9 @@ public class Parameters implements Serializable {
     
     /** Maximum anticipations about its content stored in a concept */
     public volatile int ANTICIPATIONS_PER_CONCEPT_MAX = 8;
+    
+    /** operations having used procedure knowledge above the confidence threshold will not babble */
+    public volatile float MOTOR_BABBLING_CONFIDENCE_THRESHOLD = 0.8f;
     
     /** Default threads amount at startup */
     public volatile int THREADS_AMOUNT = 1;
