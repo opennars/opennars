@@ -429,7 +429,7 @@ public class ProcessGoal {
         if(precon.bestop != null && precon.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
             final Sentence createdSentence = new Sentence(
                 precon.bestop,
-                Symbols.JUDGMENT_MARK,
+                Symbols.GOAL_MARK,
                 precon.bestop_truth,
                 projectedGoal.stamp);
             final Task t = new Task(createdSentence,

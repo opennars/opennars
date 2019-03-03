@@ -141,13 +141,6 @@ public abstract class Item<K> implements Serializable {
         budget.decDurability(v);
     }
     
-    
-
-    /** called when the item has been discarded */
-    public void end() {
-        
-    }
-    
     /**
      * Get quality value
      * @return The quality value

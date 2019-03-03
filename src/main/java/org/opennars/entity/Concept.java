@@ -360,8 +360,6 @@ public class Concept extends Item<Term> implements Serializable {
             else {
                 memory.emit(TaskLinkRemove.class, removed, this);
             }
-            
-            removed.end();
         }
         memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
@@ -548,23 +546,6 @@ public class Concept extends Item<Term> implements Serializable {
         }
         final TruthValue topValue = desires.get(0).sentence.truth;
         return topValue;
-    }
-
-
-
-    @Override
-    public void end() {
-        for (final Task t : questions) t.end();
-        for (final Task t : quests) t.end();
-        
-        questions.clear();
-        quests.clear();                
-        desires.clear();
-        //evidentalDiscountBases.clear();
-        termLinks.clear();
-        taskLinks.clear();        
-        beliefs.clear();
-        termLinkTemplates.clear();
     }
     
     /**
