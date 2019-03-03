@@ -119,7 +119,9 @@ public class Concept extends Item<Term> implements Serializable {
     //based on which intervals are closer to the average
     public final List<Float> recent_intervals = new ArrayList<>();
 
-    public boolean observable = false;
+    public boolean observable = false; //whether it received a "native" input task
+    public boolean allowBabbling = true; //for operations, becomes false if sufficiently
+                                         //confident, used procedure knowledge  exists.
 
     /**
      * Constructor, called in Memory.getConcept only

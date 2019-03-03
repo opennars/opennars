@@ -111,6 +111,7 @@
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
     <conf name="VARIABLE_INTRODUCTION_CONFIDENCE_MUL" value="0.9"/>
     <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
+    <conf name="MOTOR_BABBLING_CONFIDENCE_THRESHOLD" value="0.8"/>
     
     <conf name="THREADS_AMOUNT" value="1"/>
     <conf name="VOLUME" value="100"/>
