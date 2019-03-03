@@ -563,6 +563,9 @@ public class Concept extends Item<Term> implements Serializable {
         taskLinks.clear();        
         beliefs.clear();
         termLinkTemplates.clear();
+
+        general_executable_preconditions.clear();
+        executable_preconditions.clear();
     }
     
     /**
