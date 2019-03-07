@@ -196,8 +196,9 @@ public class ProcessAnticipation {
 
 
                 if(truthOfBeliefWithTerm != null) {
-                    // compute amount of negative evidence based on current evidence (plus one for the negative event)
-                    long countWithNegativeEvidence = ((Implication)term).counter + 1;
+                    // compute amount of negative evidence based on current evidence
+                    // we just take the counter and don't add one because we want to compute a w "unit" which will be revised
+                    long countWithNegativeEvidence = ((Implication)term).counter;
                     double negativeEvidenceRatio = 1.0 / (double) countWithNegativeEvidence;
 
                     // compute confidence by negative evidence
