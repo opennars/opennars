@@ -163,11 +163,10 @@ public class ProcessAnticipation {
 
                     synchronized (targetConcept) {
                         for( final Task iBeliefTask : targetConcept.beliefs ) {
-                            Map<Term, Term>[] subst = new Map[2];
                             Term iBeliefTerm = iBeliefTask.getTerm();
 
-                            boolean substFound = Variables.findSubstitute(nar.memory.randomNumber, Symbols.VAR_INDEPENDENT, iBeliefTerm, term, subst);
-                            if (substFound) {
+                            boolean found = iBeliefTerm.equals(term);
+                            if (found) {
                                 truthOfBeliefWithTerm = iBeliefTask.sentence.truth;
                                 break;
                             }
