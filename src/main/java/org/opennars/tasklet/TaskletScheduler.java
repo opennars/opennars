@@ -1,5 +1,6 @@
 package org.opennars.tasklet;
 
+import org.opennars.DerivationProcessor;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
@@ -137,9 +138,11 @@ public class TaskletScheduler {
         nal.setCurrentBelief(b);
 
         // addToMemory is a misnomer - should be renamed
-        List<Task> derivedTasks = TemporalRules.temporalInduction(b, a, nal, true, false, true);
+        List<Sentence> derivedTerms = new ArrayList<>();
 
-        if (derivedTasks.size() > 0) {
+        derivedTerms.add(DerivationProcessor.processProgramForTemporal("", "", DerivationProcessor.programCombineSequenceAndEvent, a, b, (Timable)nal, nal.narParameters));
+
+        if (derivedTerms.size() > 0) {
             System.out.println("combine2()");
             System.out.println("    " + a + " occTime=" + a.stamp.getOccurrenceTime());
             System.out.println("    " + b + " occTime=" + b.stamp.getOccurrenceTime());
@@ -147,14 +150,17 @@ public class TaskletScheduler {
 
 
         //System.out.println("=====");
-        for(Task iDerivedTask : derivedTasks) {
-            System.out.println("derived " + iDerivedTask.toString());
+        //for(Task iDerivedTask : derivedTasks) {
+        //    System.out.println("derived " + iDerivedTask.toString());
+        //}
+        for(Sentence iDerivedSentence : derivedTerms) {
+            System.out.println("derived " + iDerivedSentence.term);
         }
 
         // create new tasklets from derived ones
         List<Tasklet> derivedTasklets = new ArrayList<>();
-        for(Task iDerivedTask : derivedTasks) {
-            derivedTasklets.add(new Tasklet(iDerivedTask, nal.time));
+        for(Sentence iDerivedSentence : derivedTerms) {
+            derivedTasklets.add(new Tasklet(iDerivedSentence, nal.time));
         }
 
         // TODO< rework to use a table with a utility function >
