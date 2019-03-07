@@ -23,9 +23,8 @@
  */
 package org.opennars.control.concept;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
@@ -38,17 +37,16 @@ import org.opennars.entity.TruthValue;
 import org.opennars.inference.RuleTables;
 import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.OutputHandler;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
+import org.opennars.language.*;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
+
+import static org.opennars.inference.UtilityFunctions.c2w;
+import static org.opennars.inference.UtilityFunctions.w2c;
 
 /**
  *
@@ -113,14 +111,14 @@ public class ProcessAnticipation {
      * 
      * @param narParameters The reasoner parameters
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @param time The time
+     * @param nar the reasoner
      */
-    public static void maintainDisappointedAnticipations(final Parameters narParameters, final Concept concept, final Timable time) {
+    public static void maintainDisappointedAnticipations(final Parameters narParameters, final Concept concept, final Nar nar) {
         //here we can check the expiration of the feedback:
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         List<Concept.AnticipationEntry> disappointed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
-            if(entry.negConfirmation == null || time.time() <= entry.negConfirm_abort_maxtime) {
+            if(entry.negConfirmation == null || nar.time() <= entry.negConfirm_abort_maxtime) {
                 continue;
             }
             //at first search beliefs for input tasks:
@@ -152,7 +150,57 @@ public class ProcessAnticipation {
             concept.memory.emit(OutputHandler.DISAPPOINT.class,concept.getTerm());
         }
         for(Concept.AnticipationEntry entry : disappointed) {
-            concept.memory.inputTask(time, entry.negConfirmation, false);
+            final Term term = entry.negConfirmation.getTerm();
+            final Term termWithRplacedIntervals = CompoundTerm.replaceIntervals(term);
+
+            { // revise with negative evidence
+                TruthValue truthOfBeliefWithTerm = null;
+                {
+                    final Concept targetConcept = nar.memory.concept(termWithRplacedIntervals);
+                    if (targetConcept == null) { // target concept does not exist
+                        continue;
+                    }
+
+                    synchronized (targetConcept) {
+                        for( final Task iBeliefTask : targetConcept.beliefs ) {
+                            Term iBeliefTerm = iBeliefTask.getTerm();
+
+                            boolean found = iBeliefTerm.equals(term);
+                            if (found) {
+                                truthOfBeliefWithTerm = iBeliefTask.sentence.truth;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+
+                if(truthOfBeliefWithTerm != null) {
+                    // compute amount of negative evidence based on current evidence
+                    // we just take the counter and don't add one because we want to compute a w "unit" which will be revised
+                    long countWithNegativeEvidence = ((Implication)term).counter;
+                    double negativeEvidenceRatio = 1.0 / (double) countWithNegativeEvidence;
+
+                    // compute confidence by negative evidence
+                    double w = c2w(truthOfBeliefWithTerm.getConfidence(), narParameters);
+                    w *= negativeEvidenceRatio;
+                    float c = w2c((float) w, narParameters);
+
+                    final TruthValue truth = new TruthValue(0.0f, c, narParameters); // frequency of negative confirmation is 0.0
+
+                    final Sentence sentenceForNewTask = new Sentence(
+                        term,
+                        Symbols.JUDGMENT_MARK,
+                        truth,
+                        new Stamp(nar, nar.memory, Tense.Eternal));
+                    final BudgetValue budget = new BudgetValue(0.99f, 0.1f, 0.1f, nar.narParameters);
+                    final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.DERIVED);
+
+                    concept.memory.inputTask(nar, t, false);
+                }
+            }
+
             concept.anticipations.remove(entry);
         }
     }
