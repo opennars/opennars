@@ -1,11 +1,15 @@
 package org.opennars;
 
 import org.opennars.entity.Sentence;
+import org.opennars.entity.Stamp;
+import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +22,7 @@ public class DerivationProcessor {
     // /param program program to get processed instruction by instruction
     // /param a premise a
     // /param b premise b
-    public static TermWithOccurrenceTime processProgramForTemporal(String condA, String condB, Instr[] program, Sentence a, Sentence b) {
+    public static Sentence processProgramForTemporal(String condA, String condB, Instr[] program, Sentence a, Sentence b, Timable time, Parameters reasonerParameters) {
         if (!checkCondition(condA, a.term) || !checkCondition(condB, b.term)) {
             return null; // ignore because any condition didn't match up
         }
@@ -154,7 +158,17 @@ public class DerivationProcessor {
                 Term conj = Conjunction.make(resultTermsAsArr, TemporalRules.ORDER_FORWARD, false);
 
                 long occurrenceTimeOfFirstEvent = byOccurrenceTimeSortedList.get(0).occurrenceTime;
-                return new TermWithOccurrenceTime(conj, occurrenceTimeOfFirstEvent);
+
+                // TODO< compute truth value >
+                TruthValue truthValue = new TruthValue(1.0f, 0.9f, reasonerParameters);
+                Stamp stamp = new Stamp(a.stamp, b.stamp, time.time(), reasonerParameters);
+
+                Sentence createdSentence = new Sentence(
+                    conj, '.', truthValue, stamp
+                );
+                createdSentence.stamp.setOccurrenceTime(occurrenceTimeOfFirstEvent);
+
+                return createdSentence;
             }
         }
 
@@ -171,7 +185,7 @@ public class DerivationProcessor {
         }
     }
 
-    private static class TermWithOccurrenceTime {
+    public static class TermWithOccurrenceTime {
         public Term term;
         public long occurrenceTime;
 
