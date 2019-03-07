@@ -122,6 +122,14 @@ public class DerivationProcessor {
                 insertTermSortedByOccurrentTime(byOccurrenceTimeSortedList, termB);
             }
 
+            // commented because not used
+            //else if(currentInstr.mnemonic.equals("readA")) {
+            //    termA = new TermWithOccurrenceTime(a.term, a.getOccurenceTime());
+            //}
+            else if(currentInstr.mnemonic.equals("readB")) {
+                termB = new TermWithOccurrenceTime(b.term, b.getOccurenceTime());
+            }
+
             // MACRO to write out the sorted list as a conjunction
             else if(currentInstr.mnemonic.equals("m_writeConjuction")) {
                 List<Term> resultTerms = new ArrayList<>();
@@ -222,39 +230,45 @@ public class DerivationProcessor {
         public final long arg0Int;
     }
 
+    public static Instr[] programCombineSequenceAndEvent;
+
     static {
-        { // program to combine two sequences into one ordered one
-            new Instr("label", "label_readA");// label: read A
+        { // program to combine a sequences and a event into one ordered sequence
+            programCombineSequenceAndEvent = new Instr[]{
+                new Instr("label", "label_readA"),// label: read A
 
-            new Instr("startIdxA");
+                new Instr("startIdxA"),
 
-            new Instr("checkEndA");
-            new Instr("jmpTrue", "label_readB");
+                new Instr("checkEndA"),
+                new Instr("jmpTrue", "label_readB"),
 
-            new Instr("scanNextA");
-            new Instr("storeSeqSortedA");
+                new Instr("scanNextA"),
+                new Instr("storeSeqSortedA"),
 
-            new Instr("jmp", -5);
-
-
-            new Instr("label", "label_readB");// label: read B
-
-            new Instr("startIdxB");
-
-            new Instr("checkEndB");
-            new Instr("jmpTrue", "label_buildConclusion");
-
-            new Instr("scanNextB");
-            new Instr("storeSeqSortedB");
-
-            new Instr("jmp", -5);
+                new Instr("jmp", -5),
 
 
+                new Instr("label", "label_readB"),// label: read B
 
-            new Instr("label", "label_buildConclusion");// label: build conclusion
+                new Instr("readB"),
+                new Instr("storeSeqSortedB"),
 
-            // read out result array and write to conclusion sequence conjunction
-            new Instr("m_writeConjuction");
+                //new Instr("startIdxB"),
+
+                //new Instr("checkEndB"),
+                //new Instr("jmpTrue", "label_buildConclusion"),
+
+                //new Instr("scanNextB"),
+                //new Instr("storeSeqSortedB"),
+
+                //new Instr("jmp", -5),
+
+
+                new Instr("label", "label_buildConclusion"),// label: build conclusion
+
+                // read out result array and write to conclusion sequence conjunction
+                new Instr("m_writeConjuction")
+            };
         }
 
 
