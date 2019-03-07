@@ -151,43 +151,25 @@ public class ProcessAnticipation {
         }
         for(Concept.AnticipationEntry entry : disappointed) {
             final Term term = entry.negConfirmation.getTerm();
+            final Term termWithRplacedIntervals = CompoundTerm.replaceIntervals(term);
 
             { // revise with negative evidence
                 TruthValue truthOfBeliefWithTerm = null;
                 {
-
-                    Set<Term> targets = new LinkedHashSet<>();
-                    {
-                        //add to all components, unless it doesn't have vars
-                        Map<Term, Integer> ret = CompoundTerm.replaceIntervals(term).countTermRecursively(null);
-                        for (Term r : ret.keySet()) {
-                            targets.add(r);
-                        }
+                    final Concept targetConcept = nar.memory.concept(termWithRplacedIntervals);
+                    if (targetConcept == null) { // target concept does not exist
+                        continue;
                     }
 
-                    for (Term iTarget : targets) { // iterate over sub-terms
-                        final Concept targetConcept = nar.memory.concept(iTarget);
-                        if (targetConcept == null) { // target concept does not exist
-                            continue;
-                        }
+                    synchronized (targetConcept) {
+                        for( final Task iBeliefTask : targetConcept.beliefs ) {
+                            Map<Term, Term>[] subst = new Map[2];
+                            Term iBeliefTerm = iBeliefTask.getTerm();
 
-
-                        synchronized (targetConcept) {
-                            for( final Task iBeliefTask : targetConcept.beliefs ) {
-                                Map<Term, Term>[] subst = new Map[2];
-                                Term iBeliefTerm = iBeliefTask.getTerm();
-
-                                boolean substFound = Variables.findSubstitute(nar.memory.randomNumber, Symbols.VAR_INDEPENDENT, iBeliefTerm, term, subst);
-
-                                if (substFound) {
-                                    if (truthOfBeliefWithTerm != null) {
-                                        // a other truth was found before
-                                        // TODO< grab the one with the highest confidence !? >
-                                    }
-
-                                    truthOfBeliefWithTerm = iBeliefTask.sentence.truth;
-                                    break;
-                                }
+                            boolean substFound = Variables.findSubstitute(nar.memory.randomNumber, Symbols.VAR_INDEPENDENT, iBeliefTerm, term, subst);
+                            if (substFound) {
+                                truthOfBeliefWithTerm = iBeliefTask.sentence.truth;
+                                break;
                             }
                         }
                     }
