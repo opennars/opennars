@@ -4,6 +4,7 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
+import org.opennars.inference.TruthFunctions;
 import org.opennars.interfaces.Timable;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
@@ -23,7 +24,7 @@ public class DerivationProcessor {
     // /param a premise a
     // /param b premise b
     public static Sentence processProgramForTemporal(String condA, String condB, Instr[] program, Sentence a, Sentence b, Timable time, Parameters reasonerParameters) {
-        if (!checkCondition(condA, a.term) || !checkCondition(condB, b.term)) {
+        if (!checkCondition(condA, a) || !checkCondition(condB, b)) {
             return null; // ignore because any condition didn't match up
         }
 
@@ -37,6 +38,8 @@ public class DerivationProcessor {
 
         TermWithOccurrenceTime termA = null;
         TermWithOccurrenceTime termB = null;
+
+        TruthValue resultTruth = null;
 
 
         // interpret program instruction by instruction and keep track of indices in premises
@@ -56,10 +59,10 @@ public class DerivationProcessor {
                 idxB=-1;
             }
             else if(currentInstr.mnemonic.equals("checkEndA")) {
-                flag = idxA > ((Conjunction)a.term).term.length;
+                flag = idxA >= ((Conjunction)a.term).term.length;
             }
             else if(currentInstr.mnemonic.equals("checkEndB")) {
-                flag = idxB > ((Conjunction)b.term).term.length;
+                flag = idxB >= ((Conjunction)b.term).term.length;
             }
             else if(currentInstr.mnemonic.equals("jmpTrue")) {
                 if(flag) {
@@ -89,10 +92,10 @@ public class DerivationProcessor {
                         break;
                     }
                     if( conj.term[idxA] instanceof Interval ) {
-                        termA.occurrenceTime += ((Interval)conj.term[idxA]).time;
+                        termA = new TermWithOccurrenceTime(termA.term, termA.occurrenceTime + ((Interval)conj.term[idxA]).time);
                     }
                     else {
-                        termA.term = conj.term[idxA];
+                        termA = new TermWithOccurrenceTime(conj.term[idxA], termA.occurrenceTime);
                         break;
                     }
                     idxA++;
@@ -110,10 +113,10 @@ public class DerivationProcessor {
                         break;
                     }
                     if( conj.term[idxB] instanceof Interval ) {
-                        termB.occurrenceTime += ((Interval)conj.term[idxB]).time;
+                        termB = new TermWithOccurrenceTime(termB.term, termB.occurrenceTime + ((Interval)conj.term[idxB]).time);
                     }
                     else {
-                        termB.term = conj.term[idxB];
+                        termB = new TermWithOccurrenceTime(conj.term[idxB], termB.occurrenceTime);
                         break;
                     }
                     idxB++;
@@ -126,12 +129,15 @@ public class DerivationProcessor {
                 insertTermSortedByOccurrentTime(byOccurrenceTimeSortedList, termB);
             }
 
-            // commented because not used
-            //else if(currentInstr.mnemonic.equals("readA")) {
-            //    termA = new TermWithOccurrenceTime(a.term, a.getOccurenceTime());
-            //}
+            else if(currentInstr.mnemonic.equals("readA")) {
+                termA = new TermWithOccurrenceTime(a.term, a.getOccurenceTime());
+            }
             else if(currentInstr.mnemonic.equals("readB")) {
                 termB = new TermWithOccurrenceTime(b.term, b.getOccurenceTime());
+            }
+
+            else if(currentInstr.mnemonic.equals("calcTruthUnionAB")) {
+                resultTruth = TruthFunctions.union(a.truth, b.truth, reasonerParameters);
             }
 
             // MACRO to write out the sorted list as a conjunction
@@ -159,12 +165,10 @@ public class DerivationProcessor {
 
                 long occurrenceTimeOfFirstEvent = byOccurrenceTimeSortedList.get(0).occurrenceTime;
 
-                // TODO< compute truth value >
-                TruthValue truthValue = new TruthValue(1.0f, 0.9f, reasonerParameters);
                 Stamp stamp = new Stamp(a.stamp, b.stamp, time.time(), reasonerParameters);
 
                 Sentence createdSentence = new Sentence(
-                    conj, '.', truthValue, stamp
+                    conj, '.', resultTruth, stamp
                 );
                 createdSentence.stamp.setOccurrenceTime(occurrenceTimeOfFirstEvent);
 
@@ -176,6 +180,8 @@ public class DerivationProcessor {
     }
 
     private static void insertTermSortedByOccurrentTime(List<TermWithOccurrenceTime> byOccurrenceTimeSortedList, TermWithOccurrenceTime inserted) {
+        //System.out.println("insert " + inserted.term);
+
         for(int idx=0;idx<byOccurrenceTimeSortedList.size();idx++) {
             TermWithOccurrenceTime item = byOccurrenceTimeSortedList.get(idx);
             if(item.occurrenceTime > inserted.occurrenceTime) {
@@ -183,6 +189,7 @@ public class DerivationProcessor {
                 return;
             }
         }
+        byOccurrenceTimeSortedList.add(inserted);
     }
 
     public static class TermWithOccurrenceTime {
@@ -198,13 +205,19 @@ public class DerivationProcessor {
     // encoding of condition
     // "F" temporal forward implication
     // "S" temporal sequence
+    // "E" event
     // "" always true
-    private static boolean checkCondition(String condition, Term term) {
+    private static boolean checkCondition(String condition, Sentence sentence) {
+        Term term = sentence.term;
+
         if(condition.equals("F")) {
             return term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
         }
         else if(condition.equals("S")) {
             return term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+        }
+        else if(condition.equals("E")) {
+            return !sentence.isEternal() && !(term instanceof Conjunction);
         }
         else if(condition.equals("")) {
             return true;
@@ -245,6 +258,7 @@ public class DerivationProcessor {
     }
 
     public static Instr[] programCombineSequenceAndEvent;
+    public static Instr[] programCombineEventAndEvent;
 
     static {
         { // program to combine a sequences and a event into one ordered sequence
@@ -253,10 +267,10 @@ public class DerivationProcessor {
 
                 new Instr("startIdxA"),
 
+                new Instr("scanNextA"),
                 new Instr("checkEndA"),
                 new Instr("jmpTrue", "label_readB"),
 
-                new Instr("scanNextA"),
                 new Instr("storeSeqSortedA"),
 
                 new Instr("jmp", -5),
@@ -280,6 +294,9 @@ public class DerivationProcessor {
 
                 new Instr("label", "label_buildConclusion"),// label: build conclusion
 
+
+                new Instr("calcTruthUnionAB"), // compute the truth by taking the union of input A and input B
+
                 // read out result array and write to conclusion sequence conjunction
                 new Instr("m_writeConjuction")
             };
@@ -287,6 +304,20 @@ public class DerivationProcessor {
 
 
 
+        { // program to combine a event and a event into one ordered sequence
+            programCombineEventAndEvent = new Instr[]{
+                new Instr("readA"),
+                new Instr("storeSeqSortedA"),
+
+                new Instr("readB"),
+                new Instr("storeSeqSortedB"),
+
+                new Instr("calcTruthUnionAB"), // compute the truth by taking the union of input A and input B
+
+                // read out result array and write to conclusion sequence conjunction
+                new Instr("m_writeConjuction")
+            };
+        }
 
     }
 }
