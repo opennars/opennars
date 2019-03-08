@@ -235,8 +235,12 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason, Timable timable) {
-
-        taskletScheduler.addTaskletByTask(t, TaskletScheduler.EnumAddedToMemory.YES, timable);
+        if (reason.equals("Derived") || reason.equals("Perceived")) {
+            taskletScheduler.addTaskletByTask(t, TaskletScheduler.EnumAddedToMemory.YES, timable);
+        }
+        else {
+            int debugHere = 5;
+        }
 
         synchronized (tasksMutex) {
             newTasks.add(t);

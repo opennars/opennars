@@ -6,10 +6,7 @@ import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.interfaces.Timable;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Term;
+import org.opennars.language.*;
 import org.opennars.main.Parameters;
 
 import java.util.ArrayList;
@@ -205,7 +202,7 @@ public class DerivationProcessor {
     // encoding of condition
     // "F" temporal forward implication
     // "S" temporal sequence
-    // "E" event
+    // "E" single event
     // "" always true
     private static boolean checkCondition(String condition, Sentence sentence) {
         Term term = sentence.term;
@@ -217,7 +214,11 @@ public class DerivationProcessor {
             return term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
         }
         else if(condition.equals("E")) {
-            return !sentence.isEternal() && !(term instanceof Conjunction);
+            if(sentence.isEternal()) {
+                return false;
+            }
+
+            return term instanceof Similarity || term instanceof Inheritance;
         }
         else if(condition.equals("")) {
             return true;

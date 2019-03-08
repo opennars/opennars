@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class TaskletScheduler {
     public Bag<Tasklet, Term> primary;
-    public List<Tasklet> secondary;
+    private List<Tasklet> secondary;
 
     private Random rng = new Random(43); // with seed for debugging and testing of core - we hit a lot of unsupported cases in temporal induction because the preconditions are loosened
 
@@ -50,7 +50,7 @@ public class TaskletScheduler {
         }
 
         // TODO< find items which utility is not sorted and inseert them again in the right places >
-        Collections.sort(secondary, (s1, s2) -> { return s1.cachedUtility < s2.cachedUtility ? 1 : -1; });
+        Collections.sort(secondary, (s1, s2) -> { return s1.cachedUtility == s2.cachedUtility ? 0 : ( s1.cachedUtility < s2.cachedUtility ? 1 : -1 ); });
 
         // TODO< limit size of secondary >
         while (secondary.size() > 20000) {
@@ -90,7 +90,7 @@ public class TaskletScheduler {
             combine2(a.task.sentence, a.task.isInput(), b.belief, false/* don't know */, timable, nal);
         }
         else if(a.isBelief() && b.isTask()) {
-            combine2(b.belief, false/* don't know */, a.task.sentence, b.task.isInput(), timable, nal);
+            combine2(a.belief, false/* don't know */, b.task.sentence, b.task.isInput(), timable, nal);
         }
         else if(a.isTask() && b.isTask()) {
             combine2(a.task.sentence, a.task.isInput(), b.task.sentence, b.task.isInput(), timable, nal);
@@ -163,7 +163,7 @@ public class TaskletScheduler {
         //    System.out.println("derived " + iDerivedTask.toString());
         //}
         for(Sentence iDerivedSentence : derivedTerms) {
-            System.out.println("derived " + iDerivedSentence.term);
+            System.out.println("derived " + iDerivedSentence);
         }
 
         // create new tasklets from derived ones
