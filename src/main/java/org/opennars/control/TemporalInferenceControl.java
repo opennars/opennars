@@ -26,6 +26,7 @@ package org.opennars.control;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
@@ -70,10 +71,10 @@ public class TemporalInferenceControl {
         return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
     }
 
-    public static boolean eventInference(final Task newEvent, final DerivationContext nal) {
+    public static boolean eventInference(final Task newEvent, Timable timable, final DerivationContext nal) {
 
 
-        nal.memory.taskletScheduler.iterate(nal);
+        nal.memory.taskletScheduler.iterate(timable, nal);
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
