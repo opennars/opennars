@@ -391,7 +391,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 }
             }
 
-            if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
+            if (task.isInput() && !task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
                 TemporalInferenceControl.eventInference(task, time, cont);
             }
 

@@ -2,6 +2,7 @@ package org.opennars.tasklet;
 
 import org.opennars.DerivationProcessor;
 import org.opennars.control.DerivationContext;
+import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
@@ -12,6 +13,7 @@ import org.opennars.language.Similarity;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
+import org.opennars.storage.Memory;
 
 import java.util.*;
 
@@ -62,31 +64,31 @@ public class TaskletScheduler {
         }
     }
 
-    public void iterate(Timable timable, DerivationContext nal) {
+    public void iterate(Timable timable, Memory memory, Parameters narParameters) {
         System.out.println("step=" + dbgStep);
 
         indicesAlreadySampled.clear();
         for(int iteration=0;iteration < 100; iteration++) {
-            sample(secondarySingleEvents, secondarySingleEvents, timable, nal);
+            sample(secondarySingleEvents, secondarySingleEvents, timable, memory, narParameters);
         }
 
         indicesAlreadySampled.clear();
         for(int iteration=0;iteration < 25; iteration++) {
-            sample(secondary, secondarySingleEvents, timable, nal);
+            sample(secondary, secondarySingleEvents, timable, memory, narParameters);
         }
 
-        sortByUtilityAndLimitSize(secondary, secondaryMap, nal);
-        sortByUtilityAndLimitSize(secondarySingleEvents, null, nal);
+        sortByUtilityAndLimitSize(secondary, secondaryMap, timable);
+        sortByUtilityAndLimitSize(secondarySingleEvents, null, timable);
 
         int debugHere = 5;
 
         dbgStep++;
     }
 
-    private void sortByUtilityAndLimitSize(List<Tasklet> tasklets, Map<Tasklet, Boolean> hashmap, DerivationContext nal) {
+    private void sortByUtilityAndLimitSize(List<Tasklet> tasklets, Map<Tasklet, Boolean> hashmap, Timable timable) {
         // recalc utilities
         for(int idx=0;idx<tasklets.size();idx++) {
-            tasklets.get(idx).calcUtility(nal.time);
+            tasklets.get(idx).calcUtility(timable);
         }
 
         // TODO< find items which utility is not sorted and insert them again in the right places >
@@ -101,7 +103,7 @@ public class TaskletScheduler {
 
     private Map<Tuple, Boolean> indicesAlreadySampled = new HashMap<>();
 
-    private void sample(List<Tasklet> taskletsA, List<Tasklet> taskletsB, Timable timable, DerivationContext nal) {
+    private void sample(List<Tasklet> taskletsA, List<Tasklet> taskletsB, Timable timable, Memory memory, Parameters narParameters) {
         final boolean areSameTaskletLists = taskletsA == taskletsB;
 
         if(areSameTaskletLists && taskletsA.size() < 2) {
@@ -138,27 +140,27 @@ public class TaskletScheduler {
         Tasklet taskletA = taskletsA.get(idxA);
         Tasklet taskletB = taskletsB.get(idxB);
 
-        combine(taskletA, taskletB, timable, nal);
+        combine(taskletA, taskletB, timable, memory, narParameters);
 
     }
 
     // combines and infers two tasklets
-    private void combine(Tasklet a, Tasklet b, Timable timable, DerivationContext nal) {
+    private void combine(Tasklet a, Tasklet b, Timable timable, Memory memory, Parameters narParameters) {
         if (a.isTask() && b.isBelief()) {
-            combine2(a.task.sentence, a.task.isInput(), b.belief, false/* don't know */, timable, nal);
+            combine2(a.task.sentence, a.task.isInput(), b.belief, false/* don't know */, timable, memory, narParameters);
         }
         else if(a.isBelief() && b.isTask()) {
-            combine2(a.belief, false/* don't know */, b.task.sentence, b.task.isInput(), timable, nal);
+            combine2(a.belief, false/* don't know */, b.task.sentence, b.task.isInput(), timable, memory, narParameters);
         }
         else if(a.isTask() && b.isTask()) {
-            combine2(a.task.sentence, a.task.isInput(), b.task.sentence, b.task.isInput(), timable, nal);
+            combine2(a.task.sentence, a.task.isInput(), b.task.sentence, b.task.isInput(), timable, memory, narParameters);
         }
         else {
-            combine2(a.belief, false /* don't know */, b.belief, false /* don't know */, timable, nal);
+            combine2(a.belief, false /* don't know */, b.belief, false /* don't know */, timable, memory, narParameters);
         }
     }
 
-    private void combine2(Sentence a, boolean aIsInput, Sentence b, boolean bIsInput, Timable timable, DerivationContext nal) {
+    private void combine2(Sentence a, boolean aIsInput, Sentence b, boolean bIsInput, Timable timable, Memory memory, Parameters narParameters) {
         if (a.stamp.isEternal() || b.stamp.isEternal()) {
             return; // we can't combine eternal beliefs/tasks
         }
@@ -199,17 +201,17 @@ public class TaskletScheduler {
         List<Sentence> derivedTerms = new ArrayList<>();
 
         {
-            Sentence derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, a, b, timable, nal.narParameters);
+            Sentence derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, a, b, timable, narParameters);
             if (derivedSentence != null) {
                 derivedTerms.add(derivedSentence);
             }
 
-            derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, b, a, timable, nal.narParameters);
+            derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, b, a, timable, narParameters);
             if (derivedSentence != null) {
                 derivedTerms.add(derivedSentence);
             }
 
-            derivedSentence = DerivationProcessor.processProgramForTemporal("E", "E", DerivationProcessor.programCombineEventAndEvent, a, b, timable, nal.narParameters);
+            derivedSentence = DerivationProcessor.processProgramForTemporal("E", "E", DerivationProcessor.programCombineEventAndEvent, a, b, timable, narParameters);
             if (derivedSentence != null) {
                 derivedTerms.add(derivedSentence);
             }
@@ -233,12 +235,18 @@ public class TaskletScheduler {
         // create new tasklets from derived ones
         List<Tasklet> derivedTasklets = new ArrayList<>();
         for(Sentence iDerivedSentence : derivedTerms) {
-            derivedTasklets.add(new Tasklet(iDerivedSentence, nal.time));
+            derivedTasklets.add(new Tasklet(iDerivedSentence, timable));
         }
 
         // TODO< rework to use a table with a utility function >
         for(Tasklet iDerivedTasklet : derivedTasklets) {
             addTasklet(iDerivedTasklet);
+
+            { // feed back the derived result
+                Task task = new Task(iDerivedTasklet.belief, new BudgetValue(1.0f, 0.95f, 0.95f, narParameters), Task.EnumType.DERIVED);
+                memory.addNewTask(task, "tasklet", timable);
+            }
+
         }
     }
 

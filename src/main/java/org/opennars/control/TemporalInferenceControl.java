@@ -72,10 +72,6 @@ public class TemporalInferenceControl {
     }
 
     public static boolean eventInference(final Task newEvent, Timable timable, final DerivationContext nal) {
-
-
-        nal.memory.taskletScheduler.iterate(timable, nal);
-
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
        }
