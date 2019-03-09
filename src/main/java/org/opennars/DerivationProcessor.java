@@ -9,8 +9,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DerivationProcessor {
 
@@ -136,6 +135,9 @@ public class DerivationProcessor {
             else if(currentInstr.mnemonic.equals("calcTruthUnionAB")) {
                 resultTruth = TruthFunctions.union(a.truth, b.truth, reasonerParameters);
             }
+            else if(currentInstr.mnemonic.equals("calcTruthIdA")) {
+                resultTruth = a.truth;
+            }
 
             // MACRO to write out the sorted list as a conjunction
             else if(currentInstr.mnemonic.equals("m_writeConjuction")) {
@@ -171,9 +173,105 @@ public class DerivationProcessor {
 
                 return createdSentence;
             }
+            else if(currentInstr.mnemonic.equals("m_writeWindowedConjuction")) {
+                // events which are put into buckets
+                // the buckets contain parallel occuring events in their windows
+                Map<Long, List<TermWithOccurrenceTime>> quantizedParallelEvents = new HashMap<>();
+
+                long windowQuantization = 80;
+                { // put events into buckets
+                    for (TermWithOccurrenceTime iTerm : byOccurrenceTimeSortedList) {
+                        long quantizedBucketTime = (iTerm.occurrenceTime / windowQuantization) * windowQuantization;
+
+                        List<TermWithOccurrenceTime> termsOfBucket;
+                        if (quantizedParallelEvents.containsKey(quantizedBucketTime)) {
+                            termsOfBucket = quantizedParallelEvents.get(quantizedBucketTime);
+                        }
+                        else {
+                            termsOfBucket = new ArrayList<>();
+                        }
+                        termsOfBucket.add(iTerm);
+                        quantizedParallelEvents.put(quantizedBucketTime, termsOfBucket);
+                    }
+                }
+
+                { // build sequence with parallel events - seperated by intervals
+                    List<Map.Entry<Long, List<TermWithOccurrenceTime>>> sortedQuantizedParallelEvents = new ArrayList<>();
+                    sortedQuantizedParallelEvents.addAll(quantizedParallelEvents.entrySet());
+                    Collections.sort(sortedQuantizedParallelEvents, new Comparator<Map.Entry<Long, List<TermWithOccurrenceTime>>>(){
+                        public int compare(Map.Entry<Long, List<TermWithOccurrenceTime>> s1,Map.Entry<Long, List<TermWithOccurrenceTime>> s2){
+                            if( s1.getKey() == s2.getKey()) {
+                                return 0;
+                            }
+                            return s1.getKey() > s2.getKey() ? 1 : -1;
+                        }});
+
+
+                    List<Term> resultTerms = new ArrayList<>();
+
+                    // add terms with intervals between
+                    for(int iTermWithTimeIdx=0; iTermWithTimeIdx<sortedQuantizedParallelEvents.size()-1; iTermWithTimeIdx++) {
+                        long thisWindowQuantizedTime = sortedQuantizedParallelEvents.get(iTermWithTimeIdx).getKey();
+                        List<TermWithOccurrenceTime> thisWindowParallelTerms = sortedQuantizedParallelEvents.get(iTermWithTimeIdx).getValue();
+                        long nextWindowQuantizedTime = sortedQuantizedParallelEvents.get(iTermWithTimeIdx+1).getKey();
+                        List<TermWithOccurrenceTime> nextWindowParallelTerms = sortedQuantizedParallelEvents.get(iTermWithTimeIdx+1).getValue();
+
+                        Term concurrentConj = buildConcurrentConjunction(thisWindowParallelTerms);
+                        resultTerms.add(concurrentConj);
+
+                        // compute time difference - is based on size of lists - can be exact if window size is 1 and 1 - can not be exact if it is not 1 and 1
+                        long occurenceTimeDiff = 0;
+                        if (thisWindowParallelTerms.size() <= 1 && nextWindowParallelTerms.size() <= 1) {
+                            occurenceTimeDiff = nextWindowParallelTerms.get(0).occurrenceTime - thisWindowParallelTerms.get(0).occurrenceTime;
+                        }
+                        else {
+                            occurenceTimeDiff = nextWindowQuantizedTime - thisWindowQuantizedTime;
+                        }
+
+                        if(occurenceTimeDiff > 0) {
+                            resultTerms.add(new Interval(occurenceTimeDiff));
+                        }
+                    }
+
+                    // add last one
+                    Term lastTerm = byOccurrenceTimeSortedList.get(byOccurrenceTimeSortedList.size()-1).term;
+                    resultTerms.add(lastTerm);
+
+                    // build sentence
+
+                    Term[] resultTermsAsArr = resultTerms.toArray(new Term[resultTerms.size()]);
+                    Term conj = Conjunction.make(resultTermsAsArr, TemporalRules.ORDER_FORWARD, false);
+
+                    long occurrenceTimeOfFirstEvent = byOccurrenceTimeSortedList.get(0).occurrenceTime;
+
+                    Stamp stamp = new Stamp(a.stamp, b.stamp, time.time(), reasonerParameters);
+
+                    Sentence createdSentence = new Sentence(
+                        conj, '.', resultTruth, stamp
+                    );
+                    createdSentence.stamp.setOccurrenceTime(occurrenceTimeOfFirstEvent);
+
+                    return createdSentence;
+                }
+            }
+            else {
+                int here = 5;
+            }
         }
 
         return null; // program was invalid if we are here - ignore
+    }
+
+    private static Term buildConcurrentConjunction(List<TermWithOccurrenceTime> terms) {
+        if(terms.size() == 1) { // special case - just one is not parallel
+            return terms.get(0).term;
+        }
+
+        Term[] arr = new Term[terms.size()];
+        for(int i=0;i<arr.length;i++) {
+            arr[i] = terms.get(i).term;
+        }
+        return Conjunction.make(arr, TemporalRules.ORDER_CONCURRENT);
     }
 
     private static void insertTermSortedByOccurrentTime(List<TermWithOccurrenceTime> byOccurrenceTimeSortedList, TermWithOccurrenceTime inserted) {
@@ -260,6 +358,8 @@ public class DerivationProcessor {
 
     public static Instr[] programCombineSequenceAndEvent;
     public static Instr[] programCombineEventAndEvent;
+    public static Instr[] programTranslateSequenceToWindowedSequence; // translate sequence in a to a sequences with parallel windowed events
+
 
     static {
         { // program to combine a sequences and a event into one ordered sequence
@@ -317,6 +417,30 @@ public class DerivationProcessor {
 
                 // read out result array and write to conclusion sequence conjunction
                 new Instr("m_writeConjuction")
+            };
+        }
+
+        { // program to combine a sequences and a event into one ordered sequence
+            programTranslateSequenceToWindowedSequence = new Instr[]{
+                new Instr("label", "label_readA"),// label: read A
+
+                new Instr("startIdxA"),
+
+                new Instr("scanNextA"),
+                new Instr("checkEndA"),
+                new Instr("jmpTrue", "label_buildConclusion"),
+
+                new Instr("storeSeqSortedA"),
+
+                new Instr("jmp", -5),
+
+                new Instr("label", "label_buildConclusion"),// label: build conclusion
+
+
+                new Instr("calcTruthIdA"), // compute the truth by taking the truth of input A
+
+                // read out result array and write to conclusion sequence conjunction
+                new Instr("m_writeWindowedConjuction")
             };
         }
 
