@@ -74,6 +74,14 @@ public class Tasklet extends  Item<Term> {
         return truth.getExpectation() + decay;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += isBelief() ? belief.hashCode() : task.hashCode();
+        hash += isBelief() ? 1 : -1;
+        return hash;
+    }
+
     public enum EnumType {
         BELIEF,
         TASK

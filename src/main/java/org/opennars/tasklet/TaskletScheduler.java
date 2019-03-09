@@ -20,6 +20,7 @@ import java.util.*;
 
 public class TaskletScheduler {
     private List<Tasklet> secondary; // sequences and other compositions
+    private Map<Tasklet, Boolean> secondaryMap; // used to check if we already derived a conclusion
     private List<Tasklet> secondarySingleEvents;
 
     private Random rng = new Random(43); // with seed for debugging and testing of core - we hit a lot of unsupported cases in temporal induction because the preconditions are loosened
@@ -29,6 +30,7 @@ public class TaskletScheduler {
     public TaskletScheduler(Parameters reasonerParameters) {
         secondary = new ArrayList<>();
         secondarySingleEvents = new ArrayList<>();
+        secondaryMap = new HashMap<>();
     }
 
     private static boolean isEvent(Sentence sentence) {
@@ -53,7 +55,10 @@ public class TaskletScheduler {
             secondarySingleEvents.add(0, tasklet);
         }
         else {
-            secondary.add(0, tasklet);
+            if (!secondaryMap.containsKey(tasklet)) {
+                secondary.add(0, tasklet);
+                secondaryMap.put(tasklet, true);
+            }
         }
     }
 
@@ -70,15 +75,15 @@ public class TaskletScheduler {
             sample(secondary, secondarySingleEvents, timable, nal);
         }
 
-        sortByUtilityAndLimitSize(secondary, nal);
-        sortByUtilityAndLimitSize(secondarySingleEvents, nal);
+        sortByUtilityAndLimitSize(secondary, secondaryMap, nal);
+        sortByUtilityAndLimitSize(secondarySingleEvents, null, nal);
 
         int debugHere = 5;
 
         dbgStep++;
     }
 
-    private void sortByUtilityAndLimitSize(List<Tasklet> tasklets, DerivationContext nal) {
+    private void sortByUtilityAndLimitSize(List<Tasklet> tasklets, Map<Tasklet, Boolean> hashmap, DerivationContext nal) {
         // recalc utilities
         for(int idx=0;idx<tasklets.size();idx++) {
             tasklets.get(idx).calcUtility(nal.time);
@@ -89,6 +94,8 @@ public class TaskletScheduler {
 
         while (tasklets.size() > 20000) {
             tasklets.remove(20000-1);
+
+            // TODO< remove from hashmap !!! >
         }
     }
 
@@ -253,4 +260,5 @@ public class TaskletScheduler {
             return a + b;
         }
     }
+
 }
