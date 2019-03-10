@@ -9,12 +9,11 @@ import org.opennars.interfaces.Timable;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class DerivationProcessor {
-
-    // TODO< convert all instructions to static methods which can easily get called with bytecode >
-
     // process a program on two sentences for some temporal inference to derive a conclusion
     // /param condA condition
     // /param condB condition
@@ -113,6 +112,29 @@ public class DerivationProcessor {
         }
 
         return null; // program was invalid if we are here - ignore
+    }
+
+    public static Sentence processCompiledProgram(String condA, String condB, Class class_, Sentence a, Sentence b, List<Sentence> derivedSentences, Timable time, Parameters reasonerParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (!checkCondition(condA, a) || !checkCondition(condB, b)) {
+            return null; // ignore because any condition didn't match up
+        }
+
+        InstructionsAndContext.Context ctx = new InstructionsAndContext.Context();
+        ctx.a = a;
+        ctx.b = b;
+        ctx.derivedSentences = derivedSentences;
+        ctx.time = time;
+        ctx.reasonerParameters = reasonerParameters;
+
+        Method method = class_.getMethod("derive0", InstructionsAndContext.Context.class);
+
+        try {
+            return (Sentence)method.invoke(null, new Object[]{ctx});
+        }
+        catch (InvocationTargetException e) {
+            int here = 1;
+            throw e;
+        }
     }
 
     public static class TermWithOccurrenceTime {
