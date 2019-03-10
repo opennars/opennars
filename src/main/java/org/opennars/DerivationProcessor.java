@@ -234,7 +234,8 @@ public class DerivationProcessor {
                     }
 
                     // add last one
-                    Term lastTerm = byOccurrenceTimeSortedList.get(byOccurrenceTimeSortedList.size()-1).term;
+                    List<TermWithOccurrenceTime> lastParallel = sortedQuantizedParallelEvents.get(sortedQuantizedParallelEvents.size()-1).getValue();
+                    Term lastTerm = buildConcurrentConjunction(lastParallel);
                     resultTerms.add(lastTerm);
 
                     // build sentence
@@ -244,7 +245,13 @@ public class DerivationProcessor {
 
                     long occurrenceTimeOfFirstEvent = byOccurrenceTimeSortedList.get(0).occurrenceTime;
 
-                    Stamp stamp = new Stamp(a.stamp, b.stamp, time.time(), reasonerParameters);
+                    Stamp stamp;
+                    if(b != null) {
+                        stamp = new Stamp(a.stamp, b.stamp, time.time(), reasonerParameters);
+                    }
+                    else {
+                        stamp = a.stamp;
+                    }
 
                     Sentence createdSentence = new Sentence(
                         conj, '.', resultTruth, stamp
@@ -253,6 +260,9 @@ public class DerivationProcessor {
 
                     return createdSentence;
                 }
+            }
+            else if(currentInstr.mnemonic.equals("label")) {
+                // ignore
             }
             else {
                 int here = 5;
@@ -303,6 +313,10 @@ public class DerivationProcessor {
     // "E" single event
     // "" always true
     private static boolean checkCondition(String condition, Sentence sentence) {
+        if(condition.equals("")) {
+            return true;
+        }
+
         Term term = sentence.term;
 
         if(condition.equals("F")) {
@@ -318,9 +332,7 @@ public class DerivationProcessor {
 
             return term instanceof Similarity || term instanceof Inheritance;
         }
-        else if(condition.equals("")) {
-            return true;
-        }
+
         return false; // not defined - default value!
     }
 

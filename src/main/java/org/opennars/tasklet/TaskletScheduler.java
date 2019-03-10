@@ -198,26 +198,36 @@ public class TaskletScheduler {
         //nal.setCurrentBelief(b);
 
         // addToMemory is a misnomer - should be renamed
-        List<Sentence> derivedTerms = new ArrayList<>();
+        List<Sentence> derivedSentences = new ArrayList<>();
 
         {
             Sentence derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, a, b, timable, narParameters);
             if (derivedSentence != null) {
-                derivedTerms.add(derivedSentence);
+                derivedSentences.add(derivedSentence);
+
+                derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, timable, narParameters);
+                if (derivedSentence != null) {
+                    derivedSentences.add(derivedSentence);
+                }
             }
 
             derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, b, a, timable, narParameters);
             if (derivedSentence != null) {
-                derivedTerms.add(derivedSentence);
+                derivedSentences.add(derivedSentence);
+
+                derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, timable, narParameters);
+                if (derivedSentence != null) {
+                    derivedSentences.add(derivedSentence);
+                }
             }
 
             derivedSentence = DerivationProcessor.processProgramForTemporal("E", "E", DerivationProcessor.programCombineEventAndEvent, a, b, timable, narParameters);
             if (derivedSentence != null) {
-                derivedTerms.add(derivedSentence);
+                derivedSentences.add(derivedSentence);
             }
         }
 
-        if (derivedTerms.size() > 0) {
+        if (derivedSentences.size() > 0) {
             System.out.println("combine2()");
             System.out.println("    " + a + " occTime=" + a.stamp.getOccurrenceTime());
             System.out.println("    " + b + " occTime=" + b.stamp.getOccurrenceTime());
@@ -228,13 +238,13 @@ public class TaskletScheduler {
         //for(Task iDerivedTask : derivedTasks) {
         //    System.out.println("derived " + iDerivedTask.toString());
         //}
-        for(Sentence iDerivedSentence : derivedTerms) {
+        for(Sentence iDerivedSentence : derivedSentences) {
             System.out.println("derived " + iDerivedSentence);
         }
 
         // create new tasklets from derived ones
         List<Tasklet> derivedTasklets = new ArrayList<>();
-        for(Sentence iDerivedSentence : derivedTerms) {
+        for(Sentence iDerivedSentence : derivedSentences) {
             derivedTasklets.add(new Tasklet(iDerivedSentence, timable));
         }
 
