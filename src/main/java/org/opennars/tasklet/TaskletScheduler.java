@@ -1,6 +1,7 @@
 package org.opennars.tasklet;
 
 import org.opennars.derivation.DerivationProcessor;
+import org.opennars.derivation.Helpers;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
@@ -218,7 +219,23 @@ public class TaskletScheduler {
             }
         }
 
-        // TODO< build =/> implication when possible >
+        { // convert to =/> when ever possible
+
+            // TODO< split up case when predicate of the result impl is a parallel conj >
+
+            List<Sentence> derivedSentence2 = new ArrayList<>();
+            for(Sentence iSentence : derivedSentences) {
+                Term transformedTerm = Helpers.convertFromSeqToSeqImpl(iSentence.term);
+                if (transformedTerm == null) {
+                    continue;
+                }
+                Sentence s = new Sentence(transformedTerm, iSentence.punctuation, iSentence.truth, iSentence.stamp);
+                derivedSentence2.add(s);
+            }
+            derivedSentences.addAll(derivedSentence2);
+        }
+
+
         // TODO< introduce variables (after abbreviation got implemented) >
 
         if (derivedSentences.size() > 0) {
