@@ -31,6 +31,8 @@ public class TaskletScheduler {
     private long dbgStep = 0; // for debugging - current step number
 
     private Class compiledProgramCombineSequenceAndEvent;
+    private Class compiledProgramCombineEventAndEvent;
+    private Class compiledProgramTranslateSequenceToWindowedSequence;
 
     public TaskletScheduler(Parameters reasonerParameters) throws CannotCompileException {
         secondary = new ArrayList<>();
@@ -42,7 +44,8 @@ public class TaskletScheduler {
 
     private void compileDerivationPrograms() throws CannotCompileException {
         compiledProgramCombineSequenceAndEvent = DerivationCompiler.compile(DerivationProcessor.programCombineSequenceAndEvent);
-
+        compiledProgramCombineEventAndEvent = DerivationCompiler.compile(DerivationProcessor.programCombineEventAndEvent);
+        compiledProgramTranslateSequenceToWindowedSequence = DerivationCompiler.compile(DerivationProcessor.programTranslateSequenceToWindowedSequence);
     }
 
     private static boolean isEvent(Sentence sentence) {
@@ -213,7 +216,7 @@ public class TaskletScheduler {
         {
             Sentence derivedSentence = DerivationProcessor.processCompiledProgram("S", "E", compiledProgramCombineSequenceAndEvent, a, b, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
-                derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
+                derivedSentence = DerivationProcessor.processCompiledProgram("S", "", compiledProgramTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
                 if (derivedSentence != null) {
                     int debugHere = 1;
                 }
@@ -221,13 +224,13 @@ public class TaskletScheduler {
 
             derivedSentence = DerivationProcessor.processCompiledProgram("S", "E", compiledProgramCombineSequenceAndEvent, b, a, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
-                derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
+                derivedSentence = DerivationProcessor.processCompiledProgram("S", "", compiledProgramTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
                 if (derivedSentence != null) {
                     int debugHere = 1;
                 }
             }
 
-            derivedSentence = DerivationProcessor.processProgramForTemporal("E", "E", DerivationProcessor.programCombineEventAndEvent, a, b, derivedSentences, timable, narParameters);
+            derivedSentence = DerivationProcessor.processCompiledProgram("E", "E", compiledProgramCombineEventAndEvent, a, b, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
                 int debugHere = 1;
             }
