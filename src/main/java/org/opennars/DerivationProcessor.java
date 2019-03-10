@@ -19,7 +19,7 @@ public class DerivationProcessor {
     // /param program program to get processed instruction by instruction
     // /param a premise a
     // /param b premise b
-    public static Sentence processProgramForTemporal(String condA, String condB, Instr[] program, Sentence a, Sentence b, Timable time, Parameters reasonerParameters) {
+    public static Sentence processProgramForTemporal(String condA, String condB, Instr[] program, Sentence a, Sentence b, List<Sentence> derivedSentences, Timable time, Parameters reasonerParameters) {
         if (!checkCondition(condA, a) || !checkCondition(condB, b)) {
             return null; // ignore because any condition didn't match up
         }
@@ -171,6 +171,7 @@ public class DerivationProcessor {
                 );
                 createdSentence.stamp.setOccurrenceTime(occurrenceTimeOfFirstEvent);
 
+                derivedSentences.add(createdSentence);
                 return createdSentence;
             }
             else if(currentInstr.mnemonic.equals("m_writeWindowedConjuction")) {
@@ -258,6 +259,7 @@ public class DerivationProcessor {
                     );
                     createdSentence.stamp.setOccurrenceTime(occurrenceTimeOfFirstEvent);
 
+                    derivedSentences.add(createdSentence);
                     return createdSentence;
                 }
             }
