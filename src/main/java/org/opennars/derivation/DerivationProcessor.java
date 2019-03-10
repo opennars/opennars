@@ -1,4 +1,4 @@
-package org.opennars;
+package org.opennars.derivation;
 
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;

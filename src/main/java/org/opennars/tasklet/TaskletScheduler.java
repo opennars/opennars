@@ -1,7 +1,6 @@
 package org.opennars.tasklet;
 
-import org.opennars.DerivationProcessor;
-import org.opennars.control.DerivationContext;
+import org.opennars.derivation.DerivationProcessor;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
@@ -12,13 +11,9 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
-import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
 import java.util.*;
-
-// TODO< feed back the sentence as a derived task to the reasoner with a reason which prevents a immediate feedback >
-// TODO< avoid to derive the same premises >
 
 public class TaskletScheduler {
     private List<Tasklet> secondary; // sequences and other compositions
@@ -222,6 +217,9 @@ public class TaskletScheduler {
                 int debugHere = 1;
             }
         }
+
+        // TODO< build =/> implication when possible >
+        // TODO< introduce variables (after abbreviation got implemented) >
 
         if (derivedSentences.size() > 0) {
             System.out.println("combine2()");
