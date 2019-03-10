@@ -23,6 +23,7 @@
  */
 package org.opennars.storage;
  
+import javassist.CannotCompileException;
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
@@ -129,7 +130,11 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
 
-        taskletScheduler = new TaskletScheduler(narParameters);
+        try {
+            taskletScheduler = new TaskletScheduler(narParameters);
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        }
         reset();
     }
     

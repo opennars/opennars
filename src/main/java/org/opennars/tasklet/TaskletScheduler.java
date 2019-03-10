@@ -1,5 +1,7 @@
 package org.opennars.tasklet;
 
+import javassist.CannotCompileException;
+import org.opennars.derivation.DerivationCompiler;
 import org.opennars.derivation.DerivationProcessor;
 import org.opennars.derivation.Helpers;
 import org.opennars.entity.BudgetValue;
@@ -16,6 +18,7 @@ import org.opennars.language.Term;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class TaskletScheduler {
@@ -27,10 +30,19 @@ public class TaskletScheduler {
 
     private long dbgStep = 0; // for debugging - current step number
 
-    public TaskletScheduler(Parameters reasonerParameters) {
+    private Class compiledProgramCombineSequenceAndEvent;
+
+    public TaskletScheduler(Parameters reasonerParameters) throws CannotCompileException {
         secondary = new ArrayList<>();
         secondarySingleEvents = new ArrayList<>();
         secondaryMap = new HashMap<>();
+
+        compileDerivationPrograms();
+    }
+
+    private void compileDerivationPrograms() throws CannotCompileException {
+        compiledProgramCombineSequenceAndEvent = DerivationCompiler.compile(DerivationProcessor.programCombineSequenceAndEvent);
+
     }
 
     private static boolean isEvent(Sentence sentence) {
@@ -62,7 +74,7 @@ public class TaskletScheduler {
         }
     }
 
-    public void iterate(Timable timable, Memory memory, Parameters narParameters) {
+    public void iterate(Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         System.out.println("step=" + dbgStep);
 
         indicesAlreadySampled.clear();
@@ -101,7 +113,7 @@ public class TaskletScheduler {
 
     private Map<Tuple, Boolean> indicesAlreadySampled = new HashMap<>();
 
-    private void sample(List<Tasklet> taskletsA, List<Tasklet> taskletsB, Timable timable, Memory memory, Parameters narParameters) {
+    private void sample(List<Tasklet> taskletsA, List<Tasklet> taskletsB, Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         final boolean areSameTaskletLists = taskletsA == taskletsB;
 
         if(areSameTaskletLists && taskletsA.size() < 2) {
@@ -143,7 +155,7 @@ public class TaskletScheduler {
     }
 
     // combines and infers two tasklets
-    private void combine(Tasklet a, Tasklet b, Timable timable, Memory memory, Parameters narParameters) {
+    private void combine(Tasklet a, Tasklet b, Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (a.isTask() && b.isBelief()) {
             combine2(a.task.sentence, a.task.isInput(), b.belief, false/* don't know */, timable, memory, narParameters);
         }
@@ -158,7 +170,7 @@ public class TaskletScheduler {
         }
     }
 
-    private void combine2(Sentence a, boolean aIsInput, Sentence b, boolean bIsInput, Timable timable, Memory memory, Parameters narParameters) {
+    private void combine2(Sentence a, boolean aIsInput, Sentence b, boolean bIsInput, Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (a.stamp.isEternal() || b.stamp.isEternal()) {
             return; // we can't combine eternal beliefs/tasks
         }
@@ -199,7 +211,7 @@ public class TaskletScheduler {
         List<Sentence> derivedSentences = new ArrayList<>();
 
         {
-            Sentence derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, a, b, derivedSentences, timable, narParameters);
+            Sentence derivedSentence = DerivationProcessor.processCompiledProgram("S", "E", compiledProgramCombineSequenceAndEvent, a, b, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
                 derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
                 if (derivedSentence != null) {
@@ -207,7 +219,7 @@ public class TaskletScheduler {
                 }
             }
 
-            derivedSentence = DerivationProcessor.processProgramForTemporal("S", "E", DerivationProcessor.programCombineSequenceAndEvent, b, a, derivedSentences, timable, narParameters);
+            derivedSentence = DerivationProcessor.processCompiledProgram("S", "E", compiledProgramCombineSequenceAndEvent, b, a, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
                 derivedSentence = DerivationProcessor.processProgramForTemporal("S", "", DerivationProcessor.programTranslateSequenceToWindowedSequence, derivedSentence, null, derivedSentences, timable, narParameters);
                 if (derivedSentence != null) {

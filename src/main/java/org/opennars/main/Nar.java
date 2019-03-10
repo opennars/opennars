@@ -649,7 +649,15 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * A frame, consisting of one or more Nar memory cycles
      */
     public void cycle() {
-        memory.taskletScheduler.iterate(this, memory, narParameters);
+        try {
+            memory.taskletScheduler.iterate(this, memory, narParameters);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         try {
             memory.cycle(this);
