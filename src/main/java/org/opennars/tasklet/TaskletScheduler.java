@@ -6,8 +6,10 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
+import org.opennars.language.Conjunction;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
@@ -216,6 +218,29 @@ public class TaskletScheduler {
             derivedSentence = DerivationProcessor.processProgramForTemporal("E", "E", DerivationProcessor.programCombineEventAndEvent, a, b, derivedSentences, timable, narParameters);
             if (derivedSentence != null) {
                 int debugHere = 1;
+            }
+        }
+
+        { // abbreviation
+            // we abbreviate by counting how often sub sequences (with different occurence times) get derived
+            // The most frequent occuring ones get abbreviated
+
+            {
+                for(Sentence iDerivedSentence : derivedSentences) {
+                    if(!(iDerivedSentence.term instanceof Conjunction) || ((Conjunction) iDerivedSentence.term).temporalOrder != TemporalRules.ORDER_FORWARD) {
+                        continue; // only sequences are possible candidates for abbreviation
+                    }
+
+                    Conjunction iDerivedSequence = (Conjunction)iDerivedSentence.term;
+
+                    Term termWithoutIntervals = org.opennars.tasklet.Helpers.removeIntervals(iDerivedSequence);
+
+                    // TODO< sample sub-sequences >
+
+                    // TODO< count and register sub-sequences >
+
+                    // TODO< abbreviate sub-sequences if the occur frequently enough >
+                }
             }
         }
 
