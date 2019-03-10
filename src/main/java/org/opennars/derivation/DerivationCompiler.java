@@ -85,7 +85,7 @@ public class DerivationCompiler {
 
             int targetIp = labels.get(labelName);
 
-            body.append("ctx.ip="+targetIp+";\n");
+            body.append("if(ctx.flag) { ctx.ip="+targetIp+"; } else {ctx.ip++;};\n");
         }
         else {
             boolean forceReturn = false; // does the function force a return of the call?
