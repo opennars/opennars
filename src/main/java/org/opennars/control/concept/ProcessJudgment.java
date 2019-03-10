@@ -165,7 +165,7 @@ public class ProcessJudgment {
      * @param nal The derivation context
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal) {
-        Set<Term> targets = new LinkedHashSet<Term>();
+        Set<Term> targets = new LinkedHashSet<>();
         //add to all components, unless it doesn't have vars
         if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
             targets.add(((Implication)task.getTerm()).getPredicate());

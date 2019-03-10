@@ -306,8 +306,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     }
 
     public void removeTask(final Task task, final String reason) {        
-        emit(TaskRemove.class, task, reason);
-        task.end();        
+        emit(TaskRemove.class, task, reason);    
     }
     
     /**

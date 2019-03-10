@@ -32,6 +32,7 @@ import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.events.Events;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
@@ -45,7 +46,7 @@ import org.opennars.storage.Memory;
  */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Timable time) {
+    public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Nar nar) {
         final Concept currentConcept;
         synchronized (mem.concepts) { //modify concept bag
             currentConcept = mem.concepts.takeOut();
@@ -54,11 +55,11 @@ public class GeneralInferenceControl {
             }
         }
 
-        final DerivationContext nal = new DerivationContext(mem, narParameters, time);
+        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
         boolean putBackConcept = false;
         float forgetCycles = 0.0f;
         synchronized(currentConcept) { //use current concept (current concept is the resource)  
-            ProcessAnticipation.maintainDisappointedAnticipations(narParameters, currentConcept, time);
+            ProcessAnticipation.maintainDisappointedAnticipations(narParameters, currentConcept, nar);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
                 mem.concepts.pickOut(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);

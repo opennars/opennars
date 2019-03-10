@@ -119,7 +119,9 @@ public class Concept extends Item<Term> implements Serializable {
     //based on which intervals are closer to the average
     public final List<Float> recent_intervals = new ArrayList<>();
 
-    public boolean observable = false;
+    public boolean observable = false; //whether it received a "native" input task
+    public boolean allowBabbling = true; //for operations, becomes false if sufficiently
+                                         //confident, used procedure knowledge  exists.
 
     /**
      * Constructor, called in Memory.getConcept only
@@ -310,7 +312,7 @@ public class Concept extends Item<Term> implements Serializable {
             this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
         }
     }
-    public List<AnticipationEntry> anticipations = new ArrayList<AnticipationEntry>();
+    public List<AnticipationEntry> anticipations = new ArrayList<>();
     
     
     /* ---------- insert Links for indirect processing ---------- */
@@ -358,8 +360,6 @@ public class Concept extends Item<Term> implements Serializable {
             else {
                 memory.emit(TaskLinkRemove.class, removed, this);
             }
-            
-            removed.end();
         }
         memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
@@ -546,23 +546,6 @@ public class Concept extends Item<Term> implements Serializable {
         }
         final TruthValue topValue = desires.get(0).sentence.truth;
         return topValue;
-    }
-
-
-
-    @Override
-    public void end() {
-        for (final Task t : questions) t.end();
-        for (final Task t : quests) t.end();
-        
-        questions.clear();
-        quests.clear();                
-        desires.clear();
-        //evidentalDiscountBases.clear();
-        termLinks.clear();
-        taskLinks.clear();        
-        beliefs.clear();
-        termLinkTemplates.clear();
     }
     
     /**

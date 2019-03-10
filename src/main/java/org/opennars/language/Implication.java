@@ -37,18 +37,34 @@ import java.util.Arrays;
 public class Implication extends Statement {
     private int temporalOrder = TemporalRules.ORDER_NONE;
 
+    // counter used for evidence tracking
+    public long counter = 1;
+
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
     public Implication(final Term[] arg, final int order) {
         super(arg);
-                
+
         temporalOrder = order;
-        
+
         init(arg);
     }
-    
+
+    /**
+     * Constructor with partial values, called by make
+     * @param arg The component list of the term
+     */
+    public Implication(final Term[] arg, final int order, final long counter) {
+        super(arg);
+
+        temporalOrder = order;
+        this.counter = counter;
+
+        init(arg);
+    }
+
     public Implication(final Term subject, final Term predicate, final int order) {
         this(new Term[] { subject, predicate }, order);
     }
@@ -62,7 +78,7 @@ public class Implication extends Statement {
      */
     @Override
     public Implication clone() {
-        return new Implication(term, getTemporalOrder());
+        return new Implication(term, getTemporalOrder(), counter);
     }
     
     @Override public Implication clone(final Term[] t) {   

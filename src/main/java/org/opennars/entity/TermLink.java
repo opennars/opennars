@@ -221,10 +221,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         this(target, type, (short)i0, (short)i1, (short)i2, (short)i3);
     }
 
-    @Override public void end() {
-        
-    }
-
     @Override
     public Term getTarget() {
         return target;
@@ -233,6 +229,4 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
     public Term getTerm() {
         return getTarget();
     }
-
-    
 }

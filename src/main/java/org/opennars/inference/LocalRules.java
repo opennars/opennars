@@ -129,7 +129,11 @@ public class LocalRules {
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
-            return nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget);
+            long counter = -1; // -1 is invalid
+            if (newBelief.term instanceof Implication && oldBelief.term instanceof Implication) {
+                counter = ((Implication)newBelief.term).counter + ((Implication)oldBelief.term).counter; // add because the evidence adds up
+            }
+            return nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget, counter);
         }
         
         return false;
