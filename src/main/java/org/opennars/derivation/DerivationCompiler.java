@@ -2,11 +2,16 @@ package org.opennars.derivation;
 
 import javassist.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * compiles a derivation program to bytecode which can be loaded by JVM
  */
 public class DerivationCompiler {
     public static Class compile(DerivationProcessor.Instr[] program) throws CannotCompileException {
+        Map<String, Integer> labels = scanLabels(program);
+
         ClassPool pool = ClassPool.getDefault();
         CtClass cc = pool.makeClass("compiled"+classCounter++);
 
@@ -21,14 +26,12 @@ public class DerivationCompiler {
         for(int ipIdx=0;ipIdx<program.length;ipIdx++) {
             body.append("case "+ipIdx+":\n");
 
-            generateCodeForInstruction(body, program[ipIdx]);
+            generateCodeForInstruction(body, labels, program[ipIdx]);
 
             body.append("break;\n");
         }
 
         body.append("}\n"); // switch
-
-        body.append("ctx.ip++;\n"); // need to increment ip for program execution
 
         body.append("}\n"); // for
 
@@ -36,7 +39,7 @@ public class DerivationCompiler {
 
         body.append("{ return null; }\n");
 
-        //System.out.println(body);
+        System.out.println(body);
 
         CtMethod m = CtNewMethod.make("public static org.opennars.entity.Sentence derive0("+INSTRUCTIONANDCTX_PATH+".Context ctx) {"+body+"}", cc);
 
@@ -47,22 +50,42 @@ public class DerivationCompiler {
         return c;
     }
 
+    private static Map<String, Integer> scanLabels(DerivationProcessor.Instr[] program) {
+        Map<String, Integer> ipOfLabels = new HashMap<>();
+
+        for(int ipIdx=0;ipIdx<program.length;ipIdx++) {
+            DerivationProcessor.Instr iInst = program[ipIdx];
+            if (iInst.mnemonic.equals("label")) {
+                String labelname = iInst.arg0;
+                ipOfLabels.put(labelname, ipIdx);
+            }
+        }
+
+        return ipOfLabels;
+    }
+
     /**
      *
      * @param body used for emitting code
      * @param instr instruction which has to get converted
      */
-    private static void generateCodeForInstruction(StringBuilder body, DerivationProcessor.Instr instr) throws CannotCompileException {
+    private static void generateCodeForInstruction(StringBuilder body, Map<String, Integer> labels, DerivationProcessor.Instr instr) throws CannotCompileException {
         String mnemonic = instr.mnemonic;
 
         if (mnemonic.equals("label")) {
             // ignored
+            body.append("ctx.ip++;\n");
         }
         else if (mnemonic.equals("jmp")) {
-            body.append("ctx.ip+=" + instr.arg0Int);
+            body.append("ctx.ip+=" + instr.arg0Int+";\n");
+            body.append("ctx.ip++;\n");
         }
         else if (mnemonic.equals("jmpTrue")) {
-            // TODO TODO TODO TODO TODO< implement >
+            String labelName = instr.arg0;
+
+            int targetIp = labels.get(labelName);
+
+            body.append("ctx.ip="+targetIp+";\n");
         }
         else {
             boolean forceReturn = false; // does the function force a return of the call?
@@ -76,6 +99,8 @@ public class DerivationCompiler {
                 // insert call to static method which implements the function
                 body.append(INSTRUCTIONANDCTX_PATH+ "." + mnemonic + "(ctx);\n");
             }
+
+            body.append("ctx.ip++;\n");
         }
     }
 
