@@ -22,6 +22,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class TaskletScheduler {
+    private boolean verbose = false;
+
     private List<Tasklet> secondary; // sequences and other compositions
     private Map<Tasklet, Boolean> secondaryMap; // used to check if we already derived a conclusion
     private List<Tasklet> secondarySingleEvents;
@@ -78,15 +80,17 @@ public class TaskletScheduler {
     }
 
     public void iterate(Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        System.out.println("step=" + dbgStep);
+        if(verbose) {
+            System.out.println("step=" + dbgStep);
+        }
 
         indicesAlreadySampled.clear();
-        for(int iteration=0;iteration < 100; iteration++) {
+        for(int iteration=0;iteration < 50; iteration++) {
             sample(secondarySingleEvents, secondarySingleEvents, timable, memory, narParameters);
         }
 
         indicesAlreadySampled.clear();
-        for(int iteration=0;iteration < 25; iteration++) {
+        for(int iteration=0;iteration < 10; iteration++) {
             sample(secondary, secondarySingleEvents, timable, memory, narParameters);
         }
 
@@ -278,20 +282,23 @@ public class TaskletScheduler {
 
         // TODO< introduce variables (after abbreviation got implemented) >
 
-        if (derivedSentences.size() > 0) {
+        if (derivedSentences.size() > 0 && verbose) {
             System.out.println("combine2()");
             System.out.println("    " + a + " occTime=" + a.stamp.getOccurrenceTime());
             System.out.println("    " + b + " occTime=" + b.stamp.getOccurrenceTime());
         }
 
 
-        //System.out.println("=====");
-        //for(Task iDerivedTask : derivedTasks) {
-        //    System.out.println("derived " + iDerivedTask.toString());
-        //}
-        for(Sentence iDerivedSentence : derivedSentences) {
-            System.out.println("derived " + iDerivedSentence);
+        if (verbose) {
+            //System.out.println("=====");
+            //for(Task iDerivedTask : derivedTasks) {
+            //    System.out.println("derived " + iDerivedTask.toString());
+            //}
+            for(Sentence iDerivedSentence : derivedSentences) {
+                System.out.println("derived " + iDerivedSentence);
+            }
         }
+
 
         // create new tasklets from derived ones
         List<Tasklet> derivedTasklets = new ArrayList<>();
