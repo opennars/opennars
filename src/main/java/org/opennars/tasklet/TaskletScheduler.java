@@ -30,7 +30,7 @@ public class TaskletScheduler {
 
     private Random rng = new Random(43); // with seed for debugging and testing of core - we hit a lot of unsupported cases in temporal induction because the preconditions are loosened
 
-    private long dbgStep = 0; // for debugging - current step number
+    private long step = 0;
 
     private Class compiledProgramCombineSequenceAndEvent;
     private Class compiledProgramCombineEventAndEvent;
@@ -81,7 +81,7 @@ public class TaskletScheduler {
 
     public void iterate(Timable timable, Memory memory, Parameters narParameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if(verbose) {
-            System.out.println("step=" + dbgStep);
+            System.out.println("step=" + step);
         }
 
         indicesAlreadySampled.clear();
@@ -94,12 +94,14 @@ public class TaskletScheduler {
             sample(secondary, secondarySingleEvents, timable, memory, narParameters);
         }
 
-        sortByUtilityAndLimitSize(secondary, secondaryMap, timable);
-        sortByUtilityAndLimitSize(secondarySingleEvents, null, timable);
+        if (((step+1) % 50) == 0) {
+            sortByUtilityAndLimitSize(secondary, secondaryMap, timable);
+            sortByUtilityAndLimitSize(secondarySingleEvents, null, timable);
+        }
 
         int debugHere = 5;
 
-        dbgStep++;
+        step++;
     }
 
     private void sortByUtilityAndLimitSize(List<Tasklet> tasklets, Map<Tasklet, Boolean> hashmap, Timable timable) {
