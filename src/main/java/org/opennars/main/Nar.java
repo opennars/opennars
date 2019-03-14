@@ -89,7 +89,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * Name of the reasoner of the project
      */
-    public static final String REASONERNAME = "Open-NARS";
+    public static final String NAME = "Open-NARS";
 
     /**
      * The project web sites.
