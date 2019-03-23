@@ -15,6 +15,7 @@
     <conf name="BUDGET_THRESHOLD" value="0.01"/>
     
     <conf name="DEFAULT_CONFIRMATION_EXPECTATION" value="0.6"/>
+    <conf name="ALWAYS_CREATE_CONCEPT" value="true"/>
     <conf name="DEFAULT_CREATION_EXPECTATION" value="0.66"/>
     <conf name="DEFAULT_CREATION_EXPECTATION_GOAL" value="0.6"/>
     
@@ -83,8 +84,6 @@
     
     <conf name="BUSY_EVENT_HIGHER_THRESHOLD" value="0.9"/>
     <conf name="BUSY_EVENT_LOWER_THRESHOLD" value="0.1"/>
-    
-    <conf name="CONSIDER_REMIND" value="false"/>
     <conf name="BREAK_NAL_HOL_BOUNDARY" value="false"/>
     
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
