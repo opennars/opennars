@@ -116,7 +116,7 @@
     <conf name="THREADS_AMOUNT" value="1"/>
     <conf name="VOLUME" value="100"/>
     <conf name="MILLISECONDS_PER_STEP" value="0"/>
-    <conf name="STEPS_CLOCK" value="true"/>  
+    <conf name="STEPS_CLOCK" value="true"/>
     
     <!-- plugins -->
     <plugins>
