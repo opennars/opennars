@@ -4,7 +4,7 @@
     <!-- NarParameters -->
     <conf name="NOVELTY_HORIZON" value="100000"/>
     <conf name="DECISION_THRESHOLD" value="0.51"/>
-    <conf name="CONCEPT_BAG_SIZE" value="10000"/>
+    <conf name="CONCEPT_BAG_SIZE" value="80000"/>
     <conf name="CONCEPT_BAG_LEVELS" value="1000"/>
     
     <conf name="DURATION" value="5"/>
@@ -32,7 +32,7 @@
     <conf name="DEFAULT_QUEST_DURABILITY" value="0.9"/>
     
     <conf name="BAG_THRESHOLD" value="1.0"/>
-    <conf name="FORGET_QUALITY_RELATIVE" value="0.4"/>
+    <conf name="FORGET_QUALITY_RELATIVE" value="0.3"/>
     <conf name="REVISION_MAX_OCCURRENCE_DISTANCE" value="10"/>
     
     <conf name="TASK_LINK_BAG_SIZE" value="100"/>
@@ -73,14 +73,10 @@
     <conf name="DERIVATION_PRIORITY_LEAK" value="0.4"/>
     <conf name="DERIVATION_DURABILITY_LEAK" value="0.4"/>
     
-    <conf name="CURIOSITY_BUSINESS_THRESHOLD" value="0.18"/>
-    <conf name="CURIOSITY_PRIORITY_THRESHOLD" value="0.3"/>
-    <conf name="CURIOSITY_CONFIDENCE_THRESHOLD" value="0.8"/>
     <conf name="CURIOSITY_DESIRE_CONFIDENCE_MUL" value="0.1"/>
     <conf name="CURIOSITY_DESIRE_PRIORITY_MUL" value="0.1"/>
     <conf name="CURIOSITY_DESIRE_DURABILITY_MUL" value="0.3"/>
     <conf name="CURIOSITY_FOR_OPERATOR_ONLY" value="false"/>
-    <conf name="CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF" value="false"/>
     
     <conf name="HAPPY_EVENT_HIGHER_THRESHOLD" value="0.75"/>
     <conf name="HAPPY_EVENT_LOWER_THRESHOLD" value="0.25"/>
