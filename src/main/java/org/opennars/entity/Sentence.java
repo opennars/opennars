@@ -47,8 +47,6 @@ import org.opennars.storage.Memory;
  */
 public class Sentence<T extends Term> implements Cloneable, Serializable {
 
-    public boolean producedByTemporalInduction=false;
-
     /**
      * The content of a Sentence is a Term
      */

@@ -216,7 +216,6 @@ public class DerivationContext {
                 newTruth,
                 derive_stamp);
 
-            newSentence.producedByTemporalInduction=temporalInduction;
             Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
             if (newTask!=null) {
@@ -238,7 +237,6 @@ public class DerivationContext {
                     truthEt,
                     st);
 
-                newSentence.producedByTemporalInduction=temporalInduction;
                 newTask = new Task(newSentence, newBudget, getCurrentBelief());
                 if (newTask!=null) {
                     final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);

@@ -154,6 +154,11 @@
             <arg type="float.class" value="0.1" name="defaultOutputConfidence"/>
             <arg type="int.class" value="0" name="nPrototypes"/>
         </plugin>
+        
+        <plugin classpath="org.opennars.plugin.mental.ConceptNet">
+            <arg type="int.class" value="20" name="richness"/>
+            <arg type="int.class" value="1000" name="uniquenessBufferSize"/>
+        </plugin>
 
         <!-- example Operators -->
         <plugin classpath="org.opennars.operator.NullOperator">
