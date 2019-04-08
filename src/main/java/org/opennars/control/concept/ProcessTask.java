@@ -26,8 +26,12 @@ package org.opennars.control.concept;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
+import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
+import org.opennars.language.Conjunction;
+import org.opennars.language.Implication;
+import org.opennars.language.Term;
 
 /**
  * Encapsulates the dispatching task processing
@@ -81,5 +85,48 @@ public class ProcessTask {
             }
         }
         return true;
-    }     
+    }
+
+    private static Term lastDerivationTerm = null;
+
+    private static boolean isInUsefulPredictiveForm(Implication term) {
+        if( term.getSubject() instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD && term.getSubject().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            return ((Conjunction)term.getSubject()).term.length >= 2;
+        }
+        return false;
+    }
+
+    // duplicated function because we want to debug by callsite
+    public static void processPrediction(final Term term, final DerivationContext nal) {
+        if(!(term instanceof Implication)) {
+            return;
+        }
+
+        Implication implication = (Implication)term;
+        if (implication.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
+            return;
+        }
+
+        if (lastDerivationTerm != null && lastDerivationTerm.equals(term)) {
+            return;
+        }
+
+        if (!isInUsefulPredictiveForm(implication)) {
+            return;
+        }
+
+        lastDerivationTerm = term;
+
+        //System.out.println("proceed " + implication);
+
+        if (implication.toString().contains("--> [good]")) {
+            //System.out.println("processPrediction() candidate= " + implication);
+
+            int debug5 = 1;
+        }
+
+        ProcessAnticipation.addCovariantAnticipationEntry(implication, nal);
+
+        int debug = 5;
+    }
 }

@@ -23,6 +23,7 @@
  */
 package org.opennars.control;
 
+import org.opennars.control.concept.ProcessTask;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
@@ -147,6 +148,11 @@ public class TemporalInferenceControl {
                                 /*DEBUG: for(Task seq_op_cons : res) {
                                     System.out.println(seq_op_cons.toString());
                                 }*/
+
+                                for(final Task iSeqOpCon : res) {
+                                    ProcessTask.processPrediction(iSeqOpCon.sentence.term, nal);
+                                }
+
                             }
                         }
 
