@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
@@ -680,7 +681,29 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, premise1Sentence.term, mintime, maxtime, 1, new LinkedHashMap<>());
+
+
+
+            ProcessAnticipation.AnticipationTimes anticipationTimes;
+
+            boolean isValidConclusionForAnticipation = content instanceof Implication;
+            if (isValidConclusionForAnticipation) { // only estimate window of the conclusion if it is a valid sequence - we can't estimate it if it is not an implication
+                // estimate window from content
+                anticipationTimes = ProcessAnticipation.anticipationEstimateMinAndMaxTimes(nal, (Implication) content, new HashMap<>(), taskSentence.getOccurenceTime());
+            }
+            else {
+                // we need to handle the special case
+                // ex: <a =/> b> where content is b
+                anticipationTimes = ProcessAnticipation.anticipationEstimateMinAndMaxTimes(nal, (Implication)premise1Sentence.term, new HashMap<>(), taskSentence.getOccurenceTime());
+            }
+
+            if (!isValidConclusionForAnticipation) {
+                if (anticipationTimes != null) {
+                    int debugHere = 5;
+                }
+            }
+
+            ProcessAnticipation.anticipateEstimate(nal, premise1Sentence, budget, 1, new LinkedHashMap<>(), anticipationTimes);
         }
     }
 
