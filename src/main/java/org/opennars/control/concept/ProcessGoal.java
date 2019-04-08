@@ -315,7 +315,7 @@ public class ProcessGoal {
                 }
                 System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
                 for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
+                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence.term, precon.mintime, precon.maxtime, 2, precon.substitution);
                 }
                 return; //don't try the other table as a specific solution was already used
             }

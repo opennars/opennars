@@ -123,6 +123,20 @@ public class Concept extends Item<Term> implements Serializable {
     public boolean allowBabbling = true; //for operations, becomes false if sufficiently
                                          //confident, used procedure knowledge  exists.
 
+
+    // covariant predictions - used for anticipation estimation
+    // key is a term which is either a single event or a sequence of events where the intervals are quantized
+
+    // ex: (with quantization = 10
+    //    (&/, a, +19) =/> b   has key = a, predicted = b with the distribution which contains only 19
+
+    // ex: (with quantization = 10
+    //     (&/, a, +50, b, +19) => c
+    //     (&/, a, +51, b, +50) => c
+    //   has key = (&/, a, +50, b), predicted = c with distribution which contains 19 and 50
+    public List<Predicted> covariantPredictions = new ArrayList<>();
+
+
     /**
      * Constructor, called in Memory.getConcept only
      *
@@ -617,5 +631,41 @@ public class Concept extends Item<Term> implements Serializable {
     /** returns unmodifidable collection wrapping beliefs */
     public List<Task> getDesires() {
         return Collections.unmodifiableList(desires);
+    }
+
+
+    // see http://datagenetics.com/blog/november22017/index.html
+    public static class IncrementalCentralDistribution {
+        public void next(final double x) {
+            double nextMean = mean + (x - mean)/(n+1);
+            double nextS = s + (x - mean)*(x - nextMean);
+
+            mean = nextMean;
+            s = nextS;
+            n++;
+        }
+
+        public double calcVariance() {
+            return Math.sqrt(s/n);
+        }
+
+        public long n = 0;
+        public double mean = 0.0;
+        public double s = 0.0;
+    }
+
+    public static class Predicted {
+        public Term conditionalTerm;
+        public Term conditionedTerm;
+        public IncrementalCentralDistribution dist;
+        public long timestampOfLastUpdate;
+
+        public Predicted(Term conditionalTerm, Term conditionedTerm, long timestampOfLastUpdate, double sample) {
+            this.conditionalTerm = conditionalTerm;
+            this.conditionedTerm = conditionedTerm;
+            this.timestampOfLastUpdate = timestampOfLastUpdate;
+            dist = new IncrementalCentralDistribution();
+            dist.next(sample);
+        }
     }
 }

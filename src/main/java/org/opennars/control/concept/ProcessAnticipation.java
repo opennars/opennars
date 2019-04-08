@@ -54,22 +54,236 @@ import static org.opennars.inference.UtilityFunctions.w2c;
  */
 public class ProcessAnticipation {
 
-    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
+    private static void keepCovariantTableUnderAikr(Concept c, Parameters reasonerParameters) {
+        // keep under AIKR by limiting memory
+        // heuristic: use latest time of modification as heuristic
+
+        if (c.covariantPredictions.size() <= reasonerParameters.COVARIANCE_TABLE_ENTRIES) {
+            return;
+        }
+
+        int idxWithLowest = 0;
+        long latestTimestamp = c.covariantPredictions.get(0).timestampOfLastUpdate;
+        for(int idx=0;idx<c.covariantPredictions.size();idx++) {
+            Concept.Predicted iPredicted = c.covariantPredictions.get(idx);
+            if (iPredicted.timestampOfLastUpdate < latestTimestamp) {
+                latestTimestamp = iPredicted.timestampOfLastUpdate;
+                idxWithLowest = idx;
+            }
+        }
+        c.covariantPredictions.remove(idxWithLowest);
+    }
+
+    public static void addCovariantAnticipationEntry(Implication impl, final DerivationContext nal) {
+        Term conditionalWithVars = impl.getSubject();
+
+        Term conditionalWithQuantizedIntervalsWithVars = extractSeqQuantizedWithInfiniteQuant((Conjunction)conditionalWithVars);
+        Term conditionedWithVars = impl.getPredicate();
+
+        Set<Term> targets = new LinkedHashSet<>();
+        {
+            //add to all components, unless it doesn't have vars
+            Map<Term, Integer> ret = CompoundTerm.replaceIntervals(impl).countTermRecursively(null);
+            for(Term r : ret.keySet()) {
+                targets.add(r);
+            }
+        }
+
+
+        //Debug.debug(false, "addCovariantAnticipationEntry", "");
+        //Debug.debug(false, "addCovariantAnticipationEntry","   cond  = " + conditionalWithQuantizedIntervalsWithVars);
+        //Debug.debug(false, "addCovariantAnticipationEntry","   eff   = " + conditionedWithVars);
+
+        for(Term iTarget : targets) { // iterate over sub-terms
+            final Concept targetConcept = nal.memory.concept(iTarget);
+            if (targetConcept == null) { // target concept does not exist
+                continue;
+            }
+
+            //Debug.debug(false, "addCovariantAnticipationEntry", "  c=" + iTarget);
+
+
+            synchronized (targetConcept) {
+                Concept.Predicted matchingCovarianceEntry = null;
+                { // search for matching conditional in (co)variances
+
+                    // TODO< speed up when finalized >
+                    for(int idx=0;idx<targetConcept.covariantPredictions.size();idx++) {
+                        Concept.Predicted iPredicted = targetConcept.covariantPredictions.get(idx);
+                        if (iPredicted.conditionalTerm.equals(conditionalWithQuantizedIntervalsWithVars) && iPredicted.conditionedTerm.equals(conditionedWithVars)) {
+                            matchingCovarianceEntry = iPredicted;
+                            break;
+                        }
+                    }
+                }
+
+                boolean found = matchingCovarianceEntry != null;
+                if (found) {
+                    Interval lastInterval = retLastInterval((Conjunction)conditionalWithVars);
+                    if (lastInterval == null) {
+                        continue; // doesn't have a interval at the last place - return
+                    }
+                    float timeDelta = lastInterval.time;
+
+                    matchingCovarianceEntry.dist.next(timeDelta);
+                    matchingCovarianceEntry.timestampOfLastUpdate = nal.time.time();
+                }
+                else {
+                    keepCovariantTableUnderAikr(targetConcept, nal.narParameters);
+
+                    // add entry
+
+                    Interval lastInterval = retLastInterval((Conjunction)conditionalWithVars);
+                    if (lastInterval == null) {
+                        continue; // doesn't have a interval at the last place - return
+                    }
+                    float timeDelta = lastInterval.time;
+
+                    Concept.Predicted newPredicted = new Concept.Predicted(conditionalWithQuantizedIntervalsWithVars, conditionedWithVars, nal.time.time(), timeDelta);
+                    targetConcept.covariantPredictions.add(newPredicted);
+                }
+            }
+        }
+
+
+    }
+
+    public static AnticipationTimes anticipationEstimateMinAndMaxTimes(final DerivationContext nal, final Sentence mainSentence, Map<Term,Term> substitution) {
+        return anticipationEstimateMinAndMaxTimes(nal, (Implication)mainSentence.term, substitution, mainSentence.getOccurenceTime());
+    }
+
+    public static AnticipationTimes anticipationEstimateMinAndMaxTimes(final DerivationContext nal, final Implication impl, Map<Term,Term> substitution, long occurenceTime) {
+        Concept implConcept = nal.memory.conceptualize(new BudgetValue(1.0f, 0.98f, 1.0f, nal.narParameters), CompoundTerm.replaceIntervals(impl));
+
+        Term conditionalWithVars = impl.getSubject();
+        Term conditionalWithQuantizedIntervalsWithVars = extractSeqQuantizedWithInfiniteQuant((Conjunction)conditionalWithVars);
+        Term conditionedWithVars = impl.getPredicate();
+
+
+        Concept.Predicted matchingCovarianceEntry = null;
+        { // search for matching conditional in (co)variances
+
+            // TODO< speed up when finalized >
+            for(int idx=0;idx<implConcept.covariantPredictions.size();idx++) {
+                Concept.Predicted iPredicted = implConcept.covariantPredictions.get(idx);
+                if (iPredicted.conditionalTerm.equals(conditionalWithQuantizedIntervalsWithVars) && iPredicted.conditionedTerm.equals(conditionedWithVars)) {
+                    matchingCovarianceEntry = iPredicted;
+                    break;
+                }
+            }
+        }
+
+        boolean found = matchingCovarianceEntry != null;
+        if( !found) {
+            return null; // we can't estimate a covariance if we don't know anything about it
+        }
+        else if (matchingCovarianceEntry.dist.n <= 1) {
+            return null; // to few samples to make a meaningful estimation!
+        }
+
+
+        float timeOffset = 0, timeWindowHalf = 0;
+        { // sample from distribution
+            float mean = (float) matchingCovarianceEntry.dist.mean;
+            float variance = (float) matchingCovarianceEntry.dist.calcVariance();
+
+            float scaledVariance = variance * nal.narParameters.COVARIANCE_WINDOW;
+            timeWindowHalf = scaledVariance * 0.5f;
+            timeOffset = sumOfIntervalsExceptLastOne((Conjunction) conditionalWithVars) + mean;
+        }
+
+        // debug
+        {
+            if (false && matchingCovarianceEntry.dist.calcVariance() > 0.00001) {
+
+                boolean isPredictiveBySeq =
+                    impl instanceof Implication &&
+                        impl.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                        ((Implication)impl).getSubject() instanceof CompoundTerm &&
+                        ((CompoundTerm)((Implication)impl).getSubject()).term.length > 2;
+                if (isPredictiveBySeq) {
+                    System.out.println("ProcessAnticipation.anticipationEstimateMinAndMaxTimes(): successfull call anticipate for term=" + impl + " (" + (timeOffset - timeWindowHalf) + ";" + (timeOffset + timeWindowHalf) + ")");
+
+                    int debugHere = 5;
+                }
+            }
+        }
+
+
+        // assert timeOffset != 0 and timeWindowHalf != 0
+
+        AnticipationTimes result = new AnticipationTimes();
+        result.occurrenceTime = occurenceTime;
+        result.timeWindow = timeWindowHalf * 2.0f;
+        result.timeOffset = timeOffset;
+
+        //Debug.debug(false, "anticipationEstimateMinAndMaxTimes","");
+        //Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   term = " + impl);
+        //Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   n    = " + matchingCovarianceEntry.dist.n);
+        //Debug.debug(false, "anticipationEstimateMinAndMaxTimes","   ===> timeWindow=" + result.timeWindow);
+
+        return result;
+    }
+
+    public static void anticipateEstimate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget,
+                                          final float priority, Map<Term,Term> substitution, AnticipationTimes anticipationTimes) {
+
+
+        //Debug.debug(false, "ProcessAnticipation:estimate()", "ENTRY");
+
+        if (anticipationTimes == null) { // if we need to estimate the anticipation time from the sentence
+            if (mainSentence.isEternal()) {
+                return; // is actually not allow and a BUG when we land here
+                // for now it's fine to just return
+            }
+
+            anticipationTimes = anticipationEstimateMinAndMaxTimes(nal, (Implication)mainSentence.term, substitution, mainSentence.getOccurenceTime());
+            if (anticipationTimes == null) {
+                return;
+            }
+
+            //Debug.debug(false, "ProcessAnticipation:estimate()", "ProcessAnticipation:estimate() successfully estimated min/max");
+        }
+
+
+
+
+
+        long occurenceTime = anticipationTimes.occurrenceTime;
+        float timeOffset = anticipationTimes.timeOffset;
+        float timeWindowHalf = anticipationTimes.timeWindow * 0.5f;
+
+        // assert timeOffset != 0 and timeWindowHalf != 0
+
+
+        long mintime = (long) Math.max(occurenceTime, (occurenceTime + timeOffset - timeWindowHalf - 1));
+        long maxtime = (long) (occurenceTime + timeOffset + timeWindowHalf + 1);
+
+        if (maxtime < 0) {
+            int debug6 = 5; // must never happen!
+        }
+
+        //System.out.println("call anticipate for term=" + mainSentence.term + " (" + (timeOffset-timeWindowHalf) + ";" + (timeOffset+timeWindowHalf) + ")");
+
+        anticipate(nal, mainSentence.term, mintime, maxtime, priority, substitution);
+    }
+
+    public static void anticipate(final DerivationContext nal, final Term term,
             final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
         final Sentence s = new Sentence(
-            mainSentence.term,
-            mainSentence.punctuation,
+            term,
+            '.',
             new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
-        Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
+        Term specificAnticipationTerm = ((CompoundTerm)((Statement) term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
-                mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (term instanceof Implication || term instanceof Equivalence) &&
+                term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Concept.AnticipationEntry toDelete = null;
             Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
             boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
@@ -266,5 +480,75 @@ public class ProcessAnticipation {
                 }
             }
         }
+    }
+
+    private static Conjunction quantizeSeq(Conjunction term, int quantization) {
+        Term[] arr = new Term[term.term.length];
+        for(int i=0;i<term.term.length;i++) {
+            arr[i] = term.term[i];
+
+            if (!(term.term[i] instanceof Interval)) {
+                continue;
+            }
+
+            Interval interval = (Interval)term.term[i];
+            long intervalTime = interval.time;
+            // quantize
+            intervalTime = (intervalTime / quantization) * quantization;
+
+            arr[i] = new Interval(intervalTime);
+        }
+
+        return (Conjunction)Conjunction.make(arr, term.temporalOrder, term.isSpatial);
+    }
+
+    private static Term extractSeqQuantizedWithInfiniteQuant(Conjunction term) {
+        return extractSeqQuantized(term, Integer.MAX_VALUE);
+    }
+
+    private static Term extractSeqQuantized(Conjunction term, final int quantization) {
+        Conjunction quantized = quantizeSeq(term, quantization);
+
+        int cutoff = 0; // we want to cutt of the last interval
+        if (quantized.term[quantized.term.length-1] instanceof Interval) {
+            cutoff = 1;
+        }
+
+        Term[] arr = new Term[quantized.term.length-cutoff];
+        for(int i=0;i<(quantized.term.length-cutoff);i++) {
+            arr[i] = quantized.term[i];
+        }
+
+        if(arr.length == 1) {
+            return arr[0]; // return term if it is the only content of the conjunction
+        }
+        return Conjunction.make(arr, term.temporalOrder, term.isSpatial);
+    }
+
+    private static Interval retLastInterval(Conjunction term) {
+        if (term.term[term.term.length-1] instanceof Interval) {
+            return (Interval)term.term[term.term.length-1];
+        }
+        return null;
+    }
+
+    private static long sumOfIntervalsExceptLastOne(Conjunction term) {
+        long sum = 0;
+        for(int i=0;i<term.term.length-1;i++) {
+            if (!(term.term[i] instanceof Interval)) {
+                continue;
+            }
+
+            Interval interval = (Interval) term.term[i];
+            long intervalTime = interval.time;
+            sum += intervalTime;
+        }
+        return sum;
+    }
+
+    public static class AnticipationTimes {
+        public float timeOffset;
+        public float timeWindow;
+        public long occurrenceTime; // occurence time of the sentence - is the time of the first event in the sentence
     }
 }

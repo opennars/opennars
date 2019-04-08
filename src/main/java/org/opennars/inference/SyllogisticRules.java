@@ -680,7 +680,7 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new LinkedHashMap<Term,Term>());
+            ProcessAnticipation.anticipate(nal, premise1Sentence.term, mintime, maxtime, 1, new LinkedHashMap<>());
         }
     }
 
