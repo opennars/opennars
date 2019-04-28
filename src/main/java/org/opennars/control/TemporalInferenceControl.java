@@ -99,7 +99,12 @@ public class TemporalInferenceControl {
                     continue;
                 }
                 already_attempted.add(takeout);
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
+
+                final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
+                for(final Task iSeqOpCon : res) {
+                    ProcessTask.processPrediction(iSeqOpCon.sentence.term, nal);
+                }
+
                 nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
         }
