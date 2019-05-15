@@ -102,6 +102,9 @@ public class Concept extends Item<Term> implements Serializable {
     public final List<Task> beliefs;
     public List<Task> executable_preconditions;
     public List<Task> general_executable_preconditions;
+    
+    public List<Task> executable_postconditions;
+    public List<Task> general_executable_postconditions;
 
     /**
      * Desire values on the term, similar to the above one
@@ -139,6 +142,8 @@ public class Concept extends Item<Term> implements Serializable {
         this.beliefs = new ArrayList<>();
         this.executable_preconditions = new ArrayList<>();
         this.general_executable_preconditions = new ArrayList<>();
+        this.executable_postconditions = new ArrayList<>();
+        this.general_executable_postconditions = new ArrayList<>();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 

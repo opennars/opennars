@@ -165,6 +165,16 @@ public class ProcessJudgment {
      * @param nal The derivation context
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal) {
+        Set<Term> sources = new LinkedHashSet<>();
+        //add to all components, unless it doesn't have vars
+        if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
+            sources.add(((Implication)task.getTerm()).getSubject());
+        } else {
+            Map<Term, Integer> ret = ((Implication)task.getTerm()).getSubject().countTermRecursively(null);
+            for(Term r : ret.keySet()) {
+                sources.add(r);
+            }
+        }
         Set<Term> targets = new LinkedHashSet<>();
         //add to all components, unless it doesn't have vars
         if(!((Implication)task.getTerm()).getPredicate().hasVar()) {
@@ -217,6 +227,31 @@ public class ProcessJudgment {
                 }
                 //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
                 target_concept.addToTable(strongest_target.get(), true, table, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+            }
+        }
+        for(Term t : sources) { //the target sub concepts it needs to go to
+            final Concept source_concept = nal.memory.concept(t);
+            if(source_concept == null) { //source concept does not exist
+                continue;
+            }
+            // we do not add the target, instead the strongest belief in the target concept
+            synchronized(source_concept) {       
+                List<Task> table = strongest_target.get().sentence.term.hasVar() ?  source_concept.general_executable_postconditions : 
+                                                                                    source_concept.executable_postconditions;
+                //at first we have to remove the last one with same content from table
+                int i_delete = -1;
+                for(int i=0; i < table.size(); i++) {
+                    if(CompoundTerm.replaceIntervals(table.get(i).getTerm()).equals(
+                            CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
+                        i_delete = i; //even these with same term but different intervals are removed here
+                        break;
+                    }
+                }
+                if(i_delete != -1) {
+                    table.remove(i_delete);
+                }
+                //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+                source_concept.addToTable(strongest_target.get(), true, table, source_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
             }
         }
     }

@@ -272,6 +272,9 @@ public class ProcessGoal {
      * @param task The goal task
      */
     public static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
+        if(projectedGoal.truth.getExpectation() < nal.narParameters.DECISION_THRESHOLD) {
+            return; //can't lead to decision above decision threshold, we can return
+        }
         concept.incAcquiredQuality(); //useful as it is represents a goal concept that can hold important procedure knowledge
         //1. pull up variable based preconditions from component concepts without replacing them
         Map<Term, Integer> ret = (projectedGoal.getTerm()).countTermRecursively(null);
@@ -362,6 +365,37 @@ public class ProcessGoal {
                                     CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
                                     CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
+                            //check for conflict
+                            Concept precFull = nal.memory.concept(((Implication)t.getTerm()).getSubject());
+                            if(precFull != null) {
+                                boolean Conflict = false;
+                                synchronized(precFull) {
+                                    for(List<Task> postcons : List.of(precFull.executable_postconditions, precFull.general_executable_postconditions)) {
+                                        for(Task imp : postcons) {
+                                            Term postcon = ((Implication) imp.getTerm()).getPredicate();
+                                            Concept pos = nal.memory.concept(postcon);
+                                            if(pos != null) {
+                                                synchronized(pos) {
+                                                    if(pos.desires.size() > 0) {
+                                                        if(TruthFunctions.negation(pos.desires.get(0).sentence.truth, nal.narParameters).getExpectation() > nal.memory.narParameters.DECISION_THRESHOLD) {
+                                                            Conflict = true;
+                                                            System.out.println("Goal conflict: " + t.getTerm() + " with " + imp.getTerm());
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if(Conflict) {
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(Conflict) {
+                                    continue;
+                                }
+                            }
+                            //add as candidate
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
                             Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
