@@ -116,6 +116,8 @@
     <conf name="VOLUME" value="100"/>
     <conf name="MILLISECONDS_PER_STEP" value="0"/>
     <conf name="STEPS_CLOCK" value="true"/>
+    
+    <conf name="NEG_OUTCOME_AVOIDANCE_EXPECTATION_THRESHOLD" value="0.9"/>
 
     <!-- plugins -->
     <plugins>

@@ -354,6 +354,7 @@ public class ProcessGoal {
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
+            boolean Conflict = false;
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
@@ -366,33 +367,37 @@ public class ProcessGoal {
                                     CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
                             //check for conflict
-                            Concept precFull = nal.memory.concept(((Implication)t.getTerm()).getSubject());
-                            if(precFull != null) {
-                                boolean Conflict = false;
-                                synchronized(precFull) {
-                                    for(List<Task> postcons : List.of(precFull.executable_postconditions, precFull.general_executable_postconditions)) {
-                                        for(Task imp : postcons) {
-                                            Term postcon = ((Implication) imp.getTerm()).getPredicate();
-                                            Concept pos = nal.memory.concept(postcon);
-                                            if(pos != null) {
-                                                synchronized(pos) {
-                                                    if(pos.desires.size() > 0) {
-                                                        if(TruthFunctions.negation(pos.desires.get(0).sentence.truth, nal.narParameters).getExpectation() > nal.memory.narParameters.DECISION_THRESHOLD) {
-                                                            Conflict = true;
-                                                            System.out.println("Goal conflict: " + t.getTerm() + " with " + imp.getTerm());
-                                                            break;
+                            Term precFullTerm = ((Implication)t.getTerm()).getSubject();
+                            if(precFullTerm instanceof CompoundTerm) {
+                                Concept precFull = nal.memory.concept(((CompoundTerm) precFullTerm).applySubstitute(subs));
+                                if(precFull != null) {
+                                    synchronized(precFull) {
+                                        for(List<Task> postcons : List.of(precFull.executable_postconditions, precFull.general_executable_postconditions)) {
+                                            for(Task imp : postcons) {
+                                                Term postcon = ((Implication) imp.getTerm()).getPredicate();
+                                                if(imp.sentence.truth.getExpectation() > nal.memory.narParameters.NEG_OUTCOME_AVOIDANCE_EXPECTATION_THRESHOLD) {
+                                                    Concept pos = nal.memory.concept(postcon);
+                                                    if(pos != null) {
+                                                        synchronized(pos) {
+                                                            if(pos.desires.size() > 0) {
+                                                                if(TruthFunctions.negation(pos.desires.get(0).sentence.truth, nal.narParameters).getExpectation() > nal.memory.narParameters.DECISION_THRESHOLD) {
+                                                                    Conflict = true;
+                                                                    //System.out.println("Goal conflict: " + t.getTerm() + " " + t.sentence.truth + " with " + imp.getTerm() + " " + imp.sentence.truth);
+                                                                    break;
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
-                                        if(Conflict) {
-                                            break;
+                                            if(Conflict) {
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                if(Conflict) {
-                                    continue;
+                                    if(Conflict) {
+                                        continue; //(alternatively break; and uncomment "not an option")
+                                    }   //TODO get understanding why continue here works so much better
                                 }
                             }
                             //add as candidate
@@ -405,6 +410,10 @@ public class ProcessGoal {
                         }
                     }
                 }
+            }
+            if(Conflict) { //not an option  (alternatively uncomment and change above to break;)
+                System.out.println("Goal conflict");
+                //continue;  //TODO get an understanding why this works so much worse
             }
             if(bestsofar == null) {
                 continue;

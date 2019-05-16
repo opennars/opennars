@@ -294,4 +294,7 @@ public class Parameters implements Serializable {
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
     
+    /** avoidance truth expectation threshold for when an action in current context leads to a bad outcome in regard to a neg. goal */
+    public volatile double NEG_OUTCOME_AVOIDANCE_EXPECTATION_THRESHOLD = 0.9f;
+    
 }
