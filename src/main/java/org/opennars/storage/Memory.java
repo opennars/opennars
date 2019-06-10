@@ -23,12 +23,14 @@
  */
 package org.opennars.storage;
  
+import org.opennars.control.TemporalControl;
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.inference.TrieDeriver;
 import org.opennars.interfaces.Resettable;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
@@ -109,7 +111,11 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
     boolean checked=false;
     boolean isjUnit=false;
-    
+
+    public TemporalControl temporalControl = new TemporalControl();
+
+    public TrieDeriver trieDeriver;
+
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
@@ -125,6 +131,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
+
+        trieDeriver = new TrieDeriver();
+        trieDeriver.init();
+
         reset();
     }
     
@@ -348,12 +358,16 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void cycle(final Nar inputs) {
     
         event.emit(Events.CycleStart.class);
-        
+
         this.processNewTasks(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
         this.processNovelTask(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
         GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters, inputs);
+
+        { // general inference for temporal reasoning - generating temporal conclusions
+            temporalControl.generalInferenceGenerateTemporalConclusions(inputs, this, inputs.time(), narParameters);
+        }
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -378,8 +392,12 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 }
             }
 
+            if (!task.sentence.isEternal()) {
+                temporalControl.immediateProcessEvent(task, cont);
+            }
+
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                TemporalInferenceControl.eventInference(task, cont);
+                //TemporalInferenceControl.eventInference(task, cont);
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();

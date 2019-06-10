@@ -1,3 +1,27 @@
+""" 
+The MIT License
+
+Copyright 2019 The OpenNARS authors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+"""
+
 
 # Non-Axiomatic Logic generation
 
@@ -15,6 +39,20 @@
 # LATER TODO< add rules for products to metaGen.py >
 # LATER TODO< add image rules for sequences >
 #             ask must be a sequence ProdStar because of images of sequences with a length more than two?
+
+
+
+
+
+emitted = "" # used to store all of the emitted text
+
+def emit(text):
+    global emitted
+
+    #print(text)
+    emitted += (text + "\n")
+
+
 
 # class to store time with copula
 # "copula with time"
@@ -61,22 +99,27 @@ def convTermToStr(term):
     else:
         return str(term)
 
+def escape(str_):
+    return str_.replace("\\", "\\\\")
+
+# converts a path to a
+def convertPathToJavaSrc(path):
+    asStringList = []
+    for iPathElement in path:
+        if isinstance(iPathElement, str):
+            asStringList.append('"'+iPathElement+'"')
+        else:
+            asStringList.append('"' + str(iPathElement) + '"')
+    return "[" + ",".join(asStringList) + "]"
+
 # code generator : emit code
-def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
-
-    def escape(str_):
-        return str_.replace("\\", "\\\\")
-
-    # converts a path to a
-    def convertPathToDSrc(path):
-        asStringList = []
-        for iPathElement in path:
-            if isinstance(iPathElement, str):
-                asStringList.append('"'+iPathElement+'"')
-            else:
-                asStringList.append('"' + str(iPathElement) + '"')
-        return "[" + ",".join(asStringList) + "]"
-
+def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
+    # convert truth function name to the name of the enum
+    def convTruthFnNameToEnum(truth):
+        if truth == "induction":
+            return "TruthFunctions.EnumType.INDUCTION"
+        else:
+            raise Exception("not implement truth function!")
 
 
     # unpack truthTuple into truth and intervalProjection
@@ -196,13 +239,13 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
 
         def retCodeOfVar(name):
             if name == "t": # special case - is the time
-                return "new shared IntervalImpl(trieCtx.intervalPremiseT)"
+                return "new Interval(trieCtx.intervalPremiseT)"
             elif name == "t+z": # special case - is the time
-                return "new shared IntervalImpl(trieCtx.intervalPremiseT+trieCtx.intervalPremiseZ)"
+                return "new Interval(trieCtx.intervalPremiseT+trieCtx.intervalPremiseZ)"
             elif name == "t-z": # special case - is the time
-                return "new shared IntervalImpl(trieCtx.intervalPremiseT-trieCtx.intervalPremiseZ)"
+                return "new Interval(trieCtx.intervalPremiseT-trieCtx.intervalPremiseZ)"
             elif name == "tB-tA": # special case - we have to compute the difference of the timestamps
-                return "new shared IntervalImpl(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA)"
+                return "new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA)"
 
             resList = retPathOfName(name)
 
@@ -213,19 +256,19 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
                     return "b"
 
                 if resList[0][0] == 'a' or resList[0][0] == 'b':
-                    code = "(" + "cast(Binary)"+resList[0][0] + ")" + resList[0][1:]
+                    code = "(" + "(Binary)"+resList[0][0] + ")" + resList[0][1:]
 
                 return code
             elif len(resList) == 2:
                 code = None
                 if resList[0][0] == 'a' or resList[0][0] == 'b':
-                    code = "(" + "cast(Binary)"+resList[0][0] + ")" + resList[0][1:]
+                    code = "(" + "(Binary)"+resList[0][0] + ")" + resList[0][1:]
 
 
                 if resList[1] == 0:
-                    code = "(cast(Binary)("+ code +"))" + ".subject"
+                    code = "((Binary)("+ code +"))" + ".subject"
                 elif resList[1] == 1:
-                    code = "(cast(Binary)("+ code +"))" + ".predicate"
+                    code = "((Binary)("+ code +"))" + ".predicate"
                 #if resList[1] == "idx0": # special handling for compound access
                 #    code += ".TODO[0]"
                 #elif resList[1] == "idx1":
@@ -249,7 +292,7 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
                 codeName0 = retCodeOfVar(name0)
                 codeName1 = retCodeOfVar(name1)
 
-                return "new shared Binary(\"" + nameCopula + "\"," + codeName0 + "," + codeName1 + ")"
+                return "DeriverHelpers.makeBinary(\"" + nameCopula + "\"," + codeName0 + "," + codeName1 + ")"
             else:
                 # special handling for compound
 
@@ -261,7 +304,7 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
                 if compoundType == "*":
                     raise TODO() # generation for the code of products is not implemented!
                 elif compoundType in ["|", "||", "&", "&&", "&/", "&|", "-", "~"]: # fall back to generation of binary
-                    return "new shared Binary(\"" + compoundType + "\"," + codeName0 + "," + codeName1 + ")"
+                    return "DeriverHelpers.makeBinary(\"" + compoundType + "\"," + codeName0 + "," + codeName1 + ")"
                 else:
                     raise Exception(compoundType) # not implemented or internal error
 
@@ -276,7 +319,7 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     printEffective = False # do we want to print the "effective"(how it is compiled) rule?
     if printEffective:
         # TODO< print desire >
-        print "// effective    "+convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"     "+str(preconditions)+"   |-   "+convTermToStr(conclusion)+" \t\t(Truth:"+truth+intervalProjection+")"
+        emit("// effective    "+convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"     "+str(preconditions)+"   |-   "+convTermToStr(conclusion)+" \t\t(Truth:"+truth+intervalProjection+")")
 
     global emitExecCode
     if not emitExecCode:
@@ -295,25 +338,25 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     global derivationFunctionsSrc
 
 
-    print "{"
+    emit("{")
 
     teCounter = 0
 
     if isinstance(premiseA, tuple):
-        print "    shared TrieElement te0 = new shared TrieElement(TrieElement.EnumType.CHECKCOPULA);"
-        print "    te0.side = EnumSide.LEFT;"
-        print "    te0.checkedString = \""+escape(premiseACopula)+"\";"
-        print "    "
+        emit("    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.CHECKCOPULA);")
+        emit("    te0.side = EnumSide.LEFT;")
+        emit("    te0.checkedString = \""+escape(premiseACopula)+"\";")
+        emit("    ")
 
         teCounter += 1
 
     if isinstance(premiseB, tuple):
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.CHECKCOPULA);"
-        print "    te"+str(teCounter)+".side = EnumSide.RIGHT;"
-        print "    te"+str(teCounter)+".checkedString = \""+escape(premiseBCopula)+"\";"
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.CHECKCOPULA);")
+        emit("    te"+str(teCounter)+".side = EnumSide.RIGHT;")
+        emit("    te"+str(teCounter)+".checkedString = \""+escape(premiseBCopula)+"\";")
 
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
 
         teCounter+=1
 
@@ -321,12 +364,12 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
 
     for iPrecondition in preconditions:
         if iPrecondition == "Time:After(tB,tA)" or iPrecondition == "Time:Parallel(tB,tA)":
-            print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.PRECONDITION);"
-            print "    te"+str(teCounter)+".stringPayload = \"" + iPrecondition + "\";"
+            emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);")
+            emit("    te"+str(teCounter)+".stringPayload = \"" + iPrecondition + "\";")
 
             if teCounter > 0:
-                print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-            print "    "
+                emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+            emit("    ")
 
             teCounter+=1
         else:
@@ -335,30 +378,30 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     if isinstance(premiseA, tuple) and not isPlaceholder(premiseA[0]):
         comparedCompoundType = premiseA[0][0]
 
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.WALKCHECKCOMPOUND);"
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        print "    te"+str(teCounter)+".pathLeft = [\"a.subject\"];" # print python list to D list
-        print "    te"+str(teCounter)+".pathRight = [];"
-        print "    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";"
+        emit("    te"+str(teCounter)+".pathLeft = [\"a.subject\"];") # print python list to D list
+        emit("    te"+str(teCounter)+".pathRight = [];")
+        emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
 
         teCounter+=1
 
     if isinstance(premiseA, tuple) and not isPlaceholder(premiseA[2]):
         comparedCompoundType = premiseA[2][0]
 
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.WALKCHECKCOMPOUND);"
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        print "    te"+str(teCounter)+".pathLeft = [\"a.predicate\"];" # print python list to D list
-        print "    te"+str(teCounter)+".pathRight = [];"
-        print "    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";"
+        emit("    te"+str(teCounter)+".pathLeft = [\"a.predicate\"];") # print python list to D list
+        emit("    te"+str(teCounter)+".pathRight = [];")
+        emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
 
         teCounter+=1
 
@@ -366,183 +409,231 @@ def genEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     if isinstance(premiseB, tuple) and not isPlaceholder(premiseB[0]):
         comparedCompoundType = premiseB[0][0]
 
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.WALKCHECKCOMPOUND);"
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        print "    te"+str(teCounter)+".pathLeft = [];" # print python list to D list
-        print "    te"+str(teCounter)+".pathRight = [\"b.subject\"];"
-        print "    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";"
+        emit("    te"+str(teCounter)+".pathLeft = [];") # print python list to D list
+        emit("    te"+str(teCounter)+".pathRight = [\"b.subject\"];")
+        emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
 
         teCounter+=1
 
     if isinstance(premiseB, tuple) and not isPlaceholder(premiseB[2]):
         comparedCompoundType = premiseB[2][0]
 
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.WALKCHECKCOMPOUND);"
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        print "    te"+str(teCounter)+".pathLeft = [];" # print python list to D list
-        print "    te"+str(teCounter)+".pathRight = [\"b.predicate\"];"
-        print "    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";"
+        emit("    te"+str(teCounter)+".pathLeft = [];") # print python list to D list
+        emit("    te"+str(teCounter)+".pathRight = [\"b.predicate\"];")
+        emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
 
         teCounter+=1
 
 
 
     for iSamePremiseTerms in samePremiseTerms: # need to iterate because there can be multiple terms which have to be the same
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.WALKCOMPARE);"
-        print "    te"+str(teCounter)+".pathLeft = "+ convertPathToDSrc( iSamePremiseTerms[0] ) +";" # print python list to D list
-        print "    te"+str(teCounter)+".pathRight = "+ convertPathToDSrc( iSamePremiseTerms[1] ) +";" # print python list to D list
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCOMPARE);")
+        emit("    te"+str(teCounter)+".pathLeft = "+ convertPathToJavaSrc( iSamePremiseTerms[0] ) +";") # print python list to D list
+        emit("    te"+str(teCounter)+".pathRight = "+ convertPathToJavaSrc( iSamePremiseTerms[1] ) +";") # print python list to D list
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
         teCounter+=1
 
     hasIntervalT = "t" in pathsPremiseA or "t" in pathsPremiseB
     hasIntervalZ = "z" in pathsPremiseA or "z" in pathsPremiseB
 
     if hasIntervalT: # do we need to emit code for the computation of the interval(s)?
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.LOADINTERVAL);"
-        print "    te"+str(teCounter)+".stringPayload = \"premiseT\";"
-        print "    te"+str(teCounter)+".path = "+convertPathToDSrc(retPathOfName("t"))+";"
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.LOADINTERVAL);")
+        emit("    te"+str(teCounter)+".stringPayload = \"premiseT\";")
+        emit("    te"+str(teCounter)+".path = "+convertPathToJavaSrc(retPathOfName("t"))+";")
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
         teCounter+=1
 
     if hasIntervalZ: # do we need to emit code for the computation of the interval(s)?
-        print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.LOADINTERVAL);"
-        print "    te"+str(teCounter)+".stringPayload = \"premiseZ\";"
-        print "    te"+str(teCounter)+".path = "+convertPathToDSrc(retPathOfName("z"))+";"
-        print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-        print "    "
+        emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.LOADINTERVAL);")
+        emit("    te"+str(teCounter)+".stringPayload = \"premiseZ\";")
+        emit("    te"+str(teCounter)+".path = "+convertPathToJavaSrc(retPathOfName("z"))+";")
+        emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+        emit("    ")
         teCounter+=1
 
     if intervalProjection != "": # do we need to emit code for the computation of the interval(s)?
         if intervalProjection == "IntervalProjection(t,z)":
-            print "    shared TrieElement te"+str(teCounter)+" = new shared TrieElement(TrieElement.EnumType.INTERVALPROJECTION);"
-            print "    te"+str(teCounter)+".stringPayload = \""+intervalProjection+"\";"
-            print "    te"+str(teCounter-1)+".children ~= te"+str(teCounter)+";"
-            print "    "
+            emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.INTERVALPROJECTION);")
+            emit("    te"+str(teCounter)+".stringPayload = \""+intervalProjection+"\";")
+            emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
+            emit("    ")
             teCounter+=1
         else:
             raise Exception("Unknown type of interval projection (not implemented)!")
 
 
 
-    print "    shared TrieElement teX = new shared TrieElement(TrieElement.EnumType.EXEC);"
-    print "    teX.fp = &derive"+str(staticFunctionCounter)+";"
-    print "    te"+str(teCounter-1)+".children ~= teX;"
-    print "    "
-    print "    addToTrieRec(&rootTries, te0); //rootTries ~= te0;"
-    print "}"
-    print "\n"
+    emit("    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);")
+    emit("    teX.fp = new derive"+str(staticFunctionCounter)+"();")
+    emit("    te"+str(teCounter-1)+".children.add(teX);")
+    emit("    ")
+    emit("    Trie.addToTrieRec(rootTries, te0);")
+    emit("}")
+    emit("\n")
 
     teCounter+=1
 
 
-
-    derivationFunctionsSrc+= "static void derive"+str(staticFunctionCounter)+"(shared Sentence aSentence, shared Sentence bSentence, Sentences resultSentences, shared TrieElement trieElement, TrieContext *trieCtx) {\n"
-    derivationFunctionsSrc+= "   assert(!(aSentence.isQuestion() && bSentence.isQuestion()), \"Invalid derivation : question-question\");\n"
+    derivationFunctionsSrc+= "public static class derive"+str(staticFunctionCounter)+" implements Trie.TrieElement.DerivableAction {\n"
+    derivationFunctionsSrc+= "public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, Parameters narParameters) {\n"
+    derivationFunctionsSrc+= "   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : \"Invalid derivation : question-question\";\n"
     derivationFunctionsSrc+= "   \n"
     derivationFunctionsSrc+= "   \n"
-    derivationFunctionsSrc+= "   bool hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());\n"
+    derivationFunctionsSrc+= "   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());\n"
     derivationFunctionsSrc+= "   \n"
-    derivationFunctionsSrc+= "   char derivationPunctation = aSentence.punctation;\n"
+    derivationFunctionsSrc+= "   char derivationPunctuation = aSentence.punctuation;\n"
     derivationFunctionsSrc+= "   if (aSentence.isQuestion() || bSentence.isQuestion()) {\n"
-    derivationFunctionsSrc+= "       derivationPunctation = '?';\n"
+    derivationFunctionsSrc+= "       derivationPunctuation = '?';\n"
     derivationFunctionsSrc+= "   }\n"
     derivationFunctionsSrc+= "   \n"
-    derivationFunctionsSrc+= "   auto a = aSentence.term;\n"
-    derivationFunctionsSrc+= "   auto b = bSentence.term;\n"
+    derivationFunctionsSrc+= "   Term a = aSentence.term;\n"
+    derivationFunctionsSrc+= "   Term b = bSentence.term;\n"
     derivationFunctionsSrc+= "   \n"
-    derivationFunctionsSrc+= "   auto conclusionSubj = "+conclusionSubjCode+";\n"
-    derivationFunctionsSrc+= "   auto conclusionPred = "+conclusionPredCode+";\n"
+    derivationFunctionsSrc+= "   Term conclusionSubj = "+conclusionSubjCode+";\n"
+    derivationFunctionsSrc+= "   Term conclusionPred = "+conclusionPredCode+";\n"
 
     # TODO< do allow it the conclusion copula is not a real copula >
-    derivationFunctionsSrc+= "   if(!isSameRec(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL\n"
+    derivationFunctionsSrc+= "   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL\n"
 
-    derivationFunctionsSrc+= "      shared Binary conclusionTerm = new shared Binary(\""+escape(conclusionCopula)+"\", conclusionSubj, conclusionPred);\n"
+    derivationFunctionsSrc+= "      Term conclusionTerm = DeriverHelpers.makeBinary(\""+escape(conclusionCopula)+"\", conclusionSubj, conclusionPred);\n"
 
-    derivationFunctionsSrc+= "      auto stamp = Stamp.merge(aSentence.stamp, bSentence.stamp);\n"
+    derivationFunctionsSrc+= "      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps\n"
 
-    derivationFunctionsSrc+= "      auto tv = hasConclusionTruth ? TruthValue.calc(\""+truth+"\", aSentence.truth, bSentence.truth) : null;\n"
+    derivationFunctionsSrc+= "      TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute("+convTruthFnNameToEnum(truth)+", aSentence.truth, bSentence.truth, narParameters) : null;\n"
 
 
     if intervalProjection == "IntervalProjection(t,z)": # do we need to manipulate the tv for projection?
-            derivationFunctionsSrc+= "      tv = new shared TruthValue(tv.freq, tv.conf * trieCtx.projectedTruthConfidence); // multiply confidence with confidence of projection\n"
+            derivationFunctionsSrc+= "      tv = new TruthValue(tv.freq, tv.getConfidence() * trieCtx.projectedTruthConfidence); // multiply confidence with confidence of projection\n"
 
-    derivationFunctionsSrc+= "      if(hasConclusionTruth && tv.conf < 0.0001) {\n"
+    derivationFunctionsSrc+= "      if(hasConclusionTruth && tv.getConfidence() < 0.0001) {\n"
     derivationFunctionsSrc+= "          return; // conclusions with such a low conf are not relevant to the system\n"
     derivationFunctionsSrc+= "      }\n"
 
-    derivationFunctionsSrc+= "      resultSentences.arr ~= new shared Sentence(derivationPunctation, conclusionTerm, tv, stamp);\n"
+    derivationFunctionsSrc+= "      resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));\n"
     derivationFunctionsSrc+= "   }\n"
-    derivationFunctionsSrc+= "}\n"
+    derivationFunctionsSrc+= "} // method\n"
+    derivationFunctionsSrc+= "} // class\n"
     derivationFunctionsSrc+= "\n"
     derivationFunctionsSrc+= "\n"
 
 
     staticFunctionCounter+=1
 
-# generate code for the rule
-def gen(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
-    # helper to convert a premise from the temporal form to something which we can generate the code for
-    # ex: "A =/>(t) B" to "(&/, A, t) =/> B"
-    def convTerm2(term):
-        if isinstance(term, tuple):
-            if len(term) == 3:
 
-                (a, b, c) = term
+# helper to convert a premise from the temporal form to something which we can generate the code for
+# ex: "A =/>(t) B" to "(&/, A, t) =/> B"
+def convTerm2(term):
+    if isinstance(term, tuple):
+        if len(term) == 3:
 
-                if isPlaceholder(a): # normal handling for statement
+            (a, b, c) = term
 
-                    (name0, copula, name1) = term # structure of conclusion term is encoded as tuple
+            if isPlaceholder(a): # normal handling for statement
 
-                    if isinstance(copula, CWT):
-                        # we have to rebuild the statement
+                (name0, copula, name1) = term # structure of conclusion term is encoded as tuple
 
-                        return (("&/", name0, copula.tname), copula.copula, name1)
-                    else:
-                        return term # no special handling necessary because it is not a CWT
+                if isinstance(copula, CWT):
+                    # we have to rebuild the statement
 
-                else: # special handling for compound
-                    return term # because we only care about statements
+                    return (("&/", name0, copula.tname), copula.copula, name1)
+                else:
+                    return term # no special handling necessary because it is not a CWT
 
-            else:
-                raise Exception("unhandled case") # we expect a tuple of length 3
+            else: # special handling for compound
+                return term # because we only care about statements
+
         else:
-            return term # no special treatment necessary
+            raise Exception("unhandled case") # we expect a tuple of length 3
+    else:
+        return term # no special treatment necessary
+
+# generate trie code for the rule
+def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
+    
 
     # unpack truthTuple into truth and intervalProjection
     (truth, intervalProjection) = truthTuple
 
     # TODO< print desire >
-    print "// rule         "+convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"   " +str(preconditions)+  "  |-   " +  convTermToStr(conclusion) + "\t\t(Truth:"+truth+intervalProjection+")"
+    emit("// rule         "+convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"   " +str(preconditions)+  "  |-   " +  convTermToStr(conclusion) + "\t\t(Truth:"+truth+intervalProjection+")")
 
 
-    genEmit(convTerm2(premiseA), convTerm2(premiseB), preconditions,  convTerm2(conclusion), truthTuple, desire)
+    genTrieEmit(convTerm2(premiseA), convTerm2(premiseB), preconditions,  convTerm2(conclusion), truthTuple, desire)
+
 
 
 # each copula-type of form [AsymCop,SymCop,[ConjunctiveCops,DisjunctiveCop,MinusCops]]
 CopulaTypes = [
-    ["-->","<->",[["&"],"|",["-","~"]]],
-    ["==>","<=>",[["&&"],"||",None]], #
+    ##["-->","<->",[["&"],"|",["-","~"]]],
+    ##["==>","<=>",[["&&"],"||",None]], #
     [CWT("=/>","t"),CWT("</>","t"),[[CWT("&/","t"),"&|"],"||",None]], ##
-    ["=|>","<|>",[["&/","&|"],"||",None]], #
+    ##["=|>","<|>",[["&/","&|"],"||",None]], #
     #[CWT("=\>","t"),None ,[["&/","&|"],"||",None]] ###
 ]
 
 # generate code for already implemented conversions?
 genCodeComplex = False
 
-print "// AUTOGEN: initializes and fills tries"
-print "shared(TrieElement)[] initTrie() {"
-print "   shared(TrieElement)[] rootTries;"
+gen = genTrie # we want to generate trie rules
+
+emit("/*")
+emit(" * The MIT License")
+emit(" *")
+emit(" * Copyright 2019 The OpenNARS authors.")
+emit(" *")
+emit(" * Permission is hereby granted, free of charge, to any person obtaining a copy")
+emit(" * of this software and associated documentation files (the \"Software\"), to deal")
+emit(" * in the Software without restriction, including without limitation the rights")
+emit(" * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell")
+emit(" * copies of the Software, and to permit persons to whom the Software is")
+emit(" * furnished to do so, subject to the following conditions:")
+emit(" *")
+emit(" * The above copyright notice and this permission notice shall be included in")
+emit(" * all copies or substantial portions of the Software.")
+emit(" *")
+emit(" * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR")
+emit(" * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,")
+emit(" * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE")
+emit(" * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER")
+emit(" * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,")
+emit(" * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN")
+emit(" * THE SOFTWARE.")
+emit(" */")
+
+emit("package org.opennars.inference;")
+
+emit("import org.opennars.entity.Sentence;")
+emit("import org.opennars.entity.Stamp;")
+emit("import org.opennars.entity.TruthValue;")
+emit("import org.opennars.language.Interval;")
+emit("import org.opennars.language.Term;")
+emit("import org.opennars.main.Parameters;")
+
+emit("")
+emit("import java.util.List;")
+emit("import java.util.ArrayList;")
+
+
+emit("public class InitTrie {")
+
+
+emit("// AUTOGEN: initializes and fills tries")
+emit("public static List<Trie.TrieElement> initTrie() {")
+emit("   List<Trie.TrieElement> rootTries = new ArrayList<>();")
 
 for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
     isTemporal = \
@@ -567,20 +658,20 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
     # TODO< implement inference generation function to generate code which accepts only one argument >
     #print "(A "+copAsym+" B)\t\t\t\t\t|-\t(B "+ival(copAsym,"-t")+" A)\t\t(Truth:Conversion)"
 
-    if True:
+    if False:
         #print "(A "+copAsym+" B),\t(B "+copAsymZ+" C)\t\t\t|-\t(A "+ival(copAsym,"t+z")+" C)\t\t(Truth:deduction"+OmitForHOL(", Desire:Strong")+")"
         gen(("A",copAsym,"B"), ("B",copAsymZ,"C"),   [] ,("A",ival(copAsym,"t+z"),"C"),    ("deduction", ""), OmitForHOL("strong"))
 
     copAsymHasTimeOffset = "/" in str(copAsym) or "\\" in str(copAsym)
     IntervalProjection = "IntervalProjection(t,z)" if copAsymHasTimeOffset else ""
 
-    if True: # block
+    if False: # block
         gen(("A", copAsym, "B"),   ("C", copAsymZ, "B"),   [], ("A", ival(copAsym, "t-z"), "C"),   ("induction", IntervalProjection), OmitForHOL("weak"))
 
-    if True:
+    if False:
         gen(("A", copAsym, "B"),   ("A", copAsymZ, "C"),   [], ("B", ival(copAsym, "t-z"), "C"),   ("abduction", IntervalProjection), OmitForHOL("strong"))
 
-    if True: # added comparison
+    if False: # added comparison
         gen(("A", copAsym, "B"),  ("C", copAsymZ, "B"),   [],("A",ival(copSym, "t-z"),"C"), ("comparison", IntervalProjection), OmitForHOL("weak"))
         gen(("A", copAsym, "B"),  ("A", copAsymZ, "C"),   [],("C",ival(copSym, "t-z"),"B"), ("comparison", IntervalProjection), OmitForHOL("weak"))
 
@@ -588,7 +679,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
     if copSym != None:
         copSymZ = ival(copSym,"z")
 
-        if True:
+        if False:
             #print "(A "+copSym+" B),\t(B "+copSymZ+" C)\t\t\t|-\t(A "+ival(copSym,"t+z")+" C)\t\t(Truth:resemblance"+OmitForHOL(", Desire:Strong")+")"
             gen(("A",copSym,"B"),("B",copSymZ,"C"),  [], ("A",ival(copSym,"t+z"),"C"),  ("resemblance", ""), OmitForHOL("strong"))
 
@@ -697,10 +788,34 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
                     if True:
                         gen(("M",cop,"S"),("M",copZ,(junc,"S","L")),     [],("M",cop,"L"),   (TruthDecomp2, IntervalProjection), "")
 
-print "  return rootTries;"
-print "}"
-print ""
-print ""
+emit("  return rootTries;")
+emit("}")
 
-print derivationFunctionsSrc
+emit("")
+emit("")
 
+emit(derivationFunctionsSrc)
+
+
+emit("// helper")
+emit("static boolean isSame(Term a, Term b) {")
+emit("   return a.equals(b);")
+emit("}")
+
+
+emit("} // class")
+
+
+
+import sys, os
+
+pathname = os.path.dirname(sys.argv[0])
+currentdir = os.path.abspath(pathname)
+del pathname
+
+currentdir = os.path.join(currentdir,"..\\java\\org\\opennars\\inference\\InitTrie.java")
+print("emit code into file "+str(currentdir))
+
+f = open(currentdir, "w")
+f.write(emitted)
+f.close()
