@@ -162,7 +162,7 @@ public class TemporalControl {
         List<Task> mostRecentEvents = new ArrayList<>();
 
 
-        int traceMostRecentEventHorizonItems = 2; // config - how many most recent items from the "event trace" are taken into account
+        int traceMostRecentEventHorizonItems = 5; // config - how many most recent items from the "event trace" are taken into account
                                                   // has a low value because pong seems to have issues with high values (like for ex 30)
 
         for(int idx=Math.max(eligibilityTrace.eligibilityTrace.size()-traceMostRecentEventHorizonItems, 0);idx<eligibilityTrace.eligibilityTrace.size();idx++) {
