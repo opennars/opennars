@@ -52,6 +52,7 @@ public final class TruthFunctions extends UtilityFunctions {
         REDUCEDISJUNCTION,
         REDUCEDISJUNCTIONREV,
         REDUCECONJUNCTIONNEG,
+        INDUCTION,
     }
 
     /**
@@ -78,6 +79,7 @@ public final class TruthFunctions extends UtilityFunctions {
             case REDUCEDISJUNCTION: return reduceDisjunction(a, b, narParameters);
             case REDUCEDISJUNCTIONREV: return reduceDisjunction(b, a, narParameters);
             case REDUCECONJUNCTIONNEG: return reduceConjunctionNeg(a, b, narParameters);
+            case INDUCTION: return induction(a, b, narParameters);
             default: throw new IllegalArgumentException("Encountered unimplemented case!"); // internal error
         }
     }

@@ -258,6 +258,7 @@ public class ProcessGoal {
         public Task executable_precond = null;
         public long mintime = -1;
         public long maxtime = -1;
+        public float timeOffset;
         public Map<Term,Term> substitution;
     }
 
@@ -315,7 +316,10 @@ public class ProcessGoal {
                 }
                 System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
                 for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
-                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, 2, precon.substitution);
+                    float distance = precon.timeOffset - nal.time.time();
+                    float urgency = 2.0f + 1.0f/distance;
+
+                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, urgency, precon.substitution);
                 }
                 return; //don't try the other table as a specific solution was already used
             }
@@ -351,16 +355,17 @@ public class ProcessGoal {
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
-            synchronized(concept.memory.seq_current) {
-                for(final Task p : concept.memory.seq_current) {
+
+            {
+                for(final Task p : nal.memory.temporalControl.retSeqCurrent()) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
-                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
-                                    CompoundTerm.replaceIntervals(precondition), 
-                                    CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
-                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 
-                                    CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()), 
-                                    CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
+                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                            CompoundTerm.replaceIntervals(precondition),
+                            CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
+                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                            CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
+                            CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
@@ -381,8 +386,8 @@ public class ProcessGoal {
             final TruthValue Hyp = t.sentence.truth;
             //overlap will almost never happen, but to make sure
             if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
-               Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
-               Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
+                Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
+                Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
                 continue;
             }
             //and the truth of the precondition:
@@ -407,11 +412,12 @@ public class ProcessGoal {
                 result.substitution = subsBest;
                 result.mintime = mintime;
                 result.maxtime = maxtime;
+                result.timeOffset = timeOffset;
                 if(anticipationsToMake.get(result.bestop) == null) {
                     anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
                 }
                 anticipationsToMake.get(result.bestop).add(result);
-            }  
+            }
         }
         return result;
     }

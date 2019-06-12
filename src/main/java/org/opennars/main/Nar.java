@@ -25,6 +25,7 @@ package org.opennars.main;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opennars.entity.*;
+import org.opennars.inference.TrieDeriver;
 import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.ConfigReader;
@@ -84,7 +85,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version of the project
      */
-    public static final String VERSION = "v3.0.2";
+    public static final String VERSION = "v3.0.3";
 
     /**
      * Name of the reasoner of the project
@@ -656,6 +657,11 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void cycle() {
         try {
             memory.cycle(this);
+
+            if (cycle % 300 == 0) {
+                memory.temporalControl.cooldown();
+                memory.temporalControl.update(time());
+            }
 
             synchronized (cycle) {
                 cycle++;

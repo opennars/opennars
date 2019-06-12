@@ -44,7 +44,7 @@ public class MiscFlags {
     public static boolean INPUT_ERRORS_CONTINUE = false;
     
     /** use this for advanced error checking, at the expense of lower performance.*/
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     /** for thorough bag debugging (slow), requires DEBUG=true */
     public static final boolean DEBUG_BAG = false;
     /* for thorough sentence debugging (slow), requires DEBUG=true */

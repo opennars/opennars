@@ -70,8 +70,8 @@ public class TemporalInferenceControl {
         return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
     }
 
+    /*
     public static boolean eventInference(final Task newEvent, final DerivationContext nal) {
-
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
        }
@@ -144,9 +144,9 @@ public class TemporalInferenceControl {
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
-                                /*DEBUG: for(Task seq_op_cons : res) {
+                                *DEBUG: for(Task seq_op_cons : res) {
                                     System.out.println(seq_op_cons.toString());
-                                }*/
+                                }*
                             }
                         }
 
@@ -163,8 +163,10 @@ public class TemporalInferenceControl {
         addToSequenceTasks(nal, newEvent);
         return true;
     }
+    */
     
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {
+        /*
         //multiple versions are necessary, but we do not allow duplicates
         Task removal = null;
         synchronized(nal.memory.seq_current) {
@@ -210,9 +212,11 @@ public class TemporalInferenceControl {
                 nal.memory.seq_current.putIn(t2);
             }
         }
+        */
     }
     
     public static void NewOperationFrame(final Memory mem, final Task task) {
+        /*
         final List<Task> toRemove = new LinkedList<>(); //can there be more than one? I don't think so..
         float priorityGain = 0.0f;
         for(final Task t : mem.recent_operations) {   //when made sure, make single element and add break
@@ -241,5 +245,6 @@ public class TemporalInferenceControl {
             }
             mem.seq_current.clear();
         }
+        */
     }
 }
