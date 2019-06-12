@@ -4,7 +4,7 @@
     <!-- NarParameters -->
     <conf name="NOVELTY_HORIZON" value="100000"/>
     <conf name="DECISION_THRESHOLD" value="0.51"/>
-    <conf name="CONCEPT_BAG_SIZE" value="10000"/>
+    <conf name="CONCEPT_BAG_SIZE" value="80000"/>
     <conf name="CONCEPT_BAG_LEVELS" value="1000"/>
     
     <conf name="DURATION" value="5"/>
@@ -110,7 +110,7 @@
     
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
     <conf name="VARIABLE_INTRODUCTION_CONFIDENCE_MUL" value="0.9"/>
-    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="8"/>
+    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="80"/>
     <conf name="MOTOR_BABBLING_CONFIDENCE_THRESHOLD" value="0.8"/>
     
     <conf name="THREADS_AMOUNT" value="1"/>

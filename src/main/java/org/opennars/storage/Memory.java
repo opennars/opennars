@@ -100,7 +100,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Bag<Task<Term>,Sentence<Term>> seq_current;
+    //public final Bag<Task<Term>,Sentence<Term>> seq_current;
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
@@ -129,7 +129,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
         this.recent_operations = recent_operations;
-        this.seq_current = seq_current;
+        //this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
 
         trieDeriver = new TrieDeriver();
@@ -147,9 +147,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             newTasks.clear();
             novelTasks.clear();
         }
-        synchronized(this.seq_current) {
-            this.seq_current.clear();
-        }
+        //synchronized(this.seq_current) {
+        //    this.seq_current.clear();
+        //}
         if(emotion != null) {
             emotion.resetEmotions();
         }
