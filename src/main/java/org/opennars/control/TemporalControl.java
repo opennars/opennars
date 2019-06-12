@@ -97,10 +97,14 @@ public class TemporalControl {
         }
 
         // ignore NAL-9 ops
-        // we need to limit it just for testing and because it derives a lot of nonsense with to much complexity
-        if (("" + task.sentence).contains("^believe") || ("" + task.sentence).contains("^want") || ("" + task.sentence).contains("^anticipate")) {
-            return false;
+        if (("" + task.sentence).contains("^anticipate")) {
+            return false; // because anticipate events are not useful to reason about
         }
+        // we need to limit it just for testing and because it derives a lot of nonsense with to much complexity
+        if (("" + task.sentence).contains("^believe") || ("" + task.sentence).contains("^want")) {
+            //return false;
+        }
+
         return true;
     }
 
@@ -162,7 +166,7 @@ public class TemporalControl {
         List<Task> mostRecentEvents = new ArrayList<>();
 
 
-        int traceMostRecentEventHorizonItems = 5; // config - how many most recent items from the "event trace" are taken into account
+        int traceMostRecentEventHorizonItems = 2; // config - how many most recent items from the "event trace" are taken into account
                                                   // has a low value because pong seems to have issues with high values (like for ex 30)
 
         for(int idx=Math.max(eligibilityTrace.eligibilityTrace.size()-traceMostRecentEventHorizonItems, 0);idx<eligibilityTrace.eligibilityTrace.size();idx++) {
@@ -253,9 +257,6 @@ public class TemporalControl {
             conclusionTerm = new Implication(new Term[]{subj, pred}, impl.getTemporalOrder());
 
             if (!(""+conclusionTerm).equals(""+conclusionSentences.get(idx).term)) {
-                //System.out.println("DBG "+conclusionSentences.get(idx).term); // debug
-                //System.out.println("DBG "+conclusionTerm);
-
                 int here42 = 6;
             }
 
@@ -334,14 +335,37 @@ public class TemporalControl {
                 }
             }
 
+            {
+                if (
+                    ( conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD )
+                ) {
+
+                    Term rootImplSubj = ((Implication)conclusionTerm).term[0];
+                    Term rootImplPred = ((Implication)conclusionTerm).term[1];
+
+                    // don't allow ops as predicate of the impl
+                    if (rootImplPred instanceof Operation) {
+                        accept = false;
+                    }
+
+                    { // disallow "<(&/, X...) =/> X> with a length > 4
+                        if (
+                            ( (rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) )
+                        ) {
+                            CompoundTerm seq = (CompoundTerm)rootImplSubj;
+
+                            if (seq.term.length > 4) {
+                                accept = false;
+                            }
+                        }
+                    }
+                }
+            }
+
 
             // TESTING TESTING TESTING
             // FILTER FOR TESTING IN PONG
             {
-                if (!(""+conclusionTerm).contains("<{SELF} --> [good]>>")) {
-                    accept = false;
-                }
-
                 if ((""+conclusionTerm).contains("<(&/,(^")) {
                     accept = false; // don't allow op op nonsense
                 }
@@ -356,7 +380,7 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
+            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
 
             if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
                 int debug42 = 6;
@@ -405,21 +429,6 @@ public class TemporalControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
-
-
-
-
-            /** just a commented part to refer how to write it
-        Concept selectedConcept = temporalControl.generalInferenceSelectConceptAndTask(this);
-        if (selectedConcept != null) {
-            final DerivationContext nal = new DerivationContext(this, narParameters, inputs);
-            synchronized(selectedConcept) { //use current concept (current concept is the resource)
-                nal.setCurrentConcept(selectedConcept);
-
-                // TODO<
-            }
-        }
-             ****/
     }
 
     private static Sentence overrideTermOfSentence(Sentence sentence, Term term) {
@@ -686,39 +695,6 @@ public class TemporalControl {
                     }
                 }
 
-
-
-                /////////////////////////////////
-                /////////////////////////////////
-                /////////////////////////////////
-                // OLD CODE   OLD CODE    OLD CODE
-                /*
-
-                // TODO< we need a better strategy to select the sentence
-                // a better way is to sample by recency with an exp decay >
-
-                // TODO< sample from eligilibility trace by exp decay >
-
-                // TODO< filter for events and compute salience of events based on exp decay >
-
-                int numberOfSampleTries = 10;
-
-                if (primarySelectedConcept.beliefs.size() == 0) {
-                    return null;
-                }
-
-                for(int iTry=0;iTry<numberOfSampleTries;iTry++) {
-
-                    Sentence candidateSentence = primarySelectedConcept.beliefs.get(mem.randomNumber.nextInt(primarySelectedConcept.beliefs.size())).sentence;
-                    if (candidateSentence.isEternal()) {
-                        continue;
-                    }
-
-                    return candidateSentence;
-                }
-
-                return null; // when we are here means that we didn't found a sample
-                */
             }
         }
 
@@ -997,15 +973,6 @@ public class TemporalControl {
                     if (iItem.equals(item)) {
                         return; // we don't want to add the same item
                     }
-                    /* commented because this is a bug, we don't need this
-                   because it filters out unique terms
-
-                    for(Sentence iSentence : iItem.events) {
-                        if (term.equals(iSentence.term)) {
-                            return;
-                        }
-                    }
-                    */
                 }
             }
             else {
