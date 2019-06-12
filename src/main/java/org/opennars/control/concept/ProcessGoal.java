@@ -351,8 +351,9 @@ public class ProcessGoal {
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
-            synchronized(concept.memory.seq_current) {
-                for(final Task p : concept.memory.seq_current) {
+
+            {
+                for(final Task p : nal.memory.temporalControl.retSeqCurrent()) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
                         boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT, 

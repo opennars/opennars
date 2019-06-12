@@ -47,7 +47,7 @@ public class TemporalControl {
         }
 
         // we need to add it to the eligibility trace
-        eligibilityTrace.addEvent(task.sentence);
+        eligibilityTrace.addEvent(task);
     }
 
     public boolean heatupInputEvent(Task task) {
@@ -153,13 +153,33 @@ public class TemporalControl {
         int here = 5;
     }
 
+    /**
+     * returns the most recent events
+     * @return
+     */
+    // is used in decision making only
+    public List<Task> retSeqCurrent() {
+        List<Task> mostRecentEvents = new ArrayList<>();
+
+
+        int traceMostRecentEventHorizonItems = 2; // config - how many most recent items from the "event trace" are taken into account
+                                                  // has a low value because pong seems to have issues with high values (like for ex 30)
+
+        for(int idx=Math.max(eligibilityTrace.eligibilityTrace.size()-traceMostRecentEventHorizonItems, 0);idx<eligibilityTrace.eligibilityTrace.size();idx++) {
+            EligibilityTrace.EligibilityTraceItem eventTraceItem = eligibilityTrace.eligibilityTrace.get(idx);
+            mostRecentEvents.addAll(eventTraceItem.events);
+        }
+
+        return mostRecentEvents;
+    }
+
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
         // select events which happened recently
-        SentencePair sentencePair = generalInferenceSampleSentence(mem);
+        TaskPair sentencePair = generalInferenceSampleSentence(mem);
         if (sentencePair == null) {
             return; // we need two events to reason about
         }
-        Sentence
+        Task
             eventA = sentencePair.a,
             eventB = sentencePair.b,
             eventMiddle = sentencePair.middleEvent;
@@ -168,12 +188,12 @@ public class TemporalControl {
             return; // we need two events to reason about
         }
 
-        if (eventA.term.equals(eventB.term)) {
+        if (eventA.sentence.term.equals(eventB.sentence.term)) {
             return; // no need to reason about the same event happening at the same time
         }
 
         // must not overlap
-        if (Stamp.baseOverlap(eventA.stamp, eventB.stamp)) {
+        if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
             return;
         }
 
@@ -186,17 +206,17 @@ public class TemporalControl {
         List<Sentence> conclusionSentences = new ArrayList<>();
 
         { // preprocess and stuff it into deriver
-            Sentence premiseEventA = eventA;
-            Sentence premiseEventB = eventB;
+            Sentence premiseEventASentence = eventA.sentence;
+            Sentence premiseEventBSentence = eventB.sentence;
 
             if (eventMiddle != null) {
                 // TODO< do we randomly select if we want to use the middle event? >
 
                 // build sequence of eventA and middle event
-                if (!Stamp.baseOverlap(premiseEventA.stamp, eventMiddle.stamp)) {
-                    premiseEventA = buildSequence(premiseEventA, eventMiddle, time, narParameters);
+                if (!Stamp.baseOverlap(premiseEventASentence.stamp, eventMiddle.sentence.stamp)) {
+                    premiseEventASentence = buildSequence(premiseEventASentence, eventMiddle.sentence, time, narParameters);
 
-                    if (!(premiseEventB.term instanceof Operation)) {
+                    if (!(premiseEventBSentence.term instanceof Operation)) {
                         int here42 = 6;
                     }
 
@@ -206,7 +226,7 @@ public class TemporalControl {
 
 
             // stuff it all into the deriver
-            mem.trieDeriver.derive(premiseEventA, premiseEventB, conclusionSentences, time, narParameters);
+            mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, narParameters);
         }
 
         if (conclusionSentences.size() > 0) {
@@ -347,10 +367,10 @@ public class TemporalControl {
             int here42 = 6;
         }
 
+        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
+
         // add results to memory
         {
-            final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
-
             for(Sentence iConclusionSentence : conclusionSentences) {
                 BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
 
@@ -373,7 +393,17 @@ public class TemporalControl {
 
         // add results to trace
         for(Sentence iDerivedSentence : conclusionSentences) {
-            eligibilityTrace.addEvent(iDerivedSentence);
+            // TODO< derive budget somehow >
+            BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+
+            // we need to create a task for the sentence
+            Task createdTask = new Task(
+                iDerivedSentence,
+                budget,
+                Task.EnumType.DERIVED
+            );
+
+            eligibilityTrace.addEvent(createdTask);
         }
 
 
@@ -414,13 +444,13 @@ public class TemporalControl {
         return new Sentence(conclusionTerm, '.', tv, stamp);
     }
 
-    private static class SentencePair {
-        public Sentence a;
-        public Sentence b;
+    private static class TaskPair {
+        public Task a;
+        public Task b;
 
-        public Sentence middleEvent = null; // event between the two events
+        public Task middleEvent = null; // event between the two events
 
-        public SentencePair(Sentence a, Sentence b) {
+        public TaskPair(Task a, Task b) {
             this.a = a;
             this.b = b;
         }
@@ -428,7 +458,7 @@ public class TemporalControl {
 
     public boolean DEBUG_TEMPORALCONTROL = false;
 
-    private SentencePair generalInferenceSampleSentence(Memory mem) {
+    private TaskPair generalInferenceSampleSentence(Memory mem) {
 
 
         double selectedSalience = mem.randomNumber.nextDouble() * salienceMass;
@@ -480,24 +510,24 @@ public class TemporalControl {
 
 
 
-                        List<Sentence> primarySelectionCandidateEvents = new ArrayList<>();
+                        List<Task> primarySelectionCandidateEvents = new ArrayList<>();
 
                         // filter for all events where the term is equal to the term of the primary selected concept
-                        for (Sentence iEvent : selectedPrimaryEtItem.events) {
-                            if (iEvent.term.equals(primarySelectedConcept.term)) {
+                        for (Task iEvent : selectedPrimaryEtItem.events) {
+                            if (iEvent.sentence.term.equals(primarySelectedConcept.term)) {
                                 primarySelectionCandidateEvents.add(iEvent);
                             }
                         }
 
 
                         int idx = mem.randomNumber.nextInt(primarySelectionCandidateEvents.size());
-                        Sentence selectedPrimaryEvent = primarySelectionCandidateEvents.get(idx);
+                        Task selectedPrimaryEvent = primarySelectionCandidateEvents.get(idx);
 
 
                         { // select secondary event
                             // TODO< compute neightbor salience with the multiplication of the salience of neightbor ET items with the exp based kernel >
 
-                            long primaryEventOccTime = selectedPrimaryEvent.getOccurenceTime();
+                            long primaryEventOccTime = selectedPrimaryEvent.sentence.getOccurenceTime();
 
                             Integer primaryEventIdx = eligibilityTrace.calcIdxOfItemWithClosestTime(primaryEventOccTime);
 
@@ -541,7 +571,7 @@ public class TemporalControl {
 
                                 EligibilityTrace.EligibilityTraceItem secondaryTraceItem = null;
 
-                                Sentence middleEvent = null; // event in the middle between the two events
+                                Task middleEvent = null; // event in the middle between the two events
 
                                 for(int idx2=neightborMinIdx;idx2<neightborMaxIdx;idx2++) {
                                     EligibilityTrace.EligibilityTraceItem traceItem = eligibilityTrace.eligibilityTrace.get(idx2);
@@ -566,13 +596,13 @@ public class TemporalControl {
                                             if (idxDiff > 1) {
                                                 // collect possible middle candidate events which are ops
                                                 // must be ops because OpenNARS prefers "(&/, A, OP) =/> B"
-                                                List<Sentence> middleEventCandidates = new ArrayList<>();
+                                                List<Task> middleEventCandidates = new ArrayList<>();
                                                 for(int idx3=min(primaryEventIdx, secondaryEventIdx)+1;idx3<max(primaryEventIdx, secondaryEventIdx);idx3++) {
                                                     EligibilityTrace.EligibilityTraceItem additionalEventTraceItem = eligibilityTrace.eligibilityTrace.get(idx3);
 
                                                     // filter for events which are ops
-                                                    for(Sentence iEvent : additionalEventTraceItem.events) {
-                                                        if (iEvent.term instanceof Operation) {
+                                                    for(Task iEvent : additionalEventTraceItem.events) {
+                                                        if (iEvent.sentence.term instanceof Operation) {
                                                             middleEventCandidates.add(iEvent);
                                                         }
                                                     }
@@ -627,19 +657,19 @@ public class TemporalControl {
 
                                 {
                                     int secondaryEventIdx = mem.randomNumber.nextInt(secondaryTraceItem.events.size());
-                                    Sentence selectedSecondaryEvent = secondaryTraceItem.events.get(secondaryEventIdx);
+                                    Task selectedSecondaryEvent = secondaryTraceItem.events.get(secondaryEventIdx);
 
                                     // sort events
-                                    Sentence eventA = selectedPrimaryEvent;
-                                    Sentence eventB = selectedSecondaryEvent;
+                                    Task eventA = selectedPrimaryEvent;
+                                    Task eventB = selectedSecondaryEvent;
 
-                                    if (eventA.getOccurenceTime() > eventB.getOccurenceTime()) { // do we need to swap?
-                                        Sentence temp = eventA;
+                                    if (eventA.sentence.getOccurenceTime() > eventB.sentence.getOccurenceTime()) { // do we need to swap?
+                                        Task temp = eventA;
                                         eventA = eventB;
                                         eventB = temp;
                                     }
 
-                                    SentencePair sentencePair = new SentencePair(eventA, eventB);
+                                    TaskPair sentencePair = new TaskPair(eventA, eventB);
                                     sentencePair.middleEvent = middleEvent;
 
                                     if (middleEvent != null) {
@@ -789,24 +819,24 @@ public class TemporalControl {
          *
          * @param event
          */
-        public void addEvent(Sentence event) {
-            assert !event.isEternal() : "must be event";
+        public void addEvent(Task event) {
+            assert !event.sentence.isEternal() : "must be event";
 
-            if (event.isEternal()) {
+            if (event.sentence.isEternal()) {
                 int debugMe = 42;
             }
 
-            if (hasItemByOccurenceTime(event.getOccurenceTime())) {
-                EligibilityTraceItem item = retItemByOccurenceTime(event.getOccurenceTime());
-                for(final Sentence iEventOfItem : item.events) {
-                    if (iEventOfItem.equals(event)) {
+            if (hasItemByOccurenceTime(event.sentence.getOccurenceTime())) {
+                EligibilityTraceItem item = retItemByOccurenceTime(event.sentence.getOccurenceTime());
+                for(final Task iEventOfItem : item.events) {
+                    if (iEventOfItem.sentence.equals(event.sentence)) {
                         return; // don't add it if it already exists
                     }
                 }
 
                 item.events.add(event);
 
-                updateEtItemByTerm(event.term, item);
+                updateEtItemByTerm(event.sentence.term, item);
             }
             else {
                 // doesn't exist, we need to create a eligibility trace item and add it
@@ -862,8 +892,8 @@ public class TemporalControl {
 
             // update ET for all terms
             // TODO< do recursivly >
-            for(Sentence iSentence : item.events) {
-                updateEtItemByTerm(iSentence.term, item);
+            for(Task iTask : item.events) {
+                updateEtItemByTerm(iTask.sentence.term, item);
             }
 
 
@@ -934,8 +964,8 @@ public class TemporalControl {
                     EligibilityTraceItem item = eligibilityTrace.get(0);
 
                     // TODO< recurse recursivly >
-                    for(Sentence iEvent : item.events) { // iterate over all terms for removal
-                        removeEtItemByTerm(iEvent.term, item);
+                    for(Task iEvent : item.events) { // iterate over all terms for removal
+                        removeEtItemByTerm(iEvent.sentence.term, item);
                     }
                 }
 
@@ -1009,14 +1039,14 @@ public class TemporalControl {
         }
 
         public static class EligibilityTraceItem {
-            public List<Sentence> events = new ArrayList<>(); // concurrent events
+            public List<Task> events = new ArrayList<>(); // concurrent events
 
             public double decay = 1.0;
 
-            public EligibilityTraceItem(Sentence event) {
-                assert !event.isEternal();
+            public EligibilityTraceItem(Task event) {
+                assert !event.sentence.isEternal();
 
-                if (event.isEternal()) {
+                if (event.sentence.isEternal()) {
                     int debugMe = 42;
                 }
 
@@ -1024,7 +1054,7 @@ public class TemporalControl {
             }
 
             public long retOccurenceTime() {
-                return events.get(0).getOccurenceTime();
+                return events.get(0).sentence.getOccurenceTime();
             }
 
             public void updateDecay(long wallclockTime, double decayFactor) {
