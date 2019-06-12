@@ -55,7 +55,7 @@ import static org.opennars.inference.UtilityFunctions.w2c;
 public class ProcessAnticipation {
 
     public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
-            final long mintime, final long maxtime, final float priority, Map<Term,Term> substitution) {
+            final long mintime, final long maxtime, final float urgency, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
@@ -71,12 +71,12 @@ public class ProcessAnticipation {
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
                 mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Concept.AnticipationEntry toDelete = null;
-            Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(priority, t, mintime, maxtime);
+            Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(urgency, t, mintime, maxtime);
             boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
             //choose an element to replace with the new, in case that we are already at full capacity
             if(fullCapacity) {
                 for(Concept.AnticipationEntry entry : c.anticipations) {
-                    if(priority > entry.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                    if(urgency > entry.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
                         //prefer to replace one that is more far in the future, takes longer to be disappointed about
                         if(toDelete == null || entry.negConfirm_abort_maxtime > toDelete.negConfirm_abort_maxtime) {
                             toDelete = entry;

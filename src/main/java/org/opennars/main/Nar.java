@@ -85,7 +85,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version of the project
      */
-    public static final String VERSION = "v3.0.2";
+    public static final String VERSION = "v3.0.3";
 
     /**
      * Name of the reasoner of the project
