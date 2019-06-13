@@ -298,6 +298,7 @@ public class TemporalControl {
                         accept = false;
                     }
 
+                    /* commented because we have to allow for (&/, X, Z) =/> Y for prediction
                     { // only allow "<(&/, A..., OP) =/> X>
                         if (
                             ( (rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) )
@@ -320,6 +321,7 @@ public class TemporalControl {
                             // TODO< check for to complicated sequences >
                         }
                     }
+                    */
 
                     { // disallow "<(&/, OP, +T) =/> X>
                         if (
@@ -380,7 +382,7 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
+            System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
 
             if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
                 int debug42 = 6;
@@ -582,6 +584,9 @@ public class TemporalControl {
 
                                 Task middleEvent = null; // event in the middle between the two events
 
+                                float middleEventMustBeOpPropability = 0.5f; // config
+                                boolean middleEventMustBeOp = mem.randomNumber.nextFloat() > middleEventMustBeOpPropability; // must the middle event be an op or can it be a normal event?
+
                                 for(int idx2=neightborMinIdx;idx2<neightborMaxIdx;idx2++) {
                                     EligibilityTrace.EligibilityTraceItem traceItem = eligibilityTrace.eligibilityTrace.get(idx2);
 
@@ -611,7 +616,7 @@ public class TemporalControl {
 
                                                     // filter for events which are ops
                                                     for(Task iEvent : additionalEventTraceItem.events) {
-                                                        if (iEvent.sentence.term instanceof Operation) {
+                                                        if (!middleEventMustBeOp || iEvent.sentence.term instanceof Operation) {
                                                             middleEventCandidates.add(iEvent);
                                                         }
                                                     }
