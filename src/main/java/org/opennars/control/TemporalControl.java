@@ -16,19 +16,10 @@ import static java.lang.Long.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
-/*
-TODO< filter nonsense where implications are children of the left side of the root implication >
-
-TrieDeriver.derive()
-   a=<{SELF} --> [good]>. %1.00;0.90% [6703]
-   b=<(&/,<{SELF} --> [good]>,+110) =/> <(&/,(^Right,{SELF}),+50) =/> <{left} --> [on]>>>. %1.00;0.29% [6781]
-derived = <(&/,<{SELF} --> [good]>,+78) =/> <(&/,<{SELF} --> [good]>,+110) =/> <(&/,(^Right,{SELF}),+50) =/> <{left} --> [on]>>>>. %1.00;0.21% [6703]
-derived = <(&/,<{SELF} --> [good]>,+78) =/> <(&/,<{SELF} --> [good]>,+110) =/> <(&/,(^Right,{SELF}),+50) =/> <{left} --> [on]>>>>. %1.00;0.21% [6703]
- */
-
 public class TemporalControl {
     public double heatUp = 0.05; // config
 
+    public int inferencesPerCycle = 20; // config
 
 
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
@@ -102,7 +93,7 @@ public class TemporalControl {
         }
         // we need to limit it just for testing and because it derives a lot of nonsense with to much complexity
         if (("" + task.sentence).contains("^believe") || ("" + task.sentence).contains("^want")) {
-            //return false;
+            return false;
         }
 
         return true;
@@ -178,89 +169,64 @@ public class TemporalControl {
     }
 
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
-        // select events which happened recently
-        TaskPair sentencePair = generalInferenceSampleSentence(mem);
-        if (sentencePair == null) {
-            return; // we need two events to reason about
-        }
-        Task
-            eventA = sentencePair.a,
-            eventB = sentencePair.b,
-            eventMiddle = sentencePair.middleEvent;
-
-        if (eventA == null || eventB == null) {
-            return; // we need two events to reason about
-        }
-
-        if (eventA.sentence.term.equals(eventB.sentence.term)) {
-            return; // no need to reason about the same event happening at the same time
-        }
-
-        // must not overlap
-        if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
-            return;
-        }
-
-
-        // debugging
-        if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair a = "+eventA);
-        if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair b = "+eventB);
-        if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair middle = "+eventMiddle);
-
         List<Sentence> conclusionSentences = new ArrayList<>();
 
-        { // preprocess and stuff it into deriver
-            Sentence premiseEventASentence = eventA.sentence;
-            Sentence premiseEventBSentence = eventB.sentence;
+        for(int iInference=0; iInference<inferencesPerCycle; iInference++) {
+            // select events which happened recently
+            TaskPair sentencePair = generalInferenceSampleSentence(mem);
+            if (sentencePair == null) {
+                return; // we need two events to reason about
+            }
+            Task
+                eventA = sentencePair.a,
+                eventB = sentencePair.b,
+                eventMiddle = sentencePair.middleEvent;
 
-            if (eventMiddle != null) {
-                // TODO< do we randomly select if we want to use the middle event? >
+            if (eventA == null || eventB == null) {
+                return; // we need two events to reason about
+            }
 
-                // build sequence of eventA and middle event
-                if (!Stamp.baseOverlap(premiseEventASentence.stamp, eventMiddle.sentence.stamp)) {
-                    premiseEventASentence = buildSequence(premiseEventASentence, eventMiddle.sentence, time, narParameters);
+            if (eventA.sentence.term.equals(eventB.sentence.term)) {
+                return; // no need to reason about the same event happening at the same time
+            }
 
-                    if (!(premiseEventBSentence.term instanceof Operation)) {
-                        int here42 = 6;
-                    }
-
-                    int debug42 = 6;
-                }
+            // must not overlap
+            if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
+                return;
             }
 
 
-            // stuff it all into the deriver
-            mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, narParameters);
+            // debugging
+            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair a = "+eventA);
+            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair b = "+eventB);
+            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair middle = "+eventMiddle);
+
+            { // preprocess and stuff it into deriver
+                Sentence premiseEventASentence = eventA.sentence;
+                Sentence premiseEventBSentence = eventB.sentence;
+
+                if (eventMiddle != null) {
+                    // build sequence of eventA and middle event
+                    if (!Stamp.baseOverlap(premiseEventASentence.stamp, eventMiddle.sentence.stamp)) {
+                        premiseEventASentence = buildSequence(premiseEventASentence, eventMiddle.sentence, time, narParameters);
+
+                        if (!(premiseEventBSentence.term instanceof Operation)) {
+                            int here42 = 6;
+                        }
+
+                        int debug42 = 6;
+                    }
+                }
+
+
+                // stuff it all into the deriver
+                mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, narParameters);
+            }
         }
+
 
         if (conclusionSentences.size() > 0) {
             int here = 6;
-        }
-
-        // transform conclusions into valid forms for OpenNARS
-        for (int idx=0;idx<conclusionSentences.size();idx++) {
-            Term conclusionTerm = conclusionSentences.get(idx).term;
-
-            Implication impl = (Implication)conclusionTerm;
-
-            if (impl == null) {
-                continue;
-            }
-
-            if (!checkImplSeqForm(impl)) {
-                continue; // can't fold, this is fine
-            }
-
-            Term subj = foldSeqFormOfImplSeqIntoSeqRec(impl.term[0]);
-            Term pred = impl.term[1];
-
-            conclusionTerm = new Implication(new Term[]{subj, pred}, impl.getTemporalOrder());
-
-            if (!(""+conclusionTerm).equals(""+conclusionSentences.get(idx).term)) {
-                int here42 = 6;
-            }
-
-            conclusionSentences.set(idx, overrideTermOfSentence(conclusionSentences.get(idx), conclusionTerm));
         }
 
         // filter out not allowed conclusions (for OpenNARS)
@@ -419,6 +385,18 @@ public class TemporalControl {
 
         // add results to trace
         for(Sentence iDerivedSentence : conclusionSentences) {
+            boolean allowAddToTrace = false;
+
+            if (iDerivedSentence.term instanceof Conjunction && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                allowAddToTrace = true;
+            }
+
+            // TODO< allow concurrent events too >
+
+            if (!allowAddToTrace) {
+                continue;
+            }
+
             // TODO< derive budget somehow >
             BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
 
@@ -451,7 +429,7 @@ public class TemporalControl {
 
         Term conclusionTerm = DeriverHelpers.make("&/",a.term,new Interval(occTimeDiff),b.term);
         Stamp stamp = new Stamp(a.stamp, b.stamp, time, narParameters); // merge stamps
-        TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, a.truth, b.truth, narParameters);
+        TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, a.truth, b.truth, narParameters);
         return new Sentence(conclusionTerm, '.', tv, stamp);
     }
 
@@ -627,26 +605,6 @@ public class TemporalControl {
                                                     int middleEventCandidateIdx = mem.randomNumber.nextInt(middleEventCandidates.size());
                                                     middleEvent = middleEventCandidates.get(middleEventCandidateIdx);
                                                 }
-
-                                                /* commented because old way which is not biased towards OPS
-
-                                                int additionalEventIdx = min(primaryEventIdx, secondaryEventIdx)+1 + mem.randomNumber.nextInt(idxDiff-1);
-
-                                                EligibilityTrace.EligibilityTraceItem additionalEventTraceItem = eligibilityTrace.eligibilityTrace.get(additionalEventIdx);
-
-                                                if (additionalEventTraceItem.events.size() > 0) {
-                                                    // select random event as middle event
-
-                                                    int eventIdx = mem.randomNumber.nextInt(additionalEventTraceItem.events.size());
-                                                    middleEvent = additionalEventTraceItem.events.get(eventIdx);
-
-
-                                                    // check if it is an op, ignore it if this is not the case
-                                                    if (!(middleEvent.term instanceof Operation)) {
-                                                        middleEvent = null;
-                                                    }
-                                                }
-                                                */
                                             }
                                         }
 
@@ -717,55 +675,6 @@ public class TemporalControl {
         return rootConjSubj instanceof Conjunction && (rootConjSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD);
     }
 
-
-    // recursivly fold terms of the form  (&/, A...) =/> B into (&/, A..., B)
-    // does handle sequences fine
-    static private Term foldSeqFormOfImplSeqIntoSeqRec(Term term) {
-        if (term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            // is in "(&/ A...)" form
-
-            Conjunction seq = (Conjunction)term;
-
-            Term[] transformed = new Term[seq.term.length];
-            for(int idx=0;idx<seq.term.length;idx++) {
-                transformed[idx] = foldSeqFormOfImplSeqIntoSeqRec(seq.term[idx]);
-            }
-
-            return Conjunction.make(transformed, seq.temporalOrder);
-        }
-        else if (checkImplSeqForm(term)) {
-            // is in "(&/, A...) =/> B" form
-
-            return foldImplSeqIntoSeqRec(term);
-        }
-
-        return term; // can't transform
-    }
-
-    // folds (&/, A...) =/> B into (&/, A..., B) recursivly
-    static private Term foldImplSeqIntoSeqRec(Term term) {
-        if ((""+term).contains("=/>")) {
-            int debug42 = 6;
-        }
-
-        if (!checkImplSeqForm(term)) {
-            return term; // we don't need to transform it
-        }
-
-        Term rootConjSubj = ((Implication)term).term[0]; // fetch "(&/, A...)"
-
-        Term[] resultTerms = new Term[((CompoundTerm) rootConjSubj).term.length + 1];
-        // call recursivly
-        for(int idx=0;idx<((CompoundTerm) rootConjSubj).term.length;idx++) {
-            Term iteratedTerm = ((CompoundTerm) rootConjSubj).term[idx];
-            resultTerms[idx] = foldSeqFormOfImplSeqIntoSeqRec(iteratedTerm);
-        }
-
-        resultTerms[resultTerms.length-1] = ((Implication)term).term[1]; // "B" is last
-
-        Term result = Conjunction.make(resultTerms, TemporalRules.ORDER_FORWARD);
-        return result;
-    }
 
 
 
