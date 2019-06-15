@@ -304,7 +304,7 @@ public class ProcessGoal {
         //3. For the more specific hypotheses first and then the general
         for(List<Task> table : new List[] {concept.executable_preconditions, generalPreconditions}) {
             //4. Apply choice rule, using the highest truth expectation solution and anticipate the results
-            ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, table, anticipationsToMake);
+            ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal, task.isNal9, table, anticipationsToMake);
             //5. And executing it, also forming an expectation about the result
             if(executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task)) {
                 Concept op = nal.memory.concept(bestOpWithMeta.bestop);
@@ -331,7 +331,7 @@ public class ProcessGoal {
      * @param execPreconditions The procedural hypotheses with the executable preconditions
      * @return The procedural hypothesis with the highest result truth expectation
      */
-    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, List<Task> execPreconditions, Map<Operation,List<ExecutablePrecondition>> anticipationsToMake) {
+    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal, final boolean isNal9Goal, List<Task> execPreconditions, Map<Operation,List<ExecutablePrecondition>> anticipationsToMake) {
         ExecutablePrecondition result = new ExecutablePrecondition();
         for(final Task t: execPreconditions) {
             final CompoundTerm precTerm = ((Conjunction) ((Implication) t.getTerm()).getSubject());
@@ -341,6 +341,15 @@ public class ProcessGoal {
             float timeOffset = (long) (((Interval)prec[prec.length-1]).time);
             float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
             final Operation op = (Operation) prec[prec.length-2];
+
+            // this is necessary to prevent OpenNARS to execute dangerous and nonsensical NAL-9 ops which it can't weed out easily
+            if (op.getOperator().isNal9 && !isNal9Goal) {
+                continue; // don't allow to consider to execute NAL-9 operators from non-NAL9 goals
+            }
+
+
+
+
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
             long newesttime = -1;
             Task bestsofar = null;

@@ -43,7 +43,7 @@ import java.util.List;
 public class Evaluate extends Operator {
 
     public Evaluate() {
-        super("^evaluate");
+        super("^evaluate", true);
     }
 
     /**

@@ -47,11 +47,19 @@ import org.opennars.main.MiscFlags;
  * This is the only file to modify when registering a new operator into NARS.
  */
 public abstract class Operator extends Term implements Plugin {
+    public boolean isNal9 = false;
     
     protected Operator() {   super();    }
     
     protected Operator(final String name) {
         super(name);
+        if (!name.startsWith("^"))
+            throw new IllegalStateException("Operator name needs ^ prefix");
+    }
+
+    public Operator(String name, boolean isNal9) {
+        super(name);
+        this.isNal9 = isNal9;
         if (!name.startsWith("^"))
             throw new IllegalStateException("Operator name needs ^ prefix");
     }

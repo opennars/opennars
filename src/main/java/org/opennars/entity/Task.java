@@ -52,6 +52,9 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     /* Whether it is an input task or not */
     private boolean isInput = false;
 
+    /* Whether it is a NAL-9 goal */
+    public boolean isNal9 = false;
+
     /**
      * Constructor for input task and single premise derived task
      *

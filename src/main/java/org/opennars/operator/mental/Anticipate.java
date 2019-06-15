@@ -66,7 +66,7 @@ public class Anticipate extends Operator implements EventObserver {
 
 
     public Anticipate() {
-        super("^anticipate");        
+        super("^anticipate", true);
     }
     public Anticipate(float ANTICIPATION_DURABILITY_MUL, float ANTICIPATION_PRIORITY_MUL) {
         this();

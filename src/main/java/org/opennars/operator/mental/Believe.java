@@ -42,7 +42,7 @@ import java.util.List;
 public class Believe extends Operator {
 
     public Believe() {
-        super("^believe");
+        super("^believe", true);
     }
 
     /**

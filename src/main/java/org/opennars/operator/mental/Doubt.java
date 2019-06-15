@@ -39,7 +39,7 @@ import java.util.List;
 public class Doubt extends Operator {
 
     public Doubt() {
-        super("^doubt");
+        super("^doubt", true);
     }
 
     /**
