@@ -21,6 +21,8 @@ public class TemporalControl {
 
     public int inferencesPerCycle = 20; // config
 
+    public double novelityThreshold = 0.5;
+
 
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
         if ((""+task.sentence.term).contains("(^")) {
@@ -47,12 +49,23 @@ public class TemporalControl {
         }
 
         if (!termWithHeatByTerm.containsKey(task.sentence.term)) {
-            ConceptWithSalience createdConceptWithSalience = new ConceptWithSalience(task.sentence.term);
+            ConceptWithSalience createdConceptWithSalience = new ConceptWithSalience(task);
             termWithHeatByTerm.put(task.sentence.term, createdConceptWithSalience);
             sortedByHeat.add(createdConceptWithSalience);
         }
 
-        termWithHeatByTerm.get(task.sentence.term).salience += heatUp;
+        termWithHeatByTerm.get(task.sentence.term).lastInputTask = task; // update with last task because we only care about the last task
+
+        boolean isNovel = termWithHeatByTerm.get(task.sentence.term).salience < novelityThreshold;
+        if (isNovel) {
+            // we treat novel events differently by boosting it
+            termWithHeatByTerm.get(task.sentence.term).salience = heatUp * 1000;
+
+            System.out.println("event bag : novel event: "+task.sentence.term);
+        }
+        else {
+            termWithHeatByTerm.get(task.sentence.term).salience += heatUp;
+        }
 
         return true;
     }
@@ -140,7 +153,7 @@ public class TemporalControl {
 
         while(sortedByHeat.size() > maxSize) {
             ConceptWithSalience current = sortedByHeat.get(maxSize);
-            termWithHeatByTerm.remove(current.sentenceTerm);
+            termWithHeatByTerm.remove(current.lastInputTask.sentence.term);
             sortedByHeat.remove(maxSize);
         }
 
@@ -154,18 +167,26 @@ public class TemporalControl {
      */
     // is used in decision making only
     public List<Task> retSeqCurrent() {
-        List<Task> mostRecentEvents = new ArrayList<>();
+        List<Task> resultEvents = new ArrayList<>();
 
 
         int traceMostRecentEventHorizonItems = 2; // config - how many most recent items from the "event trace" are taken into account
                                                   // has a low value because pong seems to have issues with high values (like for ex 30)
 
+        // commented because it is the old way which only takes the last n timesteps into account
         for(int idx=Math.max(eligibilityTrace.eligibilityTrace.size()-traceMostRecentEventHorizonItems, 0);idx<eligibilityTrace.eligibilityTrace.size();idx++) {
             EligibilityTrace.EligibilityTraceItem eventTraceItem = eligibilityTrace.eligibilityTrace.get(idx);
-            mostRecentEvents.addAll(eventTraceItem.events);
+            resultEvents.addAll(eventTraceItem.events);
         }
 
-        return mostRecentEvents;
+
+        /*
+        for(ConceptWithSalience iTask : termWithHeatByTerm.values()) {
+            resultEvents.add(iTask.lastInputTask);
+        }
+         */
+
+        return resultEvents;
     }
 
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
@@ -452,11 +473,17 @@ public class TemporalControl {
 
         double selectedSalience = mem.randomNumber.nextDouble() * salienceMass;
 
+        // do we sample the secondary event uniformly?
+        boolean enableUniformSecondarySampling = mem.randomNumber.nextDouble() > 0.2; // config
+
+        // sample a far smaller window when sampling uniformly
+        int neightborEventWindowSize = enableUniformSecondarySampling ? 5 : 500; // config
+
         double salienceAccu = 0.0;
         for(ConceptWithSalience iConceptWithSalience : sortedByHeat) {
             salienceAccu += iConceptWithSalience.salience;
             if(salienceAccu > selectedSalience) {
-                Concept primarySelectedConcept = mem.concept(iConceptWithSalience.sentenceTerm);
+                Concept primarySelectedConcept = mem.concept(iConceptWithSalience.lastInputTask.sentence.term);
                 if (primarySelectedConcept == null) {
                     return null;
                 }
@@ -530,7 +557,7 @@ public class TemporalControl {
                                 // ignore if it is null
                             }
                             else {
-                                int neightborEventWindowSize = 500; // config
+
 
                                 int neightborMinIdx = primaryEventIdx - neightborEventWindowSize;
                                 int neightborMaxIdx = primaryEventIdx + neightborEventWindowSize;
@@ -538,7 +565,7 @@ public class TemporalControl {
                                 neightborMaxIdx = min(neightborMaxIdx, eligibilityTrace.eligibilityTrace.size());
 
 
-                                // compute accumated mass
+                                // compute accumulated mass
                                 double windowedSalienceAccu = 0.0;
                                 for(int idx2=neightborMinIdx;idx2<neightborMaxIdx;idx2++) {
                                     EligibilityTrace.EligibilityTraceItem traceItem = eligibilityTrace.eligibilityTrace.get(idx2);
@@ -547,6 +574,9 @@ public class TemporalControl {
                                     double expWindow = Math.exp(-timeDiff * decayFactorSecondary); // config
 
                                     double mulSalience = expWindow * traceItem.decay; // multiply salience with window to get "windowed" salience
+                                    if (enableUniformSecondarySampling) { // do we sample uniformly?
+                                        mulSalience = 1.0;
+                                    }
 
                                     windowedSalienceAccu += mulSalience;
                                 }
@@ -572,6 +602,9 @@ public class TemporalControl {
                                     double expWindow = Math.exp(-timeDiff * decayFactorSecondary); // config
 
                                     double mulSalience = expWindow * traceItem.decay; // multiply salience with window to get "windowed" salience
+                                    if (enableUniformSecondarySampling) { // do we sample uniformly?
+                                        mulSalience = 1.0;
+                                    }
 
                                     selectionMassAccu += mulSalience;
 
@@ -679,12 +712,12 @@ public class TemporalControl {
 
 
     public static class ConceptWithSalience {
-        public Term sentenceTerm;
+        public Task lastInputTask;
 
         public double salience = 0;
 
-        public ConceptWithSalience(Term sentenceTerm) {
-            this.sentenceTerm = sentenceTerm;
+        public ConceptWithSalience(Task lastInputTask) {
+            this.lastInputTask = lastInputTask;
         }
     }
 
