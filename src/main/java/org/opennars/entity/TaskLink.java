@@ -67,16 +67,14 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
             return time;
         }
 
-        
         public void setTime(final long t) {
             this.time = t;
         }
         
     }
     
+    /** The usage record **/
     public final Deque<Recording> records;
-    
-
     
     /** The type of link, one of the above */    
     public final short type;
@@ -109,7 +107,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         ;
         
         this.targetTask = t;
-        
         this.recordLength = recordLength;
         this.records = new ArrayDeque(recordLength);
         this.hash = (((targetTask.hashCode() * 31) + type) * 31) + (index!=null ? Arrays.hashCode(index) : 0);
@@ -171,7 +168,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
             return false;
         }
         final TermLink linkKey = termLink.name();
-        int next, i;
                 
         //iterating the FIFO deque from oldest (first) to newest (last)
         final Iterator<Recording> ir = records.iterator();
@@ -190,14 +186,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
                 }
             }
         }
-        
-        
         //keep recordedLinks queue a maximum finite size
         while (records.size() + 1 >= recordLength) records.removeFirst();
-        
         // add knowledge reference to recordedLinks
         records.addLast(new Recording(linkKey, currentTime));
-        
         return true;
     }
 
