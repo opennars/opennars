@@ -36,6 +36,7 @@ import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
+import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
 
@@ -98,7 +99,7 @@ public class ProcessQuestion {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
             for(final TaskLink t : concept.taskLinks) {
-                final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                final Term[] u = new Term[] { CompoundTerm.replaceIntervals(ques.getTerm()), CompoundTerm.replaceIntervals(t.getTerm()) };
                 if(!t.getTerm().hasVarQuery() && Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, u)) {
                     final Concept c = nal.memory.concept(t.getTerm());
                     if(c == null) {
@@ -137,7 +138,7 @@ public class ProcessQuestion {
                     (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
                     (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
                     boolean newAnswer = false;
-                    final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                    final Term[] u = new Term[] { CompoundTerm.replaceIntervals(ques.getTerm()), CompoundTerm.replaceIntervals(t.getTerm()) };
                     if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(nal.memory.randomNumber, Symbols.VAR_QUERY, u)) {
                         final Concept c = nal.memory.concept(t.getTerm());
                         if(c == null) {
