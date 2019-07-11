@@ -51,6 +51,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
     public final Task targetTask;
     private final int recordLength;
     
+    /* Hash of the object */
+    public int hash;
     
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
     public final static class Recording implements Serializable {
@@ -81,8 +83,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
-    
-    public int hash;
     
     /**
      * Constructor
