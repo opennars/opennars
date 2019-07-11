@@ -28,6 +28,7 @@ import org.opennars.main.Parameters;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -82,7 +83,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
-
+    
+    public int hash;
     
     /**
      * Constructor
@@ -110,13 +112,13 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         
         this.recordLength = recordLength;
         this.records = new ArrayDeque(recordLength);
-        
+        this.hash = (((targetTask.hashCode() * 31) + type) * 31) + (index!=null ? Arrays.hashCode(index) : 0);
     }
 
 
     @Override
-    public int hashCode() {        
-        return targetTask.hashCode();                
+    public int hashCode() {
+        return hash;       
     }
 
     @Override
@@ -130,7 +132,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             final TaskLink t = (TaskLink)obj;
-            return t.targetTask.equals(targetTask);                    
+            return hash==t.hash && type==t.type && Arrays.equals(index, t.index) && targetTask.equals(t.targetTask);
         }
         return false;
     }    
