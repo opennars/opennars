@@ -32,6 +32,7 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
+import org.opennars.util.Instrumentation;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -137,7 +138,7 @@ public class TemporalInferenceControl {
                         final long x = Toperation.sentence.getOccurenceTime();
                         final long y = takeout.sentence.getOccurenceTime();
                         if(y > x) { //something wrong here?
-                            System.out.println("analyze case in TemporalInferenceControl!");
+                            Instrumentation.debug("TemporalInferenceControl", "analyze case in TemporalInferenceControl!");
                             continue;
                         }
                         final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
