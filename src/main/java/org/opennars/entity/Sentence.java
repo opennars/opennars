@@ -366,10 +366,10 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             newTruth = TruthFunctions.eternalize(truth, mem.narParameters);
             if (targetTime != Stamp.ETERNAL) {
                 final long occurrenceTime = stamp.getOccurrenceTime();
-                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime, mem.narParameters);
-                final float projectedConfidence = factor * truth.getConfidence();
+                final double factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime, mem.narParameters);
+                final double projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence, mem.narParameters);
+                    newTruth = new TruthValue(truth.getFrequency(), (float)projectedConfidence, mem.narParameters);
                 }
             }
         }
