@@ -182,12 +182,12 @@ public class LocalRules {
             for(int i=0;i<ivalNew.size();i++) {
                 AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
             }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
+            final double a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
             //we won't count more confidence than
             //when the second premise would have been shifted
             //to the necessary time in the first place
             //to build the hypothesis newBelief encodes
-            newTruth.setConfidence(newTruth.getConfidence()*a);
+            newTruth.setConfidence((float)(newTruth.getConfidence()*a));
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         return useNewBeliefTerm;
