@@ -110,7 +110,7 @@ def convertPathToJavaSrc(path):
             asStringList.append('"'+iPathElement+'"')
         else:
             asStringList.append('"' + str(iPathElement) + '"')
-    return "[" + ",".join(asStringList) + "]"
+    return "new String[]{" + ",".join(asStringList) + "}"
 
 # code generator : emit code
 def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
@@ -118,6 +118,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
     def convTruthFnNameToEnum(truth):
         if truth == "induction":
             return "TruthFunctions.EnumType.INDUCTION"
+        elif truth == "abduction":
+            return "TruthFunctions.EnumType.ABDUCTION"
         else:
             raise Exception("not implement truth function!")
 
@@ -256,19 +258,35 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
                     return "b"
 
                 if resList[0][0] == 'a' or resList[0][0] == 'b':
-                    code = "(" + "(Binary)"+resList[0][0] + ")" + resList[0][1:]
+
+                    retrivalCode = ""
+                    if resList[0][1:] == ".subject":
+                        retrivalCode = ".getSubject()"
+                    elif resList[0][1:] == ".predicate":
+                        retrivalCode = ".getPredicate()"
+                    else:
+                        raise Exception("")
+                    code = "(" + "(Statement)"+resList[0][0] + ")" + retrivalCode
 
                 return code
             elif len(resList) == 2:
                 code = None
                 if resList[0][0] == 'a' or resList[0][0] == 'b':
-                    code = "(" + "(Binary)"+resList[0][0] + ")" + resList[0][1:]
+
+                    retrivalCode = ""
+                    if resList[0][1:] == ".subject":
+                        retrivalCode = ".getSubject()"
+                    elif resList[0][1:] == ".predicate":
+                        retrivalCode = ".getPredicate()"
+                    else:
+                        raise Exception("")
+                    code = "(" + "(Statement)"+resList[0][0] + ")" + retrivalCode
 
 
                 if resList[1] == 0:
-                    code = "((Binary)("+ code +"))" + ".subject"
+                    code = "((Statement)("+ code +"))" + ".getSubject()"
                 elif resList[1] == 1:
-                    code = "((Binary)("+ code +"))" + ".predicate"
+                    code = "((Statement)("+ code +"))" + ".getPredicate()"
                 #if resList[1] == "idx0": # special handling for compound access
                 #    code += ".TODO[0]"
                 #elif resList[1] == "idx1":
@@ -344,7 +362,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
 
     if isinstance(premiseA, tuple):
         emit("    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.CHECKCOPULA);")
-        emit("    te0.side = EnumSide.LEFT;")
+        emit("    te0.side = Trie.TrieElement.EnumSide.LEFT;")
         emit("    te0.checkedString = \""+escape(premiseACopula)+"\";")
         emit("    ")
 
@@ -352,7 +370,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
 
     if isinstance(premiseB, tuple):
         emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.CHECKCOPULA);")
-        emit("    te"+str(teCounter)+".side = EnumSide.RIGHT;")
+        emit("    te"+str(teCounter)+".side = Trie.TrieElement.EnumSide.RIGHT;")
         emit("    te"+str(teCounter)+".checkedString = \""+escape(premiseBCopula)+"\";")
 
         emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
@@ -381,8 +399,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
         emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        emit("    te"+str(teCounter)+".pathLeft = [\"a.subject\"];") # print python list to D list
-        emit("    te"+str(teCounter)+".pathRight = [];")
+        emit("    te"+str(teCounter)+".pathLeft = new String[]{\"a.subject\"};")
+        emit("    te"+str(teCounter)+".pathRight = new String[]{};")
         emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
         emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
@@ -396,8 +414,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
         emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        emit("    te"+str(teCounter)+".pathLeft = [\"a.predicate\"];") # print python list to D list
-        emit("    te"+str(teCounter)+".pathRight = [];")
+        emit("    te"+str(teCounter)+".pathLeft = new String[]{\"a.predicate\"};")
+        emit("    te"+str(teCounter)+".pathRight = new String[]{};")
         emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
         emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
@@ -412,8 +430,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
         emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        emit("    te"+str(teCounter)+".pathLeft = [];") # print python list to D list
-        emit("    te"+str(teCounter)+".pathRight = [\"b.subject\"];")
+        emit("    te"+str(teCounter)+".pathLeft = new String[]{};")
+        emit("    te"+str(teCounter)+".pathRight = new String[]{\"b.subject\"};")
         emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
         emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
@@ -427,8 +445,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
         emit("    Trie.TrieElement te"+str(teCounter)+" = new Trie.TrieElement(Trie.TrieElement.EnumType.WALKCHECKCOMPOUND);")
 
 
-        emit("    te"+str(teCounter)+".pathLeft = [];") # print python list to D list
-        emit("    te"+str(teCounter)+".pathRight = [\"b.predicate\"];")
+        emit("    te"+str(teCounter)+".pathLeft = new String[]{};")
+        emit("    te"+str(teCounter)+".pathRight = new String[]{\"b.predicate\"};")
         emit("    te"+str(teCounter)+".checkedString = \"" + comparedCompoundType + "\";")
 
         emit("    te"+str(teCounter-1)+".children.add( te"+str(teCounter)+");")
@@ -517,7 +535,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
 
 
     if intervalProjection == "IntervalProjection(t,z)": # do we need to manipulate the tv for projection?
-            derivationFunctionsSrc+= "      tv = new TruthValue(tv.freq, tv.getConfidence() * trieCtx.projectedTruthConfidence); // multiply confidence with confidence of projection\n"
+            derivationFunctionsSrc+= "      tv = new TruthValue(tv.getFrequency(), (float)(tv.getConfidence() * trieCtx.projectedTruthConfidence), narParameters); // multiply confidence with confidence of projection\n"
 
     derivationFunctionsSrc+= "      if(hasConclusionTruth && tv.getConfidence() < 0.0001) {\n"
     derivationFunctionsSrc+= "          return; // conclusions with such a low conf are not relevant to the system\n"
@@ -620,6 +638,7 @@ emit("import org.opennars.entity.Sentence;")
 emit("import org.opennars.entity.Stamp;")
 emit("import org.opennars.entity.TruthValue;")
 emit("import org.opennars.language.Interval;")
+emit("import org.opennars.language.Statement;")
 emit("import org.opennars.language.Term;")
 emit("import org.opennars.main.Parameters;")
 
@@ -665,10 +684,10 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
     copAsymHasTimeOffset = "/" in str(copAsym) or "\\" in str(copAsym)
     IntervalProjection = "IntervalProjection(t,z)" if copAsymHasTimeOffset else ""
 
-    if False: # block
+    if True: # block
         gen(("A", copAsym, "B"),   ("C", copAsymZ, "B"),   [], ("A", ival(copAsym, "t-z"), "C"),   ("induction", IntervalProjection), OmitForHOL("weak"))
 
-    if False:
+    if True:
         gen(("A", copAsym, "B"),   ("A", copAsymZ, "C"),   [], ("B", ival(copAsym, "t-z"), "C"),   ("abduction", IntervalProjection), OmitForHOL("strong"))
 
     if False: # added comparison
