@@ -489,8 +489,8 @@ public final class TruthFunctions extends UtilityFunctions {
         return new EternalizedTruthValue(f1, c, narParameters);
     }
     
-    public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime, Parameters param) {
+    public static final double temporalProjection(final long sourceTime, final long targetTime, final long currentTime, Parameters param) {
         final double a = 100000.0 * param.PROJECTION_DECAY; //projection less strict as we changed in v2.0.0  10000.0 slower decay than 100000.0
-        return 1.0f - abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime) + a);
+        return 1.0 - abs(sourceTime - targetTime) / (abs(sourceTime - currentTime) + abs(targetTime - currentTime) + a);
     }
 }
