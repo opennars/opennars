@@ -4,6 +4,8 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+import org.opennars.inference.TemporalRules;
+import org.opennars.language.Implication;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
@@ -57,6 +59,10 @@ public class EventInferenceDeriver {
         List<Sentence> conclusionSentences = new ArrayList<>();
         mem.trieDeriver.derive(premiseASentence, premiseBSentence, conclusionSentences, time, narParameters);
 
+        if (conclusionSentences.size() > 0) {
+            int debugMeHere = 5;
+        }
+
 
         // add results to memory
         {
@@ -81,9 +87,7 @@ public class EventInferenceDeriver {
 
         // put results back into bag and sort
         for(Sentence iConclusion : conclusionSentences) {
-            // TODO< add it only if it doesn't exist already based on statement and stamp >
-
-            bag.add(new StatementWithAttentionValue(iConclusion));
+            addToBagIfNecessary(iConclusion);
         }
 
         // sort
@@ -93,6 +97,38 @@ public class EventInferenceDeriver {
         while(bag.size() > bagMaxSize) {
             bag.remove(bagMaxSize);
         }
+    }
+
+    public void addToBagIfNecessary(Sentence sentence) {
+        // TODO< add it only if it doesn't exist already based on statement and stamp >
+
+        bag.add(new StatementWithAttentionValue(sentence));
+    }
+
+
+    /**
+     * checks if sentence is eternal and in allowed NAL-7 form and adds it to it's bag if so
+     * @param sentence
+     */
+    public void addOnlyNal7ToBagIfNecessary(Sentence sentence) {
+        // disallow events because the inference is done somewhere else for events
+        // allow only judgements TODO< allow questions too? >
+        if (!sentence.stamp.isEternal() || sentence.punctuation != '.') {
+            return;
+        }
+
+        { // allow only implications with a temporal order!
+            if (!(sentence.term instanceof Implication)) {
+                return;
+            }
+
+            if (sentence.term.getTemporalOrder() == TemporalRules.ORDER_INVALID || sentence.term.getTemporalOrder() == TemporalRules.ORDER_NONE) {
+                return;
+            }
+        }
+
+        // now we can try to add if it is not known yet
+        addToBagIfNecessary(sentence);
     }
 
 

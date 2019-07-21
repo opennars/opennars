@@ -23,11 +23,8 @@
  */
 package org.opennars.storage;
  
-import org.opennars.control.TemporalControl;
+import org.opennars.control.*;
 import org.opennars.control.concept.ProcessTask;
-import org.opennars.control.DerivationContext;
-import org.opennars.control.GeneralInferenceControl;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TrieDeriver;
@@ -113,6 +110,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     boolean isjUnit=false;
 
     public TemporalControl temporalControl = new TemporalControl();
+    public EventInferenceDeriver eventInferenceDeriver = new EventInferenceDeriver();
 
     public TrieDeriver trieDeriver;
 
@@ -368,6 +366,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         { // general inference for temporal reasoning - generating temporal conclusions
             temporalControl.generalInferenceGenerateTemporalConclusions(inputs, this, inputs.time(), narParameters);
         }
+
+        { // general inference for temporal reasoning - give cycles to deriver
+            eventInferenceDeriver.tryInfer(inputs.time(), this, narParameters);
+        }
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -395,6 +397,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             if (!task.sentence.isEternal()) {
                 temporalControl.immediateProcessEvent(task, cont);
             }
+
+            eventInferenceDeriver.addOnlyNal7ToBagIfNecessary(task.sentence);
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
                 //TemporalInferenceControl.eventInference(task, cont);
