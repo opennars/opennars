@@ -466,7 +466,7 @@ public class TemporalControl {
         }
     }
 
-    public boolean DEBUG_TEMPORALCONTROL = false;
+    public boolean DEBUG_TEMPORALCONTROL = true;
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
 
@@ -787,7 +787,7 @@ public class TemporalControl {
 
                 int here = 5;
 
-                if(idxMin == idxMax-1) {
+                if(idxMin == idxMax) {
                     return null; // didn't find item with the exact occurence time
                 }
 
