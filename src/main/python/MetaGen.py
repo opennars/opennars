@@ -248,6 +248,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
                 return "new Interval(trieCtx.intervalPremiseT-trieCtx.intervalPremiseZ)"
             elif name == "tB-tA": # special case - we have to compute the difference of the timestamps
                 return "new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA)"
+            elif name == "tA-tB": # special case - we have to compute the difference of the timestamps
+                return "new Interval(/*negate because tA-tB is a convention but leads to negative timing*/- (trieCtx.occurrencetimePremiseA-trieCtx.occurrencetimePremiseB))"
 
             resList = retPathOfName(name)
 
@@ -342,6 +344,9 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
     global emitExecCode
     if not emitExecCode:
         return # if we don't emit the code and just the inference rules with comments
+
+    #DEBUG print("SUBJ "+str(conclusionSubj))
+    #DEBUG print("PRED "+str(conclusionPred))
 
     conclusionSubjCode = retCode(conclusionSubj)
     conclusionPredCode = retCode(conclusionPred)
@@ -554,6 +559,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
 
 # helper to convert a premise from the temporal form to something which we can generate the code for
 # ex: "A =/>(t) B" to "(&/, A, t) =/> B"
+# ex: "A =\>(t) B" to "A =\> (&/, B, t)"
 def convTerm2(term):
     if isinstance(term, tuple):
         if len(term) == 3:
@@ -567,7 +573,12 @@ def convTerm2(term):
                 if isinstance(copula, CWT):
                     # we have to rebuild the statement
 
-                    return (("&/", name0, copula.tname), copula.copula, name1)
+                    if copula.copula == "=/>":
+                        return (("&/", name0, copula.tname), copula.copula, name1)
+                    elif copula.copula == "=\\>":
+                        return (name0, copula.copula, ("&/", name1, copula.tname))
+                    else:
+                        raise Exception("Unhandled copula!")
                 else:
                     return term # no special handling necessary because it is not a CWT
 
@@ -579,6 +590,9 @@ def convTerm2(term):
     else:
         return term # no special treatment necessary
 
+# used to detect and ignore rules for which we had already generated code
+rulesOfAlreadyGeneratedCode = {}
+
 # generate trie code for the rule
 def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     
@@ -586,8 +600,16 @@ def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     # unpack truthTuple into truth and intervalProjection
     (truth, intervalProjection) = truthTuple
 
+    # create string description of rule
+    stringOfRule = convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"   " +str(preconditions)+  "  |-   " +  convTermToStr(conclusion) + "\t\t(Truth:"+truth+intervalProjection+")"
+
+    if stringOfRule in rulesOfAlreadyGeneratedCode:
+        return # ignore because we already generated code for this rule
+
+    rulesOfAlreadyGeneratedCode[stringOfRule] = True # register string of rule because we are in the process of generating code for it
+
     # TODO< print desire >
-    emit("// rule         "+convTermToStr(premiseA)+", "+convTermToStr(premiseB)+"   " +str(preconditions)+  "  |-   " +  convTermToStr(conclusion) + "\t\t(Truth:"+truth+intervalProjection+")")
+    emit("// rule         "+stringOfRule)
 
 
     genTrieEmit(convTerm2(premiseA), convTerm2(premiseB), preconditions,  convTerm2(conclusion), truthTuple, desire)
@@ -600,7 +622,7 @@ CopulaTypes = [
     ##["==>","<=>",[["&&"],"||",None]], #
     [CWT("=/>","t"),CWT("</>","t"),[[CWT("&/","t"),"&|"],"||",None]], ##
     ##["=|>","<|>",[["&/","&|"],"||",None]], #
-    #[CWT("=\>","t"),None ,[["&/","&|"],"||",None]] ###
+    [CWT("=\>","t"),None ,[["&/","&|"],"||",None]] ###
 ]
 
 # generate code for already implemented conversions?
@@ -684,10 +706,10 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
     copAsymHasTimeOffset = "/" in str(copAsym) or "\\" in str(copAsym)
     IntervalProjection = "IntervalProjection(t,z)" if copAsymHasTimeOffset else ""
 
-    if True: # block
+    if False:#True: # block
         gen(("A", copAsym, "B"),   ("C", copAsymZ, "B"),   [], ("A", ival(copAsym, "t-z"), "C"),   ("induction", IntervalProjection), OmitForHOL("weak"))
 
-    if True:
+    if False:#True:
         gen(("A", copAsym, "B"),   ("A", copAsymZ, "C"),   [], ("B", ival(copAsym, "t-z"), "C"),   ("abduction", IntervalProjection), OmitForHOL("strong"))
 
     if False: # added comparison
@@ -736,8 +758,9 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
                 #print "A\t\tB\t"+predRel+"\t|-\t(B "+copSym.replace("t",forwardRel)+"A)\t\t(Truth:Comparison, Variables:Introduce$#)"
 
             else:
-                pass
                 #print "A, \t\tB\t"+predRel+"\t|-\t(B "+copAsym+"(tA-tB) A)\t(Truth:Induction, Variables:Introduce$#)"
+                gen("A", "B",  predRel,("B", ival(copAsym, "tA-tB"), "A"),  ("induction", ""), "")
+
 
             #print "("+ConjCop+" A B)\t\t\t\t\t|-\tA\t\t\t(Truth:Deduction, Desire:Induction)"
 
