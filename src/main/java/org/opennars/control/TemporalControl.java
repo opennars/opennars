@@ -196,7 +196,7 @@ public class TemporalControl {
             // select events which happened recently
             TaskPair sentencePair = generalInferenceSampleSentence(mem);
             if (sentencePair == null) {
-                return; // we need two events to reason about
+                continue; // we need two events to reason about
             }
             Task
                 eventA = sentencePair.a,
@@ -204,16 +204,16 @@ public class TemporalControl {
                 eventMiddle = sentencePair.middleEvent;
 
             if (eventA == null || eventB == null) {
-                return; // we need two events to reason about
+                continue; // we need two events to reason about
             }
 
             if (eventA.sentence.term.equals(eventB.sentence.term)) {
-                return; // no need to reason about the same event happening at the same time
+                continue; // no need to reason about the same event happening at the same time
             }
 
             // must not overlap
             if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
-                return;
+                continue;
             }
 
 
@@ -787,7 +787,7 @@ public class TemporalControl {
 
                 int here = 5;
 
-                if(idxMin == idxMax) {
+                if(idxMin >= idxMax) {
                     return null; // didn't find item with the exact occurence time
                 }
 
@@ -795,7 +795,14 @@ public class TemporalControl {
 
                 long timeMiddle = eligibilityTrace.get(idxMiddle).retOccurenceTime();
                 if (timeMiddle < occTime) {
-                    idxMin = idxMiddle;
+                    // special handling to prevent infinite loop
+                    if(idxMin == idxMiddle) {
+                        idxMin = idxMin+1;
+                    }
+                    else  {
+                        idxMin = idxMiddle;
+                    }
+
                     continue;
                 }
                 else if(timeMiddle > occTime) {
