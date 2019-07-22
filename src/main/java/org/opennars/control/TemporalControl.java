@@ -369,7 +369,8 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
+            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
+            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
 
             if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
                 int debug42 = 6;
@@ -385,21 +386,36 @@ public class TemporalControl {
         // add results to memory
         {
             for(Sentence iConclusionSentence : conclusionSentences) {
-                BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+                { // add non-eternalized
+                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
 
-                // we need to eternalize the sentence
-                // TODO< do it the proper way with calculation of TV >
-                Stamp eternalizedStamp = iConclusionSentence.stamp.clone();
-                eternalizedStamp.setEternal();
-                Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, iConclusionSentence.truth, eternalizedStamp);
+                    Task createdTask = new Task(
+                        iConclusionSentence,
+                        budget,
+                        Task.EnumType.DERIVED
+                    );
 
-                Task createdTask = new Task(
-                    eternalizedSentence,
-                    budget,
-                    Task.EnumType.DERIVED
-                );
+                    mem.addNewTask(createdTask, "Derived");
+                }
 
-                mem.addNewTask(createdTask, "Derived");
+                { // add eternalized
+                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+
+                    // we need to eternalize the sentence
+                    // TODO< do it the proper way with calculation of TV >
+                    Stamp eternalizedStamp = iConclusionSentence.stamp.clone();
+                    eternalizedStamp.setEternal();
+                    Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, iConclusionSentence.truth, eternalizedStamp);
+
+                    Task createdTask = new Task(
+                        eternalizedSentence,
+                        budget,
+                        Task.EnumType.DERIVED
+                    );
+
+                    mem.addNewTask(createdTask, "Derived");
+                }
+
             }
         }
 
@@ -466,7 +482,7 @@ public class TemporalControl {
         }
     }
 
-    public boolean DEBUG_TEMPORALCONTROL = true;
+    public boolean DEBUG_TEMPORALCONTROL = false;
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
 
