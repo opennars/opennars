@@ -113,7 +113,8 @@ def convertPathToJavaSrc(path):
     return "new String[]{" + ",".join(asStringList) + "}"
 
 # code generator : emit code
-def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
+# /param timePremiseSource premise from which the timing will be sourced, can be 'l' for left premise or 'r'
+def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desire, timePremiseSource):
     # convert truth function name to the name of the enum
     def convTruthFnNameToEnum(truth):
         if truth == "induction":
@@ -534,7 +535,10 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, desir
 
     derivationFunctionsSrc+= "      Term conclusionTerm = DeriverHelpers.makeBinary(\""+escape(conclusionCopula)+"\", conclusionSubj, conclusionPred);\n"
 
-    derivationFunctionsSrc+= "      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps\n"
+    # source of timing
+    sourceStampsSrc = "aSentence.stamp, bSentence.stamp" if timePremiseSource == 'l' else "bSentence.stamp, aSentence.stamp"
+
+    derivationFunctionsSrc+= "      Stamp stamp = new Stamp("+sourceStampsSrc+", time, narParameters); // merge stamps\n"
 
     derivationFunctionsSrc+= "      TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute("+convTruthFnNameToEnum(truth)+", aSentence.truth, bSentence.truth, narParameters) : null;\n"
 
@@ -594,7 +598,7 @@ def convTerm2(term):
 rulesOfAlreadyGeneratedCode = {}
 
 # generate trie code for the rule
-def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
+def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire, timePremiseSource):
     
 
     # unpack truthTuple into truth and intervalProjection
@@ -612,7 +616,7 @@ def genTrie(premiseA, premiseB, preconditions, conclusion, truthTuple, desire):
     emit("// rule         "+stringOfRule)
 
 
-    genTrieEmit(convTerm2(premiseA), convTerm2(premiseB), preconditions,  convTerm2(conclusion), truthTuple, desire)
+    genTrieEmit(convTerm2(premiseA), convTerm2(premiseB), preconditions,  convTerm2(conclusion), truthTuple, desire, timePremiseSource)
 
 
 
@@ -701,20 +705,20 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
     if False:
         #print "(A "+copAsym+" B),\t(B "+copAsymZ+" C)\t\t\t|-\t(A "+ival(copAsym,"t+z")+" C)\t\t(Truth:deduction"+OmitForHOL(", Desire:Strong")+")"
-        gen(("A",copAsym,"B"), ("B",copAsymZ,"C"),   [] ,("A",ival(copAsym,"t+z"),"C"),    ("deduction", ""), OmitForHOL("strong"))
+        gen(("A",copAsym,"B"), ("B",copAsymZ,"C"),   [] ,("A",ival(copAsym,"t+z"),"C"),    ("deduction", ""), OmitForHOL("strong"), 'l')
 
     copAsymHasTimeOffset = "/" in str(copAsym) or "\\" in str(copAsym)
     IntervalProjection = "IntervalProjection(t,z)" if copAsymHasTimeOffset else ""
 
     if False:#True: # block
-        gen(("A", copAsym, "B"),   ("C", copAsymZ, "B"),   [], ("A", ival(copAsym, "t-z"), "C"),   ("induction", IntervalProjection), OmitForHOL("weak"))
+        gen(("A", copAsym, "B"),   ("C", copAsymZ, "B"),   [], ("A", ival(copAsym, "t-z"), "C"),   ("induction", IntervalProjection), OmitForHOL("weak"), 'l')
 
     if False:#True:
-        gen(("A", copAsym, "B"),   ("A", copAsymZ, "C"),   [], ("B", ival(copAsym, "t-z"), "C"),   ("abduction", IntervalProjection), OmitForHOL("strong"))
+        gen(("A", copAsym, "B"),   ("A", copAsymZ, "C"),   [], ("B", ival(copAsym, "t-z"), "C"),   ("abduction", IntervalProjection), OmitForHOL("strong"), 'l')
 
     if False: # added comparison
-        gen(("A", copAsym, "B"),  ("C", copAsymZ, "B"),   [],("A",ival(copSym, "t-z"),"C"), ("comparison", IntervalProjection), OmitForHOL("weak"))
-        gen(("A", copAsym, "B"),  ("A", copAsymZ, "C"),   [],("C",ival(copSym, "t-z"),"B"), ("comparison", IntervalProjection), OmitForHOL("weak"))
+        gen(("A", copAsym, "B"),  ("C", copAsymZ, "B"),   [],("A",ival(copSym, "t-z"),"C"), ("comparison", IntervalProjection), OmitForHOL("weak"), 'l')
+        gen(("A", copAsym, "B"),  ("A", copAsymZ, "C"),   [],("C",ival(copSym, "t-z"),"B"), ("comparison", IntervalProjection), OmitForHOL("weak"), 'l')
 
 
     if copSym != None:
@@ -722,19 +726,19 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
         if False:
             #print "(A "+copSym+" B),\t(B "+copSymZ+" C)\t\t\t|-\t(A "+ival(copSym,"t+z")+" C)\t\t(Truth:resemblance"+OmitForHOL(", Desire:Strong")+")"
-            gen(("A",copSym,"B"),("B",copSymZ,"C"),  [], ("A",ival(copSym,"t+z"),"C"),  ("resemblance", ""), OmitForHOL("strong"))
+            gen(("A",copSym,"B"),("B",copSymZ,"C"),  [], ("A",ival(copSym,"t+z"),"C"),  ("resemblance", ""), OmitForHOL("strong"), 'l')
 
             #print "(A "+copAsym+" B),\t(C "+copSymZ+" B)\t\t\t|-\t(A "+copAsym+" C)\t\t(Truth:analogy"+IntervalProjection+OmitForHOL(", Desire:Strong")+")"
-            gen(("A",copAsym,"B"),("C",copSymZ,"B"),   [], ("A",copAsym,"C"),   ("analogy", IntervalProjection), OmitForHOL("strong"))
+            gen(("A",copAsym,"B"),("C",copSymZ,"B"),   [], ("A",copAsym,"C"),   ("analogy", IntervalProjection), OmitForHOL("strong"), 'l')
 
             #print "(A "+copAsym+" B),\t(C "+copSymZ+" A)\t\t\t|-\t(C "+ival(copSym,"t+z")+" B)\t\t(Truth:analogy"+OmitForHOL(", Desire:Strong")+")"
-            gen(("A",copAsym,"B"),("C",copSymZ,"A"),   [], ("C",ival(copSym,"t+z"),"B"),  ("analogy", ""), OmitForHOL("strong"))
+            gen(("A",copAsym,"B"),("C",copSymZ,"A"),   [], ("C",ival(copSym,"t+z"),"B"),  ("analogy", ""), OmitForHOL("strong"), 'l')
 
             #print "(A "+copAsym+" B),\t(C "+copSymZ+" B)\t\t\t|-\t(A "+copSym+" C)\t\t(Truth:comparison"+IntervalProjection+OmitForHOL(", Desire:Weak")+")"
-            gen(("A", copAsym, "B"),  ("C", copSymZ, "B"),   [],("A",copSym,"C"), ("comparison", IntervalProjection), OmitForHOL("weak"))
+            gen(("A", copAsym, "B"),  ("C", copSymZ, "B"),   [],("A",copSym,"C"), ("comparison", IntervalProjection), OmitForHOL("weak"), 'l')
 
             #print "(A "+copAsym+" B),\t(A "+copSymZ+" C)\t\t\t|-\t(C "+copSym+" B)\t\t(Truth:comparison"+IntervalProjection+OmitForHOL(", Desire:Weak")+")"
-            gen(("A", copAsym, "B"),  ("A",copSymZ,"C"),    [],("C",copSym,"B"), ("comparison", IntervalProjection), OmitForHOL("weak"))
+            gen(("A", copAsym, "B"),  ("A",copSymZ,"C"),    [],("C",copSym,"B"), ("comparison", IntervalProjection), OmitForHOL("weak"), 'l')
 
 
 
@@ -751,7 +755,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
                 #print "A, \t\tB\t"+predRel+"\t|-\t(A "+copAsym.replace("t",forwardRel)+ "B)\t\t(Truth:Induction, Variables:Introduce$#)"
                 #print "A, \t\tB\t"+predRel+"\t|-\t(A "+copAsym.replace("t",forwardRel)+ "B)\t\t(Truth:Induction, Variables:Introduce$#)"
-                gen("A", "B",  predRel,("A", ival(copAsym, forwardRel), "B"),  ("induction", ""), "")
+                gen("A", "B",  predRel,("A", ival(copAsym, forwardRel), "B"),  ("induction", ""), "", 'l')
 
                 #print "A,\t\tB\t"+predConj+"\t|-\t("+ConjCop.replace("t",forwardConj)+" A B)\t\t(Truth:Intersection, Variables:Introduce#)"
 
@@ -759,7 +763,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
             else:
                 #print "A, \t\tB\t"+predRel+"\t|-\t(B "+copAsym+"(tA-tB) A)\t(Truth:Induction, Variables:Introduce$#)"
-                gen("A", "B",  predRel,("B", ival(copAsym, "tA-tB"), "A"),  ("induction", ""), "")
+                gen("A", "B",  predRel,("B", ival(copAsym, "tA-tB"), "A"),  ("induction", ""), "", 'r')
 
 
             #print "("+ConjCop+" A B)\t\t\t\t\t|-\tA\t\t\t(Truth:Deduction, Desire:Induction)"
@@ -777,12 +781,12 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
         copZ = ival(cop,"z")
         if MinusCops != None:
             if True:
-                gen(("A",cop,"B"),("C",copZ,"B"),   [], ((MinusCops[1],"A","C"),cop,"B"),    ("difference", ""), "")
-                gen(("A",cop,"B"),("A",copZ,"C"),   [], ("B",cop,(MinusCops[0],"A","C")),    ("difference", ""), "")
-                gen(("S",cop,"M"),((MinusCops[1],"S","P"),copZ,"B"),   [],("P",cop,"M"),   ("decomposePNP", ""), "")
-                gen(("S",cop,"M"),((MinusCops[1],"P","S"),copZ,"B"),   [],("P",cop,"M"),   ("decomposeNNN", ""), "")
-                gen(("M",cop,"S"),("M",copZ,(MinusCops[0],"S","P")),   [],("M",cop,"P"),   ("decomposePNP", ""), "")
-                gen(("M",cop,"S"),("M",copZ,(MinusCops[0],"P","S")),    [],("M",cop,"P"),    ("decomposeNNN", ""), "")
+                gen(("A",cop,"B"),("C",copZ,"B"),   [], ((MinusCops[1],"A","C"),cop,"B"),    ("difference", ""), "", 'l')
+                gen(("A",cop,"B"),("A",copZ,"C"),   [], ("B",cop,(MinusCops[0],"A","C")),    ("difference", ""), "", 'l')
+                gen(("S",cop,"M"),((MinusCops[1],"S","P"),copZ,"B"),   [],("P",cop,"M"),   ("decomposePNP", ""), "", 'l')
+                gen(("S",cop,"M"),((MinusCops[1],"P","S"),copZ,"B"),   [],("P",cop,"M"),   ("decomposeNNN", ""), "", 'l')
+                gen(("M",cop,"S"),("M",copZ,(MinusCops[0],"S","P")),   [],("M",cop,"P"),   ("decomposePNP", ""), "", 'l')
+                gen(("M",cop,"S"),("M",copZ,(MinusCops[0],"P","S")),    [],("M",cop,"P"),    ("decomposeNNN", ""), "", 'l')
 
 
 
@@ -819,16 +823,16 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
                         if True:
                             #print "(A "+cop+" B),\t(C "+copZ+" B)\t\t\t|-\t((" + junc + " A C) "+ cop + " B) \t" + TruthSet1 + IntervalProjection+")"
-                            gen(("A",cop,"B"),("C",copZ,"B"),   (["extset?(A)",TruthSet2+"(A,B,R)"] if enableSetForm else []),(setFormSubj(), cop, "B"),  (TruthSet1, IntervalProjection), "")
+                            gen(("A",cop,"B"),("C",copZ,"B"),   (["extset?(A)",TruthSet2+"(A,B,R)"] if enableSetForm else []),(setFormSubj(), cop, "B"),  (TruthSet1, IntervalProjection), "", 'l')
 
                             #print "(A "+cop+" B),\t(A "+copZ+" C)\t\t\t|-\t(A "+ cop + " (" + junc + " B C)) \t"  + TruthSet2 + IntervalProjection+")"
-                            gen(("A",cop,"B"),("A",copZ,"C"),   (["intset?(B)",TruthSet1+"(B,C,R)"] if enableSetForm else []),("A",cop,setFormPred()),  (TruthSet2, IntervalProjection), "")
+                            gen(("A",cop,"B"),("A",copZ,"C"),   (["intset?(B)",TruthSet1+"(B,C,R)"] if enableSetForm else []),("A",cop,setFormPred()),  (TruthSet2, IntervalProjection), "", 'l')
 
                     if True:
-                        gen(("S",cop,"M"),((junc,"S", "L"),copZ,"M"),    [],("L",cop,"M"),   (TruthDecomp1, IntervalProjection), "")
+                        gen(("S",cop,"M"),((junc,"S", "L"),copZ,"M"),    [],("L",cop,"M"),   (TruthDecomp1, IntervalProjection), "", 'l')
 
                     if True:
-                        gen(("M",cop,"S"),("M",copZ,(junc,"S","L")),     [],("M",cop,"L"),   (TruthDecomp2, IntervalProjection), "")
+                        gen(("M",cop,"S"),("M",copZ,(junc,"S","L")),     [],("M",cop,"L"),   (TruthDecomp2, IntervalProjection), "", 'l')
 
 emit("  return rootTries;")
 emit("}")
