@@ -23,6 +23,7 @@ public class TemporalControl {
 
     public double novelityThreshold = 0.5;
 
+    private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
         if ((""+task.sentence.term).contains("(^")) {
@@ -379,6 +380,22 @@ public class TemporalControl {
 
             conclusionSentences.clear();
             conclusionSentences.addAll(uniqueConclusions.values());
+        }
+
+        { // filter to allow only new conclusions
+            List<Sentence> filteredConclusions = new ArrayList<>();
+            for(Sentence iConclusion : conclusionSentences) {
+                if (!derivationFilter.contains(iConclusion.hashCode())) {
+                    filteredConclusions.add(iConclusion);
+                }
+            }
+            conclusionSentences = filteredConclusions;
+        }
+
+        { // remember that we derived it
+            for(Sentence iConclusion : conclusionSentences) {
+                derivationFilter.pushLifo(iConclusion.hashCode());
+            }
         }
 
 
@@ -1027,6 +1044,25 @@ public class TemporalControl {
                 long diff = wallclockTime - retOccurenceTime();
                 decay = Math.exp(-diff*decayFactor);
             }
+        }
+    }
+
+    // used to ignore already derived conclusions
+    private static class DerivationFilter {
+        public List<Integer> hashesOfLastConclusions = new ArrayList<>();
+
+        public void pushLifo(int hash) {
+            int maxLength = 20;
+
+            hashesOfLastConclusions.add(hash);
+
+            if (hashesOfLastConclusions.size() >= maxLength) {
+                hashesOfLastConclusions.remove(0);
+            }
+        }
+
+        public boolean contains(int hash) {
+            return hashesOfLastConclusions.contains(hash);
         }
     }
 }
