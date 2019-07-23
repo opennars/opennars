@@ -42,6 +42,9 @@ public class DeriverHelpers {
         if (termCode.equals("&/")) {
             return Conjunction.make(new Term[]{left, right}, TemporalRules.ORDER_FORWARD);
         }
+        else if (termCode.equals("&|")) {
+            return Conjunction.make(new Term[]{left, right}, TemporalRules.ORDER_CONCURRENT);
+        }
         else if(termCode.equals("=/>")) {
             return new Implication(new Term[]{left, right}, TemporalRules.ORDER_FORWARD);
         }

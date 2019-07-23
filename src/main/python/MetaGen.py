@@ -563,7 +563,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
 
     derivationFunctionsSrc+= "      }\n"
 
-    if varHints == "Introduce$#": # we need to add code to introduce variables
+    # HACK< we don't differentiate between Introduce$# and Introduce# >
+    if varHints == "Introduce$#" or varHints == "Introduce#": # we need to add code to introduce variables
         derivationFunctionsSrc+= "      { // add conclusion with introduced variables\n"
 
         derivationFunctionsSrc+= "         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute("+convTruthFnNameToEnum(truth)+", aSentence.truth, bSentence.truth, narParameters) : null;\n"

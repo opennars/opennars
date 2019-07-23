@@ -368,11 +368,24 @@ public class TemporalControl {
             }
         }
 
+        { // identify unique conclusions , necessary to not overwhelm the deriver
+            HashMap<Integer, Sentence> uniqueConclusions = new HashMap<>();
+
+            for(Sentence iConclusion : conclusionSentences) {
+                if (!uniqueConclusions.containsKey(iConclusion.hashCode())) {
+                    uniqueConclusions.put(iConclusion.hashCode(), iConclusion);
+                }
+            }
+
+            conclusionSentences.clear();
+            conclusionSentences.addAll(uniqueConclusions.values());
+        }
+
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
             //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
-            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
+            System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
 
             if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
                 int debug42 = 6;
@@ -484,6 +497,8 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
 
@@ -556,8 +571,25 @@ public class TemporalControl {
                         int idx = mem.randomNumber.nextInt(primarySelectionCandidateEvents.size());
                         Task selectedPrimaryEvent = primarySelectionCandidateEvents.get(idx);
 
+                        Task selectedSecondaryEvent = null;
+                        Task middleEvent = null; // event in the middle between the two events
 
-                        { // select secondary event
+                        // it is sometimes necessary to sample from the same occurence time
+                        boolean sampleForSameOccurenceTime = selectedPrimaryEtItem.events.size() > 1 && mem.randomNumber.nextDouble() < 0.3;
+
+                        if (sampleForSameOccurenceTime) {
+                            // filter
+                            List<Task> otherPossibleEvents = new ArrayList<>();
+                            for (Task iEvent : selectedPrimaryEtItem.events) {
+                                if (!iEvent.sentence.term.equals(selectedPrimaryEvent.sentence.term)) {
+                                    otherPossibleEvents.add(iEvent);
+                                }
+                            }
+
+                            int secondaryEventIdx = mem.randomNumber.nextInt(otherPossibleEvents.size());
+                            selectedSecondaryEvent = otherPossibleEvents.get(secondaryEventIdx);
+                        }
+                        else { // select secondary event
                             // TODO< compute neightbor salience with the multiplication of the salience of neightbor ET items with the exp based kernel >
 
                             long primaryEventOccTime = selectedPrimaryEvent.sentence.getOccurenceTime();
@@ -606,8 +638,6 @@ public class TemporalControl {
                                 double selectionMassAccu = 0.0;
 
                                 EligibilityTrace.EligibilityTraceItem secondaryTraceItem = null;
-
-                                Task middleEvent = null; // event in the middle between the two events
 
                                 float middleEventMustBeOpPropability = 0.5f; // config
                                 boolean middleEventMustBeOp = mem.randomNumber.nextFloat() > middleEventMustBeOpPropability; // must the middle event be an op or can it be a normal event?
@@ -677,33 +707,31 @@ public class TemporalControl {
                                     return null; // shouldn't happen
                                 }
 
-                                {
-                                    int secondaryEventIdx = mem.randomNumber.nextInt(secondaryTraceItem.events.size());
-                                    Task selectedSecondaryEvent = secondaryTraceItem.events.get(secondaryEventIdx);
 
-                                    // sort events
-                                    Task eventA = selectedPrimaryEvent;
-                                    Task eventB = selectedSecondaryEvent;
+                                int secondaryEventIdx = mem.randomNumber.nextInt(secondaryTraceItem.events.size());
+                                selectedSecondaryEvent = secondaryTraceItem.events.get(secondaryEventIdx);
+                            }
+                        }
 
-                                    if (eventA.sentence.getOccurenceTime() > eventB.sentence.getOccurenceTime()) { // do we need to swap?
-                                        Task temp = eventA;
-                                        eventA = eventB;
-                                        eventB = temp;
-                                    }
+                        if (selectedSecondaryEvent != null) {
+                            // sort events
+                            Task eventA = selectedPrimaryEvent;
+                            Task eventB = selectedSecondaryEvent;
 
-                                    TaskPair sentencePair = new TaskPair(eventA, eventB);
-                                    sentencePair.middleEvent = middleEvent;
-
-                                    if (middleEvent != null) {
-                                        int here = 5;
-                                    }
-
-                                    return sentencePair;
-
-                                }
+                            if (eventA.sentence.getOccurenceTime() > eventB.sentence.getOccurenceTime()) { // do we need to swap?
+                                Task temp = eventA;
+                                eventA = eventB;
+                                eventB = temp;
                             }
 
+                            TaskPair sentencePair = new TaskPair(eventA, eventB);
+                            sentencePair.middleEvent = middleEvent;
 
+                            if (middleEvent != null) {
+                                int here = 5;
+                            }
+
+                            return sentencePair;
                         }
                     }
                 }
