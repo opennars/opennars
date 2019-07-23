@@ -6,6 +6,7 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.inference.TemporalRules;
 import org.opennars.language.Implication;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
@@ -26,7 +27,9 @@ public class EventInferenceDeriver {
      * @param mem
      * @param narParameters
      */
-    public void tryInfer(long time, Memory mem, Parameters narParameters) {
+    public void tryInfer(long time, Memory mem, Nar nar, Parameters narParameters) {
+        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
+
         if (bag.size() <= 1) {
             return;
         }
@@ -57,7 +60,7 @@ public class EventInferenceDeriver {
 
         // stuff it all into the deriver
         List<Sentence> conclusionSentences = new ArrayList<>();
-        mem.trieDeriver.derive(premiseASentence, premiseBSentence, conclusionSentences, time, narParameters);
+        mem.trieDeriver.derive(premiseASentence, premiseBSentence, conclusionSentences, time, nal, narParameters);
 
         if (conclusionSentences.size() > 0) {
             int debugMeHere = 5;

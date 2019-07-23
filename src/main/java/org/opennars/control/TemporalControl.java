@@ -190,6 +190,8 @@ public class TemporalControl {
     }
 
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
+        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
+
         List<Sentence> conclusionSentences = new ArrayList<>();
 
         for(int iInference=0; iInference<inferencesPerCycle; iInference++) {
@@ -241,7 +243,7 @@ public class TemporalControl {
 
 
                 // stuff it all into the deriver
-                mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, narParameters);
+                mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
             }
         }
 
@@ -381,7 +383,6 @@ public class TemporalControl {
             int here42 = 6;
         }
 
-        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
 
         // add results to memory
         {

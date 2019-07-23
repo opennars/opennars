@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import org.opennars.control.DerivationContext;
 import org.opennars.entity.Sentence;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
@@ -43,7 +44,7 @@ public class TrieDeriver {
         //writeln("TrieDeriver: init with nTries=", rootTries.length);
     }
 
-    public void derive(Sentence leftSentence, Sentence rightSentence, List<Sentence> resultSentences, long time, Parameters narParameters) {
+    public void derive(Sentence leftSentence, Sentence rightSentence, List<Sentence> resultSentences, long time, DerivationContext nal, Parameters narParameters) {
         boolean debugVerbose = false;
 
         if (debugVerbose) {
@@ -60,13 +61,13 @@ public class TrieDeriver {
                 ctx.occurrencetimePremiseA = leftSentence.stamp.getOccurrenceTime();
                 ctx.occurrencetimePremiseB = rightSentence.stamp.getOccurrenceTime();
 
-                interpretTrieRec(iRootTries, leftSentence, rightSentence, resultSentences, time, ctx, narParameters);
+                interpretTrieRec(iRootTries, leftSentence, rightSentence, resultSentences, time, ctx, nal, narParameters);
             }
             {   Trie.TrieContext ctx = new Trie.TrieContext();
                 ctx.occurrencetimePremiseA = rightSentence.stamp.getOccurrenceTime();
                 ctx.occurrencetimePremiseB = leftSentence.stamp.getOccurrenceTime();
 
-                interpretTrieRec(iRootTries, rightSentence, leftSentence, resultSentences, time, ctx, narParameters);
+                interpretTrieRec(iRootTries, rightSentence, leftSentence, resultSentences, time, ctx, nal, narParameters);
             }
         }
     }
@@ -156,6 +157,7 @@ public class TrieDeriver {
 
         long time,
         Trie.TrieContext trieCtx,
+        DerivationContext nal,
         Parameters narParameters
     ) {
         boolean debugVerbose = false;
@@ -193,7 +195,7 @@ public class TrieDeriver {
         else if(trieElement.type == Trie.TrieElement.EnumType.EXEC) {
             if(debugVerbose) System.out.println("interpretTrieRec EXEC");
 
-            trieElement.fp.derive(leftSentence, rightSentence, resultSentences, trieElement, time, trieCtx, narParameters);
+            trieElement.fp.derive(leftSentence, rightSentence, resultSentences, trieElement, time, trieCtx, nal, narParameters);
         }
         else if(trieElement.type == Trie.TrieElement.EnumType.WALKCOMPARE) {
             if(debugVerbose) System.out.println("interpretTrieRec WALKCOMPARE");
@@ -299,7 +301,7 @@ public class TrieDeriver {
                     }
                 }
                 else if(trieElement.stringPayload.equals("Time:Parallel(tB,tA)")) {
-                    if( !occurrenceTimeIsParallel(rightSentence.stamp.getOccurrenceTime(), leftSentence.stamp.getOccurrenceTime())) {
+                    if( !occurrenceTimeIsParallel(rightSentence.stamp.getOccurrenceTime(), leftSentence.stamp.getOccurrenceTime(), narParameters.DURATION)) {
                         return false;
                     }
                 }
@@ -312,7 +314,7 @@ public class TrieDeriver {
 
         // we need to iterate children if we are here
         for( Trie.TrieElement iChildren: trieElement.children) {
-            boolean recursionResult = interpretTrieRec(iChildren, leftSentence, rightSentence, resultSentences, time, trieCtx, narParameters);
+            boolean recursionResult = interpretTrieRec(iChildren, leftSentence, rightSentence, resultSentences, time, trieCtx, nal, narParameters);
             if (recursionResult ) {
                 //return recursionResult;
             }
@@ -335,9 +337,8 @@ public class TrieDeriver {
 
 
     // are the events perceived to occur at the same time?
-    public static boolean occurrenceTimeIsParallel(long a, long b) {
-        long timeWindow = 50; // TODO< make parameter >
-        return abs(a - b) <= timeWindow;
+    public static boolean occurrenceTimeIsParallel(long a, long b, int duration) {
+        return abs(a - b) <= duration;
     }
 
     public static double calcProjectedConf(long timeA, long timeB) {

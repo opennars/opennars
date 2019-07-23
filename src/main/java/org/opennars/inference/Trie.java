@@ -23,6 +23,7 @@
  */
 package org.opennars.inference;
 
+import org.opennars.control.DerivationContext;
 import org.opennars.entity.Sentence;
 import org.opennars.main.Parameters;
 
@@ -51,7 +52,7 @@ public class Trie {
 
         // interface to call the derivable action from the deriver
         public interface DerivableAction {
-            void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, Parameters narParameters);
+            void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters);
         }
 
         public List<TrieElement> children = new ArrayList<>(); // children are traversed if the check was true
