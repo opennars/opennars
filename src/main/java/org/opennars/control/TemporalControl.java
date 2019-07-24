@@ -62,7 +62,7 @@ public class TemporalControl {
             // we treat novel events differently by boosting it
             termWithHeatByTerm.get(task.sentence.term).salience = heatUp * 1000;
 
-            System.out.println("event bag : novel event: "+task.sentence.term);
+            if (DEBUG_TEMPORALCONTROL) System.out.println("event trace : novel event: "+task.sentence.term);
         }
         else {
             termWithHeatByTerm.get(task.sentence.term).salience += heatUp;
@@ -545,7 +545,7 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
