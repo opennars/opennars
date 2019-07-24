@@ -28,6 +28,7 @@ import org.opennars.main.Parameters;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -50,6 +51,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
     public final Task targetTask;
     private final int recordLength;
     
+    /* Hash of the object */
+    public int hash;
     
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
     public final static class Recording implements Serializable {
@@ -66,23 +69,20 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
             return time;
         }
 
-        
         public void setTime(final long t) {
             this.time = t;
         }
         
     }
     
+    /** The usage record **/
     public final Deque<Recording> records;
-    
-
     
     /** The type of link, one of the above */    
     public final short type;
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
-
     
     /**
      * Constructor
@@ -107,16 +107,15 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         ;
         
         this.targetTask = t;
-        
         this.recordLength = recordLength;
         this.records = new ArrayDeque(recordLength);
-        
+        this.hash = (((targetTask.hashCode() * 31) + type) * 31) + (index!=null ? Arrays.hashCode(index) : 0);
     }
 
 
     @Override
-    public int hashCode() {        
-        return targetTask.hashCode();                
+    public int hashCode() {
+        return hash;       
     }
 
     @Override
@@ -130,7 +129,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             final TaskLink t = (TaskLink)obj;
-            return t.targetTask.equals(targetTask);                    
+            return hash==t.hash && type==t.type && Arrays.equals(index, t.index) && targetTask.equals(t.targetTask);
         }
         return false;
     }    
@@ -169,7 +168,6 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
             return false;
         }
         final TermLink linkKey = termLink.name();
-        int next, i;
                 
         //iterating the FIFO deque from oldest (first) to newest (last)
         final Iterator<Recording> ir = records.iterator();
@@ -188,14 +186,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
                 }
             }
         }
-        
-        
         //keep recordedLinks queue a maximum finite size
         while (records.size() + 1 >= recordLength) records.removeFirst();
-        
         // add knowledge reference to recordedLinks
         records.addLast(new Recording(linkKey, currentTime));
-        
         return true;
     }
 
