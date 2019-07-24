@@ -147,7 +147,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -164,7 +164,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;
@@ -203,7 +203,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -220,7 +220,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;
@@ -259,7 +259,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -276,7 +276,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;
@@ -315,7 +315,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -332,7 +332,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;
@@ -371,7 +371,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -388,7 +388,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;
@@ -427,7 +427,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
             return; // conclusions with such a low conf are not relevant to the system
          }
          Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);
-         resultSentences.add(resultSentence);
+         synchronized (resultSentences) { resultSentences.add(resultSentence); }
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -444,7 +444,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
                      }
                      if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid
                         Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);
-                        resultSentences.add(resultSentence);
+                        synchronized (resultSentences) { resultSentences.add(resultSentence); }
                      }
                      else {
                         int debugHere=6;

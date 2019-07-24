@@ -560,7 +560,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
     derivationFunctionsSrc+= "         }\n"
 
     derivationFunctionsSrc+= "         Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);\n"
-    derivationFunctionsSrc+= "         resultSentences.add(resultSentence);\n"
+    derivationFunctionsSrc+= "         synchronized (resultSentences) { resultSentences.add(resultSentence); }\n"
 
     derivationFunctionsSrc+= "      }\n"
 
@@ -588,7 +588,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
 
         derivationFunctionsSrc+= "                     if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid\n"
         derivationFunctionsSrc+= "                        Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);\n"
-        derivationFunctionsSrc+= "                        resultSentences.add(resultSentence);\n"
+        derivationFunctionsSrc+= "                        synchronized (resultSentences) { resultSentences.add(resultSentence); }\n"
         derivationFunctionsSrc+= "                     }\n"
         derivationFunctionsSrc+= "                     else {\n"
         derivationFunctionsSrc+= "                        int debugHere=6;\n"
