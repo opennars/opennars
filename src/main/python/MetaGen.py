@@ -559,7 +559,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
     derivationFunctionsSrc+= "            return; // conclusions with such a low conf are not relevant to the system\n"
     derivationFunctionsSrc+= "         }\n"
 
-    derivationFunctionsSrc+= "         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));\n"
+    derivationFunctionsSrc+= "         Sentence resultSentence = new Sentence(conclusionTerm, derivationPunctuation, tv, stamp);\n"
+    derivationFunctionsSrc+= "         resultSentences.add(resultSentence);\n"
 
     derivationFunctionsSrc+= "      }\n"
 
@@ -585,7 +586,13 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
         derivationFunctionsSrc+= "                        continue; // conclusions with such a low conf are not relevant to the system\n"
         derivationFunctionsSrc+= "                     }\n"
 
-        derivationFunctionsSrc+= "                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));\n"
+        derivationFunctionsSrc+= "                     if (conclusionTerm2 != null) { // check is necessary because conclusion may be invalid\n"
+        derivationFunctionsSrc+= "                        Sentence resultSentence = new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp);\n"
+        derivationFunctionsSrc+= "                        resultSentences.add(resultSentence);\n"
+        derivationFunctionsSrc+= "                     }\n"
+        derivationFunctionsSrc+= "                     else {\n"
+        derivationFunctionsSrc+= "                        int debugHere=6;\n"
+        derivationFunctionsSrc+= "                     }\n"
 
 
         derivationFunctionsSrc+= "                 }\n"
