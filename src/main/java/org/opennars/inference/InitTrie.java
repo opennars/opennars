@@ -39,8 +39,33 @@ public class InitTrie {
 // AUTOGEN: initializes and fills tries
 public static List<Trie.TrieElement> initTrie() {
    List<Trie.TrieElement> rootTries = new ArrayList<>();
+// rule         A, B   ['Time:After(tB,tA)']  |-   <A=/>(tB-tA)B>		(Truth:induction)	Introduce$#
+{
+    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
+    te0.stringPayload = "Time:After(tB,tA)";
+    
+    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);
+    teX.fp = new derive0();
+    te0.children.add(teX);
+    
+    Trie.addToTrieRec(rootTries, te0);
+}
 
-   // rule         A, B   ['Time:Parallel(tB,tA)']  |-   <A&|B>		(Truth:intersection)	Introduce#
+
+// rule         A, B   ['Time:After(tB,tA)']  |-   <A&/(tB-tA)B>		(Truth:intersection)	Introduce#
+{
+    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
+    te0.stringPayload = "Time:After(tB,tA)";
+    
+    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);
+    teX.fp = new derive1();
+    te0.children.add(teX);
+    
+    Trie.addToTrieRec(rootTries, te0);
+}
+
+
+// rule         A, B   ['Time:Parallel(tB,tA)']  |-   <A=|>B>		(Truth:induction)	Introduce$#
 {
     Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
     te0.stringPayload = "Time:Parallel(tB,tA)";
@@ -53,15 +78,246 @@ public static List<Trie.TrieElement> initTrie() {
 }
 
 
+// rule         A, B   ['Time:After(tB,tA)']  |-   <A&/B>		(Truth:intersection)	Introduce#
+/*{
+    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
+    te0.stringPayload = "Time:After(tB,tA)";
+    
+    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);
+    teX.fp = new derive3();
+    te0.children.add(teX);
+    
+    Trie.addToTrieRec(rootTries, te0);
+}*/
+
+
+// rule         A, B   ['Time:Parallel(tB,tA)']  |-   <A&|B>		(Truth:intersection)	Introduce#
+{
+    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
+    te0.stringPayload = "Time:Parallel(tB,tA)";
+    
+    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);
+    teX.fp = new derive4();
+    te0.children.add(teX);
+    
+    Trie.addToTrieRec(rootTries, te0);
+}
+
+
+// rule         A, B   ['Time:After(tB,tA)']  |-   <B=\>(tA-tB)A>		(Truth:induction)	Introduce$#
+{
+    Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
+    te0.stringPayload = "Time:After(tB,tA)";
+    
+    Trie.TrieElement teX = new Trie.TrieElement(Trie.TrieElement.EnumType.EXEC);
+    teX.fp = new derive5();
+    te0.children.add(teX);
+    
+    Trie.addToTrieRec(rootTries, te0);
+}
+
+
   return rootTries;
 }
 
 
+public static class derive0 implements Trie.TrieElement.DerivableAction {
+public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
+   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
+   
+   
+   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());
+   
+   char derivationPunctuation = aSentence.punctuation;
+   if (aSentence.isQuestion() || bSentence.isQuestion()) {
+       derivationPunctuation = '?';
+   }
+   
+   Term a = aSentence.term;
+   Term b = bSentence.term;
+   
+   Term conclusionSubj = DeriverHelpers.makeBinary("&/",a,new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA));
+   Term conclusionPred = b;
+   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
+      Term conclusionTerm = DeriverHelpers.makeBinary("=/>", conclusionSubj, conclusionPred);
+      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
+      { // add conclusion without introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+            return; // conclusions with such a low conf are not relevant to the system
+         }
+         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));
+      }
+      { // add conclusion with introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         // introduce vars
+         // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+             for(boolean subjectIntro : new boolean[]{true, false}) {
+                 Set<Pair<Term,Float>> termWithIntroVarsAndPenality = CompositionalRules.introduceVariables(nal, conclusionTerm, subjectIntro);
+                 for(Pair<Term,Float> iTermWithIntroVarsAndPenality : termWithIntroVarsAndPenality) { // ok we applied it, all we have to do now is to use it
+                     final Term conclusionTerm2 = iTermWithIntroVarsAndPenality.getLeft();
+                     final float penality = iTermWithIntroVarsAndPenality.getRight();
+                     tv.mulConfidence(penality);
+                     if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+                        continue; // conclusions with such a low conf are not relevant to the system
+                     }
+                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));
+                 }
+             }
+         }
+   }
+} // method
+} // class
 
 
+public static class derive1 implements Trie.TrieElement.DerivableAction {
+public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
+   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
+   
+   
+   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());
+   
+   char derivationPunctuation = aSentence.punctuation;
+   if (aSentence.isQuestion() || bSentence.isQuestion()) {
+       derivationPunctuation = '?';
+   }
+   
+   Term a = aSentence.term;
+   Term b = bSentence.term;
+   
+   Term conclusionSubj = a;
+   Term conclusionPred = b;
+   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
+      Term conclusionTerm = DeriverHelpers.makeBinary("&/", conclusionSubj, conclusionPred);
+      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
+      { // add conclusion without introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+            return; // conclusions with such a low conf are not relevant to the system
+         }
+         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));
+      }
+      { // add conclusion with introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         // introduce vars
+         // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+             for(boolean subjectIntro : new boolean[]{true, false}) {
+                 Set<Pair<Term,Float>> termWithIntroVarsAndPenality = CompositionalRules.introduceVariables(nal, conclusionTerm, subjectIntro);
+                 for(Pair<Term,Float> iTermWithIntroVarsAndPenality : termWithIntroVarsAndPenality) { // ok we applied it, all we have to do now is to use it
+                     final Term conclusionTerm2 = iTermWithIntroVarsAndPenality.getLeft();
+                     final float penality = iTermWithIntroVarsAndPenality.getRight();
+                     tv.mulConfidence(penality);
+                     if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+                        continue; // conclusions with such a low conf are not relevant to the system
+                     }
+                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));
+                 }
+             }
+         }
+   }
+} // method
+} // class
 
 
 public static class derive2 implements Trie.TrieElement.DerivableAction {
+public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
+   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
+   
+   
+   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());
+   
+   char derivationPunctuation = aSentence.punctuation;
+   if (aSentence.isQuestion() || bSentence.isQuestion()) {
+       derivationPunctuation = '?';
+   }
+   
+   Term a = aSentence.term;
+   Term b = bSentence.term;
+   
+   Term conclusionSubj = a;
+   Term conclusionPred = b;
+   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
+      Term conclusionTerm = DeriverHelpers.makeBinary("=|>", conclusionSubj, conclusionPred);
+      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
+      { // add conclusion without introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+            return; // conclusions with such a low conf are not relevant to the system
+         }
+         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));
+      }
+      { // add conclusion with introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         // introduce vars
+         // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+             for(boolean subjectIntro : new boolean[]{true, false}) {
+                 Set<Pair<Term,Float>> termWithIntroVarsAndPenality = CompositionalRules.introduceVariables(nal, conclusionTerm, subjectIntro);
+                 for(Pair<Term,Float> iTermWithIntroVarsAndPenality : termWithIntroVarsAndPenality) { // ok we applied it, all we have to do now is to use it
+                     final Term conclusionTerm2 = iTermWithIntroVarsAndPenality.getLeft();
+                     final float penality = iTermWithIntroVarsAndPenality.getRight();
+                     tv.mulConfidence(penality);
+                     if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+                        continue; // conclusions with such a low conf are not relevant to the system
+                     }
+                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));
+                 }
+             }
+         }
+   }
+} // method
+} // class
+
+
+public static class derive3 implements Trie.TrieElement.DerivableAction {
+public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
+   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
+   
+   
+   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());
+   
+   char derivationPunctuation = aSentence.punctuation;
+   if (aSentence.isQuestion() || bSentence.isQuestion()) {
+       derivationPunctuation = '?';
+   }
+   
+   Term a = aSentence.term;
+   Term b = bSentence.term;
+   
+   Term conclusionSubj = a;
+   Term conclusionPred = b;
+   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
+      Term conclusionTerm = DeriverHelpers.makeBinary("&/", conclusionSubj, conclusionPred);
+      Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
+      { // add conclusion without introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+            return; // conclusions with such a low conf are not relevant to the system
+         }
+         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));
+      }
+      { // add conclusion with introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         // introduce vars
+         // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+             for(boolean subjectIntro : new boolean[]{true, false}) {
+                 Set<Pair<Term,Float>> termWithIntroVarsAndPenality = CompositionalRules.introduceVariables(nal, conclusionTerm, subjectIntro);
+                 for(Pair<Term,Float> iTermWithIntroVarsAndPenality : termWithIntroVarsAndPenality) { // ok we applied it, all we have to do now is to use it
+                     final Term conclusionTerm2 = iTermWithIntroVarsAndPenality.getLeft();
+                     final float penality = iTermWithIntroVarsAndPenality.getRight();
+                     tv.mulConfidence(penality);
+                     if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+                        continue; // conclusions with such a low conf are not relevant to the system
+                     }
+                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));
+                 }
+             }
+         }
+   }
+} // method
+} // class
+
+
+public static class derive4 implements Trie.TrieElement.DerivableAction {
 public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
    assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
    
@@ -90,6 +346,55 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
       }
       { // add conclusion with introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         // introduce vars
+         // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+             for(boolean subjectIntro : new boolean[]{true, false}) {
+                 Set<Pair<Term,Float>> termWithIntroVarsAndPenality = CompositionalRules.introduceVariables(nal, conclusionTerm, subjectIntro);
+                 for(Pair<Term,Float> iTermWithIntroVarsAndPenality : termWithIntroVarsAndPenality) { // ok we applied it, all we have to do now is to use it
+                     final Term conclusionTerm2 = iTermWithIntroVarsAndPenality.getLeft();
+                     final float penality = iTermWithIntroVarsAndPenality.getRight();
+                     tv.mulConfidence(penality);
+                     if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+                        continue; // conclusions with such a low conf are not relevant to the system
+                     }
+                     resultSentences.add(new Sentence(conclusionTerm2, derivationPunctuation, tv, stamp));
+                 }
+             }
+         }
+   }
+} // method
+} // class
+
+
+public static class derive5 implements Trie.TrieElement.DerivableAction {
+public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {
+   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : "Invalid derivation : question-question";
+   
+   
+   boolean hasConclusionTruth = !(aSentence.isQuestion() || bSentence.isQuestion());
+   
+   char derivationPunctuation = aSentence.punctuation;
+   if (aSentence.isQuestion() || bSentence.isQuestion()) {
+       derivationPunctuation = '?';
+   }
+   
+   Term a = aSentence.term;
+   Term b = bSentence.term;
+   
+   Term conclusionSubj = b;
+   Term conclusionPred = DeriverHelpers.makeBinary("&/",a,new Interval(/*negate because tA-tB is a convention but leads to negative timing*/- (trieCtx.occurrencetimePremiseA-trieCtx.occurrencetimePremiseB)));
+   if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
+      Term conclusionTerm = DeriverHelpers.makeBinary("=\\>", conclusionSubj, conclusionPred);
+      Stamp stamp = new Stamp(bSentence.stamp, aSentence.stamp, time, narParameters); // merge stamps
+      { // add conclusion without introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
+         if(hasConclusionTruth && tv.getConfidence() < 0.0001) {
+            return; // conclusions with such a low conf are not relevant to the system
+         }
+         resultSentences.add(new Sentence(conclusionTerm, derivationPunctuation, tv, stamp));
+      }
+      { // add conclusion with introduced variables
+         TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
          // introduce vars
          // "Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
              for(boolean subjectIntro : new boolean[]{true, false}) {

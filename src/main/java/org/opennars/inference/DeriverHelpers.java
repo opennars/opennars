@@ -51,6 +51,9 @@ public class DeriverHelpers {
         else if(termCode.equals("=\\>")) {
             return new Implication(new Term[]{left, right}, TemporalRules.ORDER_BACKWARD);
         }
+        else if(termCode.equals("=|>")) {
+            return new Implication(new Term[]{left, right}, TemporalRules.ORDER_CONCURRENT);
+        }
         else {
             throw new RuntimeException("NOT IMPLEMENTED!"); // TODO< chose an exception which we can throw >
         }

@@ -673,7 +673,7 @@ CopulaTypes = [
     ##["==>","<=>",[["&&"],"||",None]], #
     [CWT("=/>","t"),CWT("</>","t"),[[CWT("&/","t"),"&|"],"||",None]], ##
     ["=|>","<|>",[["&/","&|"],"||",None]], #
-    #####[CWT("=\>","t"),None ,[["&/","&|"],"||",None]] ###
+    [CWT("=\>","t"),None ,[["&/","&|"],"||",None]] ###
 ]
 
 # generate code for already implemented conversions?
@@ -804,7 +804,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
                 #print "A, \t\tB\t"+predRel+"\t|-\t(A "+copAsym.replace("t",forwardRel)+ "B)\t\t(Truth:Induction, Variables:Introduce$#)"
                 #print "A, \t\tB\t"+predRel+"\t|-\t(A "+copAsym.replace("t",forwardRel)+ "B)\t\t(Truth:Induction, Variables:Introduce$#)"
-                ######gen("A", "B",  predRel,("A", ival(copAsym, forwardRel), "B"),  ("induction", ""), "Introduce$#", "", 'l')
+                gen("A", "B",  predRel,("A", ival(copAsym, forwardRel), "B"),  ("induction", ""), "Introduce$#", "", 'l')
 
                 if predConj != []: # check is necessary to avoid to generate invalid code
                     print(copAsym)
@@ -821,7 +821,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
                 pass
 
                 #print "A, \t\tB\t"+predRel+"\t|-\t(B "+copAsym+"(tA-tB) A)\t(Truth:Induction, Variables:Introduce$#)"
-                ######gen("A", "B",  predRel,("B", ival(copAsym, "tA-tB"), "A"),  ("induction", ""), "Introduce$#", "", 'r')
+                gen("A", "B",  predRel,("B", ival(copAsym, "tA-tB"), "A"),  ("induction", ""), "Introduce$#", "", 'r')
 
 
             #print "("+ConjCop+" A B)\t\t\t\t\t|-\tA\t\t\t(Truth:Deduction, Desire:Induction)"
