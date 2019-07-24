@@ -4,4 +4,7 @@
 <a2 --> A>. :|:
 10
 <a --> B>!
-''outputMustContain('(^pick,{SELF},a). :!110: %1.00;0.90%')
+''outputMustContain('(^pick,{SELF},a). :!1')
+
+' give it time to reason
+50
