@@ -634,8 +634,10 @@ public class TemporalControl {
                                 }
                             }
 
-                            int secondaryEventIdx = mem.randomNumber.nextInt(otherPossibleEvents.size());
-                            selectedSecondaryEvent = otherPossibleEvents.get(secondaryEventIdx);
+                            if (otherPossibleEvents.size() > 0) {
+                                int secondaryEventIdx = mem.randomNumber.nextInt(otherPossibleEvents.size());
+                                selectedSecondaryEvent = otherPossibleEvents.get(secondaryEventIdx);
+                            }
                         }
                         else { // select secondary event
                             // TODO< compute neightbor salience with the multiplication of the salience of neightbor ET items with the exp based kernel >
