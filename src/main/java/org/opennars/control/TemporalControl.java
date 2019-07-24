@@ -210,6 +210,10 @@ public class TemporalControl {
                 continue; // we need two events to reason about
             }
 
+            if (eventA.sentence.term instanceof Operation && eventB.sentence.term instanceof Operation) {
+                continue; // ignore it because ^op1 ^op2 leads to no useful derivations
+            }
+
             if (eventA.sentence.term.equals(eventB.sentence.term)) {
                 continue; // no need to reason about the same event happening at the same time
             }
@@ -327,6 +331,33 @@ public class TemporalControl {
                 }
             }
 
+            { // disallow seq of two ops, because we don't need to derive it
+                if (
+                    ( (conclusionTerm instanceof CompoundTerm && (conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) )
+                ) {
+                    CompoundTerm seq = (CompoundTerm) conclusionTerm;
+
+                    if (seq.term.length == 2 && seq.term[0] instanceof Operation && seq.term[1] instanceof Operation) {
+                        accept = false;
+                    } else if (seq.term.length == 3 && seq.term[0] instanceof Operation && seq.term[1] instanceof Interval && seq.term[2] instanceof Operation) {
+                        accept = false;
+                    }
+                }
+            }
+
+            { // disallow implication, because it doesn't make any sense
+                if (
+                    ( conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD )
+                ) {
+                    Term rootImplSubj = ((Implication) conclusionTerm).term[0];
+
+                    // don't allow ops as subject of the impl
+                    if (rootImplSubj instanceof Operation) {
+                        accept = false;
+                    }
+                }
+            }
+
             {
                 if (
                     ( conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD )
@@ -401,8 +432,8 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            //System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
-            System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
+            //if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
+            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
 
             if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
                 int debug42 = 6;
@@ -514,7 +545,7 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
