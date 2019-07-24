@@ -2,7 +2,7 @@ language: java
 
 sudo: false
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 env:
   - CODACY_PROJECT_TOKEN=636acc26006042628c9ec9391472a1c6
   
