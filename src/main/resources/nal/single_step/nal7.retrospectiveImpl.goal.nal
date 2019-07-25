@@ -1,0 +1,6 @@
+<<$1 --> [unscrewing]> =\> <$1 --> [hardened]>>. %1.00;0.90%
+<#1 --> [unscrewing]>!
+
+10
+
+''outputMustContain('<#1 --> [hardened]>! %1.00;0.45%')
