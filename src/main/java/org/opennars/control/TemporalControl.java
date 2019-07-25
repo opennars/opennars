@@ -210,8 +210,8 @@ public class TemporalControl {
                 continue; // we need two events to reason about
             }
 
-            if (eventA.sentence.term instanceof Operation && eventB.sentence.term instanceof Operation) {
-                continue; // ignore it because ^op1 ^op2 leads to no useful derivations
+            if (isOp(eventA.sentence.term) && isOp(eventB.sentence.term)) {
+                continue; // ignore it because op related don't leads to useful derivations
             }
 
             if (eventA.sentence.term.equals(eventB.sentence.term)) {
@@ -352,7 +352,7 @@ public class TemporalControl {
                     Term rootImplSubj = ((Implication) conclusionTerm).term[0];
 
                     // don't allow ops as subject of the impl
-                    if (rootImplSubj instanceof Operation) {
+                    if (isOp(rootImplSubj)) {
                         accept = false;
                     }
                 }
@@ -367,7 +367,7 @@ public class TemporalControl {
                     Term rootImplPred = ((Implication)conclusionTerm).term[1];
 
                     // don't allow ops as predicate of the impl
-                    if (rootImplPred instanceof Operation) {
+                    if (isOp(rootImplPred)) {
                         accept = false;
                     }
 
@@ -416,17 +416,18 @@ public class TemporalControl {
         { // filter to allow only new conclusions
             List<Sentence> filteredConclusions = new ArrayList<>();
             for(Sentence iConclusion : conclusionSentences) {
+
+                //System.out.println("==");
+                //System.out.println("   "+iConclusion);
+                //System.out.println("   "+iConclusion.hashCode());
+
                 if (!derivationFilter.contains(iConclusion.hashCode())) {
+                    derivationFilter.pushLifo(iConclusion.hashCode());
+                    //System.out.println("doesn't contain "+iConclusion.hashCode());
                     filteredConclusions.add(iConclusion);
                 }
             }
             conclusionSentences = filteredConclusions;
-        }
-
-        { // remember that we derived it
-            for(Sentence iConclusion : conclusionSentences) {
-                derivationFilter.pushLifo(iConclusion.hashCode());
-            }
         }
 
 
@@ -508,6 +509,39 @@ public class TemporalControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
+    }
+
+    /**
+     * check if it is a op or a NAL2 form of a op
+     * @param term
+     * @return
+     */
+    private static boolean isOp(Term term) {
+        if( term instanceof Operation ) {
+            return true;
+        }
+
+        // check case when X --> ^Y
+        if (term instanceof Inheritance) {
+            Inheritance inh = (Inheritance)term;
+            if (inh.getPredicate() instanceof Term && inh.getPredicate().name().length()>0 && inh.getPredicate().name().charAt(0)=='^') {
+                return true;
+            }
+        }
+        // check case when X <-> ^Y or ^Y <-> X
+        if (term instanceof Similarity) {
+            Similarity sim = (Similarity)term;
+
+            if (sim.getPredicate() instanceof Term && sim.getPredicate().name().length()>0 && sim.getPredicate().name().charAt(0)=='^') {
+                return true;
+            }
+            if (sim.getSubject() instanceof Term && sim.getSubject().name().length()>0 && sim.getSubject().name().charAt(0)=='^') {
+                return true;
+            }
+            int here = 5;
+        }
+
+        return false;
     }
 
     private static Sentence overrideTermOfSentence(Sentence sentence, Term term) {
@@ -1095,7 +1129,12 @@ public class TemporalControl {
         }
 
         public boolean contains(int hash) {
-            return hashesOfLastConclusions.contains(hash);
+            for(int i=0;i<hashesOfLastConclusions.size();i++) {
+                if (hashesOfLastConclusions.get(i) == hash) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

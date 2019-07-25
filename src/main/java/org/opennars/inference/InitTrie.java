@@ -53,7 +53,7 @@ public static List<Trie.TrieElement> initTrie() {
 
 
 // rule         A, B   ['Time:After(tB,tA)']  |-   <A&/(tB-tA)B>		(Truth:intersection)	Introduce#
-{
+/*{
     Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
     te0.stringPayload = "Time:After(tB,tA)";
     
@@ -62,7 +62,7 @@ public static List<Trie.TrieElement> initTrie() {
     te0.children.add(teX);
     
     Trie.addToTrieRec(rootTries, te0);
-}
+}*/
 
 
 // rule         A, B   ['Time:Parallel(tB,tA)']  |-   <A=|>B>		(Truth:induction)	Introduce$#

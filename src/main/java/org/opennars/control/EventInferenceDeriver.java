@@ -94,7 +94,8 @@ public class EventInferenceDeriver {
         }
 
         // sort
-        Collections.sort(bag, (s1, s2) -> s1.calcPriority(time) < s2.calcPriority(time) ? 1 : -1);
+        // commented because it is buggy
+        //Collections.sort(bag, (s1, s2) -> s1.calcPriority(time) < s2.calcPriority(time) ? 1 : -1);
 
         // limit memory
         while(bag.size() > bagMaxSize) {
