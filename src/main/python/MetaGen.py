@@ -36,9 +36,6 @@ THE SOFTWARE.
 
 # TODO< add special backward inference rules >
 
-# LATER TODO< add rules for products to metaGen.py >
-# LATER TODO< add image rules for sequences >
-#             ask must be a sequence ProdStar because of images of sequences with a length more than two?
 
 
 
@@ -517,6 +514,14 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
     teCounter+=1
 
 
+    # special code to figure out if a impl is derived
+    isPredImpl = isinstance(conclusionCopula, CWT) and conclusionCopula.copula == "=/>"
+
+
+
+
+
+
     derivationFunctionsSrc+= "public static class derive"+str(staticFunctionCounter)+" implements Trie.TrieElement.DerivableAction {\n"
     derivationFunctionsSrc+= "public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> resultSentences, Trie.TrieElement trieElement, long time, Trie.TrieContext trieCtx, DerivationContext nal, Parameters narParameters) {\n"
     derivationFunctionsSrc+= "   assert !(aSentence.isQuestion() && bSentence.isQuestion()) : \"Invalid derivation : question-question\";\n"
@@ -540,6 +545,16 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
 
     derivationFunctionsSrc+= "      Term conclusionTerm = DeriverHelpers.makeBinary(\""+escape(conclusionCopula)+"\", conclusionSubj, conclusionPred);\n"
 
+    if conclusionCopula == "=/>":
+        # we need special handling to derive the correct conclusion by merging event + seq impl |- seq impl
+        derivationFunctionsSrc+= "      conclusionTerm = DeriverHelpers.derivePredImplConclusionTerm(conclusionTerm, aSentence, bSentence);\n"
+    # TODO< same case for =\> >
+
+    # necessary because invalid derivations are signaled with a null
+    derivationFunctionsSrc+= "      if(conclusionTerm == null) {\n"
+    derivationFunctionsSrc+= "          return;\n"
+    derivationFunctionsSrc+= "      }\n"
+    
 
 
     # source of timing

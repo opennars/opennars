@@ -579,7 +579,7 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {

@@ -23,8 +23,10 @@
  */
 package org.opennars.inference;
 
+import org.opennars.entity.Sentence;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
+import org.opennars.language.Interval;
 import org.opennars.language.Term;
 
 /**
@@ -66,5 +68,40 @@ public class DeriverHelpers {
         else {
             throw new RuntimeException("NOT IMPLEMENTED!"); // TODO< chose an exception which we can throw >
         }
+    }
+
+    /**
+     * implements special handling for derivation of =/>
+     * @param defaultConclusion is the conclusion without special handling
+     * @param subj
+     * @param pred
+     * @return
+     */
+    public static Term derivePredImplConclusionTerm(Term defaultConclusion, Sentence subj, Sentence pred) {
+        Term conclusionTerm = defaultConclusion;
+
+        if (pred.term instanceof Implication && pred.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            boolean isPredASeqPredImpl = ((Implication)pred.term).getSubject() instanceof Conjunction && ((Implication)pred.term).getSubject().getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+            if (!isPredASeqPredImpl) {
+                // has form <(a, +t) =/> b> =/> c
+
+                Term event0 = subj.term;
+                long interval = pred.stamp.getOccurrenceTime() - subj.stamp.getOccurrenceTime();
+                Term event1 = ((Implication)pred.term).getSubject();
+                Term event2 = ((Implication)pred.term).getPredicate();
+
+                Term conj = Conjunction.make(new Term[]{event0, new Interval(interval), event1}, TemporalRules.ORDER_FORWARD);
+                Term seq = Implication.make(conj, event2, TemporalRules.ORDER_FORWARD);
+
+                return seq;
+            }
+
+            int here2 = 5;
+        }
+
+
+
+
+        return conclusionTerm;
     }
 }

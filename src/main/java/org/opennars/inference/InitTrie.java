@@ -140,6 +140,10 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("=/>", conclusionSubj, conclusionPred);
+      conclusionTerm = DeriverHelpers.derivePredImplConclusionTerm(conclusionTerm, aSentence, bSentence);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -196,6 +200,9 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("&/", conclusionSubj, conclusionPred);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -252,6 +259,9 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("=|>", conclusionSubj, conclusionPred);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -308,6 +318,9 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("&/", conclusionSubj, conclusionPred);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -364,6 +377,9 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("&|", conclusionSubj, conclusionPred);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(aSentence.stamp, bSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, aSentence.truth, bSentence.truth, narParameters) : null;
@@ -420,6 +436,9 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = DeriverHelpers.makeBinary("&/",a,new Interval(/*negate because tA-tB is a convention but leads to negative timing*/- (trieCtx.occurrencetimePremiseA-trieCtx.occurrencetimePremiseB)));
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("=\\>", conclusionSubj, conclusionPred);
+      if(conclusionTerm == null) {
+          return;
+      }
       Stamp stamp = new Stamp(bSentence.stamp, aSentence.stamp, time, narParameters); // merge stamps
       { // add conclusion without introduced variables
          TruthValue tv = hasConclusionTruth ? TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, aSentence.truth, bSentence.truth, narParameters) : null;
