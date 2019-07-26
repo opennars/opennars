@@ -210,12 +210,30 @@ public class TemporalControl {
                 continue; // ignore it because op related don't leads to useful derivations
             }
 
-            if (eventA.sentence.term.equals(eventB.sentence.term)) {
-                continue; // no need to reason about the same event happening at the same time
+
+            // restrict types of premise events to avoid deriving nonsense
+            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventA.sentence.term, false)) {
+                continue;
             }
+            if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
+                continue;
+            }
+
+
+            // this test is nonsense because we may want to do revision etc
+            //if (eventA.sentence.term.equals(eventB.sentence.term)) {
+            //    continue; // no need to reason about the same event happening at the same time
+            //}
+
 
             // must not overlap
             if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
+                continue;
+            }
+            if (eventMiddle != null && (Stamp.baseOverlap(eventA.sentence.stamp, eventMiddle.sentence.stamp))) {
+                continue;
+            }
+            if (eventMiddle != null && (Stamp.baseOverlap(eventB.sentence.stamp, eventMiddle.sentence.stamp))) {
                 continue;
             }
 
@@ -499,6 +517,32 @@ public class TemporalControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
+    }
+
+    static private boolean isValidForInference2(Term term, boolean isFirstEvent) {
+        boolean isPredImpl = term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+        boolean isSeq = term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+        if ((isSeq || isPredImpl) && isFirstEvent) {
+            return true; // special case
+        }
+
+        return isValidForInference(term);
+    }
+
+    static private boolean isValidForInference(Term term) {
+        if (term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_NONE) {
+            return true; // parallel events are always valid for inference
+        }
+
+        boolean isTemporalConj = term instanceof Conjunction && term.getTemporalOrder() != TemporalRules.ORDER_NONE; // may be a seq or par
+        boolean isTemporalImpl = term instanceof Implication && term.getTemporalOrder() != TemporalRules.ORDER_NONE;
+        boolean isTemporalEquiv = term instanceof Equivalence && term.getTemporalOrder() != TemporalRules.ORDER_NONE;
+
+        if (isTemporalConj || isTemporalImpl || isTemporalEquiv) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
