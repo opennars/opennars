@@ -581,6 +581,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term conclusionPred = DeriverHelpers.makeBinary("&/",a,new Interval(/*negate because tA-tB is a convention but leads to negative timing*/- (trieCtx.occurrencetimePremiseA-trieCtx.occurrencetimePremiseB)));
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("=\\>", conclusionSubj, conclusionPred);
+      conclusionTerm = DeriverHelpers.deriveRetroImplConclusionTerm(conclusionTerm, aSentence, bSentence);
       if(conclusionTerm == null) {
           return;
       }

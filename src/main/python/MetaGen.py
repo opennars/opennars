@@ -550,7 +550,9 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
     if conclusionCopula == "=/>":
         # we need special handling to derive the correct conclusion by merging event + seq impl |- seq impl
         derivationFunctionsSrc+= "      conclusionTerm = DeriverHelpers.derivePredImplConclusionTerm(conclusionTerm, aSentence, bSentence);\n"
-    # TODO< same case for =\> >
+    elif conclusionCopula == "=\\>":
+        # we need special handling to derive the correct conclusion
+        derivationFunctionsSrc+= "      conclusionTerm = DeriverHelpers.deriveRetroImplConclusionTerm(conclusionTerm, aSentence, bSentence);\n"
 
     # necessary because invalid derivations are signaled with a null
     derivationFunctionsSrc+= "      if(conclusionTerm == null) {\n"

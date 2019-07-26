@@ -108,6 +108,16 @@ public class DeriverHelpers {
         return conclusionTerm;
     }
 
+    public static Term deriveRetroImplConclusionTerm(Term defaultConclusion, Sentence subj, Sentence pred) {
+        Term conclusionTerm = defaultConclusion;
+
+        if (pred.term instanceof Implication && pred.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            return null; // disallow because it is not legal
+        }
+
+        return conclusionTerm;
+    }
+
     // computes the overall interval time of a seq
     public static long calcSeqTime(Term term) {
         if (!(term instanceof Conjunction)) {
