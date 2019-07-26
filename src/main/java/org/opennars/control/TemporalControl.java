@@ -24,13 +24,11 @@ public class TemporalControl {
 
     public double novelityThreshold = 0.5;
 
+    public int sortedByHeatMaxSize = 500; // config - memory size
+
     private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
-        if ((""+task.sentence.term).contains("(^")) {
-            int here = 5;
-        }
-
         heatupInputEvent(task);
         checkAddToEligibilityTrace(task);
         return true;
@@ -150,13 +148,10 @@ public class TemporalControl {
         Collections.sort(sortedByHeat, (s1, s2) -> s1.salience < s2.salience ? 1 : -1);
 
         // limit memory
-
-        int maxSize = 500; // config
-
-        while(sortedByHeat.size() > maxSize) {
-            ConceptWithSalience current = sortedByHeat.get(maxSize);
+        while(sortedByHeat.size() > sortedByHeatMaxSize) {
+            ConceptWithSalience current = sortedByHeat.get(sortedByHeatMaxSize);
             termWithHeatByTerm.remove(current.lastInputTask.sentence.term);
-            sortedByHeat.remove(maxSize);
+            sortedByHeat.remove(sortedByHeatMaxSize);
         }
 
 
