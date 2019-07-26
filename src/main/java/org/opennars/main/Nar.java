@@ -24,6 +24,7 @@
 package org.opennars.main;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.TrieDeriver;
 import org.opennars.interfaces.Timable;
@@ -393,6 +394,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
 
         //else input into NARS directly:
+        {
+            final DerivationContext cont = new DerivationContext(memory, narParameters, this);
+            if (!task.sentence.isEternal()) {
+                memory.temporalControl.immediateProcessEvent(task, cont);
+            }
+        }
+
+
         this.memory.inputTask(this, task);
     }
 
