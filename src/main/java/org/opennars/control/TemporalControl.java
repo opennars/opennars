@@ -498,6 +498,10 @@ public class TemporalControl {
             if (iDerivedSentence.term instanceof Conjunction && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                 allowAddToTrace = true;
             }
+            // we need to allow =/> too because we need to build more complex impl seqs
+            if (iDerivedSentence.term instanceof Implication && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                allowAddToTrace = true;
+            }
 
             // TODO< allow concurrent events too >
 

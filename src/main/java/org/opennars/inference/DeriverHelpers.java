@@ -85,11 +85,11 @@ public class DeriverHelpers {
 
         if (pred.term instanceof Implication && pred.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             boolean isPredASeqPredImpl = ((Implication)pred.term).getSubject() instanceof Conjunction && ((Implication)pred.term).getSubject().getTemporalOrder() == TemporalRules.ORDER_FORWARD;
-            if (!isPredASeqPredImpl) {
+            if (isPredASeqPredImpl) {
                 // has form <(a, +t) =/> b> =/> c
 
                 Term event0 = subj.term;
-                long interval = pred.stamp.getOccurrenceTime() - subj.stamp.getOccurrenceTime();
+                long interval = pred.stamp.getOccurrenceTime() - subj.stamp.getOccurrenceTime() - calcSeqTime(pred.term);
                 Term event1 = ((Implication)pred.term).getSubject();
                 Term event2 = ((Implication)pred.term).getPredicate();
 
