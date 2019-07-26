@@ -63,9 +63,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         if(rankTruthExpectation) {
             return judg.getTruth().getExpectation();
         }
-        final float confidence = judg.truth.getConfidence();
+        final double confidence = judg.truth.getConfidence();
         //final float originality = judg.stamp.getOriginality();
-        return confidence; //or(confidence, originality);
+        return (float)confidence; //or(confidence, originality);
     }
 
 
@@ -91,9 +91,9 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
         }
-        final float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
-        final float priority = or(dif, task.getPriority());
-        final float durability = aveAri(dif, task.getDurability());
+        final double dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
+        final float priority = or((float)dif, task.getPriority());
+        final float durability = aveAri((float)dif, task.getDurability());
         final float quality = truthToQuality(truth);
         
         /*
@@ -239,7 +239,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget value of the conclusion
      */
     public static BudgetValue backwardWeak(final TruthValue truth, final org.opennars.control.DerivationContext nal) {
-        return budgetInference(w2c(1, nal.narParameters) * truthToQuality(truth), 1, nal);
+        return budgetInference((float)w2c(1, nal.narParameters) * truthToQuality(truth), 1, nal);
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
@@ -275,7 +275,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackwardWeak(final Term content, final org.opennars.control.DerivationContext nal) {
-        return budgetInference(w2c(1, nal.narParameters), content.getComplexity()*nal.narParameters.COMPLEXITY_UNIT, nal);
+        return budgetInference((float)w2c(1, nal.narParameters), content.getComplexity()*nal.narParameters.COMPLEXITY_UNIT, nal);
     }
 
     /**
@@ -308,7 +308,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         final TermLink bLink = nal.getCurrentBeliefLink();
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
-            durability = and(durability, bLink.getDurability());
+            durability = (float)and(durability, bLink.getDurability());
             final float targetActivation = conceptActivation(nal.memory, bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
