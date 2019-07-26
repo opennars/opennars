@@ -123,6 +123,8 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
             return "TruthFunctions.EnumType.INTERSECTION"
         elif truth == "union":
             return "TruthFunctions.EnumType.UNION"
+        elif truth == "comparison":
+            return "TruthFunctions.EnumType.COMPARISON"
         else:
             raise Exception("not implement truth function \""+truth+"\"!")
 
@@ -642,7 +644,7 @@ def convTerm2(term):
                 if isinstance(copula, CWT):
                     # we have to rebuild the statement
 
-                    if copula.copula == "=/>":
+                    if copula.copula in ["=/>", "</>"]:
                         return (("&/", name0, copula.tname), copula.copula, name1)
                     elif copula.copula == "=\\>":
                         return (name0, copula.copula, ("&/", name1, copula.tname))
@@ -837,7 +839,7 @@ for [copAsym,copSym,[ConjCops,DisjCop,MinusCops]] in CopulaTypes:
 
 
                 #print "A\t\tB\t"+predRel+"\t|-\t(B "+copSym.replace("t",forwardRel)+"A)\t\t(Truth:Comparison, Variables:Introduce$#)"
-                #gen("A", "B",  predRel,("B", ival(copSym, forwardRel), "A"),  ("comparison", ""), "Introduce$#", "", 'l')
+                gen("A", "B",  predRel,("A", ival(copSym, forwardRel), "B"),  ("comparison", ""), "Introduce$#", "", 'l')
 
             else:
                 pass

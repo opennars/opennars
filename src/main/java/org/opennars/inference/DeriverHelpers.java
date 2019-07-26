@@ -24,10 +24,7 @@
 package org.opennars.inference;
 
 import org.opennars.entity.Sentence;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Term;
+import org.opennars.language.*;
 
 /**
  * helper methods for the deriver
@@ -49,6 +46,12 @@ public class DeriverHelpers {
         }
         else if(termCode.equals("=/>")) {
             return new Implication(new Term[]{left, right}, TemporalRules.ORDER_FORWARD);
+        }
+        else if(termCode.equals("</>")) {
+            return Equivalence.make(left, right, TemporalRules.ORDER_FORWARD);
+        }
+        else if(termCode.equals("<|>")) {
+            return Equivalence.make(left, right, TemporalRules.ORDER_CONCURRENT);
         }
         else if(termCode.equals("=\\>")) {
             return new Implication(new Term[]{left, right}, TemporalRules.ORDER_BACKWARD);
