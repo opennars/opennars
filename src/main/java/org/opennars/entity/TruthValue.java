@@ -58,7 +58,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * confidence factor of the truth value
      */
-    private float confidence;
+    private double confidence;
     /**
      * Whether the truth value is derived from a definition
      */
@@ -80,7 +80,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param c confidence value
      * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c, Parameters narParameters) {
+    public TruthValue(final float f, final double c, Parameters narParameters) {
         this(f, c, false, narParameters);
     }
 
@@ -92,7 +92,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param isAnalytic is the truth value an analytic one?
      * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c, final boolean isAnalytic, Parameters narParameters) {
+    public TruthValue(final float f, final double c, final boolean isAnalytic, Parameters narParameters) {
         this.narParameters = narParameters;
         setFrequency(f);                
         setConfidence(c);        
@@ -125,7 +125,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      *
      * @return confidence value
      */
-    public float getConfidence() {
+    public double getConfidence() {
         return confidence;
     }
 
@@ -134,15 +134,15 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return this;
     }
     
-    public TruthValue setConfidence(final float c) {
-        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
+    public TruthValue setConfidence(final double c) {
+        double max_confidence = 1.0 - this.narParameters.TRUTH_EPSILON;
         this.confidence = (c < max_confidence) ? c : max_confidence;
         return this;
     }
     
     public TruthValue mulConfidence(final float mul) {
-        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
-        final float c = this.confidence * mul;
+        final double max_confidence = 1.0 - this.narParameters.TRUTH_EPSILON;
+        final double c = this.confidence * mul;
         this.confidence = (c < max_confidence) ? c : max_confidence;
         return this;
     }
@@ -167,7 +167,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @return expectation value
      */
     public float getExpectation() {
-        return (confidence * (frequency - 0.5f) + 0.5f);
+        return ((float)confidence * (frequency - 0.5f) + 0.5f);
     }
 
     /**
@@ -190,8 +190,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return getFrequency() < 0.5;
     }
 
-    public static boolean isEqual(final float a, final float b, final float epsilon) {
-        final float d = Math.abs(a - b);
+    public static boolean isEqual(final double a, final double b, final double epsilon) {
+        final double d = Math.abs(a - b);
         return (d < epsilon);
     }
     
@@ -284,13 +284,13 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         } else if(term.equals(Truth_FALSE)) {
             return new TruthValue(0.0f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE, narParameters);
         } else if(term.equals(Truth_UNSURE)) {
-            return new TruthValue(0.5f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE / 2.0f, narParameters);
+            return new TruthValue(0.5f, narParameters.DEFAULT_JUDGMENT_CONFIDENCE / 2.0, narParameters);
         } else {
             return null;
         }
     }
 
-    public TruthValue set(final float frequency, final float confidence) {
+    public TruthValue set(final float frequency, final double confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;
