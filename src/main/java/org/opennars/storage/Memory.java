@@ -189,7 +189,17 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         if(term instanceof Interval) {
             return null;
         }
-        term = CompoundTerm.replaceIntervals(term);
+
+        if (term == null) {
+            int here = 5;
+        }
+
+        Term termBefore = term;
+        term = CompoundTerm.replaceIntervals(termBefore);
+
+        if (term == null) {
+            int here = 5;
+        }
 
         final Concept displaced;
         Concept concept;
