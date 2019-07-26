@@ -539,13 +539,6 @@ public class TemporalControl {
         return false;
     }
 
-    private static Sentence overrideTermOfSentence(Sentence sentence, Term term) {
-        Sentence result = new Sentence(term, sentence.punctuation, sentence.truth, sentence.stamp);
-        result.setRevisible(sentence.getRevisible());
-        result.producedByTemporalInduction = sentence.producedByTemporalInduction;
-        return result;
-    }
-
     private static Sentence buildSequence(Sentence a, Sentence b, long time, Parameters narParameters) {
         assert a.getOccurenceTime() < b.getOccurenceTime();
 
@@ -779,7 +772,6 @@ public class TemporalControl {
 
 
                                 // now we need to select the secondary event from the trace item
-                                // TODO< should we ensure that it is not an operation ? >
 
                                 //  select random event as secondary
                                 if (secondaryTraceItem.events.size() == 0) {
@@ -820,21 +812,6 @@ public class TemporalControl {
 
         return null;
     }
-
-    // is in "(&/, A...) =/> B" form?
-    static private boolean checkImplSeqForm(Term term) {
-        if (!(term instanceof Implication) || term.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
-            return false;
-        }
-
-        Term rootConjSubj = ((Implication)term).term[0]; // fetch "(&/, A...)"
-
-        return rootConjSubj instanceof Conjunction && (rootConjSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD);
-    }
-
-
-
-
 
 
     public static class ConceptWithSalience {
