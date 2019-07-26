@@ -8,4 +8,4 @@
 (&&,<#1 --> object>,<#1 --> [unscrewing]>)!
 10000
 ''outputMustContain('(^lighter,{SELF},toothbrush)! %1.00;0.39%')
-''outputMustContain('(^reshape,{SELF},toothbrush)! %1.00;0.09%')
+''outputMustContain('(^reshape,{SELF},toothbrush)! %1.00;0.39%')

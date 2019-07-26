@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
+import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 public class InitTrie {
 // AUTOGEN: initializes and fills tries
 public static List<Trie.TrieElement> initTrie() {
@@ -92,7 +93,7 @@ public static List<Trie.TrieElement> initTrie() {
 
 
 // rule         A, B   ['Time:After(tB,tA)']  |-   <A&/B>		(Truth:intersection)	Introduce#
-/*{
+{
     Trie.TrieElement te0 = new Trie.TrieElement(Trie.TrieElement.EnumType.PRECONDITION);
     te0.stringPayload = "Time:After(tB,tA)";
     
@@ -101,7 +102,7 @@ public static List<Trie.TrieElement> initTrie() {
     te0.children.add(teX);
     
     Trie.addToTrieRec(rootTries, te0);
-}*/
+}
 
 
 // rule         A, B   ['Time:Parallel(tB,tA)']  |-   <A<|>B>		(Truth:comparison)	Introduce$#
@@ -162,7 +163,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term a = aSentence.term;
    Term b = bSentence.term;
    
-   Term conclusionSubj = DeriverHelpers.makeBinary("&/",a,new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA));
+   Term conclusionSubj = DeriverHelpers.makeBinary("&/",a,new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA   - calcSeqTime(a)));
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("=/>", conclusionSubj, conclusionPred);
@@ -281,7 +282,7 @@ public void derive(Sentence aSentence, Sentence bSentence, List<Sentence> result
    Term a = aSentence.term;
    Term b = bSentence.term;
    
-   Term conclusionSubj = DeriverHelpers.makeBinary("&/",a,new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA));
+   Term conclusionSubj = DeriverHelpers.makeBinary("&/",a,new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA   - calcSeqTime(a)));
    Term conclusionPred = b;
    if(!isSame(conclusionSubj, conclusionPred)) { // conclusion with same subject and predicate are forbidden by NAL
       Term conclusionTerm = DeriverHelpers.makeBinary("</>", conclusionSubj, conclusionPred);

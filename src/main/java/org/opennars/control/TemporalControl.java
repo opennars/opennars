@@ -15,11 +15,12 @@ import java.util.*;
 import static java.lang.Long.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 
 public class TemporalControl {
     public double heatUp = 0.05; // config
 
-    public int inferencesPerCycle = 20; // config
+    public int inferencesPerCycle = 6; // config
 
     public double novelityThreshold = 0.5;
 
@@ -237,12 +238,6 @@ public class TemporalControl {
                     // build sequence of eventA and middle event
                     if (!Stamp.baseOverlap(premiseEventASentence.stamp, eventMiddle.sentence.stamp)) {
                         premiseEventASentence = buildSequence(premiseEventASentence, eventMiddle.sentence, time, narParameters);
-
-                        if (!(premiseEventBSentence.term instanceof Operation)) {
-                            int here42 = 6;
-                        }
-
-                        int debug42 = 6;
                     }
                 }
 
@@ -558,7 +553,7 @@ public class TemporalControl {
             int here = 5;
         }
 
-        long occTimeDiff = b.getOccurenceTime() - a.getOccurenceTime();
+        long occTimeDiff = b.getOccurenceTime() - a.getOccurenceTime() - calcSeqTime(a.term);
 
         Term conclusionTerm = DeriverHelpers.make("&/",a.term,new Interval(occTimeDiff),b.term);
         Stamp stamp = new Stamp(a.stamp, b.stamp, time, narParameters); // merge stamps
@@ -836,6 +831,8 @@ public class TemporalControl {
 
         return rootConjSubj instanceof Conjunction && (rootConjSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD);
     }
+
+
 
 
 

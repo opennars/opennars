@@ -107,4 +107,22 @@ public class DeriverHelpers {
 
         return conclusionTerm;
     }
+
+    // computes the overall interval time of a seq
+    public static long calcSeqTime(Term term) {
+        if (!(term instanceof Conjunction)) {
+            return 0; // time of non-Conjuction is zero
+        }
+
+        Conjunction seq = (Conjunction)term;
+        assert seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+
+        long intervalSum = 0;
+        for(final Term iComponent : seq.term) {
+            if (iComponent instanceof Interval) {
+                intervalSum += ((Interval)iComponent).time;
+            }
+        }
+        return intervalSum;
+    }
 }

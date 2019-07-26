@@ -252,7 +252,7 @@ def genTrieEmit(premiseA, premiseB, preconditions, conclusion, truthTuple, varHi
             elif name == "t-z": # special case - is the time
                 return "new Interval(trieCtx.intervalPremiseT-trieCtx.intervalPremiseZ)"
             elif name == "tB-tA": # special case - we have to compute the difference of the timestamps
-                return "new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA)"
+                return "new Interval(trieCtx.occurrencetimePremiseB-trieCtx.occurrencetimePremiseA   - calcSeqTime(a))"
             elif name == "tA-tB": # special case - we have to compute the difference of the timestamps
                 return "new Interval(/*negate because tA-tB is a convention but leads to negative timing*/- (trieCtx.occurrencetimePremiseA-trieCtx.occurrencetimePremiseB))"
 
@@ -745,6 +745,8 @@ emit("import java.util.List;")
 emit("import java.util.ArrayList;")
 emit("import java.util.Set;")
 emit("import org.apache.commons.lang3.tuple.Pair;")
+
+emit("import static org.opennars.inference.DeriverHelpers.calcSeqTime;")
 
 emit("public class InitTrie {")
 
