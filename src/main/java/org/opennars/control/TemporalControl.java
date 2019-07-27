@@ -236,7 +236,7 @@ public class TemporalControl {
             // debugging
             {
                 String strOfPair = "(~ "+eventA.sentence.toString(nar, false)+(eventMiddle != null ? " ~ "+eventMiddle.sentence.toString(nar, false) : "") + " ~ " + eventB.sentence.toString(nar, false)+" ~)";
-                if(DEBUG_TEMPORALCONTROL) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
+                if(DEBUG_TEMPORALCONTROL_PREMISESELECTION) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
             }
 
             // stuff it into deriver
@@ -634,7 +634,9 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
