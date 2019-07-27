@@ -239,9 +239,10 @@ public class TemporalControl {
 
 
             // debugging
-            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair a = "+eventA);
-            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair b = "+eventB);
-            if(DEBUG_TEMPORALCONTROL) System.out.println("select event pair middle = "+eventMiddle);
+            {
+                String strOfPair = "(~ "+eventA.sentence.toString(nar, false)+(eventMiddle != null ? " ~ "+eventMiddle.sentence.toString(nar, false) : "") + " ~ " + eventB.sentence.toString(nar, false)+" ~)";
+                if(DEBUG_TEMPORALCONTROL) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
+            }
 
             { // preprocess and stuff it into deriver
                 Sentence premiseEventASentence = eventA.sentence;
@@ -441,12 +442,7 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            //if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, true));
-            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("derived after transform = " + iDerivedConclusion.toString(nar, false));
-
-            if ((""+iDerivedConclusion).contains("=/> <{SELF} --> [good]>>.")) {
-                int debug42 = 6;
-            }
+            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, false));
         }
 
         if (conclusionSentences.size() > 0) {
@@ -609,8 +605,8 @@ public class TemporalControl {
         }
     }
 
-    public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
