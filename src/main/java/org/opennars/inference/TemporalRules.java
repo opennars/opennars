@@ -150,8 +150,8 @@ public class TemporalRules {
         
         Term t1 = s1.term;
         Term t2 = s2.term;
-               
-        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
+
+        final boolean deriveSequenceOnly = Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         

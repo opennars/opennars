@@ -11,4 +11,4 @@
 20
 
 'If the key001 is reachable for the robot and the robot picks the key001, the robot may hold hey001.
-''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+11,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :!0: %1.00;0.45%')
+''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+11,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :!11: %1.00;0.45%')

@@ -153,9 +153,6 @@ public class TemporalControl {
             termWithHeatByTerm.remove(current.lastInputTask.sentence.term);
             sortedByHeat.remove(sortedByHeatMaxSize);
         }
-
-
-        int here = 5;
     }
 
     /**
@@ -187,8 +184,6 @@ public class TemporalControl {
     }
 
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
-        final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
-
         List<Sentence> conclusionSentences = new ArrayList<>();
 
         for(int iInference=0; iInference<inferencesPerCycle; iInference++) {
@@ -244,21 +239,8 @@ public class TemporalControl {
                 if(DEBUG_TEMPORALCONTROL) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
             }
 
-            { // preprocess and stuff it into deriver
-                Sentence premiseEventASentence = eventA.sentence;
-                Sentence premiseEventBSentence = eventB.sentence;
-
-                if (eventMiddle != null) {
-                    // build sequence of eventA and middle event
-                    if (!Stamp.baseOverlap(premiseEventASentence.stamp, eventMiddle.sentence.stamp)) {
-                        premiseEventASentence = buildSequence(premiseEventASentence, eventMiddle.sentence, time, narParameters);
-                    }
-                }
-
-
-                // stuff it all into the deriver
-                mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
-            }
+            // stuff it into deriver
+            derive(nar, mem, time, narParameters, conclusionSentences, eventA, eventMiddle, eventB);
         }
 
 
@@ -442,7 +424,8 @@ public class TemporalControl {
 
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
-            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, false));
+            boolean DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS = true;
+            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
         }
 
         if (conclusionSentences.size() > 0) {
@@ -454,7 +437,7 @@ public class TemporalControl {
         {
             for(Sentence iConclusionSentence : conclusionSentences) {
                 { // add non-eternalized
-                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
 
                     Task createdTask = new Task(
                         iConclusionSentence,
@@ -466,7 +449,7 @@ public class TemporalControl {
                 }
 
                 { // add eternalized
-                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
 
                     // we need to eternalize the sentence
                     // TODO< do it the proper way with calculation of TV >
@@ -506,7 +489,7 @@ public class TemporalControl {
             }
 
             // TODO< derive budget somehow >
-            BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, nal.narParameters);
+            BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
 
             // we need to create a task for the sentence
             Task createdTask = new Task(
@@ -516,6 +499,49 @@ public class TemporalControl {
             );
 
             eligibilityTrace.addEvent(createdTask);
+        }
+    }
+
+    // derive conclusions from premises
+    private static void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, Task premiseEventA, Task premiseEventMiddle, Task premiseEventB) {
+        Sentence premiseEventASentence = premiseEventA.sentence;
+        Sentence premiseEventBSentence = premiseEventB.sentence;
+
+        // we assume that event B happens either at the same time or after event A
+        assert premiseEventBSentence.stamp.getOccurrenceTime() >= premiseEventBSentence.stamp.getOccurrenceTime() : "assumption of order of events violated";
+
+        if (premiseEventMiddle != null) /* check if we have three premises and derive the results with special rules */ {
+            // build sequence of eventA and middle event
+            if (Stamp.baseOverlap(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp)) {
+                return;
+            }
+            Sentence premiseEventASequence = buildSequence(premiseEventASentence, premiseEventMiddle.sentence, time, narParameters);
+
+            // TODO< implement derivation for the case with three premises >
+            int here6 = 1;
+        }
+        else { // we have two premises
+            // stuff it all into the deriver
+            //commented because we are using    mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
+
+            { // implementation using TemporalRules.temporalInduction()
+                Sentence currentBelief = premiseEventBSentence;
+                Sentence previousBelief = premiseEventASentence;
+
+                // it is necessary to update the nal-context
+                final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
+                nal.setTheNewStamp(premiseEventB.sentence.stamp, premiseEventA.sentence.stamp, nal.time.time());
+                nal.setCurrentTask(premiseEventB);
+                nal.setCurrentBelief(premiseEventA.sentence);
+                List<Task> derivationsFromTemporalInduction = TemporalRules.temporalInduction(currentBelief, previousBelief, nal, false, false, true);
+
+                // map to List of sentences
+                for (final Task iDerivedTask : derivationsFromTemporalInduction) {
+                    if (!iDerivedTask.sentence.stamp.isEternal()) { // must be event because event trace derives only events
+                        conclusionSentences.add(iDerivedTask.sentence);
+                    }
+                }
+            }
         }
     }
 
@@ -605,8 +631,8 @@ public class TemporalControl {
         }
     }
 
-    public boolean DEBUG_TEMPORALCONTROL = true;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
