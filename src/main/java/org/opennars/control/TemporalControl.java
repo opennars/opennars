@@ -207,7 +207,7 @@ public class TemporalControl {
 
 
             // restrict types of premise events to avoid deriving nonsense
-            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventA.sentence.term, false)) {
+            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventB.sentence.term, false)) {
                 continue;
             }
             if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
@@ -660,7 +660,8 @@ public class TemporalControl {
                 }
 
                 {
-                    List<EligibilityTrace.EligibilityTraceItem> etItemsByTerm = eligibilityTrace.eligibilityTraceItemsByTerm.get(""+primarySelectedConcept.term);
+                    String etItemKey = ""+primarySelectedConcept.term;
+                    List<EligibilityTrace.EligibilityTraceItem> etItemsByTerm = eligibilityTrace.eligibilityTraceItemsByTerm.get(etItemKey);
 
                     if (etItemsByTerm == null) {
                         return null; // no events to sample from
@@ -701,7 +702,7 @@ public class TemporalControl {
 
                         // filter for all events where the term is equal to the term of the primary selected concept
                         for (Task iEvent : selectedPrimaryEtItem.events) {
-                            if (iEvent.sentence.term.equals(primarySelectedConcept.term)) {
+                            if (CompoundTerm.replaceIntervals(iEvent.sentence.term).equals(primarySelectedConcept.term)) {
                                 primarySelectionCandidateEvents.add(iEvent);
                             }
                         }
@@ -1091,8 +1092,9 @@ public class TemporalControl {
          * @param item
          */
         public void updateEtItemByTerm(Term term, EligibilityTraceItem item) {
-            if (eligibilityTraceItemsByTerm.containsKey(""+term)) {
-                List<EligibilityTraceItem> items = eligibilityTraceItemsByTerm.get(""+term);
+            String etKey = ""+CompoundTerm.replaceIntervals(term);
+            if (eligibilityTraceItemsByTerm.containsKey(etKey)) {
+                List<EligibilityTraceItem> items = eligibilityTraceItemsByTerm.get(etKey);
 
                 // search for term, return if found because we don't need to add the term
                 for(EligibilityTraceItem iItem : items) {
@@ -1103,31 +1105,33 @@ public class TemporalControl {
             }
             else {
                 List<EligibilityTraceItem> items = new ArrayList<>();
-                eligibilityTraceItemsByTerm.put(""+term, items);
+                eligibilityTraceItemsByTerm.put(etKey, items);
             }
 
             // add it if we are here
-            List<EligibilityTraceItem> arr = eligibilityTraceItemsByTerm.get(""+term);
+            List<EligibilityTraceItem> arr = eligibilityTraceItemsByTerm.get(etKey);
             arr.add(item);
 
             if (arr.size() >= 2) {
                 int debugMe = 5;
             }
 
-            eligibilityTraceItemsByTerm.remove(""+term);
-            eligibilityTraceItemsByTerm.put(""+term, arr);
+            eligibilityTraceItemsByTerm.remove(etKey);
+            eligibilityTraceItemsByTerm.put(etKey, arr);
 
             int here = 5;
         }
 
         public void removeEtItemByTerm(Term term, EligibilityTraceItem item) {
-            if (!eligibilityTraceItemsByTerm.containsKey(term)) {
+            String etKey = ""+CompoundTerm.replaceIntervals(term);
+
+            if (!eligibilityTraceItemsByTerm.containsKey(etKey)) {
                 return; // we can safely ignore it
             }
 
-            eligibilityTraceItemsByTerm.get(term).remove(item);
-            if (eligibilityTraceItemsByTerm.get(term).size() == 0) {
-                eligibilityTraceItemsByTerm.remove(term); // we can remove it
+            eligibilityTraceItemsByTerm.get(etKey).remove(item);
+            if (eligibilityTraceItemsByTerm.get(etKey).size() == 0) {
+                eligibilityTraceItemsByTerm.remove(etKey); // we can remove it
             }
         }
 
