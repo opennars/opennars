@@ -474,15 +474,17 @@ public class TemporalControl {
         for(Sentence iDerivedSentence : conclusionSentences) {
             boolean allowAddToTrace = false;
 
-            if (iDerivedSentence.term instanceof Conjunction && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            boolean isSeq = iDerivedSentence.term instanceof Conjunction && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+            boolean isPar = iDerivedSentence.term instanceof Conjunction && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT;
+            boolean isPredImpl = iDerivedSentence.term instanceof Implication && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+
+            if (isSeq || isPar) {
                 allowAddToTrace = true;
             }
             // we need to allow =/> too because we need to build more complex impl seqs
-            if (iDerivedSentence.term instanceof Implication && iDerivedSentence.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            if (isPredImpl) {
                 allowAddToTrace = true;
             }
-
-            // TODO< allow concurrent events too >
 
             if (!allowAddToTrace) {
                 continue;
