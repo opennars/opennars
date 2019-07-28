@@ -537,7 +537,7 @@ public class TemporalControl {
 
             { // build =/>
                 TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
-                Stamp stamp = new Stamp(seqStamp, premiseEventB.sentence.stamp, time, narParameters); // merge stamps
+                Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
                 boolean ise = stamp.isEternal();
                 Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
                 Sentence s = new Sentence(term, '.', tv, stamp);
