@@ -20,7 +20,7 @@ import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 public class TemporalControl {
     public double heatUp = 0.05; // config
 
-    public int inferencesPerCycle = 6; // config
+    public int inferencesPerCycle = 1; // config
 
     public double novelityThreshold = 0.5;
 
@@ -659,7 +659,7 @@ public class TemporalControl {
 
     public boolean DEBUG_TEMPORALCONTROL = false;
     public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
 

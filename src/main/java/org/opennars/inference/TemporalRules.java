@@ -207,16 +207,20 @@ public class TemporalRules {
         List<Term> t22s = new ArrayList<>();
         List<Float> penalties = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if(!deriveSequenceOnly && statement2!=null) {
-            for(boolean subjectIntro : new boolean[]{true, false}) {
-                Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
-                for(Pair<Term,Float> content_penalty : ress) { //ok we applied it, all we have to do now is to use it
-                    t11s.add(((Statement)content_penalty.getLeft()).getPredicate());
-                    t22s.add(((Statement)content_penalty.getLeft()).getSubject());
-                    penalties.add(content_penalty.getRight());
+        if (true) {
+            if(!deriveSequenceOnly && statement2!=null) {
+                for(boolean subjectIntro : new boolean[]{true, false}) {
+                    Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
+                    for(Pair<Term,Float> content_penalty : ress) { //ok we applied it, all we have to do now is to use it
+                        t11s.add(((Statement)content_penalty.getLeft()).getPredicate());
+                        t22s.add(((Statement)content_penalty.getLeft()).getSubject());
+                        penalties.add(content_penalty.getRight());
+                    }
                 }
             }
         }
+
+
         
         final List<Task> derivations= new ArrayList<>();
         if (!deriveSequenceOnly ) {
