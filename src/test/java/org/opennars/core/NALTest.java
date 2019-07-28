@@ -64,7 +64,7 @@ public class NALTest  {
     public static final Map<String, Boolean> tests = new LinkedHashMap<>();
 
     // ignore tests with these prefixes
-    static public String[] ignoredPrefixes = new String[]{"nal1.","nal2.","nal3.","nal4.","nal5"};
+    static public String[] ignoredPrefixes = new String[]{};//"nal1.","nal2.","nal3.","nal4.","nal5"};
 
     // we store a list of scores to keep track of each sample
     public static final Map<String, List<Double>> scores = new LinkedHashMap<>();

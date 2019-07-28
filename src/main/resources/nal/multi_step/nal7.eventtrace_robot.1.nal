@@ -19,6 +19,6 @@
 'The robot holds key001
 <(*,Self,key001) --> hold>. :|:
 
-120
+50
 
-''outputMustContain('<(&/,<a --> A>,+17,(^pick,{SELF},ACT0),+15) =/> <(*,Self,key001) --> hold>>. %1.00;0.30%')
+''outputMustContain('<(&/,<a --> A>,+10,(^pick,{SELF},ACT0),+11) =/> <(*,Self,key001) --> hold>>. %1.00;0.30%')
