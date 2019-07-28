@@ -745,8 +745,7 @@ public class TemporalControl {
                         }
 
 
-                        int idx = mem.randomNumber.nextInt(primarySelectionCandidateEvents.size());
-                        Task selectedPrimaryEvent = primarySelectionCandidateEvents.get(idx);
+                        Task selectedPrimaryEvent = selectTaskByConf(mem, primarySelectionCandidateEvents);
 
                         Task selectedSecondaryEvent = null;
                         Task middleEvent = null; // event in the middle between the two events
@@ -764,8 +763,7 @@ public class TemporalControl {
                             }
 
                             if (otherPossibleEvents.size() > 0) {
-                                int secondaryEventIdx = mem.randomNumber.nextInt(otherPossibleEvents.size());
-                                selectedSecondaryEvent = otherPossibleEvents.get(secondaryEventIdx);
+                                selectedSecondaryEvent = selectTaskByConf(mem, otherPossibleEvents);
                             }
                         }
                         else { // select secondary event
@@ -821,8 +819,6 @@ public class TemporalControl {
                                 float middleEventMustBeOpPropability = 0.5f; // config
                                 boolean middleEventMustBeOp = mem.randomNumber.nextFloat() > middleEventMustBeOpPropability; // must the middle event be an op or can it be a normal event?
 
-                                System.out.println("must be op " +middleEventMustBeOp);
-
                                 for(int idx2=neightborMinIdx;idx2<neightborMaxIdx;idx2++) {
                                     EligibilityTrace.EligibilityTraceItem traceItem = eligibilityTrace.eligibilityTrace.get(idx2);
 
@@ -839,8 +835,8 @@ public class TemporalControl {
                                     if (selectionMassAccu > selectedSalience2) {
                                         int secondaryEventIdx = idx2;
 
-                                        if (secondaryEventIdx == 2) {
-                                            int here = 5;
+                                        if (secondaryEventIdx == 2 && !middleEventMustBeOp) {
+                                            int here = 5; // DEBUG
                                         }
 
                                         if(DEBUG_TEMPORALCONTROL) System.out.println("secondary event idx = " + secondaryEventIdx);
@@ -867,8 +863,7 @@ public class TemporalControl {
 
                                                 // select middle candidate event
                                                 if (middleEventCandidates.size() > 0) {
-                                                    int middleEventCandidateIdx = mem.randomNumber.nextInt(middleEventCandidates.size());
-                                                    middleEvent = middleEventCandidates.get(middleEventCandidateIdx);
+                                                    middleEvent = selectTaskByConf(mem, middleEventCandidates);
                                                 }
                                             }
                                         }
@@ -891,9 +886,8 @@ public class TemporalControl {
                                     return null; // shouldn't happen
                                 }
 
-
-                                int secondaryEventIdx = mem.randomNumber.nextInt(secondaryTraceItem.events.size());
-                                selectedSecondaryEvent = secondaryTraceItem.events.get(secondaryEventIdx);
+                                List<Task> candidateEvents = secondaryTraceItem.events;
+                                selectedSecondaryEvent = selectTaskByConf(mem, candidateEvents);
                             }
                         }
 
@@ -924,6 +918,38 @@ public class TemporalControl {
         }
 
         return null;
+    }
+
+    /**
+     * selects one Task by the relative conf of all
+     * @param mem
+     * @param candidateEvents
+     * @return one selection
+     */
+    private Task selectTaskByConf(Memory mem, List<Task> candidateEvents) {
+        assert candidateEvents.size() > 0 : "it is assumed that there are events to select";
+        if (candidateEvents.size() == 0) {
+            return null;
+        }
+
+        double confMass = 0.0;
+        // sum up all conf
+        for (final Task iCandidate : candidateEvents) {
+            confMass += iCandidate.sentence.truth.getConfidence();
+        }
+
+        double chosenConfMass = mem.randomNumber.nextDouble() * confMass;
+
+        // select by accumulation
+        double accu = 0.0;
+        for (final Task iCandidate : candidateEvents) {
+            accu += iCandidate.sentence.truth.getConfidence();
+            if (accu >= chosenConfMass) {
+                return iCandidate;
+            }
+        }
+
+        return candidateEvents.get(candidateEvents.size()-1); // return last one if no other won
     }
 
 
