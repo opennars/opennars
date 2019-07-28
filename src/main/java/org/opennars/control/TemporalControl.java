@@ -206,13 +206,7 @@ public class TemporalControl {
             }
 
 
-            // restrict types of premise events to avoid deriving nonsense
-            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventB.sentence.term, false)) {
-                continue;
-            }
-            if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
-                continue;
-            }
+
 
 
             // this test is nonsense because we may want to do revision etc
@@ -229,6 +223,15 @@ public class TemporalControl {
                 continue;
             }
             if (eventMiddle != null && (Stamp.baseOverlap(eventB.sentence.stamp, eventMiddle.sentence.stamp))) {
+                continue;
+            }
+
+
+            // restrict types of premise events to avoid deriving nonsense
+            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventB.sentence.term, false)) {
+                continue;
+            }
+            if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
                 continue;
             }
 
@@ -548,10 +551,18 @@ public class TemporalControl {
     }
 
     static private boolean isValidForInference2(Term term, boolean isFirstEvent) {
-        boolean isPredImpl = term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+        boolean isTemporalImpl = term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
         boolean isSeq = term instanceof Conjunction && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
-        if ((isSeq || isPredImpl) && isFirstEvent) {
+        if (isSeq && isFirstEvent) {
             return true; // special case
+        }
+        if (isTemporalImpl && !isFirstEvent) {
+            return true; // special case for
+                         // <(*,Self,key001) --> reachable>. :|:
+                         // 11
+                         // <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|:
+                         // |-
+                         // <(&/,<(*,Self,key001) --> reachable>,+11,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :!11: %1.00;0.45%
         }
 
         return isValidForInference(term);
@@ -635,7 +646,7 @@ public class TemporalControl {
 
     public boolean DEBUG_TEMPORALCONTROL = false;
     public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
 
