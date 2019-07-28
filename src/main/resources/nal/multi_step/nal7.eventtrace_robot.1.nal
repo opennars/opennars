@@ -1,0 +1,22 @@
+' example for a task where event trace produces a result which event bag doesn't produce
+
+<a --> A>. :|:
+
+10
+
+'The robot picks key001 and does a action
+(^pick,{SELF},key001). :|: %1.00;0.90%
+<c-->C>.:|:
+
+' the robot does another action
+(^pick,{SELF},ACT0). :|: %1.00;0.90%
+
+
+11
+
+'The robot holds key001
+<(*,Self,key001) --> hold>. :|:
+
+120
+
+''outputMustContain('<(&/,<a --> A>,+17,(^pick,{SELF},ACT0),+15) =/> <(*,Self,key001) --> hold>>. %1.00;0.30%')
