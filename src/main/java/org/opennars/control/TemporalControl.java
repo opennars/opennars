@@ -455,10 +455,10 @@ public class TemporalControl {
                     BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
 
                     // we need to eternalize the sentence
-                    // TODO< do it the proper way with calculation of TV >
+                    TruthValue eternalizedTv = TruthFunctions.eternalize(iConclusionSentence.truth.clone(), narParameters);
                     Stamp eternalizedStamp = iConclusionSentence.stamp.clone();
                     eternalizedStamp.setEternal();
-                    Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, iConclusionSentence.truth, eternalizedStamp);
+                    Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, eternalizedTv, eternalizedStamp);
 
                     Task createdTask = new Task(
                         eternalizedSentence,
@@ -538,6 +538,7 @@ public class TemporalControl {
             { // build =/>
                 TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
                 Stamp stamp = new Stamp(seqStamp, premiseEventB.sentence.stamp, time, narParameters); // merge stamps
+                boolean ise = stamp.isEternal();
                 Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
                 Sentence s = new Sentence(term, '.', tv, stamp);
                 synchronized (conclusionSentences) {
