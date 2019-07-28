@@ -538,8 +538,18 @@ public class TemporalControl {
             { // build =/>
                 TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
                 Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
-                boolean ise = stamp.isEternal();
                 Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
+                Sentence s = new Sentence(term, '.', tv, stamp);
+                synchronized (conclusionSentences) {
+                    conclusionSentences.add(s);
+                }
+            }
+
+            { // build </>
+                TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.COMPARISON, seqTv, premiseEventBSentence.truth, narParameters);
+                Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
+                boolean ise = stamp.isEternal();
+                Term term = Equivalence.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
                 Sentence s = new Sentence(term, '.', tv, stamp);
                 synchronized (conclusionSentences) {
                     conclusionSentences.add(s);
@@ -550,6 +560,9 @@ public class TemporalControl {
             int here6 = 1;
         }
         else { // we have two premises
+            //int r=1;
+            //if (r==1) return; // avoid binary premise selection for TESTING
+
             // stuff it all into the deriver
             //commented because we are using    mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
 
@@ -808,6 +821,8 @@ public class TemporalControl {
                                 float middleEventMustBeOpPropability = 0.5f; // config
                                 boolean middleEventMustBeOp = mem.randomNumber.nextFloat() > middleEventMustBeOpPropability; // must the middle event be an op or can it be a normal event?
 
+                                System.out.println("must be op " +middleEventMustBeOp);
+
                                 for(int idx2=neightborMinIdx;idx2<neightborMaxIdx;idx2++) {
                                     EligibilityTrace.EligibilityTraceItem traceItem = eligibilityTrace.eligibilityTrace.get(idx2);
 
@@ -823,6 +838,10 @@ public class TemporalControl {
 
                                     if (selectionMassAccu > selectedSalience2) {
                                         int secondaryEventIdx = idx2;
+
+                                        if (secondaryEventIdx == 2) {
+                                            int here = 5;
+                                        }
 
                                         if(DEBUG_TEMPORALCONTROL) System.out.println("secondary event idx = " + secondaryEventIdx);
                                         if(DEBUG_TEMPORALCONTROL) System.out.println("secondary event time = " + traceItem.retOccurenceTime());
