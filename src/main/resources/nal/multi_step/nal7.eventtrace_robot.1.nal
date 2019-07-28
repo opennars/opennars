@@ -1,4 +1,6 @@
-' example for a task where event trace produces a result which event bag doesn't produce
+' example for a task where event trace produces a result which event bag doesnt produce
+
+30
 
 <a --> A>. :|:
 

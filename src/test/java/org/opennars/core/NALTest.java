@@ -38,8 +38,10 @@ import org.opennars.util.test.OutputCondition;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -60,6 +62,9 @@ public class NALTest  {
     static public final int similarsToSave = 5;
     protected static final Map<String, String> examples = new LinkedHashMap<>(); //path -> script data
     public static final Map<String, Boolean> tests = new LinkedHashMap<>();
+
+    // ignore tests with these prefixes
+    static public String[] ignoredPrefixes = new String[]{"nal1.","nal2.","nal3.","nal4.","nal5"};
 
     // we store a list of scores to keep track of each sample
     public static final Map<String, List<Double>> scores = new LinkedHashMap<>();
@@ -89,15 +94,65 @@ public class NALTest  {
     public Nar newNAR() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         return new Nar();
     }
-    
+
+    private static Map<String,Object> getUnitTests(final String[] directories, final String[] ignoredPrefixes) {
+        final Map<String,Object> l = new TreeMap();
+
+        for (final String dir : directories ) {
+
+            File folder = null;
+            try {
+                folder = new File(Nar.class.getResource(dir).toURI());
+            } catch (final URISyntaxException e) {
+                throw new IllegalStateException("Could not resolve path to nal tests in reosources.", e);
+            }
+
+            if( folder.listFiles() != null ) {
+                for (final File file : folder.listFiles()) {
+                    if (file.getName().equals("README.txt") || file.getName().contains(".png"))
+                        continue;
+
+                    {
+                        boolean ignored = false;
+
+                        // check if the prefix is ignored
+                        for(String iIgnoredPrefix : ignoredPrefixes) {
+                            ignored |= file.getName().startsWith(iIgnoredPrefix);
+                        }
+
+                        if (ignored) {
+                            continue;
+                        }
+                    }
+
+                    if (!("extra".equals(file.getName()))) {
+                        l.put(file.getName(), new Object[]{file.getAbsolutePath()});
+                    }
+                }
+            }
+
+        }
+        return l;
+    }
     
     @Parameterized.Parameters
     public static Collection params() {
         // return all test-paths of all files in the directories
 
-        final Map<String, Object> et = ExampleFileInput.getUnitTests(directories);
+        final Map<String, Object> et = getUnitTests(directories, ignoredPrefixes);
         final Collection t = et.values();
-        for (final String x : et.keySet()) addTest(x);
+        for (final String x : et.keySet()) {
+            //boolean ignored = false;
+
+            //// check if the prefix is ignored
+            //for(String iIgnoredPrefix : ignoredPrefixes) {
+            //    ignored |= x.startsWith(iIgnoredPrefix);
+            //}
+
+            //if (!ignored) {
+                addTest(x);
+            //}
+        }
         return t;
     }
     

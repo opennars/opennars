@@ -520,9 +520,32 @@ public class TemporalControl {
             if (Stamp.baseOverlap(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp)) {
                 return;
             }
-            Sentence premiseEventASequence = buildSequence(premiseEventASentence, premiseEventMiddle.sentence, time, narParameters);
 
-            // TODO< implement derivation for the case with three premises >
+            Term seqTerm;
+            Stamp seqStamp;
+            TruthValue seqTv;
+            { // build (&/, a, t, m, t)
+                assert premiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
+
+                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime() - calcSeqTime(premiseEventASentence.term);
+
+                seqTerm = Conjunction.make(new Term[]{premiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term, new Interval(premiseEventB.sentence.getOccurenceTime()-premiseEventMiddle.sentence.getOccurenceTime())}, TemporalRules.ORDER_FORWARD);
+                seqStamp = new Stamp(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
+                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, premiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
+            }
+
+
+            { // build =/>
+                TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
+                Stamp stamp = new Stamp(seqStamp, premiseEventB.sentence.stamp, time, narParameters); // merge stamps
+                Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
+                Sentence s = new Sentence(term, '.', tv, stamp);
+                synchronized (conclusionSentences) {
+                    conclusionSentences.add(s);
+                }
+            }
+
+            // TODO< implement other derivation for the case with three premises >
             int here6 = 1;
         }
         else { // we have two premises
@@ -543,7 +566,9 @@ public class TemporalControl {
                 // map to List of sentences
                 for (final Task iDerivedTask : derivationsFromTemporalInduction) {
                     if (!iDerivedTask.sentence.stamp.isEternal()) { // must be event because event trace derives only events
-                        conclusionSentences.add(iDerivedTask.sentence);
+                        synchronized (conclusionSentences) {
+                            conclusionSentences.add(iDerivedTask.sentence);
+                        }
                     }
                 }
             }
@@ -617,20 +642,7 @@ public class TemporalControl {
         return false;
     }
 
-    private static Sentence buildSequence(Sentence a, Sentence b, long time, Parameters narParameters) {
-        assert a.getOccurenceTime() < b.getOccurenceTime();
 
-        if (!(a.getOccurenceTime() < b.getOccurenceTime())) {
-            int here = 5;
-        }
-
-        long occTimeDiff = b.getOccurenceTime() - a.getOccurenceTime() - calcSeqTime(a.term);
-
-        Term conclusionTerm = DeriverHelpers.make("&/",a.term,new Interval(occTimeDiff),b.term);
-        Stamp stamp = new Stamp(a.stamp, b.stamp, time, narParameters); // merge stamps
-        TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, a.truth, b.truth, narParameters);
-        return new Sentence(conclusionTerm, '.', tv, stamp);
-    }
 
     private static class TaskPair {
         public Task a;
