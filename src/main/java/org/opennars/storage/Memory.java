@@ -81,7 +81,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public boolean allowExecution = true;
 
     public final long randomSeed = 1;
-    public final Random randomNumber = new Random(randomSeed);
+    public Random randomNumber = new Random(randomSeed);
     
     //todo make sense of this class and de-obfuscate
     public final Bag<Concept,Term> concepts;

@@ -798,8 +798,8 @@ public class TemporalControl {
     }
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
 
