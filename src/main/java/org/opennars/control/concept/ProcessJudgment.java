@@ -120,7 +120,7 @@ public class ProcessJudgment {
             //only consider these mental ops an operation to track when executed not already when generated as internal event
             if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
                     && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
-                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+                //TemporalInferenceControl.NewOperationFrame(nal.memory, task);
             }
         }
     }

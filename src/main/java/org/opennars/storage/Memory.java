@@ -109,7 +109,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     boolean checked=false;
     boolean isjUnit=false;
 
-    public TemporalControl temporalControl = new TemporalControl();
+    public TemporalInferenceControl temporalControl = new TemporalInferenceControl();
     public EventInferenceDeriver eventInferenceDeriver = new EventInferenceDeriver();
 
     public TrieDeriver trieDeriver;

@@ -248,16 +248,6 @@ public class TemporalRules {
             final List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false, addToMemory);
             if(tl!=null) {
                 for(final Task t : tl) {
-                    //fill sequenceTask buffer due to the new derived sequence
-                    if(addToMemory &&
-                            t.sentence.isJudgment() &&
-                            !t.sentence.isEternal() && 
-                            t.sentence.term instanceof Conjunction && 
-                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-                        TemporalInferenceControl.addToSequenceTasks(nal, t);
-                    }
-
                     derivations.add(t);
                 }
             }
