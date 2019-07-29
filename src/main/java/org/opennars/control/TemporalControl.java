@@ -16,6 +16,7 @@ import java.util.*;
 import static java.lang.Long.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static org.opennars.inference.BudgetFunctions.truthToQuality;
 import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 
 public class TemporalControl {
@@ -443,7 +444,10 @@ public class TemporalControl {
         {
             for(Sentence iConclusionSentence : conclusionSentences) {
                 { // add non-eternalized
-                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
+                    final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
+                    float quality = truthToQuality(iConclusionSentence.truth);
+                    float durability = 1.0f / complexity;
+                    BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
 
                     Task createdTask = new Task(
                         iConclusionSentence,
@@ -455,13 +459,16 @@ public class TemporalControl {
                 }
 
                 { // add eternalized
-                    BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
-
                     // we need to eternalize the sentence
                     TruthValue eternalizedTv = TruthFunctions.eternalize(iConclusionSentence.truth.clone(), narParameters);
                     Stamp eternalizedStamp = iConclusionSentence.stamp.clone();
                     eternalizedStamp.setEternal();
                     Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, eternalizedTv, eternalizedStamp);
+
+                    final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
+                    float quality = truthToQuality(eternalizedTv);
+                    float durability = 1.0f / complexity;
+                    BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
 
                     Task createdTask = new Task(
                         eternalizedSentence,
