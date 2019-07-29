@@ -395,8 +395,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
         //else input into NARS directly:
         {
-            final DerivationContext cont = new DerivationContext(memory, narParameters, this);
             if (!task.sentence.isEternal()) {
+                final DerivationContext cont = new DerivationContext(memory, narParameters, this);
+
                 // necessary because it may not be set yet
                 final Stamp stamp = task.sentence.stamp;
                 if (stamp.getCreationTime()==-1) {

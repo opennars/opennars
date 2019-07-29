@@ -804,7 +804,10 @@ public class TemporalControl {
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem) {
-
+        if (eligibilityTrace.eligibilityTrace.size() == 0) {
+            return null; // special case
+                         // necessary to not disturb declarative NAL tests
+        }
 
         double selectedSalience = mem.randomNumber.nextDouble() * salienceMass;
 

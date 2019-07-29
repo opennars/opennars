@@ -378,7 +378,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         }
 
         { // general inference for temporal reasoning - give cycles to deriver
-            eventInferenceDeriver.tryInfer(inputs.time(), this, inputs, narParameters);
+            //eventInferenceDeriver.tryInfer(inputs.time(), this, inputs, narParameters);
         }
         
         event.emit(Events.CycleEnd.class);
