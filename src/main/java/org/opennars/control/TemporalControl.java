@@ -447,6 +447,11 @@ public class TemporalControl {
                     final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
                     float quality = truthToQuality(iConclusionSentence.truth);
                     float durability = 1.0f / complexity;
+                    if (isImplSeqOp(iConclusionSentence.term)) {
+                        durability *= 2.0f; // boost because it is in a "special" representation
+                        durability = Math.min(1.0f, durability);
+                    }
+
                     BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
 
                     Task createdTask = new Task(
@@ -468,6 +473,10 @@ public class TemporalControl {
                     final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
                     float quality = truthToQuality(eternalizedTv);
                     float durability = 1.0f / complexity;
+                    if (isImplSeqOp(iConclusionSentence.term)) {
+                        durability *= 2.0f; // boost because it is in a "special" representation
+                        durability = Math.min(1.0f, durability);
+                    }
                     BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
 
                     Task createdTask = new Task(
@@ -517,6 +526,18 @@ public class TemporalControl {
         }
     }
 
+    // checks if it is in the form (&/, a, ^OP) =/> b
+    static private boolean isImplSeqOp(Term term) {
+        if (term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            Term rootImplSubj = ((Implication)term).term[0];
+            Term rootImplPred = ((Implication)term).term[1];
+
+            return ((rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) && ((CompoundTerm)rootImplPred).term.length == 2);
+        }
+
+        return false;
+    }
+
     // derive conclusions from premises
     private static void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, Task premiseEventA, Task premiseEventMiddle, Task premiseEventB) {
         Sentence premiseEventASentence = premiseEventA.sentence;
@@ -529,6 +550,10 @@ public class TemporalControl {
             // build sequence of eventA and middle event
             if (Stamp.baseOverlap(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp)) {
                 return;
+            }
+
+            if (checkOverlapInclusive(premiseEventASentence, premiseEventMiddle.sentence) || checkOverlapInclusive(premiseEventBSentence, premiseEventMiddle.sentence)) {
+                return; // must not overlap
             }
 
             Term seqTerm;
