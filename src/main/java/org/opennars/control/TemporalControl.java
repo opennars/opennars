@@ -10,6 +10,7 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
+import javax.sound.midi.Sequence;
 import java.util.*;
 
 import static java.lang.Long.max;
@@ -196,6 +197,8 @@ public class TemporalControl {
                 eventA = sentencePair.a,
                 eventB = sentencePair.b,
                 eventMiddle = sentencePair.middleEvent;
+
+            //eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
 
             if (eventA == null || eventB == null) {
                 continue; // we need two events to reason about
@@ -580,6 +583,18 @@ public class TemporalControl {
                 Sentence currentBelief = premiseEventBSentence;
                 Sentence previousBelief = premiseEventASentence;
 
+                if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
+                    return; // don't allow overlapping events
+                }
+
+                boolean isPreviousSeq = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+                boolean isPreviousPar = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT;
+                boolean isPreviousDeclarative = isDeclarative(previousBelief.term);
+                if (!(isPreviousPar||isPreviousSeq||isPreviousDeclarative)) {
+                    return; // must be restricted to avoid wrong derivations
+                }
+
+
                 // it is necessary to update the nal-context
                 final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
                 nal.setTheNewStamp(premiseEventB.sentence.stamp, premiseEventA.sentence.stamp, nal.time.time());
@@ -597,6 +612,63 @@ public class TemporalControl {
                 }
             }
         }
+    }
+
+    private static boolean checkOverlapInclusive(Sentence a, Sentence b) {
+
+        long aEndTime = a.getOccurenceTime();
+        long aStartTime = a.getOccurenceTime();
+        if (a.term instanceof Conjunction && a.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            aStartTime = getStartimeOfSeq(a);
+        }
+
+        long bEndTime = b.getOccurenceTime();
+        long bStartTime = b.getOccurenceTime();
+        if (b.term instanceof Conjunction && b.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            bStartTime = getStartimeOfSeq(b);
+        }
+
+
+        if (aStartTime == bStartTime) {
+            return true;
+        }
+        if (aStartTime == bEndTime) {
+            return true;
+        }
+        if (aEndTime == bStartTime) {
+            return true;
+        }
+        if (aEndTime == bEndTime) {
+            return true;
+        }
+
+
+        if (aStartTime <= bStartTime && bStartTime <= aEndTime) { // is bStart in the interval?
+            return true;
+        }
+        if (aStartTime <= bEndTime && bEndTime <= aEndTime) { // is bEnd in the interval?
+            return true;
+        }
+
+        if (bStartTime <= aStartTime && aStartTime <= bEndTime) { // is aStart in the interval?
+            return true;
+        }
+        if (bStartTime <= aEndTime && aEndTime <= bEndTime) { // is aEnd in the interval?
+            return true;
+        }
+
+
+        return false;
+    }
+
+    static private long getStartimeOfSeq(Sentence seq) {
+        long sum = 0;
+        for(Term iComponent : ((Conjunction)seq.term).term) {
+            if (iComponent instanceof Interval) {
+                sum += ((Interval)iComponent).time;
+            }
+        }
+        return seq.getOccurenceTime() - sum;
     }
 
     static private boolean isValidForInference2(Term term, boolean isFirstEvent) {
@@ -631,6 +703,17 @@ public class TemporalControl {
         }
 
         return true;
+    }
+
+    /**
+     * check if it is a declarative event, defined as NAL6 or below
+     */
+    private static boolean isDeclarative(Term term) {
+        return
+            term instanceof Inheritance ||
+            term instanceof Similarity ||
+            (term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_NONE) ||
+            (term instanceof Equivalence && term.getTemporalOrder() == TemporalRules.ORDER_NONE);
     }
 
     /**
