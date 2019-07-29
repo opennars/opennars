@@ -615,7 +615,9 @@ public class TemporalControl {
                 Sentence currentBelief = premiseEventBSentence;
                 Sentence previousBelief = premiseEventASentence;
 
-                if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
+                if (currentBelief.getOccurenceTime() == previousBelief.getOccurenceTime() && isDeclarative(currentBelief.term) && isDeclarative(previousBelief.term)) { // are both declarative events and at the same time? then we need to put it into the ifnerence because we want parallel events
+                }
+                else if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
                     return; // don't allow overlapping events
                 }
 
