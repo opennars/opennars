@@ -538,22 +538,32 @@ public class TemporalControl {
             { // build =/>
                 TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
                 Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
-                Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
-                Sentence s = new Sentence(term, '.', tv, stamp);
-                synchronized (conclusionSentences) {
-                    conclusionSentences.add(s);
+
+                if (!Statement.invalidStatement(seqTerm, premiseEventBSentence.term, true)) {
+                    Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
+                    Sentence s = new Sentence(term, '.', tv, stamp);
+                    synchronized (conclusionSentences) {
+                        conclusionSentences.add(s);
+                    }
                 }
             }
 
             { // build </>
                 TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.COMPARISON, seqTv, premiseEventBSentence.truth, narParameters);
                 Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
-                boolean ise = stamp.isEternal();
-                Term term = Equivalence.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
-                Sentence s = new Sentence(term, '.', tv, stamp);
-                synchronized (conclusionSentences) {
-                    conclusionSentences.add(s);
+
+                if (!Statement.invalidStatement(seqTerm, premiseEventBSentence.term, true)) {
+                    Term term = Equivalence.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
+                    if (term != null) {
+                        Sentence s = new Sentence(term, '.', tv, stamp);
+                        synchronized (conclusionSentences) {
+                            conclusionSentences.add(s);
+                        }
+                    }
                 }
+
+
+
             }
 
             // TODO< implement other derivation for the case with three premises >
