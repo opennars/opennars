@@ -562,7 +562,7 @@ public class TemporalControl {
             { // build (&/, a, t, m, t)
                 assert premiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
 
-                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime() - calcSeqTime(premiseEventASentence.term);
+                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime() ;
 
                 seqTerm = Conjunction.make(new Term[]{premiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term, new Interval(premiseEventB.sentence.getOccurenceTime()-premiseEventMiddle.sentence.getOccurenceTime())}, TemporalRules.ORDER_FORWARD);
                 seqStamp = new Stamp(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
@@ -601,7 +601,22 @@ public class TemporalControl {
 
             }
 
-            // TODO< implement other derivation for the case with three premises >
+            { // build (&/, a, t, m, t, b)
+                assert premiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
+
+                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime();
+
+                seqTerm = Conjunction.make(new Term[]{premiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term, new Interval(premiseEventB.sentence.getOccurenceTime()-premiseEventMiddle.sentence.getOccurenceTime() - calcSeqTime(premiseEventMiddle.sentence.term)), premiseEventB.sentence.term}, TemporalRules.ORDER_FORWARD);
+                seqStamp = new Stamp(premiseEventMiddle.sentence.stamp, premiseEventASentence.stamp, time, narParameters); // merge stamps
+                seqStamp = new Stamp(premiseEventBSentence.stamp, seqStamp, time, narParameters); // merge stamps
+                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, premiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
+                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, seqTv, premiseEventB.sentence.truth, narParameters);
+                Sentence s = new Sentence(seqTerm, '.', seqTv, seqStamp);
+                synchronized (conclusionSentences) {
+                    conclusionSentences.add(s);
+                }
+            }
+
             int here6 = 1;
         }
         else { // we have two premises
