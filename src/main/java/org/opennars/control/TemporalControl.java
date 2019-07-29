@@ -30,6 +30,10 @@ public class TemporalControl {
 
     private DerivationFilter derivationFilter = new DerivationFilter();
 
+    public boolean DEBUG_TEMPORALCONTROL = false;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
         heatupInputEvent(task);
         checkAddToEligibilityTrace(task);
@@ -175,13 +179,6 @@ public class TemporalControl {
             resultEvents.addAll(eventTraceItem.events);
         }
 
-
-        /*
-        for(ConceptWithSalience iTask : termWithHeatByTerm.values()) {
-            resultEvents.add(iTask.lastInputTask);
-        }
-         */
-
         return resultEvents;
     }
 
@@ -208,15 +205,6 @@ public class TemporalControl {
             if (isOp(eventA.sentence.term) && isOp(eventB.sentence.term)) {
                 continue; // ignore it because op related don't leads to useful derivations
             }
-
-
-
-
-
-            // this test is nonsense because we may want to do revision etc
-            //if (eventA.sentence.term.equals(eventB.sentence.term)) {
-            //    continue; // no need to reason about the same event happening at the same time
-            //}
 
 
             // must not overlap
@@ -290,31 +278,6 @@ public class TemporalControl {
                         accept = false;
                     }
 
-                    /* commented because we have to allow for (&/, X, Z) =/> Y for prediction
-                    { // only allow "<(&/, A..., OP) =/> X>
-                        if (
-                            ( (rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) )
-                        ) {
-                            CompoundTerm seq = (CompoundTerm)rootImplSubj;
-
-                            Term lastTermOfSeq = null;
-                            // scan for last term of seq
-                            for(int idxSeq=seq.term.length-1;idxSeq>=0;idxSeq--) {
-                                if (!(seq.term[idxSeq] instanceof Interval)) {
-                                    lastTermOfSeq = seq.term[idxSeq];
-                                    break;
-                                }
-                            }
-
-                            if (!(lastTermOfSeq instanceof Operation)) {
-                                accept = false; // ignored
-                            }
-
-                            // TODO< check for to complicated sequences >
-                        }
-                    }
-                    */
-
                     { // disallow "<(&/, OP, +T) =/> X>
                         if (
                             ( (rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) )
@@ -380,15 +343,6 @@ public class TemporalControl {
                             }
                         }
                     }
-                }
-            }
-
-
-            // TESTING TESTING TESTING
-            // FILTER FOR TESTING IN PONG
-            {
-                if ((""+conclusionTerm).contains("<(&/,(^")) {
-                    accept = false; // don't allow op op nonsense
                 }
             }
 
@@ -512,7 +466,6 @@ public class TemporalControl {
                 continue;
             }
 
-            // TODO< derive budget somehow >
             BudgetValue budget = new BudgetValue(0.9f, 0.5f, 0.5f, narParameters);
 
             // we need to create a task for the sentence
@@ -812,9 +765,7 @@ public class TemporalControl {
         }
     }
 
-    public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+
 
 
 
@@ -847,10 +798,6 @@ public class TemporalControl {
 
                     if (etItemsByTerm == null) {
                         return null; // no events to sample from
-                    }
-
-                    if ((""+primarySelectedConcept.term).equals("<{SELF} --> [good]>")) {
-                        int herehb = 55; // debug
                     }
 
                     // we need to compute the mass for a fair sampling
@@ -980,10 +927,6 @@ public class TemporalControl {
                                     if (selectionMassAccu > selectedSalience2) {
                                         int secondaryEventIdx = idx2;
 
-                                        if (secondaryEventIdx == 2 && !middleEventMustBeOp) {
-                                            int here = 5; // DEBUG
-                                        }
-
                                         if(DEBUG_TEMPORALCONTROL) System.out.println("secondary event idx = " + secondaryEventIdx);
                                         if(DEBUG_TEMPORALCONTROL) System.out.println("secondary event time = " + traceItem.retOccurenceTime());
 
@@ -1049,10 +992,6 @@ public class TemporalControl {
 
                             TaskPair sentencePair = new TaskPair(eventA, eventB);
                             sentencePair.middleEvent = middleEvent;
-
-                            if (middleEvent != null) {
-                                int here = 5;
-                            }
 
                             return sentencePair;
                         }
