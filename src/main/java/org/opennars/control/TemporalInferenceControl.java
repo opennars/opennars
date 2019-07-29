@@ -460,12 +460,18 @@ public class TemporalInferenceControl {
                     final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
                     float quality = truthToQuality(iConclusionSentence.truth);
                     float durability = 1.0f / complexity;
+                    float priority = 0.5f;
                     if (isImplSeqOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
                     }
-
-                    BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
+                    else {
+                        // punish - is necessary because else Pong doesn't work
+                        quality *= 0.1f;
+                        durability *= 0.1f;
+                        priority *= 0.1f;
+                    }
+                    BudgetValue budget = new BudgetValue(priority, durability, quality, narParameters);
 
                     Task createdTask = new Task(
                         iConclusionSentence,
@@ -486,11 +492,18 @@ public class TemporalInferenceControl {
                     final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
                     float quality = truthToQuality(eternalizedTv);
                     float durability = 1.0f / complexity;
+                    float priority = 0.5f;
                     if (isImplSeqOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
                     }
-                    BudgetValue budget = new BudgetValue(0.5f, durability, quality, narParameters);
+                    else {
+                        // punish - is necessary because else Pong doesn't work
+                        quality *= 0.1f;
+                        durability *= 0.1f;
+                        priority *= 0.1f;
+                    }
+                    BudgetValue budget = new BudgetValue(priority, durability, quality, narParameters);
 
                     Task createdTask = new Task(
                         eternalizedSentence,
