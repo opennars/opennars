@@ -62,8 +62,8 @@ public class TemporalInferenceControl {
     private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -405,10 +405,68 @@ public class TemporalInferenceControl {
                 }
             }
 
+            { // disallow implication with a op because it doesn't make any sense
+
+                // disallow ^op =/> x and x =/> ^op and ^op1 =/> ^op2
+                // disallow ^op =\> x and x =\> ^op and ^op1 =\> ^op2
+                // disallow ^op =|> x and x =|> ^op and ^op1 =|> ^op2
+                if (
+                    (conclusionTerm instanceof Implication)
+                ) {
+
+                    Term rootImplSubj = ((Implication) conclusionTerm).term[0];
+                    Term rootImplPred = ((Implication) conclusionTerm).term[1];
+
+                    int opCount = 0;
+                    opCount += isOp(rootImplSubj) ? 1 : 0;
+                    opCount += isOp(rootImplPred) ? 1 : 0;
+
+                    if (opCount >= 1) {
+                        accept = false;
+                    }
+                }
+            }
+
+            // HACK ATTENTION - only allow  seq =/> , seq =|> and seq =\>
+            if (accept) {
+                if (conclusionTerm instanceof Implication)
+                {
+                    assert conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_NONE && conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_INVALID;
+
+                    Term rootImplSubj = ((Implication)conclusionTerm).term[0];
+                    Term rootImplPred = ((Implication)conclusionTerm).term[1];
+
+                    if (
+                        ( (rootImplSubj instanceof CompoundTerm) )
+                    ) {
+                        CompoundTerm seq = (CompoundTerm)rootImplSubj;
+
+                        if (seq.term.length > 4) {
+                            accept = false;
+                        }
+                    }
+                    else {
+                        accept = false;
+                    }
+                }
+                else {
+                    accept = false;
+                }
+            }
+
             if (!accept) {
                 // remove
                 conclusionSentences.remove(idx);
             }
+        }
+
+
+
+
+
+        { // ATTENTION MECHANISM - limit result size
+            int limitResultByConfCount = 2; // number of conclusions ordered by conf
+            conclusionSentences = calcTopSentencesByConf(conclusionSentences, nar.memory.randomNumber, limitResultByConfCount);
         }
 
         { // identify unique conclusions , necessary to not overwhelm the deriver
@@ -1408,5 +1466,30 @@ public class TemporalInferenceControl {
             }
             return false;
         }
+    }
+
+    static private List<Sentence> calcTopSentencesByConf(List<Sentence> sentences, Random rng, int limit) {
+        List<Sentence> res = new ArrayList<>();
+        res.addAll(sentences);
+        Collections.sort(res, (s1, s2) -> {
+            boolean isS1SmallerThanS2 = false;
+
+            if (s1.truth.getConfidence() == s2.truth.getConfidence()) {
+                isS1SmallerThanS2 = rng.nextFloat() > 0.5f; // necessary to randomly sort results which have the same conf
+            } else {
+                isS1SmallerThanS2 = s1.truth.getConfidence() < s2.truth.getConfidence();
+            }
+
+            //return s1.truth.getConfidence() == s2.truth.getConfidence() ?
+            //    0 :
+            //    (s1.truth.getConfidence() < s2.truth.getConfidence() ? 1 : -1); });
+
+            return isS1SmallerThanS2 ? 1 : -1;
+        });
+
+        while(res.size() > limit) {
+            res.remove(limit);
+        }
+        return res;
     }
 }
