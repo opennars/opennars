@@ -405,7 +405,7 @@ public class TemporalInferenceControl {
                 }
             }
 
-            { // disallow implication with a op because it doesn't make any sense
+            if (true) { // disallow implication with a op because it doesn't make any sense
 
                 // disallow ^op =/> x and x =/> ^op and ^op1 =/> ^op2
                 // disallow ^op =\> x and x =\> ^op and ^op1 =\> ^op2
@@ -413,16 +413,21 @@ public class TemporalInferenceControl {
                 if (
                     (conclusionTerm instanceof Implication)
                 ) {
-
                     Term rootImplSubj = ((Implication) conclusionTerm).term[0];
                     Term rootImplPred = ((Implication) conclusionTerm).term[1];
 
-                    int opCount = 0;
-                    opCount += checkIsOpOrSeqWithFirstOp(rootImplSubj, true) ? 1 : 0;
-                    opCount += checkIsOpOrSeqWithFirstOp(rootImplPred, true) ? 1 : 0;
+                    if (false) { //conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD && isOp(rootImplSubj) && !isOp(rootImplPred)) {
+                        // special case which we must allow for NAL8
+                        // disabled because it's not necessary
+                    }
+                    else {
+                        int opCount = 0;
+                        opCount += checkIsOpOrSeqWithFirstOp(rootImplSubj, true) ? 1 : 0;
+                        opCount += checkIsOpOrSeqWithFirstOp(rootImplPred, true) ? 1 : 0;
 
-                    if (opCount >= 1) {
-                        accept = false;
+                        if (opCount >= 1) {
+                            accept = false;
+                        }
                     }
                 }
             }
@@ -444,9 +449,17 @@ public class TemporalInferenceControl {
 
                     assert seq.term.length >= 2; // we assume valid seq
 
-                    if (!isOp(seq.term[seq.term.length-1]) && isOp((seq.term[seq.term.length-2]))) {
-                        accept = false; // don't allow
+                    // we need this loop to skip over the intervals from behind
+                    for(int idx2=seq.term.length-1;idx2 >= 0;idx2--) {
+                        if (seq.term[idx2] instanceof Interval) {
+                            continue; // we have to skip intervals
+                        }
+
+                        if (idx2-1 >= 0 && !isOp(seq.term[idx2]) && isOp((seq.term[idx2-1]))) {
+                            accept = false; // don't allow
+                        }
                     }
+
                 }
             }
             if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
@@ -460,8 +473,15 @@ public class TemporalInferenceControl {
 
                     assert seq.term.length >= 2; // we assume valid seq
 
-                    if (!isOp(seq.term[seq.term.length-1]) && isOp((seq.term[seq.term.length-2]))) {
-                        accept = false; // don't allow
+                    // we need this loop to skip over the intervals from behind
+                    for(int idx2=seq.term.length-1;idx2 >= 0;idx2--) {
+                        if (seq.term[idx2] instanceof Interval) {
+                            continue; // we have to skip intervals
+                        }
+
+                        if (idx2-1 >= 0 && !isOp(seq.term[idx2]) && isOp((seq.term[idx2-1]))) {
+                            accept = false; // don't allow
+                        }
                     }
                 }
             }
