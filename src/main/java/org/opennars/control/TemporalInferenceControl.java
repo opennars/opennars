@@ -62,7 +62,7 @@ public class TemporalInferenceControl {
     private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
     public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
@@ -418,8 +418,8 @@ public class TemporalInferenceControl {
                     Term rootImplPred = ((Implication) conclusionTerm).term[1];
 
                     int opCount = 0;
-                    opCount += isOp(rootImplSubj) ? 1 : 0;
-                    opCount += isOp(rootImplPred) ? 1 : 0;
+                    opCount += checkIsOpOrSeqWithFirstOp(rootImplSubj, true) ? 1 : 0;
+                    opCount += checkIsOpOrSeqWithFirstOp(rootImplPred, true) ? 1 : 0;
 
                     if (opCount >= 1) {
                         accept = false;
@@ -427,8 +427,48 @@ public class TemporalInferenceControl {
                 }
             }
 
+            // don't allow anything with more than one op
+            if (countOps(conclusionTerm) > 1) {
+                accept = false; // we don't allow more than one op in a term because OpenNARS can't handle it currently
+            }
+
+            // don't allow seq =/> and =\> seq where the op isn't the last element of the seq
+            if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                Term rootImplSubj = ((Implication)conclusionTerm).term[0];
+                Term rootImplPred = ((Implication)conclusionTerm).term[1];
+
+                if (
+                    ( (rootImplSubj instanceof CompoundTerm) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+                ) {
+                    CompoundTerm seq = (CompoundTerm)rootImplSubj;
+
+                    assert seq.term.length >= 2; // we assume valid seq
+
+                    if (!isOp(seq.term[seq.term.length-1]) && isOp((seq.term[seq.term.length-2]))) {
+                        accept = false; // don't allow
+                    }
+                }
+            }
+            if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
+                Term rootImplSubj = ((Implication)conclusionTerm).term[0];
+                Term rootImplPred = ((Implication)conclusionTerm).term[1];
+
+                if (
+                    ( (rootImplPred instanceof CompoundTerm) && rootImplPred.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+                ) {
+                    CompoundTerm seq = (CompoundTerm)rootImplPred;
+
+                    assert seq.term.length >= 2; // we assume valid seq
+
+                    if (!isOp(seq.term[seq.term.length-1]) && isOp((seq.term[seq.term.length-2]))) {
+                        accept = false; // don't allow
+                    }
+                }
+            }
+
+
             // HACK ATTENTION - only allow  seq =/> , seq =|> and seq =\>
-            if (accept) {
+            if (false && accept) {
                 if (conclusionTerm instanceof Implication)
                 {
                     assert conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_NONE && conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_INVALID;
@@ -437,7 +477,7 @@ public class TemporalInferenceControl {
                     Term rootImplPred = ((Implication)conclusionTerm).term[1];
 
                     if (
-                        ( (rootImplSubj instanceof CompoundTerm) )
+                        ( (rootImplSubj instanceof CompoundTerm) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
                     ) {
                         CompoundTerm seq = (CompoundTerm)rootImplSubj;
 
@@ -449,7 +489,12 @@ public class TemporalInferenceControl {
                         accept = false;
                     }
                 }
+                else if (conclusionTerm instanceof CompoundTerm && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT) {
+                    // allow
+                }
                 else {
+                    System.out.println("NOT ALLOWED " + conclusionTerm);
+
                     accept = false;
                 }
             }
@@ -465,7 +510,7 @@ public class TemporalInferenceControl {
 
 
         { // ATTENTION MECHANISM - limit result size
-            int limitResultByConfCount = 2; // number of conclusions ordered by conf
+            int limitResultByConfCount = 200; // number of conclusions ordered by conf
             conclusionSentences = calcTopSentencesByConf(conclusionSentences, nar.memory.randomNumber, limitResultByConfCount);
         }
 
@@ -607,6 +652,61 @@ public class TemporalInferenceControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
+    }
+
+    /**
+     * recursivly count the number of ops of a temporal term
+     * @param term
+     * @return
+     */
+    static private int countOps(Term term) {
+        if (isOp(term)) {
+            return 1;
+        }
+
+        if (term instanceof Implication && (term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT || term.getTemporalOrder() == TemporalRules.ORDER_FORWARD || term.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+            Implication impl = (Implication)term;
+            return countOps(impl.term[0]) + countOps(impl.term[1]);
+        }
+        else if (term instanceof Equivalence && (term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT || term.getTemporalOrder() == TemporalRules.ORDER_FORWARD || term.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+            Equivalence equ = (Equivalence)term;
+            return countOps(equ.term[0]) + countOps(equ.term[1]);
+        }
+        else if (term instanceof CompoundTerm && (term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT || term.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            CompoundTerm comp = (CompoundTerm)term;
+            int c = 0;
+            for(Term iComponent : comp.term) {
+                c += countOps(iComponent);
+            }
+            return c;
+        }
+
+        return 0;
+    }
+
+    // used to blacklist temporal relationships which don't make sense
+    /**
+     * checks if it is a op or a seq where the first element is a op
+     * @param term
+     * @param seqAllowed is a sequence allowed (as the term or the first component of a seq)
+     * @return
+     */
+    static private boolean checkIsOpOrSeqWithFirstOp(Term term, boolean seqAllowed) {
+        if (term instanceof CompoundTerm && term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT) {
+            for(Term iComponent : ((CompoundTerm)term).term) {
+                if (checkIsOpOrSeqWithFirstOp(iComponent, false)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (seqAllowed && term instanceof CompoundTerm && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            return checkIsOpOrSeqWithFirstOp(((CompoundTerm)term).term[0], seqAllowed); // we care only about first component
+        }
+
+        return isOp(term);
     }
 
     // checks if it is in the form (&/, a, ^OP) =/> b
