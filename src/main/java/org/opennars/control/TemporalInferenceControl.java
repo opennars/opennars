@@ -24,16 +24,13 @@
 package org.opennars.control;
 
 import org.opennars.entity.*;
-import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.io.Symbols;
-import org.opennars.io.events.Events;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
-import org.opennars.storage.Bag;
 import org.opennars.storage.Memory;
 
 import java.util.*;
@@ -447,19 +444,10 @@ public class TemporalInferenceControl {
                 ) {
                     CompoundTerm seq = (CompoundTerm)rootImplSubj;
 
-                    assert seq.term.length >= 2; // we assume valid seq
-
-                    // we need this loop to skip over the intervals from behind
-                    for(int idx2=seq.term.length-1;idx2 >= 0;idx2--) {
-                        if (seq.term[idx2] instanceof Interval) {
-                            continue; // we have to skip intervals
-                        }
-
-                        if (idx2-1 >= 0 && !isOp(seq.term[idx2]) && isOp((seq.term[idx2-1]))) {
-                            accept = false; // don't allow
-                        }
+                    boolean isLastOp = checkSeqIsLastOp(seq);
+                    if (checkHasOp(seq) && !isLastOp) {
+                        accept = false; // don't allow
                     }
-
                 }
             }
             if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
@@ -471,17 +459,9 @@ public class TemporalInferenceControl {
                 ) {
                     CompoundTerm seq = (CompoundTerm)rootImplPred;
 
-                    assert seq.term.length >= 2; // we assume valid seq
-
-                    // we need this loop to skip over the intervals from behind
-                    for(int idx2=seq.term.length-1;idx2 >= 0;idx2--) {
-                        if (seq.term[idx2] instanceof Interval) {
-                            continue; // we have to skip intervals
-                        }
-
-                        if (idx2-1 >= 0 && !isOp(seq.term[idx2]) && isOp((seq.term[idx2-1]))) {
-                            accept = false; // don't allow
-                        }
+                    boolean isLastOp = checkSeqIsLastOp(seq);
+                    if (checkHasOp(seq) && !isLastOp) {
+                        accept = false; // don't allow
                     }
                 }
             }
@@ -584,15 +564,20 @@ public class TemporalInferenceControl {
                     float quality = truthToQuality(iConclusionSentence.truth);
                     float durability = 1.0f / complexity;
                     float priority = 0.5f;
-                    if (isImplSeqOp(iConclusionSentence.term)) {
+
+                    if(iConclusionSentence.term instanceof Implication && (""+(iConclusionSentence.term)).contains("^")) {
+                        int here = 1;
+                    }
+
+                    if (isImplSeqLastOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
                     }
                     else {
                         // punish - is necessary because else Pong doesn't work
-                        quality *= 0.1f;
-                        durability *= 0.1f;
-                        priority *= 0.1f;
+                        quality *= 0.05f;
+                        durability *= 0.05f;
+                        priority *= 0.03f;
                     }
                     BudgetValue budget = new BudgetValue(priority, durability, quality, narParameters);
 
@@ -616,7 +601,7 @@ public class TemporalInferenceControl {
                     float quality = truthToQuality(eternalizedTv);
                     float durability = 1.0f / complexity;
                     float priority = 0.5f;
-                    if (isImplSeqOp(iConclusionSentence.term)) {
+                    if (isImplSeqLastOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
                     }
@@ -672,6 +657,35 @@ public class TemporalInferenceControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
+    }
+
+    static private boolean checkHasOp(CompoundTerm seq) {
+        for(Term iComponent:seq.term) {
+            if (isOp(iComponent)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * is the last non-interval element of a seq a op?
+     * @param seq
+     * @return
+     */
+    static private boolean checkSeqIsLastOp(CompoundTerm seq) {
+        assert seq.term.length >= 2; // we assume valid seq
+
+        // we need this loop to skip over the intervals from behind
+        for(int idx2=seq.term.length-1;idx2 >= 0;idx2--) {
+            if (seq.term[idx2] instanceof Interval) {
+                continue; // we have to skip intervals
+            }
+
+            return isOp(seq.term[idx2]);
+        }
+        return false;
     }
 
     /**
@@ -730,12 +744,15 @@ public class TemporalInferenceControl {
     }
 
     // checks if it is in the form (&/, a, ^OP) =/> b
-    static private boolean isImplSeqOp(Term term) {
+    // ex: (&/, a, ^OP, +t) =/> b returns true
+    static private boolean isImplSeqLastOp(Term term) {
         if (term instanceof Implication && term.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Term rootImplSubj = ((Implication)term).term[0];
-            Term rootImplPred = ((Implication)term).term[1];
 
-            return ((rootImplSubj instanceof CompoundTerm && (rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) && ((CompoundTerm)rootImplPred).term.length == 2);
+            if (rootImplSubj instanceof CompoundTerm && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                return checkSeqIsLastOp((CompoundTerm)rootImplSubj);
+            }
+            return false;
         }
 
         return false;
