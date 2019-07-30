@@ -33,6 +33,7 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.*;
 
 import static java.lang.Long.max;
@@ -468,7 +469,11 @@ public class TemporalInferenceControl {
 
 
             // HACK ATTENTION - only allow  seq =/> , seq =|> and seq =\>
-            if (false && accept) {
+            if (   (""+conclusionTerm).contains("<|>")) {
+                int here = 5;
+            }
+
+            if (true && accept) {
                 if (conclusionTerm instanceof Implication)
                 {
                     assert conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_NONE && conclusionTerm.getTemporalOrder() != TemporalRules.ORDER_INVALID;
@@ -477,25 +482,38 @@ public class TemporalInferenceControl {
                     Term rootImplPred = ((Implication)conclusionTerm).term[1];
 
                     if (
-                        ( (rootImplSubj instanceof CompoundTerm) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+                        ( (rootImplSubj instanceof Conjunction) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
                     ) {
-                        CompoundTerm seq = (CompoundTerm)rootImplSubj;
+                        Conjunction seq = (Conjunction) rootImplSubj;
 
                         if (seq.term.length > 4) {
                             accept = false;
+                        }
+
+                        if (seq.term.length == 2 && seq.term[1] instanceof Interval) {
+                            accept = false; // don't allow (&/, a, +t) =/> b
+                        }
+
+                        // TODO< put into function called checkConjunction(), checks if a conjunction is valid if it doesn't contain any statements
+                        for(Term i:seq.term) {
+                            if (i instanceof Statement) {
+
+                            //if (i instanceof Equivalence || i instanceof Similarity || i instanceof Implication) {
+                                accept = false; // obviously nonsense
+                            }
                         }
                     }
                     else {
                         accept = false;
                     }
                 }
-                else if (conclusionTerm instanceof CompoundTerm && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT) {
+                else if (conclusionTerm instanceof Conjunction && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT) {
                     // allow
                 }
                 else {
-                    System.out.println("NOT ALLOWED " + conclusionTerm);
+                    //System.out.println("NOT ALLOWED " + conclusionTerm);
 
-                    accept = false;
+                    //accept = false;
                 }
             }
 
@@ -569,7 +587,7 @@ public class TemporalInferenceControl {
                         int here = 1;
                     }
 
-                    if (isImplSeqLastOp(iConclusionSentence.term)) {
+                    /*if (isImplSeqLastOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
                     }
@@ -578,7 +596,7 @@ public class TemporalInferenceControl {
                         quality *= 0.05f;
                         durability *= 0.05f;
                         priority *= 0.03f;
-                    }
+                    }*/
                     BudgetValue budget = new BudgetValue(priority, durability, quality, narParameters);
 
                     Task createdTask = new Task(
@@ -597,10 +615,13 @@ public class TemporalInferenceControl {
                     eternalizedStamp.setEternal();
                     Sentence eternalizedSentence = new Sentence(iConclusionSentence.term, iConclusionSentence.punctuation, eternalizedTv, eternalizedStamp);
 
+
                     final float complexity = narParameters.COMPLEXITY_UNIT*iConclusionSentence.term.getComplexity();
                     float quality = truthToQuality(eternalizedTv);
                     float durability = 1.0f / complexity;
                     float priority = 0.5f;
+
+                    /*
                     if (isImplSeqLastOp(iConclusionSentence.term)) {
                         durability *= 2.0f; // boost because it is in a "special" representation
                         durability = Math.min(1.0f, durability);
@@ -610,7 +631,7 @@ public class TemporalInferenceControl {
                         quality *= 0.1f;
                         durability *= 0.1f;
                         priority *= 0.1f;
-                    }
+                    }*/
                     BudgetValue budget = new BudgetValue(priority, durability, quality, narParameters);
 
                     Task createdTask = new Task(
