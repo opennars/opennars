@@ -244,6 +244,11 @@ public class TemporalInferenceControl {
     }
 
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
+        if (eligibilityTrace.eligibilityTrace.size() == 0) {
+            return; // special case
+            // necessary to not disturb declarative NAL tests
+        }
+
         List<Sentence> conclusionSentences = new ArrayList<>();
 
         int nInferences = 0;
@@ -1080,11 +1085,6 @@ public class TemporalInferenceControl {
 
 
     private TaskPair generalInferenceSampleSentence(Memory mem, boolean onlyInputEvents) {
-        if (eligibilityTrace.eligibilityTrace.size() == 0) {
-            return null; // special case
-            // necessary to not disturb declarative NAL tests
-        }
-
         double selectedSalience = mem.randomNumber.nextDouble() * salienceMass;
 
         // do we sample the secondary event uniformly?
