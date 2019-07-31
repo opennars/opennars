@@ -51,7 +51,7 @@ public class TemporalInferenceControl {
 
     public double heatUp = 0.05; // config
 
-    public int inferencesPerCycle = 3; // config
+    public int inferencesPerCycle = 1; // config
 
     public double novelityThreshold = 0.5;
 
@@ -61,7 +61,7 @@ public class TemporalInferenceControl {
 
     public boolean DEBUG_TEMPORALCONTROL = false;
     public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -409,6 +409,7 @@ public class TemporalInferenceControl {
 
             if (true) { // disallow implication with a op because it doesn't make any sense
 
+
                 // disallow ^op =/> x and x =/> ^op and ^op1 =/> ^op2
                 // disallow ^op =\> x and x =\> ^op and ^op1 =\> ^op2
                 // disallow ^op =|> x and x =|> ^op and ^op1 =|> ^op2
@@ -432,6 +433,21 @@ public class TemporalInferenceControl {
                         }
                     }
                 }
+                // disallow x </> ^op
+                if (
+                    (conclusionTerm instanceof Equivalence && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+                ) {
+                    Term rootImplSubj = ((Statement) conclusionTerm).term[0];
+                    Term rootImplPred = ((Statement) conclusionTerm).term[1];
+
+
+                    int opCount = 0;
+                    opCount += checkIsOpOrSeqWithFirstOp(rootImplPred, true) ? 1 : 0;
+
+                    if (opCount >= 1) {
+                        accept = false;
+                    }
+                }
             }
 
             // don't allow anything with more than one op
@@ -439,10 +455,9 @@ public class TemporalInferenceControl {
                 accept = false; // we don't allow more than one op in a term because OpenNARS can't handle it currently
             }
 
-            // don't allow seq =/> and =\> seq where the op isn't the last element of the seq
-            if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                Term rootImplSubj = ((Implication)conclusionTerm).term[0];
-                Term rootImplPred = ((Implication)conclusionTerm).term[1];
+            // don't allow seq =/> and seq </> and =\> seq where the op isn't the last element of the seq
+            if ((conclusionTerm instanceof Implication || conclusionTerm instanceof Equivalence) && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                Term rootImplSubj = ((Statement)conclusionTerm).term[0];
 
                 if (
                     ( (rootImplSubj instanceof CompoundTerm) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
@@ -455,6 +470,8 @@ public class TemporalInferenceControl {
                     }
                 }
             }
+
+
             if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
                 Term rootImplSubj = ((Implication)conclusionTerm).term[0];
                 Term rootImplPred = ((Implication)conclusionTerm).term[1];
@@ -570,7 +587,16 @@ public class TemporalInferenceControl {
         // debugging
         for (Sentence iDerivedConclusion : conclusionSentences) {
             boolean DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS = true;
-            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
+            if(DEBUG_TEMPORALCONTROL_DERIVATIONS) {
+                String a = ""+iDerivedConclusion.term.toString();
+
+                int x = (a).indexOf("</>");
+
+                if (x != -1) {
+                    int frgfgf = 5;
+                }
+                System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
+            }
         }
 
         if (conclusionSentences.size() > 0) {
