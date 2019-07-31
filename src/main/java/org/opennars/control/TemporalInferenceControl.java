@@ -60,7 +60,7 @@ public class TemporalInferenceControl {
     private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
     public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
 
@@ -106,16 +106,20 @@ public class TemporalInferenceControl {
         eligibilityTrace.addEvent(task);
     }
 
-    public boolean heatupInputEvent(Task task) {
-        if (!isValidTask(task, "goal")) {
-            return false;
-        }
-
+    private void addToHeat(Task task) {
         if (!termWithHeatByTerm.containsKey(task.sentence.term)) {
             ConceptWithSalience createdConceptWithSalience = new ConceptWithSalience(task);
             termWithHeatByTerm.put(task.sentence.term, createdConceptWithSalience);
             sortedByHeat.add(createdConceptWithSalience);
         }
+    }
+
+    public boolean heatupInputEvent(Task task) {
+        if (!isValidTask(task, "goal")) {
+            return false;
+        }
+
+        addToHeat(task);
 
         termWithHeatByTerm.get(task.sentence.term).lastInputTask = task; // update with last task because we only care about the last task
 
@@ -253,7 +257,7 @@ public class TemporalInferenceControl {
                 eventB = sentencePair.b,
                 eventMiddle = sentencePair.middleEvent;
 
-            //eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
+            eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
 
             if (eventA == null || eventB == null) {
                 continue; // we need two events to reason about
@@ -879,7 +883,7 @@ public class TemporalInferenceControl {
 
                 boolean isPreviousSeq = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
                 boolean isPreviousPar = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT;
-                boolean isPreviousDeclarative = isDeclarative(previousBelief.term);
+                boolean isPreviousDeclarative = previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_NONE;//isDeclarative(previousBelief.term);
                 if (!(isPreviousPar||isPreviousSeq||isPreviousDeclarative)) {
                     return; // must be restricted to avoid wrong derivations
                 }
@@ -1117,9 +1121,13 @@ public class TemporalInferenceControl {
 
                         List<Task> primarySelectionCandidateEvents = new ArrayList<>();
 
-                        // filter for all events where the term is equal to the term of the primary selected concept
+                        ////////////////// filter for all events where the term is equal to the term of the primary selected concept
+
+                        // filter for all events where the primary selected concept is contained in the term
+                        // this is necessary to match for ex: (&/, a, b) to b
                         for (Task iEvent : selectedPrimaryEtItem.events) {
-                            if (CompoundTerm.replaceIntervals(iEvent.sentence.term).equals(primarySelectedConcept.term)) {
+                            // commented because it is the old code   if (CompoundTerm.replaceIntervals(iEvent.sentence.term).equals(primarySelectedConcept.term)) {
+                            if ((""+CompoundTerm.replaceIntervals(iEvent.sentence.term)).contains(""+primarySelectedConcept.term)) {
                                 primarySelectionCandidateEvents.add(iEvent);
                             }
                         }
