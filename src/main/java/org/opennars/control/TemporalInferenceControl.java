@@ -488,6 +488,22 @@ public class TemporalInferenceControl {
                 }
             }
 
+            // don't allow equ which are to complex
+            // is required because else OpenNARS 3.0.3 gets confused
+            if ((conclusionTerm instanceof Equivalence) && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                Term rootImplSubj = ((Statement)conclusionTerm).term[0];
+
+                if (
+                    ( (rootImplSubj instanceof CompoundTerm) && rootImplSubj.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+                ) {
+                    CompoundTerm seq = (CompoundTerm)rootImplSubj;
+
+                    if (seq.term.length > 1) {
+                        accept = false;
+                    }
+                }
+            }
+
 
             if (conclusionTerm instanceof Implication && conclusionTerm.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
                 Term rootImplSubj = ((Implication)conclusionTerm).term[0];

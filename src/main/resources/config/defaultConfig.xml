@@ -49,7 +49,7 @@
     <conf name="SEQUENCE_BAG_SIZE" value="30"/>
     <conf name="SEQUENCE_BAG_LEVELS" value="10"/>
     
-    <conf name="OPERATION_BAG_SIZE" value="10"/>
+    <conf name="OPERATION_BAG_SIZE" value="20"/>
     <conf name="OPERATION_BAG_LEVELS" value="10"/>
     <conf name="OPERATION_SAMPLES" value="6"/>
     
@@ -60,7 +60,7 @@
     <conf name="TERMLINK_MAX_REASONED" value="3"/>
     <conf name="TERM_LINK_RECORD_LENGTH" value="10"/>
     
-    <conf name="CONCEPT_BELIEFS_MAX" value="28"/>
+    <conf name="CONCEPT_BELIEFS_MAX" value="40"/>
     <conf name="CONCEPT_QUESTIONS_MAX" value="5"/>
     <conf name="CONCEPT_GOALS_MAX" value="7"/>
     
@@ -110,10 +110,10 @@
     
     <conf name="VARIABLE_INTRODUCTION_COMBINATIONS_MAX" value="8"/>
     <conf name="VARIABLE_INTRODUCTION_CONFIDENCE_MUL" value="0.9"/>
-    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="80"/>
+    <conf name="ANTICIPATIONS_PER_CONCEPT_MAX" value="160"/>
     <conf name="MOTOR_BABBLING_CONFIDENCE_THRESHOLD" value="0.8"/>
     
-    <conf name="THREADS_AMOUNT" value="1"/>
+    <conf name="THREADS_AMOUNT" value="3"/>
     <conf name="VOLUME" value="100"/>
     <conf name="MILLISECONDS_PER_STEP" value="0"/>
     <conf name="STEPS_CLOCK" value="true"/>
