@@ -247,56 +247,59 @@ public class TemporalInferenceControl {
         List<Sentence> conclusionSentences = new ArrayList<>();
 
         for(int iInference=0; iInference<inferencesPerCycle; iInference++) {
-            // select events which happened recently
-            TaskPair sentencePair = generalInferenceSampleSentence(mem);
-            if (sentencePair == null) {
-                continue; // we need two events to reason about
+
+            for(boolean onlyInputEvents:new boolean[]{false, true}) { // necessary to bias it to valid seqs of event/ops which are not to complicated
+                // select events which happened recently
+                TaskPair sentencePair = generalInferenceSampleSentence(mem, onlyInputEvents);
+                if (sentencePair == null) {
+                    continue; // we need two events to reason about
+                }
+                Task
+                    eventA = sentencePair.a,
+                    eventB = sentencePair.b,
+                    eventMiddle = sentencePair.middleEvent;
+
+                // eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
+
+                if (eventA == null || eventB == null) {
+                    continue; // we need two events to reason about
+                }
+
+                if (isOp(eventA.sentence.term) && isOp(eventB.sentence.term)) {
+                    continue; // ignore it because op related don't leads to useful derivations
+                }
+
+
+                // must not overlap
+                if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
+                    continue;
+                }
+                if (eventMiddle != null && (Stamp.baseOverlap(eventA.sentence.stamp, eventMiddle.sentence.stamp))) {
+                    continue;
+                }
+                if (eventMiddle != null && (Stamp.baseOverlap(eventB.sentence.stamp, eventMiddle.sentence.stamp))) {
+                    continue;
+                }
+
+
+                // restrict types of premise events to avoid deriving nonsense
+                if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventB.sentence.term, false)) {
+                    continue;
+                }
+                if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
+                    continue;
+                }
+
+
+                // debugging
+                {
+                    String strOfPair = "(~ "+eventA.sentence.toString(nar, false)+(eventMiddle != null ? " ~ "+eventMiddle.sentence.toString(nar, false) : "") + " ~ " + eventB.sentence.toString(nar, false)+" ~)";
+                    if(DEBUG_TEMPORALCONTROL_PREMISESELECTION) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
+                }
+
+                // stuff it into deriver
+                derive(nar, mem, time, narParameters, conclusionSentences, eventA, eventMiddle, eventB);
             }
-            Task
-                eventA = sentencePair.a,
-                eventB = sentencePair.b,
-                eventMiddle = sentencePair.middleEvent;
-
-            // eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
-
-            if (eventA == null || eventB == null) {
-                continue; // we need two events to reason about
-            }
-
-            if (isOp(eventA.sentence.term) && isOp(eventB.sentence.term)) {
-                continue; // ignore it because op related don't leads to useful derivations
-            }
-
-
-            // must not overlap
-            if (Stamp.baseOverlap(eventA.sentence.stamp, eventB.sentence.stamp)) {
-                continue;
-            }
-            if (eventMiddle != null && (Stamp.baseOverlap(eventA.sentence.stamp, eventMiddle.sentence.stamp))) {
-                continue;
-            }
-            if (eventMiddle != null && (Stamp.baseOverlap(eventB.sentence.stamp, eventMiddle.sentence.stamp))) {
-                continue;
-            }
-
-
-            // restrict types of premise events to avoid deriving nonsense
-            if (!isValidForInference2(eventA.sentence.term, true) || !isValidForInference2(eventB.sentence.term, false)) {
-                continue;
-            }
-            if (eventMiddle != null && !isValidForInference2(eventMiddle.sentence.term, false)) {
-                continue;
-            }
-
-
-            // debugging
-            {
-                String strOfPair = "(~ "+eventA.sentence.toString(nar, false)+(eventMiddle != null ? " ~ "+eventMiddle.sentence.toString(nar, false) : "") + " ~ " + eventB.sentence.toString(nar, false)+" ~)";
-                if(DEBUG_TEMPORALCONTROL_PREMISESELECTION) System.out.println("DEBUG event trace  |||  select events "+strOfPair);
-            }
-
-            // stuff it into deriver
-            derive(nar, mem, time, narParameters, conclusionSentences, eventA, eventMiddle, eventB);
         }
 
 
@@ -517,7 +520,7 @@ public class TemporalInferenceControl {
 
                         // TODO< put into function called checkConjunction(), checks if a conjunction is valid if it doesn't contain any statements
                         for(Term i:seq.term) {
-                            if (i instanceof Statement) {
+                            if (i instanceof Statement && i.getTemporalOrder() != TemporalRules.ORDER_NONE) {
 
                             //if (i instanceof Equivalence || i instanceof Similarity || i instanceof Implication) {
                                 accept = false; // obviously nonsense
@@ -590,12 +593,14 @@ public class TemporalInferenceControl {
             if(DEBUG_TEMPORALCONTROL_DERIVATIONS) {
                 String a = ""+iDerivedConclusion.term.toString();
 
-                int x = (a).indexOf("</>");
+                int x = (a).indexOf("=/>");
 
                 if (x != -1) {
                     int frgfgf = 5;
+
+                    System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
                 }
-                System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
+
             }
         }
 
@@ -1045,7 +1050,7 @@ public class TemporalInferenceControl {
 
 
 
-    private TaskPair generalInferenceSampleSentence(Memory mem) {
+    private TaskPair generalInferenceSampleSentence(Memory mem, boolean onlyInputEvents) {
         if (eligibilityTrace.eligibilityTrace.size() == 0) {
             return null; // special case
             // necessary to not disturb declarative NAL tests
@@ -1112,6 +1117,10 @@ public class TemporalInferenceControl {
                         for (Task iEvent : selectedPrimaryEtItem.events) {
                             // commented because it is the old code   if (CompoundTerm.replaceIntervals(iEvent.sentence.term).equals(primarySelectedConcept.term)) {
                             if ((""+CompoundTerm.replaceIntervals(iEvent.sentence.term)).contains(""+primarySelectedConcept.term)) {
+                                if (onlyInputEvents && !iEvent.isInput()) {
+                                    continue;
+                                }
+
                                 primarySelectionCandidateEvents.add(iEvent);
                             }
                         }
@@ -1130,6 +1139,10 @@ public class TemporalInferenceControl {
                             List<Task> otherPossibleEvents = new ArrayList<>();
                             for (Task iEvent : selectedPrimaryEtItem.events) {
                                 if (!iEvent.sentence.term.equals(selectedPrimaryEvent.sentence.term)) {
+                                    if (onlyInputEvents && !iEvent.isInput()) {
+                                        continue;
+                                    }
+
                                     otherPossibleEvents.add(iEvent);
                                 }
                             }
@@ -1224,6 +1237,10 @@ public class TemporalInferenceControl {
                                                     // filter for events which are ops
                                                     for(Task iEvent : additionalEventTraceItem.events) {
                                                         if (!middleEventMustBeOp || iEvent.sentence.term instanceof Operation) {
+                                                            if (onlyInputEvents && !iEvent.isInput()) {
+                                                                continue;
+                                                            }
+
                                                             middleEventCandidates.add(iEvent);
                                                         }
                                                     }
@@ -1250,11 +1267,20 @@ public class TemporalInferenceControl {
                                 // now we need to select the secondary event from the trace item
 
                                 //  select random event as secondary
-                                if (secondaryTraceItem.events.size() == 0) {
-                                    return null; // shouldn't happen
+
+
+                                List<Task> candidateEvents = new ArrayList<>();
+                                for(Task iEvent : secondaryTraceItem.events) {
+                                    if (onlyInputEvents && !iEvent.isInput()) {
+                                        continue;
+                                    }
+
+                                    candidateEvents.add(iEvent);
                                 }
 
-                                List<Task> candidateEvents = secondaryTraceItem.events;
+                                if (candidateEvents.size() == 0) {
+                                    return null; // shouldn't happen
+                                }
                                 selectedSecondaryEvent = selectTaskByConf(mem, candidateEvents);
                             }
                         }
