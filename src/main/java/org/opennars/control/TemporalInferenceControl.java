@@ -51,7 +51,7 @@ public class TemporalInferenceControl {
 
     public double heatUp = 0.05; // config
 
-    public int inferencesPerCycle = 1; // config
+    public int inferencesPerCycle = 3; // config
 
     public double novelityThreshold = 0.5;
 
@@ -60,8 +60,8 @@ public class TemporalInferenceControl {
     private DerivationFilter derivationFilter = new DerivationFilter();
 
     public boolean DEBUG_TEMPORALCONTROL = false;
-    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = true;
-    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
+    public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
+    public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = false;
 
 
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -257,7 +257,7 @@ public class TemporalInferenceControl {
                 eventB = sentencePair.b,
                 eventMiddle = sentencePair.middleEvent;
 
-            eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
+            // eventMiddle = null; // DEBUG DEBUG DEBUG - disable codepath for middle event
 
             if (eventA == null || eventB == null) {
                 continue; // we need two events to reason about
@@ -785,7 +785,7 @@ public class TemporalInferenceControl {
 
     // derive conclusions from premises
     private static void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, Task premiseEventA, Task premiseEventMiddle, Task premiseEventB) {
-        Sentence premiseEventASentence = premiseEventA.sentence;
+        Sentence usedPremiseEventASentence = premiseEventA.sentence;
         Sentence premiseEventBSentence = premiseEventB.sentence;
 
         // we assume that event B happens either at the same time or after event A
@@ -793,11 +793,11 @@ public class TemporalInferenceControl {
 
         if (premiseEventMiddle != null) /* check if we have three premises and derive the results with special rules */ {
             // build sequence of eventA and middle event
-            if (Stamp.baseOverlap(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp)) {
+            if (Stamp.baseOverlap(usedPremiseEventASentence.stamp, premiseEventMiddle.sentence.stamp)) {
                 return;
             }
 
-            if (checkOverlapInclusive(premiseEventASentence, premiseEventMiddle.sentence) || checkOverlapInclusive(premiseEventBSentence, premiseEventMiddle.sentence)) {
+            if (checkOverlapInclusive(usedPremiseEventASentence, premiseEventMiddle.sentence) || checkOverlapInclusive(premiseEventBSentence, premiseEventMiddle.sentence)) {
                 return; // must not overlap
             }
 
@@ -805,103 +805,61 @@ public class TemporalInferenceControl {
             Stamp seqStamp;
             TruthValue seqTv;
             { // build (&/, a, t, m, t)
-                assert premiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
+                assert usedPremiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
 
-                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime() ;
+                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - usedPremiseEventASentence.getOccurenceTime() ;
 
-                seqTerm = Conjunction.make(new Term[]{premiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term, new Interval(premiseEventB.sentence.getOccurenceTime()-premiseEventMiddle.sentence.getOccurenceTime())}, TemporalRules.ORDER_FORWARD);
-                seqStamp = new Stamp(premiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
-                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, premiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
+                seqTerm = Conjunction.make(new Term[]{usedPremiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term}, TemporalRules.ORDER_FORWARD);
+                seqStamp = new Stamp(usedPremiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
+                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, usedPremiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
+                usedPremiseEventASentence = new Sentence(seqTerm, '.', seqTv, seqStamp);
             }
 
 
-            { // build =/>
-                TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INDUCTION, seqTv, premiseEventBSentence.truth, narParameters);
-                Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
-
-                if (!Statement.invalidStatement(seqTerm, premiseEventBSentence.term, true)) {
-                    Term term = Implication.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
-                    Sentence s = new Sentence(term, '.', tv, stamp);
-                    synchronized (conclusionSentences) {
-                        conclusionSentences.add(s);
-                    }
-                }
-            }
-
-            { // build </>
-                TruthValue tv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.COMPARISON, seqTv, premiseEventBSentence.truth, narParameters);
-                Stamp stamp = new Stamp(premiseEventB.sentence.stamp, seqStamp, time, narParameters); // merge stamps, premises are reversed because we care about the timing of the last event
-
-                if (!Statement.invalidStatement(seqTerm, premiseEventBSentence.term, true)) {
-                    Term term = Equivalence.make(seqTerm, premiseEventBSentence.term, TemporalRules.ORDER_FORWARD);
-                    if (term != null) {
-                        Sentence s = new Sentence(term, '.', tv, stamp);
-                        synchronized (conclusionSentences) {
-                            conclusionSentences.add(s);
-                        }
-                    }
-                }
-
-
-
-            }
-
-            { // build (&/, a, t, m, t, b)
-                assert premiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
-
-                long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - premiseEventASentence.getOccurenceTime();
-
-                seqTerm = Conjunction.make(new Term[]{premiseEventASentence.term,new Interval(occTimeDiff),premiseEventMiddle.sentence.term, new Interval(premiseEventB.sentence.getOccurenceTime()-premiseEventMiddle.sentence.getOccurenceTime() - calcSeqTime(premiseEventMiddle.sentence.term)), premiseEventB.sentence.term}, TemporalRules.ORDER_FORWARD);
-                seqStamp = new Stamp(premiseEventMiddle.sentence.stamp, premiseEventASentence.stamp, time, narParameters); // merge stamps
-                seqStamp = new Stamp(premiseEventBSentence.stamp, seqStamp, time, narParameters); // merge stamps
-                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, premiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
-                seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, seqTv, premiseEventB.sentence.truth, narParameters);
-                Sentence s = new Sentence(seqTerm, '.', seqTv, seqStamp);
-                synchronized (conclusionSentences) {
-                    conclusionSentences.add(s);
-                }
-            }
 
             int here6 = 1;
         }
-        else { // we have two premises
-            //int r=1;
-            //if (r==1) return; // avoid binary premise selection for TESTING
-
-            // stuff it all into the deriver
-            //commented because we are using    mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
-
-            { // implementation using TemporalRules.temporalInduction()
-                Sentence currentBelief = premiseEventBSentence;
-                Sentence previousBelief = premiseEventASentence;
-
-                if (currentBelief.getOccurenceTime() == previousBelief.getOccurenceTime() && isDeclarative(currentBelief.term) && isDeclarative(previousBelief.term)) { // are both declarative events and at the same time? then we need to put it into the ifnerence because we want parallel events
-                }
-                else if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
-                    return; // don't allow overlapping events
-                }
-
-                boolean isPreviousSeq = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
-                boolean isPreviousPar = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT;
-                boolean isPreviousDeclarative = previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_NONE;//isDeclarative(previousBelief.term);
-                if (!(isPreviousPar||isPreviousSeq||isPreviousDeclarative)) {
-                    return; // must be restricted to avoid wrong derivations
-                }
 
 
-                // it is necessary to update the nal-context
-                final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
-                nal.setTheNewStamp(premiseEventB.sentence.stamp, premiseEventA.sentence.stamp, nal.time.time());
-                nal.setCurrentTask(premiseEventB);
-                nal.setCurrentBelief(premiseEventA.sentence);
-                List<Task> derivationsFromTemporalInduction = TemporalRules.temporalInduction(currentBelief, previousBelief, nal, false, false, true);
+        // we have two premises or three
 
-                // map to List of sentences
-                for (final Task iDerivedTask : derivationsFromTemporalInduction) {
-                    if (!iDerivedTask.sentence.stamp.isEternal()) { // must be event because event trace derives only events
-                        synchronized (conclusionSentences) {
-                            conclusionSentences.add(iDerivedTask.sentence);
-                        }
+
+        //int r=1;
+        //if (r==1) return; // avoid binary premise selection for TESTING
+
+        // stuff it all into the deriver
+        //commented because we are using    mem.trieDeriver.derive(premiseEventASentence, premiseEventBSentence, conclusionSentences, time, nal, narParameters);
+
+        { // implementation using TemporalRules.temporalInduction()
+            Sentence currentBelief = premiseEventBSentence;
+            Sentence previousBelief = usedPremiseEventASentence;
+
+            if (currentBelief.getOccurenceTime() == previousBelief.getOccurenceTime() && isDeclarative(currentBelief.term) && isDeclarative(previousBelief.term)) { // are both declarative events and at the same time? then we need to put it into the ifnerence because we want parallel events
+            }
+            else if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
+                return; // don't allow overlapping events
+            }
+
+            boolean isPreviousSeq = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
+            boolean isPreviousPar = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT;
+            boolean isPreviousDeclarative = previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_NONE;//isDeclarative(previousBelief.term);
+            if (!(isPreviousPar||isPreviousSeq||isPreviousDeclarative)) {
+                return; // must be restricted to avoid wrong derivations
+            }
+
+
+            // it is necessary to update the nal-context
+            final DerivationContext nal = new DerivationContext(mem, narParameters, nar);
+            nal.setTheNewStamp(premiseEventB.sentence.stamp, premiseEventA.sentence.stamp, nal.time.time());
+            nal.setCurrentTask(premiseEventB);
+            nal.setCurrentBelief(premiseEventA.sentence);
+            List<Task> derivationsFromTemporalInduction = TemporalRules.temporalInduction(currentBelief, previousBelief, nal, false, false, true);
+
+            // map to List of sentences
+            for (final Task iDerivedTask : derivationsFromTemporalInduction) {
+                if (!iDerivedTask.sentence.stamp.isEternal()) { // must be event because event trace derives only events
+                    synchronized (conclusionSentences) {
+                        conclusionSentences.add(iDerivedTask.sentence);
                     }
                 }
             }
