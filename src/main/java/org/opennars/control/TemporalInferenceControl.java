@@ -51,7 +51,7 @@ public class TemporalInferenceControl {
 
     public double heatUp = 0.05; // config
 
-    public int inferencesPerCycle = 1; // config
+    public double inferencesPerCycle = 0.15; // config
 
     public double novelityThreshold = 0.5;
 
@@ -246,7 +246,16 @@ public class TemporalInferenceControl {
     public void generalInferenceGenerateTemporalConclusions(Nar nar, Memory mem, long time, Parameters narParameters) {
         List<Sentence> conclusionSentences = new ArrayList<>();
 
-        for(int iInference=0; iInference<inferencesPerCycle; iInference++) {
+        int nInferences = 0;
+        if (inferencesPerCycle < 1.0) {
+            nInferences += (mem.randomNumber.nextDouble() < inferencesPerCycle)?1:0;
+        }
+        else {
+            nInferences = (int)inferencesPerCycle;
+        }
+
+
+        for(int iInference=0; iInference<nInferences; iInference++) {
 
             for(boolean onlyInputEvents:new boolean[]{false, true}) { // necessary to bias it to valid seqs of event/ops which are not to complicated
                 // select events which happened recently
@@ -577,9 +586,12 @@ public class TemporalInferenceControl {
                 //System.out.println("   "+iConclusion);
                 //System.out.println("   "+iConclusion.hashCode());
 
-                if (!derivationFilter.contains(iConclusion.hashCode())) {
-                    derivationFilter.pushLifo(iConclusion.hashCode());
-                    //System.out.println("doesn't contain "+iConclusion.hashCode());
+                String asStr = iConclusion.term.toString() + iConclusion.truth.toString() + strOfStamp2(iConclusion.stamp);
+                int hash = asStr.hashCode();
+
+                if (!derivationFilter.contains(hash)) {
+                    derivationFilter.pushLifo(hash);
+                    //System.out.println("doesn't contain "+hash);
                     filteredConclusions.add(iConclusion);
                 }
             }
@@ -595,9 +607,7 @@ public class TemporalInferenceControl {
 
                 int x = (a).indexOf("=/>");
 
-                if (x != -1) {
-                    int frgfgf = 5;
-
+                if (true || x != -1) {
                     System.out.println("DEBUG event trace  |||   derived after transform = " + iDerivedConclusion.toString(nar, DEBUG_TEMPORALCONTROL_DERIVATIONS_SHOWSTAMPS));
                 }
 
@@ -713,6 +723,25 @@ public class TemporalInferenceControl {
 
             eligibilityTrace.addEvent(createdTask);
         }
+    }
+
+    static private String strOfStamp2(Stamp stamp) {
+        final int estimatedInitialSize = 10 * stamp.baseLength;
+
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        if (!stamp.isEternal()) {
+            buffer.append('|').append(stamp.getOccurrenceTime());
+        }
+        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+        for (int i = 0; i < stamp.baseLength; i++) {
+            buffer.append(stamp.evidentialBase[i].toString());
+            if (i < (stamp.baseLength - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            }
+        }
+        buffer.append(Symbols.STAMP_CLOSER).append(' ');
+
+        return buffer.toString();
     }
 
     static private boolean checkHasOp(CompoundTerm seq) {
@@ -1625,7 +1654,7 @@ public class TemporalInferenceControl {
         public List<Integer> hashesOfLastConclusions = new ArrayList<>();
 
         public void pushLifo(int hash) {
-            int maxLength = 20;
+            int maxLength = 100;
 
             hashesOfLastConclusions.add(hash);
 
