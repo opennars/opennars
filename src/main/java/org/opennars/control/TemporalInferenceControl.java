@@ -864,6 +864,20 @@ public class TemporalInferenceControl {
         return false;
     }
 
+    // is the term a valid premise for a seq?
+    private static boolean isValidSeqPremise(Term term) {
+        //if (isOp(term)) {
+        //    return true; // ops are a special case
+        //}
+
+        if (term instanceof Statement && term.getTemporalOrder() != TemporalRules.ORDER_NONE) {
+            return false; // not allowed
+        }
+
+        return true;
+
+    }
+
     // derive conclusions from premises
     private static void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, Task premiseEventA, Task premiseEventMiddle, Task premiseEventB) {
         Sentence usedPremiseEventASentence = premiseEventA.sentence;
@@ -885,7 +899,12 @@ public class TemporalInferenceControl {
             Term seqTerm;
             Stamp seqStamp;
             TruthValue seqTv;
-            { // build (&/, a, t, m, t)
+            if (
+                // premises must not be temporal statements!
+                isValidSeqPremise(usedPremiseEventASentence.term) &&
+                isValidSeqPremise(premiseEventMiddle.sentence.term)
+            ) {
+                // build (&/, a, t, m, t)
                 assert usedPremiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();
 
                 long occTimeDiff = premiseEventMiddle.sentence.getOccurenceTime() - usedPremiseEventASentence.getOccurenceTime() ;
@@ -894,6 +913,9 @@ public class TemporalInferenceControl {
                 seqStamp = new Stamp(usedPremiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
                 seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, usedPremiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
                 usedPremiseEventASentence = new Sentence(seqTerm, '.', seqTv, seqStamp);
+            }
+            else {
+                int here5 = 56;
             }
 
 
