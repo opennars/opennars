@@ -42,6 +42,9 @@ import static java.lang.Math.min;
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
 import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 
+// TODO< count and assign unique id's to trace items >
+// TODO< maintain hashtable of et items by id >
+
 /**
  *
  * @author Robert Wünsche
@@ -50,7 +53,7 @@ public class TemporalInferenceControl {
 
     public double heatUp = 0.05; // config
 
-    public double inferencesPerCycle = 0.15; // config
+    public double inferencesPerCycle = 1.15; // config
 
     public double novelityThreshold = 0.5;
 
@@ -97,7 +100,7 @@ public class TemporalInferenceControl {
         final Sentence currentBelief = newEvent;
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
+        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence, 1.0f);
     }
 
     public boolean immediateProcessEvent(Task task, DerivationContext ctx) {
@@ -325,7 +328,7 @@ public class TemporalInferenceControl {
                 }
 
                 // stuff it into deriver
-                derive(nar, mem, time, narParameters, conclusionSentences, eventA, eventMiddle, eventB);
+                derive(nar, mem, time, narParameters, conclusionSentences, sentencePair.aTraceItem, eventA, eventMiddle, sentencePair.bTraceItem, eventB);
             }
         }
 
@@ -891,13 +894,33 @@ public class TemporalInferenceControl {
 
     }
 
+    // counts how many ops are between the trace indices "spanned"
+    private int countSpannedOps(EligibilityTrace.EligibilityTraceItem lowTraceItem, EligibilityTrace.EligibilityTraceItem highTraceItem) {
+        int nOps = 0;
+
+        // iterate over the id's of the trace items
+        for(long iEtId=lowTraceItem.id;iEtId<highTraceItem.id;iEtId++) {
+            EligibilityTrace.EligibilityTraceItem etItem = eligibilityTrace.getById(iEtId);
+
+            for(Task iEvent : etItem.events) {
+                if (iEvent.isInput() && iEvent.sentence.term instanceof Operation) {
+                    nOps++; // op found, increment
+                }
+            }
+        }
+
+        return nOps;
+    }
+
     // derive conclusions from premises
-    private static void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, Task premiseEventA, Task premiseEventMiddle, Task premiseEventB) {
+    private void derive(Nar nar, Memory mem, long time, Parameters narParameters, List<Sentence> conclusionSentences, EligibilityTrace.EligibilityTraceItem premiseEventAEtItem, Task premiseEventA, Task premiseEventMiddle, EligibilityTrace.EligibilityTraceItem premiseEventBEtItem, Task premiseEventB) {
         Sentence usedPremiseEventASentence = premiseEventA.sentence;
         Sentence premiseEventBSentence = premiseEventB.sentence;
 
         // we assume that event B happens either at the same time or after event A
         assert premiseEventBSentence.stamp.getOccurrenceTime() >= premiseEventBSentence.stamp.getOccurrenceTime() : "assumption of order of events violated";
+
+        double conclusionsConfMultiplier = 1.0;
 
         if (premiseEventMiddle != null) /* check if we have three premises and derive the results with special rules */ {
             // build sequence of eventA and middle event
@@ -926,6 +949,15 @@ public class TemporalInferenceControl {
                 seqStamp = new Stamp(usedPremiseEventASentence.stamp, premiseEventMiddle.sentence.stamp, time, narParameters); // merge stamps
                 seqTv = TruthFunctions.lookupTruthFunctionAndCompute(TruthFunctions.EnumType.INTERSECTION, usedPremiseEventASentence.truth, premiseEventMiddle.sentence.truth, narParameters);
                 usedPremiseEventASentence = new Sentence(seqTerm, '.', seqTv, seqStamp);
+
+                int countOfSpannedOps = countSpannedOps(premiseEventAEtItem, premiseEventBEtItem);
+                if(countOfSpannedOps > 1) {
+                    // decay conf by number of "spanned" ops between the selected events
+                    int countUsedForDecayBySpannedOps = countOfSpannedOps - 1; // one is fine and should be treated as the base value
+                    conclusionsConfMultiplier = Math.pow(2.4, -countUsedForDecayBySpannedOps);
+
+                    int here = 1;
+                }
             }
             else {
                 int here5 = 56;
@@ -969,7 +1001,7 @@ public class TemporalInferenceControl {
             nal.setTheNewStamp(premiseEventB.sentence.stamp, premiseEventA.sentence.stamp, nal.time.time());
             nal.setCurrentTask(premiseEventB);
             nal.setCurrentBelief(premiseEventA.sentence);
-            List<Task> derivationsFromTemporalInduction = TemporalRules.temporalInduction(currentBelief, previousBelief, nal, false, false, true);
+            List<Task> derivationsFromTemporalInduction = TemporalRules.temporalInduction(currentBelief, previousBelief, nal, false, false, true, conclusionsConfMultiplier);
 
             // map to List of sentences
             for (final Task iDerivedTask : derivationsFromTemporalInduction) {
@@ -1121,13 +1153,17 @@ public class TemporalInferenceControl {
 
     private static class TaskPair {
         public Task a;
+        public EligibilityTrace.EligibilityTraceItem aTraceItem;
         public Task b;
+        public EligibilityTrace.EligibilityTraceItem bTraceItem;
 
         public Task middleEvent = null; // event between the two events
 
-        public TaskPair(Task a, Task b) {
+        public TaskPair(Task a, EligibilityTrace.EligibilityTraceItem aTraceItem, Task b, EligibilityTrace.EligibilityTraceItem bTraceItem) {
             this.a = a;
+            this.aTraceItem = aTraceItem;
             this.b = b;
+            this.bTraceItem = bTraceItem;
         }
     }
 
@@ -1211,6 +1247,8 @@ public class TemporalInferenceControl {
                         Task selectedSecondaryEvent = null;
                         Task middleEvent = null; // event in the middle between the two events
 
+                        EligibilityTrace.EligibilityTraceItem secondaryTraceItem = null;
+
                         // it is sometimes necessary to sample from the same occurence time
                         boolean sampleForSameOccurenceTime = selectedPrimaryEtItem.events.size() > 1 && mem.randomNumber.nextDouble() < 0.3;
 
@@ -1230,6 +1268,8 @@ public class TemporalInferenceControl {
                             if (otherPossibleEvents.size() > 0) {
                                 selectedSecondaryEvent = selectTaskByConf(mem, otherPossibleEvents);
                             }
+
+                            secondaryTraceItem = selectedPrimaryEtItem;
                         }
                         else { // select secondary event
                             // TODO< compute neightbor salience with the multiplication of the salience of neightbor ET items with the exp based kernel >
@@ -1279,7 +1319,7 @@ public class TemporalInferenceControl {
                                 double selectedSalience2 = mem.randomNumber.nextDouble() * windowedSalienceAccu;
                                 double selectionMassAccu = 0.0;
 
-                                EligibilityTrace.EligibilityTraceItem secondaryTraceItem = null;
+                                secondaryTraceItem = null;
 
                                 float middleEventMustBeOpPropability = 0.5f; // config
                                 boolean middleEventMustBeOp = mem.randomNumber.nextFloat() > middleEventMustBeOpPropability; // must the middle event be an op or can it be a normal event?
@@ -1374,9 +1414,13 @@ public class TemporalInferenceControl {
                                 Task temp = eventA;
                                 eventA = eventB;
                                 eventB = temp;
+
+                                EligibilityTrace.EligibilityTraceItem tempEtItem = selectedPrimaryEtItem;
+                                selectedPrimaryEtItem = secondaryTraceItem;
+                                secondaryTraceItem = tempEtItem;
                             }
 
-                            TaskPair sentencePair = new TaskPair(eventA, eventB);
+                            TaskPair sentencePair = new TaskPair(eventA, selectedPrimaryEtItem, eventB, secondaryTraceItem);
                             sentencePair.middleEvent = middleEvent;
 
                             return sentencePair;
@@ -1449,6 +1493,10 @@ public class TemporalInferenceControl {
         // by string of term
         public Map<String, List<EligibilityTraceItem>> eligibilityTraceItemsByTerm = new HashMap<>();
 
+        public Map<Long, EligibilityTraceItem> etItemsById = new HashMap<>();
+
+        public long etItemCounter = Integer.MAX_VALUE; // counter for the id's of ET items
+
         /**
          * tries to add the event to the trace, checks if it already exists and ignores it if so
          *
@@ -1475,7 +1523,7 @@ public class TemporalInferenceControl {
             }
             else {
                 // doesn't exist, we need to create a eligibility trace item and add it
-                EligibilityTraceItem createdItem = new EligibilityTraceItem(event);
+                EligibilityTraceItem createdItem = new EligibilityTraceItem(event, etItemCounter++);
                 addItem(createdItem);
             }
         }
@@ -1531,6 +1579,8 @@ public class TemporalInferenceControl {
         public void addItem(EligibilityTraceItem item) {
             // put into map
             eligibilityTraceItemsByTime.put(item.retOccurenceTime(), item);
+
+            etItemsById.put(item.id, item);
 
             // update ET for all terms
             // TODO< do recursivly >
@@ -1672,6 +1722,17 @@ public class TemporalInferenceControl {
             if (eligibilityTraceItemsByTerm.get(etKey).size() == 0) {
                 eligibilityTraceItemsByTerm.remove(etKey); // we can remove it
             }
+
+            etItemsById.remove(item.id);
+        }
+
+        public EligibilityTraceItem getById(long id) {
+            if (etItemsById.containsKey(id)) {
+                return etItemsById.get(id);
+            }
+
+            // else WARN TODO
+            return null;
         }
 
         public static class EligibilityTraceItem {
@@ -1679,7 +1740,9 @@ public class TemporalInferenceControl {
 
             public double decay = 1.0;
 
-            public EligibilityTraceItem(Task event) {
+            public final long id;
+
+            public EligibilityTraceItem(Task event, long id) {
                 assert !event.sentence.isEternal();
 
                 if (event.sentence.isEternal()) {
@@ -1687,6 +1750,7 @@ public class TemporalInferenceControl {
                 }
 
                 this.events.add(event);
+                this.id = id;
             }
 
             public long retOccurenceTime() {

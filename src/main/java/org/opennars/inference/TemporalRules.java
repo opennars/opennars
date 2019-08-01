@@ -142,7 +142,7 @@ public class TemporalRules {
     }
     
     //TODO maybe split &/ case into own function
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, final double conclusionConfMultiplier) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -178,10 +178,10 @@ public class TemporalRules {
         givenTruth2 = s3.truth; 
         
         //Truth and priority calculations
-        final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2, nal.narParameters);
-        final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1, nal.narParameters);
-        final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2, nal.narParameters);
-        final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2, nal.narParameters);
+        final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2, nal.narParameters).clone().mulConfidence((float)conclusionConfMultiplier);
+        final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1, nal.narParameters).clone().mulConfidence((float)conclusionConfMultiplier);
+        final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2, nal.narParameters).clone().mulConfidence((float)conclusionConfMultiplier);
+        final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2, nal.narParameters).clone().mulConfidence((float)conclusionConfMultiplier);
         final BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
@@ -207,7 +207,10 @@ public class TemporalRules {
         List<Term> t22s = new ArrayList<>();
         List<Float> penalties = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if (true) {
+        boolean s1ContainsOp = s1.term.toString().indexOf('^') != -1;
+        boolean s2ContainsOp = s2.term.toString().indexOf('^') != -1;
+
+        if (s1ContainsOp || s2ContainsOp) {
             if(!deriveSequenceOnly && statement2!=null) {
                 for(boolean subjectIntro : new boolean[]{true, false}) {
                     Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
