@@ -53,7 +53,7 @@ public class TemporalInferenceControl {
 
     public double heatUp = 0.05; // config
 
-    public double inferencesPerCycle = 1.15; // config
+    public double inferencesPerCycle = 0.05; // config
 
     public double novelityThreshold = 0.5;
 
