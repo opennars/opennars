@@ -33,14 +33,12 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.*;
 
 import static java.lang.Long.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
-import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 
 // TODO< count and assign unique id's to trace items >
 // TODO< maintain hashtable of et items by id >
@@ -295,9 +293,10 @@ public class TemporalInferenceControl {
                     continue; // ignore it because op related don't leads to useful derivations
                 }
 
-                if (!isValidSeqPremise(eventA.sentence.term) || !isValidSeqPremise(eventB.sentence.term)) {
-                    continue;
-                }
+                // commented because it conflicts with nal7.7
+                //if (!isValidSeqComponent(eventA.sentence.term) || !isValidSeqComponent(eventB.sentence.term)) {
+                //    continue;
+                //}
 
 
                 // must not overlap
@@ -535,6 +534,13 @@ public class TemporalInferenceControl {
                         accept = false; // don't allow
                     }
                 }
+            }
+
+            if (conclusionTerm instanceof Statement && !isValidConclusionStatement((Statement)conclusionTerm)) {
+                accept = false;
+            }
+            if (conclusionTerm instanceof CompoundTerm && !isValidCompound((CompoundTerm)conclusionTerm)) {
+                accept = false;
             }
 
 
@@ -880,18 +886,37 @@ public class TemporalInferenceControl {
         return false;
     }
 
-    // is the term a valid premise for a seq?
-    private static boolean isValidSeqPremise(Term term) {
-        //if (isOp(term)) {
-        //    return true; // ops are a special case
-        //}
+    private static boolean isValidConclusionStatement(Statement stmt) {
+        if (!isValidSeqComponent(stmt.term[0]) || !isValidSeqComponent(stmt.term[1])) {
+            return false; // pred and subj must be non-temporal!
+        }
 
-        if (term instanceof Statement && term.getTemporalOrder() != TemporalRules.ORDER_NONE) {
-            return false; // not allowed
+        if (stmt.term[0] instanceof CompoundTerm && !isValidCompound((CompoundTerm) stmt.term[0])) {
+            return false;
+        }
+        if (stmt.term[1] instanceof CompoundTerm && !isValidCompound((CompoundTerm) stmt.term[1])) {
+            return false;
         }
 
         return true;
+    }
 
+    private static boolean isValidCompound(CompoundTerm cmpnd) {
+        // must not have temporal statements!
+        for(Term iComponent:cmpnd.term) {
+            if (!isValidSeqComponent(iComponent)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // is the term a valid premise for a seq?
+    private static boolean isValidSeqComponent(Term term) {
+        if (term instanceof Statement && term.getTemporalOrder() != TemporalRules.ORDER_NONE) {
+            return false; // not allowed
+        }
+        return true;
     }
 
     // counts how many ops are between the trace indices "spanned"
@@ -937,8 +962,8 @@ public class TemporalInferenceControl {
             TruthValue seqTv;
             if (
                 // premises must not be temporal statements!
-                isValidSeqPremise(usedPremiseEventASentence.term) &&
-                isValidSeqPremise(premiseEventMiddle.sentence.term)
+                isValidSeqComponent(usedPremiseEventASentence.term) &&
+                isValidSeqComponent(premiseEventMiddle.sentence.term)
             ) {
                 // build (&/, a, t, m, t)
                 assert usedPremiseEventASentence.getOccurenceTime() < premiseEventMiddle.sentence.getOccurenceTime();

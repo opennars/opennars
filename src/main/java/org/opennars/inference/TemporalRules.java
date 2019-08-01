@@ -210,7 +210,7 @@ public class TemporalRules {
         boolean s1ContainsOp = s1.term.toString().indexOf('^') != -1;
         boolean s2ContainsOp = s2.term.toString().indexOf('^') != -1;
 
-        if (s1ContainsOp || s2ContainsOp) {
+        if (true || s1ContainsOp || s2ContainsOp) {
             if(!deriveSequenceOnly && statement2!=null) {
                 for(boolean subjectIntro : new boolean[]{true, false}) {
                     Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
