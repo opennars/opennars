@@ -44,7 +44,6 @@ import static org.opennars.inference.DeriverHelpers.calcSeqTime;
 
 /**
  *
- * @author Patrick Hammer
  * @author Robert Wünsche
  */
 public class TemporalInferenceControl {
@@ -63,7 +62,17 @@ public class TemporalInferenceControl {
     public boolean DEBUG_TEMPORALCONTROL_PREMISESELECTION = false;
     public boolean DEBUG_TEMPORALCONTROL_DERIVATIONS = true;
 
-
+    /**
+     * @author Patrick Hammer
+     * @param newEvent
+     * @param stmLast
+     * @param controllerTask
+     * @param nal
+     * @param SucceedingEventsInduction
+     * @param addToMemory
+     * @param allowSequence
+     * @return
+     */
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
         
         if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
@@ -281,6 +290,10 @@ public class TemporalInferenceControl {
 
                 if (isOp(eventA.sentence.term) && isOp(eventB.sentence.term)) {
                     continue; // ignore it because op related don't leads to useful derivations
+                }
+
+                if (!isValidSeqPremise(eventA.sentence.term) || !isValidSeqPremise(eventB.sentence.term)) {
+                    continue;
                 }
 
 
