@@ -979,7 +979,7 @@ public class TemporalInferenceControl {
                 if(countOfSpannedOps > 1) {
                     // decay conf by number of "spanned" ops between the selected events
                     int countUsedForDecayBySpannedOps = countOfSpannedOps - 1; // one is fine and should be treated as the base value
-                    conclusionsConfMultiplier = Math.pow(2.4, -countUsedForDecayBySpannedOps);
+                    conclusionsConfMultiplier = Math.pow(3.8, -countUsedForDecayBySpannedOps);
 
                     int here = 1;
                 }
@@ -1011,6 +1011,10 @@ public class TemporalInferenceControl {
             }
             else if (checkOverlapInclusive(premiseEventB.sentence, premiseEventA.sentence)) {
                 return; // don't allow overlapping events
+            }
+
+            if (currentBelief.term.equals(previousBelief.term)) {
+                return; // don't allow because it can currently lead to nonsense conclusions if it introduces vars
             }
 
             boolean isPreviousSeq = previousBelief.term instanceof Conjunction && previousBelief.term.getTemporalOrder() == TemporalRules.ORDER_FORWARD;
@@ -1510,7 +1514,7 @@ public class TemporalInferenceControl {
 
     public static class EligibilityTrace {
 
-        public int maxLength = 10000; // config
+        public int maxLength = 9; // config
 
         public List<EligibilityTraceItem> eligibilityTrace = new ArrayList<>(); // sorted by occurence time of events of the items
         public Map<Long, EligibilityTraceItem> eligibilityTraceItemsByTime = new HashMap<>();
