@@ -1,0 +1,6 @@
+<a --> A>. :|: %1.00;0.90%
+8
+<a --> A>. :|: %1.00;0.90%
+100
+' check for eternalized revised conclusion
+''outputMustContain('<a --> A>. %1.00;0.40%')
