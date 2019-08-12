@@ -138,11 +138,8 @@ public class Parameters implements Serializable {
     public volatile double PROJECTION_DECAY = 0.1;
 
     /* ---------- avoiding repeated reasoning ---------- */
-    /** Maximum length of the evidental base of the Stamp, a power of 2 */
+    /** Maximum length of the evidental base of the Stamp */
     public int MAXIMUM_EVIDENTAL_BASE_LENGTH = 20000;
-
-    /** Maximum length of Stamp, a power of 2 */
-    //public int MAXIMUM_STAMP_LENGTH = 8;
 
     /** Maximum TermLinks used in reasoning for each Task in Concept */
     public volatile int TERMLINK_MAX_REASONED = 3;
