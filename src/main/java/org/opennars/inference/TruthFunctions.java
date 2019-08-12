@@ -126,9 +126,9 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final TruthValue conversion(final TruthValue v1, Parameters narParameters) {
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float w = and(f1, c1);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final float w = (float)and(f1, c1);
+        final double c = w2c(w, narParameters);
         return new TruthValue(1, c, narParameters);
     }
 
@@ -140,7 +140,7 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final TruthValue negation(final TruthValue v1, Parameters narParameters) {
         final float f = 1 - v1.getFrequency();
-        final float c = v1.getConfidence();
+        final double c = v1.getConfidence();
         return new TruthValue(f, c, narParameters);
     }
 
@@ -151,9 +151,9 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final TruthValue contraposition(final TruthValue v1, Parameters narParameters) {
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float w = and(1 - f1, c1);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final float w = (float)and(1 - (double)f1, c1);
+        final double c = w2c(w, narParameters);
         return new TruthValue(0, c, narParameters);
     }
 
@@ -171,10 +171,10 @@ public final class TruthFunctions extends UtilityFunctions {
     private static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float w1 = c2w( v1.getConfidence(), narParameters );
-        final float w2 = c2w( v2.getConfidence(), narParameters );
-        final float w = w1 + w2;
-        result.setFrequency( (w1 * f1 + w2 * f2) / w );
+        final double w1 = c2w( v1.getConfidence(), narParameters );
+        final double w2 = c2w( v2.getConfidence(), narParameters );
+        final double w = w1 + w2;
+        result.setFrequency( (float)((w1 * f1 + w2 * f2) / w) );
         result.setConfidence( w2c(w, narParameters) );
         return result;
     }
@@ -189,10 +189,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue deduction(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2, f);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2, f);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -204,8 +204,8 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final TruthValue deduction(final TruthValue v1, final float reliance, Parameters narParameters) {
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c = and(f1, c1, reliance);
+        final double c1 = v1.getConfidence();
+        final double c = and(f1, c1, reliance);
         return new TruthValue(f1, c, true, narParameters);
     }
 
@@ -218,10 +218,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue analogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2, f2);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2, f2);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -234,10 +234,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue resemblance(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2, or(f1, f2));
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2, or(f1, f2));
         return new TruthValue(f, c, narParameters);
     }
 
@@ -253,10 +253,10 @@ public final class TruthFunctions extends UtilityFunctions {
         }
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float w = and(f2, c1, c2);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final double w = and(f2, c1, c2);
+        final double c = w2c(w, narParameters);
         return new TruthValue(f1, c, narParameters);
     }
 
@@ -271,9 +271,9 @@ public final class TruthFunctions extends UtilityFunctions {
             return new TruthValue(0.5f, 0f, narParameters);
         }
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float w = and(c1, reliance);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final double w = and(c1, reliance);
+        final double c = w2c(w, narParameters);
         return new TruthValue(f1, c, true, narParameters);
     }
 
@@ -299,10 +299,10 @@ public final class TruthFunctions extends UtilityFunctions {
         }
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float w = and(f1, f2, c1, c2);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final double w = and(f1, f2, c1, c2);
+        final double c = w2c(w, narParameters);
         return new TruthValue(1, c, narParameters);
     }
 
@@ -315,12 +315,12 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue comparison(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
         final float f0 = or(f1, f2);
-        final float f = (f0 == 0) ? 0 : (and(f1, f2) / f0);
-        final float w = and(f0, c1, c2);
-        final float c = w2c(w, narParameters);
+        final float f = (f0 == 0) ? 0 : ((float)and(f1, f2) / f0);
+        final double w = and(f0, c1, c2);
+        final double c = w2c(w, narParameters);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -334,10 +334,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue desireStrong(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2, f2);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2, f2);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -350,10 +350,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue desireWeak(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2, f2, w2c(1.0f, narParameters));
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2, f2, w2c(1.0, narParameters));
         return new TruthValue(f, c, narParameters);
     }
 
@@ -366,10 +366,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue desireDed(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -382,10 +382,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue desireInd(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float w = and(f2, c1, c2);
-        final float c = w2c(w, narParameters);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final double w = and(f2, c1, c2);
+        final double c = w2c(w, narParameters);
         return new TruthValue(f1, c, narParameters);
     }
 
@@ -399,10 +399,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue union(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
         final float f = or(f1, f2);
-        final float c = and(c1, c2);
+        final double c = and(c1, c2);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -415,10 +415,10 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final TruthValue intersection(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float f = and(f1, f2);
-        final float c = and(c1, c2);
+        final double c1 = v1.getConfidence();
+        final double c2 = v2.getConfidence();
+        final float f = (float)and(f1, f2);
+        final double c = and(c1, c2);
         return new TruthValue(f, c, narParameters);
     }
 
@@ -462,7 +462,7 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final TruthValue anonymousAnalogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
+        final double c1 = v1.getConfidence();
         final TruthValue v0 = new TruthValue(f1, w2c(c1, narParameters), narParameters);
         return analogy(v2, v0, narParameters);
     }
@@ -472,7 +472,7 @@ public final class TruthFunctions extends UtilityFunctions {
      *
      * Implements the same functionality like TruthValue */
     public static final class EternalizedTruthValue extends TruthValue {
-        public EternalizedTruthValue(final float f, final float c, Parameters narParameters) {
+        public EternalizedTruthValue(final float f, final double c, Parameters narParameters) {
             super(f, c, narParameters);
         }        
     }
@@ -484,8 +484,8 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final EternalizedTruthValue eternalize(final TruthValue v1, Parameters narParameters) {
         final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c = w2c(c1, narParameters);
+        final double c1 = v1.getConfidence();
+        final double c = w2c(c1, narParameters);
         return new EternalizedTruthValue(f1, c, narParameters);
     }
     

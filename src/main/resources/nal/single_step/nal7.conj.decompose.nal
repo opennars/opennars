@@ -1,0 +1,6 @@
+(&&,<#1 --> [unscrewing]>,<#1 --> object>)! %1.00;0.90%
+
+10
+
+''outputMustContain('<#1 --> [unscrewing]>! %1.00;0.81%')
+''outputMustContain('<#1 --> object>! %1.00;0.81%')
