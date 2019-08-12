@@ -185,7 +185,7 @@ public class ProcessAnticipation {
                     // compute confidence by negative evidence
                     double w = c2w(truthOfBeliefWithTerm.getConfidence(), narParameters);
                     w *= negativeEvidenceRatio;
-                    float c = w2c((float) w, narParameters);
+                    double c = w2c((float) w, narParameters);
 
                     final TruthValue truth = new TruthValue(0.0f, c, narParameters); // frequency of negative confirmation is 0.0
 

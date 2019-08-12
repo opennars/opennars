@@ -136,7 +136,7 @@ public class BudgetValue implements Cloneable, Serializable {
 
     /** AND's (multiplies) priority with another value */
     public void andPriority(final float v) {
-        setPriority( and(priority, v) );
+        setPriority( (float)and(priority, v) );
     }
 
     /**
@@ -144,7 +144,7 @@ public class BudgetValue implements Cloneable, Serializable {
      * @param v The decreasing percent
      */
     public void decPriority(final float v) {
-        setPriority( and(priority, v) );
+        setPriority( (float)and(priority, v) );
     }
 
     /**
@@ -183,7 +183,7 @@ public class BudgetValue implements Cloneable, Serializable {
      * @param v The decreasing percent
      */
     public void decDurability(final float v) {
-        durability = and(durability, v);
+        durability = (float)and(durability, v);
     }
 
     /**
@@ -215,7 +215,7 @@ public class BudgetValue implements Cloneable, Serializable {
      * @param v The decreasing percent
      */
     public void decQuality(final float v) {
-        quality = and(quality, v);
+        quality = (float)and(quality, v);
     }
 
     /**
