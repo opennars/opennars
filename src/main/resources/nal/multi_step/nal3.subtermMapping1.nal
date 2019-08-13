@@ -1,0 +1,15 @@
+' from https://code.google.com/archive/p/open-nars/issues/47
+<{t1,{t2,{t3}}} --> [p1,[p2,[p3]]]>. %1.00;0.90%
+<c <-> t3>. %1.00;0.90%
+
+<{t1,{t2,{c}}} --> [p1,[p2,[p3]]]>?
+500
+
+' |-
+
+' answer provided by OpenNARS 3.0.2 and 3.0.3
+''outputMustContain('<{t1,{t2,{c}}} --> [[[p3],p2],p1]>. %1.00;0.59%')
+
+' right answer should be
+'''outputMustContain('<{t1,{t2,{c}}} --> [[[p3],p2],p1]>. %1.00;0.81%')
+' because it can use conj

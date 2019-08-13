@@ -1,0 +1,33 @@
+' stress test
+' from https://code.google.com/archive/p/open-nars/issues/1
+
+<{b1} --> bird>.
+<{b1} --> fly>.
+<{b2} --> bird>.
+<{b2} --> fly>.
+<{b3} --> bird>.
+<{b3} --> fly>.
+<{b4} --> bird>.
+<{b4} --> fly>.
+<{b5} --> bird>.
+<{b5} --> fly>.
+<{b6} --> bird>.
+<{b6} --> fly>.
+<{b7} --> bird>.
+<{b7} --> fly>.
+<{b8} --> bird>.
+<{b8} --> fly>.
+<{b9} --> bird>.
+<{b9} --> fly>.
+<{bA} --> bird>.
+<{bA} --> fly>?
+
+' expected answers on a good run
+' Answer <{bA} --> fly>. %1.00;0.27% {2176
+' Answer <{bA} --> fly>. %1.00;0.40% {6305
+' Answer <{bA} --> fly>. %1.00;0.44% {32125
+' Answer <{bA} --> fly>. %1.00;0.78% {44080
+
+' give enough time
+60000
+''outputMustContain('<{bA} --> fly>. %1.00;0.77%')

@@ -40,9 +40,9 @@ public class UtilityFunctions {
      * @param arr The inputs, each in [0, 1]
      * @return The output that is no larger than each input
      */
-    public final static float and(final float... arr) {        
+    public final static double and(final double... arr) {
         float product = 1;
-        for (final float f : arr) {
+        for (final double f : arr) {
             product *= f;
         }
         return product;
@@ -97,7 +97,7 @@ public class UtilityFunctions {
      * @param narParameters parameters of the reasoner
      * @return The corresponding confidence, in [0, 1)
      */
-    public final static float w2c(final float w, Parameters narParameters) {
+    public final static double w2c(final double w, Parameters narParameters) {
         return w / (w + narParameters.HORIZON);
     }
 
@@ -107,7 +107,7 @@ public class UtilityFunctions {
      * @param narParameters parameters of the reasoner
      * @return The corresponding weight of evidence, a non-negative real number
      */
-    public final static float c2w(final float c, Parameters narParameters) {
+    public final static double c2w(final double c, Parameters narParameters) {
         return narParameters.HORIZON * c / (1 - c);
     }
 }
