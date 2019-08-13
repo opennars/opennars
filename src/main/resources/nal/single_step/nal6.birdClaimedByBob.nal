@@ -1,0 +1,8 @@
+' from https://code.google.com/archive/p/open-nars/issues/7
+
+<(&,<{Tweety} --> bird>,<bird --> fly>) --> claimedByBob>.
+<<(&,<#1 --> $2>,<$3 --> #1>) --> claimedByBob> ==> <<$3 --> $2> --> claimedByBob>>.
+
+<?x --> claimedByBob>?
+100
+''outputMustContain('<<{Tweety} --> fly> --> claimedByBob>. %1.00;0.81%')
