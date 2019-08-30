@@ -46,8 +46,6 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
-import org.opennars.main.Nar;
-import org.opennars.main.Shell;
 import org.xml.sax.SAXException;
 
 /**
@@ -101,9 +99,7 @@ public class NarNode implements EventObserver  {
                                 nar.addInput((String) ret);
                             }
                         }
-                    } catch (IOException ex) {
-                        Logger.getLogger(NarNode.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
+                    } catch (Exception ex) { //log any type of exception, also parsing exceptions, because it shouldn't crash on wrong parses or temporary network issues
                         Logger.getLogger(NarNode.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -229,19 +225,31 @@ public class NarNode implements EventObserver  {
     }
  
     /***
-     * NarNode's receiving a task
+     * NarNode's receiving a task or Narsese string
      * 
-     * @return
-     * @throws IOException
-     * @throws ClassNotFoundException 
+     * @return the object received (Task, String)
+     * @throws IOException when can't receive packet
      */
-    private Object receiveObject() throws IOException, ClassNotFoundException {
+    private Object receiveObject() throws IOException {
         byte[] recBytes = new byte[65535];
         DatagramPacket packet = new DatagramPacket(recBytes, recBytes.length);
         receiveSocket.receive(packet);
-        ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(recBytes));
-        Object msg = iStream.readObject();
-        iStream.close();
-        return msg;
+        if(packet.getLength() > 0) {
+            try {
+                try(ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(recBytes))) {
+                    Object msg = iStream.readObject();
+                    if(msg instanceof Task || msg instanceof String) {
+                        return msg;
+                    }
+                }
+                //not an object NarNode could digest
+            }
+            catch(Exception ex) {
+                //object wasn't retrieved, maybe it wasn't one
+            }
+            //ok let's assume it's a raw Narsese string encoding not a Java object, the parser will tell
+            return new String(recBytes, java.nio.charset.StandardCharsets.UTF_8).trim();
+        }
+        return null;
     }
 }
