@@ -94,6 +94,8 @@ public abstract class Operator extends Term implements Plugin {
             }
             if(!MiscFlags.EXECUTION_ERRORS_CONTINUE) {
                 throw new IllegalStateException("Execution error:\n", ex);
+            } else {
+                return false; //failure on execution
             }
         }
 

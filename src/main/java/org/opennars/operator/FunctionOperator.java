@@ -78,12 +78,6 @@ public abstract class FunctionOperator extends Operator {
         final Term lastTerm = args[numArgs];
         final boolean variable = lastTerm instanceof Variable;
         
-        if(!variable /*&& !(this instanceof Javascript)*/) { 
-            throw new IllegalStateException("output can not be specified");
-        }
-        
-        
-        
         final int numParam = numArgs-1;
         
         /*if(this instanceof Javascript && !variable) {
@@ -115,26 +109,16 @@ public abstract class FunctionOperator extends Operator {
         operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs, y, m), m); 
-
         final float confidence = m.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
-        if (variable) {
-            final Sentence s = new Sentence(operation,
-                                      Symbols.JUDGMENT_MARK,
-                                      new TruthValue(1.0f, confidence, m.narParameters),
-                                      new Stamp(time, m));
-
-            final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,
-                m.narParameters.DEFAULT_FEEDBACK_DURABILITY,
-                truthToQuality(s.getTruth()), m.narParameters);
-            final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
-
-            return Lists.newArrayList(newTask);
-        }
-        else {
-            
-            return null;
-            
-        }
+        final Sentence s = new Sentence(operation,
+                                  Symbols.JUDGMENT_MARK,
+                                  new TruthValue(1.0f, confidence, m.narParameters),
+                                  new Stamp(time, m));
+        final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+            m.narParameters.DEFAULT_FEEDBACK_DURABILITY,
+            truthToQuality(s.getTruth()), m.narParameters);
+        final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
+        return Lists.newArrayList(newTask);
     }
 
     /** (can be overridden in subclasses) the extent to which it is truth 
