@@ -248,7 +248,7 @@ public class NarNode implements EventObserver  {
                 //object wasn't retrieved, maybe it wasn't one
             }
             //ok let's assume it's a raw Narsese string encoding not a Java object, the parser will tell
-            return new String(recBytes).trim();
+            return new String(recBytes, java.nio.charset.StandardCharsets.UTF_8).trim();
         }
         return null;
     }
