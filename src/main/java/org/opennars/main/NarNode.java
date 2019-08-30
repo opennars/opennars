@@ -99,7 +99,7 @@ public class NarNode implements EventObserver  {
                                 nar.addInput((String) ret);
                             }
                         }
-                    } catch (Exception ex) { //log any type of exception, also parsing exceptions, because it shouldn't crash on wrong parses
+                    } catch (Exception ex) { //log any type of exception, also parsing exceptions, because it shouldn't crash on wrong parses or temporary network issues
                         Logger.getLogger(NarNode.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
