@@ -23,6 +23,7 @@
  */
 package org.opennars.storage;
  
+import org.opennars.control.ShardControl;
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
@@ -109,7 +110,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
     boolean checked=false;
     boolean isjUnit=false;
-    
+
+    public ShardControl shardControl = new ShardControl();
+
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
@@ -354,7 +357,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.processNovelTask(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
         GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters, inputs);
-        
+
+        shardControl.limitMemory(inputs.time());
+        shardControl.selectShardAndDoInference(inputs, this, inputs.narParameters, inputs);
+
         event.emit(Events.CycleEnd.class);
         event.synch();
     }
@@ -401,7 +407,12 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
             while (counter-- > 0) {
                 task = newTasks.removeFirst();
-                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
+
+                if (task.sentence.isGoal()) {
+                    shardControl.addNewShardIfNotExist(task.sentence, task.getCreationTime(), narParameters);
+                }
+
+                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||
                         task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                     localInference(task, narParameters, time);
                 } else {
