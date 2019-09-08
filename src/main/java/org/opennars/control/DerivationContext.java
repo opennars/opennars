@@ -55,6 +55,8 @@ public class DerivationContext {
     public Parameters narParameters;
 
     public Timable time;
+
+    public boolean addToMemory = true;
     
     public DerivationContext(final Memory mem, final Parameters narParameters, final Timable time) {
         super();
@@ -142,7 +144,7 @@ public class DerivationContext {
         memory.event.emit(Events.TaskDerive.class, task, revised, single);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         
-        if(addToMemory) {
+        if(addToMemory && this.addToMemory) {
             addTask(task, "Derived");
         }
         return true;
