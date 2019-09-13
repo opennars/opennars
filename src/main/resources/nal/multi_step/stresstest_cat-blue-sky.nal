@@ -1,0 +1,11 @@
+// see https://github.com/opennars/ALANN2018/blob/master/Examples/cat-blue-sky.txt
+<{sky} --> [blue]>. %1.00;0.90%
+<{tom} --> cat>. %1.00;0.90%
+<(*,{tom},{sky}) --> likes>. %1.00;0.90%
+<(*,cat,[blue]) --> likes>?
+
+// "record" with ALANN
+//Answer:[  774ms]<(cat * [blue]) --> likes>{1.00 0.18}
+//Answer:[  983ms]<(cat * [blue]) --> likes>{1.00 0.23}
+//Answer:[ 1232ms]<(cat * [blue]) --> likes>{1.00 0.25}
+//Answer:[ 9981ms]<(cat * [blue]) --> likes>{1.00 0.40}
