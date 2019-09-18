@@ -114,7 +114,7 @@
     <conf name="MOTOR_BABBLING_CONFIDENCE_THRESHOLD" value="0.8"/>
     
     <conf name="THREADS_AMOUNT" value="1"/>
-    <conf name="VOLUME" value="100"/>
+    <conf name="VOLUME" value="0"/>
     <conf name="MILLISECONDS_PER_STEP" value="0"/>
     <conf name="STEPS_CLOCK" value="true"/>
     
@@ -153,6 +153,11 @@
             <arg type="int.class" value="25" name="duration"/>
             <arg type="float.class" value="0.1" name="defaultOutputConfidence"/>
             <arg type="int.class" value="0" name="nPrototypes"/>
+        </plugin>
+        
+        <plugin classpath="org.opennars.plugin.mental.ConceptNet">
+            <arg type="int.class" value="20" name="richness"/>
+            <arg type="int.class" value="1000" name="uniquenessBufferSize"/>
         </plugin>
 
         <!-- example Operators -->
