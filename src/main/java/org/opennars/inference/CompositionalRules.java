@@ -790,7 +790,7 @@ public final class CompositionalRules {
             if(t instanceof Conjunction || t instanceof Disjunction || t instanceof Negation) { //component itself is a conjunction/disjunction
                 addVariableCandidates(candidates, t, subject);
             }
-            if(t instanceof Inheritance || t instanceof Similarity) {
+            if(t instanceof Inheritance) {
                 Inheritance inh = (Inheritance) t;
                 Term subjT = inh.getSubject();
                 Term predT = inh.getPredicate();

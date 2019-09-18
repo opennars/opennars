@@ -87,7 +87,7 @@ public class DerivationContext {
             return false;
         } 
         if (task.sentence != null && task.sentence.truth != null) {
-            final float conf = task.sentence.truth.getConfidence();
+            final double conf = task.sentence.truth.getConfidence();
             if (conf < narParameters.TRUTH_EPSILON) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");

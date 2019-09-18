@@ -1,0 +1,6 @@
+' (A =|> B),      (B =|> C)                       |-      (A =|> C)               (Truth:Deduction)
+
+<A =|> B>.
+<B =|> C>.
+
+''outputMustContain('<A =|> C>. %1.00;0.81%')

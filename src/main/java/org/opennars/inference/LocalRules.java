@@ -274,7 +274,7 @@ public class LocalRules {
             
             return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT))));
         } else {
-            return truth.getConfidence();
+            return (float)truth.getConfidence();
         }
     }
 

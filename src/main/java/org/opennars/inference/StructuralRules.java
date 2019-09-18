@@ -690,7 +690,13 @@ public final class StructuralRules {
                newTermRight.length == compound.size()) {
                 return;
             }
+            if(conjCompound.term.length < newTermLeft.length) {
+                return;
+            }
             System.arraycopy(conjCompound.term, 0, newTermLeft, 0, newTermLeft.length);
+            if(conjCompound.term.length - index < newTermRight.length) {
+                return;
+            }
             System.arraycopy(conjCompound.term, 0 + index, newTermRight, 0, newTermRight.length);
             final Sentence curS = nal.getCurrentTask().sentence;
             TruthValue truth = null;
