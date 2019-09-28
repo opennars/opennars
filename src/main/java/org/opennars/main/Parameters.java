@@ -132,7 +132,7 @@ public class Parameters implements Serializable {
     /**  Size of remembered last operation tasks */
     public int OPERATION_BAG_SIZE = 10;
     public int OPERATION_BAG_LEVELS = 10;
-    public volatile int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
+    public volatile int OPERATION_SAMPLES = 1; //should be at least 2 to not only consider last decision
     
     /** How fast events decay in confidence **/
     public volatile double PROJECTION_DECAY = 0.1;

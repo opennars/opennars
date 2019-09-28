@@ -43,6 +43,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
@@ -51,14 +52,17 @@ import org.opennars.language.Equivalence;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
+import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
 import org.opennars.language.Variables;
 import org.opennars.main.MiscFlags;
+import org.opennars.main.Parameters;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
 
 /**
  *
@@ -259,6 +263,7 @@ public class ProcessGoal {
         public long mintime = -1;
         public long maxtime = -1;
         public float timeOffset;
+        public List<Task> derivedSubgoals = new ArrayList<Task>();
         public Map<Term,Term> substitution;
     }
 
@@ -355,6 +360,7 @@ public class ProcessGoal {
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
+            List<Term> subgoals = new ArrayList<Term>();
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
@@ -369,6 +375,7 @@ public class ProcessGoal {
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
                             Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
+                            subgoals.add(pNew.sentence.term);
                             LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
@@ -376,27 +383,37 @@ public class ProcessGoal {
                     }
                 }
             }
-            if(bestsofar == null) {
-                continue;
+            if(!precondition.hasVar()) {
+                subgoals.add(precondition);
             }
             //ok now we can take the desire value:
             final TruthValue A = projectedGoal.getTruth();
             //and the truth of the hypothesis:
             final TruthValue Hyp = t.sentence.truth;
+            //and derive the conjunction of the left side:
+            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
+            for(Term precon_unified : subgoals) { //due to var matching!
+                Term subgoal_term = precon_unified;
+                Stamp s = new Stamp(nal.time, nal.memory, Tense.Present); //new Stamp(t.sentence.stamp, projectedGoal.stamp, nal.time.time(), nal.narParameters);
+                Sentence sg = new Sentence(subgoal_term, Symbols.GOAL_MARK, TruthFunctions.desireStrong(leftside, new TruthValue(1.0f, nal.narParameters.reliance, nal.narParameters), nal.narParameters), s);
+                result.derivedSubgoals.add(new Task(sg, new BudgetValue(nal.narParameters.DEFAULT_GOAL_PRIORITY, nal.narParameters.DEFAULT_GOAL_DURABILITY, 0.01f, nal.narParameters), Task.EnumType.DERIVED));
+            }
+            if(bestsofar == null) {
+                continue;
+            }
             //overlap will almost never happen, but to make sure
-            if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
+            /*if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
                 Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
                 Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
                 continue;
-            }
+            }*/
             //and the truth of the precondition:
             final Sentence projectedPrecon = bestsofar.sentence.projection(nal.time.time() /*- distance*/, nal.time.time(), concept.memory);
             if(projectedPrecon.isEternal()) {
                 continue; //projection wasn't better than eternalization, too long in the past
             }
             final TruthValue precon = projectedPrecon.truth;
-            //and derive the conjunction of the left side:
-            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
+
             //in order to derive the operator desire value:
             final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
             final float expecdesire = opdesire.getExpectation();
@@ -447,6 +464,20 @@ public class ProcessGoal {
                     return false;
                 }
                 return true;
+            }
+        }
+        else
+        {
+            //propagate subgoals above decision threshold when no execution happened, an idea coming from ANSNA
+            for(Task sg : precon.derivedSubgoals) {
+                if(sg != null && sg.sentence.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD)
+                {   //subgoal derivation, as execution didn't happen
+                    //nal.memory.addNewTask(sg, "Derived subgoal (precond. mechanism)"); //go through derivation pipeline instead:
+                    nal.setCurrentTask(task); //TODO check 
+                    nal.setCurrentBelief(sg.sentence); //the stamp
+                    nal.setTheNewStamp(sg.sentence.stamp); //etc.
+                    nal.doublePremiseTask(sg.sentence.term, sg.sentence.truth, sg.budget, false, true); 
+                }
             }
         }
         return false;
