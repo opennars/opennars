@@ -51,7 +51,7 @@
     
     <conf name="OPERATION_BAG_SIZE" value="10"/>
     <conf name="OPERATION_BAG_LEVELS" value="10"/>
-    <conf name="OPERATION_SAMPLES" value="1"/>
+    <conf name="OPERATION_SAMPLES" value="6"/>
     
     <conf name="PROJECTION_DECAY" value="0.1"/>
     
