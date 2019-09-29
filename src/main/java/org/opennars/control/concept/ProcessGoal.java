@@ -24,6 +24,7 @@
 package org.opennars.control.concept;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -360,22 +361,34 @@ public class ProcessGoal {
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
-            List<Term> subgoals = new ArrayList<Term>();
+            HashSet<Term> subgoals = new HashSet<Term>();
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
                     Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
-                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
-                            CompoundTerm.replaceIntervals(precondition),
-                            CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
                         boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
                             CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
                             CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
+                        Map<Term,Term> subsconc = new LinkedHashMap<>(subs);
+                        boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                            CompoundTerm.replaceIntervals(precondition),
+                            CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
+                        Task pNew = null;
+                        if(conclusionMatches) {
+                            pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
+                            CompoundTerm precon_ = (CompoundTerm) precondition.cloneDeep();
+                            Term precon = precon_.applySubstitute(subsconc);
+                            if(precon instanceof Conjunction) {
+                                for(Term comp : ((Conjunction) precon)) {
+                                    subgoals.add(comp);
+                                }
+                            } else {
+                                subgoals.add(precon);
+                            }
+                        }
                         if(preconditionMatches && conclusionMatches){
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
-                            Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
-                            subgoals.add(pNew.sentence.term);
                             LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
@@ -384,8 +397,15 @@ public class ProcessGoal {
                 }
             }
             if(!precondition.hasVar()) {
-                subgoals.add(precondition);
+                if(precondition instanceof Conjunction) {
+                    for(Term comp : ((Conjunction) precondition).term) {
+                        subgoals.add(comp);
+                    }
+                } else {
+                    subgoals.add(precondition);
+                }
             }
+            
             //ok now we can take the desire value:
             final TruthValue A = projectedGoal.getTruth();
             //and the truth of the hypothesis:
@@ -470,6 +490,10 @@ public class ProcessGoal {
         {
             //propagate subgoals above decision threshold when no execution happened, an idea coming from ANSNA
             for(Task sg : precon.derivedSubgoals) {
+                /*Concept c = nal.memory.concept(sg.getTerm());
+                if(c != null) {
+                    if(c.beliefs[0])
+                }*/
                 if(sg != null && sg.sentence.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD)
                 {   //subgoal derivation, as execution didn't happen
                     //nal.memory.addNewTask(sg, "Derived subgoal (precond. mechanism)"); //go through derivation pipeline instead:
