@@ -376,8 +376,7 @@ public class ProcessGoal {
                         Task pNew = null;
                         if(conclusionMatches) {
                             pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
-                            CompoundTerm precon_ = (CompoundTerm) precondition.cloneDeep();
-                            Term precon = precon_.applySubstitute(subsconc);
+                            Term precon = ((CompoundTerm)precondition).applySubstitute(subsconc);
                             if(precon instanceof Conjunction) {
                                 for(Term comp : ((Conjunction) precon)) {
                                     subgoals.add(comp);

@@ -102,7 +102,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
-    public final Deque<Task> newTasks;
+    public final Bag<Task<Term>,Sentence<Term>> newTasks;
     
     //Boolean localInferenceMutex = false;
 
@@ -121,7 +121,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
-        this.newTasks = new ArrayDeque<>();
+        this.newTasks = new Bag<Task<Term>,Sentence<Term>>(10,10,narParameters);
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
@@ -231,7 +231,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      */
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
-            newTasks.add(t);
+            newTasks.putIn(t);
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
@@ -400,7 +400,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             Task task;
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
             while (counter-- > 0) {
-                task = newTasks.removeFirst();
+                task = newTasks.takeOut();
+                if(task == null) {
+                    break;
+                }
                 if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
                         task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                     localInference(task, narParameters, time);
