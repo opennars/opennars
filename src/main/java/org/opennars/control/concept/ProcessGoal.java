@@ -264,6 +264,7 @@ public class ProcessGoal {
         public long mintime = -1;
         public long maxtime = -1;
         public float timeOffset;
+        public List<Task> derivedSubgoals = new ArrayList<Task>();
         public Map<Term,Term> substitution;
     }
 
@@ -357,10 +358,30 @@ public class ProcessGoal {
             for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
                 prec_intervals.add((float) l);
             }
+            HashSet<Term> subgoals = new HashSet<Term>();
             Map<Term,Term> subsconc = new LinkedHashMap<>();
             boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
                             CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
                             CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subsconc, new LinkedHashMap<>());
+            if(conclusionMatches) {
+                CompoundTerm precon_ = (CompoundTerm) precondition.cloneDeep();
+                Term precon = precon_.applySubstitute(subsconc);
+                if(precon instanceof Conjunction) {
+                    for(Term comp : ((Conjunction) precon)) {
+                        boolean novel = true;
+                        for(Term sg : subgoals) {
+                            if(Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,comp, sg, new LinkedHashMap<>(), new LinkedHashMap<>())) {
+                                novel = false;
+                            }
+                        }
+                        if(novel) {
+                            subgoals.add(comp);
+                        }
+                    }
+                } else {
+                    subgoals.add(precon);
+                }
+            }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
@@ -382,21 +403,27 @@ public class ProcessGoal {
                     }
                 }
             }
-            if(bestsofar == null) {
-                continue;
-            }
             //ok now we can take the desire value:
             final TruthValue A = projectedGoal.getTruth();
             //and the truth of the hypothesis:
             final TruthValue Hyp = t.sentence.truth;
             //and derive the conjunction of the left side:
             final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
+            for(Term precon_unified : subgoals) { //due to var matching!
+                Term subgoal_term = precon_unified;
+                Stamp s = new Stamp(nal.time, nal.memory, Tense.Present); //new Stamp(t.sentence.stamp, projectedGoal.stamp, nal.time.time(), nal.narParameters);
+                Sentence sg = new Sentence(subgoal_term, Symbols.GOAL_MARK, TruthFunctions.desireStrong(leftside, new TruthValue(1.0f, nal.narParameters.reliance, nal.narParameters), nal.narParameters), s);
+                result.derivedSubgoals.add(new Task(sg, new BudgetValue(sg.truth.getExpectation(), 1.0f/((float) sg.term.getComplexity()), 0.01f, nal.narParameters), Task.EnumType.DERIVED));
+            }
+            if(bestsofar == null) {
+                continue;
+            }
             //overlap will almost never happen, but to make sure
-            if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
+            /*if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
                 Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
                 Stamp.baseOverlap(projectedGoal.stamp, bestsofar.sentence.stamp)) {
                 continue;
-            }
+            }*/
             //and the truth of the precondition:
             final Sentence projectedPrecon = bestsofar.sentence.projection(nal.time.time() /*- distance*/, nal.time.time(), concept.memory);
             if(projectedPrecon.isEternal()) {
@@ -454,6 +481,24 @@ public class ProcessGoal {
                     return false;
                 }
                 return true;
+            }
+        }
+        else
+        {
+            //propagate subgoals above decision threshold when no execution happened, an idea coming from ANSNA
+            for(Task sg : precon.derivedSubgoals) {
+                /*Concept c = nal.memory.concept(sg.getTerm());
+                if(c != null) {
+                    if(c.beliefs[0])
+                }*/
+                if(sg != null && sg.sentence.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD)
+                {   //subgoal derivation, as execution didn't happen
+                    //nal.memory.addNewTask(sg, "Derived subgoal (precond. mechanism)"); //go through derivation pipeline instead:
+                    nal.setCurrentTask(task); //TODO check 
+                    nal.setCurrentBelief(sg.sentence); //the stamp
+                    nal.setTheNewStamp(sg.sentence.stamp); //etc.
+                    nal.doublePremiseTask(sg.sentence.term, sg.sentence.truth, sg.budget, false, true); 
+                }
             }
         }
         return false;
