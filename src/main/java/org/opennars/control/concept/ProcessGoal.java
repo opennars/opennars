@@ -24,6 +24,7 @@
 package org.opennars.control.concept;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
@@ -51,14 +53,17 @@ import org.opennars.language.Equivalence;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
+import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
 import org.opennars.language.Variables;
 import org.opennars.main.MiscFlags;
+import org.opennars.main.Parameters;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
 
 /**
  *
@@ -352,23 +357,24 @@ public class ProcessGoal {
             for(Long l : CompoundTerm.extractIntervals(nal.memory, precTerm)) {
                 prec_intervals.add((float) l);
             }
+            Map<Term,Term> subsconc = new LinkedHashMap<>();
+            boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
+                            CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
+                            CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subsconc, new LinkedHashMap<>());
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
             Map<Term,Term> subsBest = new LinkedHashMap<>();
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
-                    Map<Term,Term> subs = new LinkedHashMap<>();
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
+                        Map<Term,Term> subs = new LinkedHashMap<>(subsconc);
                         boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
                             CompoundTerm.replaceIntervals(precondition),
                             CompoundTerm.replaceIntervals(p.sentence.term), subs, new LinkedHashMap<>());
-                        boolean conclusionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,
-                            CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
-                            CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subs, new LinkedHashMap<>());
                         if(preconditionMatches && conclusionMatches){
+                            Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
                             newesttime = p.sentence.getOccurenceTime();
                             //Apply interval penalty for interval differences in the precondition
-                            Task pNew = new Task(p.sentence.clone(), p.budget.clone(), p.isInput() ? Task.EnumType.INPUT : Task.EnumType.DERIVED);
                             LocalRules.intervalProjection(nal, pNew.sentence.term, precondition, prec_intervals, pNew.sentence.truth);
                             bestsofar = pNew;
                             subsBest = subs;
@@ -383,6 +389,8 @@ public class ProcessGoal {
             final TruthValue A = projectedGoal.getTruth();
             //and the truth of the hypothesis:
             final TruthValue Hyp = t.sentence.truth;
+            //and derive the conjunction of the left side:
+            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
             //overlap will almost never happen, but to make sure
             if(Stamp.baseOverlap(projectedGoal.stamp, t.sentence.stamp) ||
                 Stamp.baseOverlap(bestsofar.sentence.stamp, t.sentence.stamp) ||
@@ -395,8 +403,7 @@ public class ProcessGoal {
                 continue; //projection wasn't better than eternalization, too long in the past
             }
             final TruthValue precon = projectedPrecon.truth;
-            //and derive the conjunction of the left side:
-            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
+
             //in order to derive the operator desire value:
             final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
             final float expecdesire = opdesire.getExpectation();

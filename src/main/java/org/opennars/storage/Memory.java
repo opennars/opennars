@@ -100,9 +100,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* Input event tasks that were either input events or derived sequences*/
     public final Bag<Task<Term>,Sentence<Term>> seq_current;
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
-
-    /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
-    public final Deque<Task> newTasks;
     
     //Boolean localInferenceMutex = false;
 
@@ -121,7 +118,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
-        this.newTasks = new ArrayDeque<>();
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
@@ -134,7 +130,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             concepts.clear();
         }
         synchronized (tasksMutex) {
-            newTasks.clear();
             novelTasks.clear();
         }
         synchronized(this.seq_current) {
@@ -231,7 +226,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      */
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
-            newTasks.add(t);
+            novelTasks.putIn(t);
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
@@ -345,15 +340,15 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         emit(Events.ConceptForget.class, c);
     }
     
-    public void cycle(final Nar inputs) {
+    public void cycle(final Nar nar) {
     
         event.emit(Events.CycleStart.class);
-        
-        this.processNewTasks(inputs.narParameters, inputs);
+        for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
+            this.processNovelTask(nar.narParameters, nar);
+        }
+        this.novelTasks.clear();
     //if(noResult()) //newTasks empty
-        this.processNovelTask(inputs.narParameters, inputs);
-    //if(noResult()) //newTasks empty
-        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters, inputs);
+        GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -386,44 +381,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             emit(Events.TaskImmediateProcess.class, task, cont);
         //}
     }
-    
-    /**
-     * Process the newTasks accumulated in the previous workCycle, accept input
-     * ones and those that corresponding to existing concepts, plus one from the
-     * buffer.
-     *
-     * @param narParameters parameters for the Reasoner instance
-     * @param time indirection to retrieve time
-     */
-    public void processNewTasks(Parameters narParameters, final Timable time) {
-        synchronized (tasksMutex) {
-            Task task;
-            int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
-            while (counter-- > 0) {
-                task = newTasks.removeFirst();
-                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
-                        task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                    localInference(task, narParameters, time);
-                } else {
-                    final Sentence s = task.sentence;
-                    if (s.isJudgment() || s.isGoal()) {
-                        final double d = s.getTruth().getExpectation();
-                        if (s.isJudgment() && d > narParameters.DEFAULT_CREATION_EXPECTATION) {
-                            novelTasks.putIn(task);    // new concept formation
-                        } else
-                        if(s.isGoal() && d > narParameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
-                            novelTasks.putIn(task);    // new concept formation
-                        }
-                        else
-                        {
-                            removeTask(task, "Neglected");
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
 
     /**
      * Select a novel task to process
@@ -432,9 +389,11 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param time indirection to retrieve time
      */
     public void processNovelTask(Parameters narParameters, final Timable time) {
-        final Task task = novelTasks.takeOut();
-        if (task != null) {            
-            localInference(task, narParameters, time);
+        synchronized (tasksMutex) {
+            final Task task = novelTasks.takeOut();
+            if (task != null) {            
+                localInference(task, narParameters, time);
+            }
         }
     }
 
