@@ -43,9 +43,9 @@
     <conf name="TERM_LINK_BAG_LEVELS" value="10"/>
     <conf name="TERM_LINK_MAX_MATCHED" value="10"/>
     
-    <conf name="NOVEL_TASK_BAG_SIZE" value="500"/>
-    <conf name="NOVEL_TASK_BAG_LEVELS" value="50"/>
-    <conf name="NOVEL_TASK_BAG_SELECTIONS" value="500"/>
+    <conf name="NOVEL_TASK_BAG_SIZE" value="1000"/>
+    <conf name="NOVEL_TASK_BAG_LEVELS" value="100"/>
+    <conf name="NOVEL_TASK_BAG_SELECTIONS" value="100"/>
     
     <conf name="SEQUENCE_BAG_SIZE" value="30"/>
     <conf name="SEQUENCE_BAG_LEVELS" value="10"/>
