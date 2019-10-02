@@ -346,7 +346,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
             this.processNovelTask(nar.narParameters, nar);
         }
-        this.novelTasks.clear();
     //if(noResult()) //newTasks empty
         GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
         
