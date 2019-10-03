@@ -265,6 +265,7 @@ public class ProcessGoal {
         public long maxtime = -1;
         public float timeOffset;
         public Map<Term,Term> substitution;
+        public Stamp prediction_stamp = null;
     }
 
     /**
@@ -324,7 +325,7 @@ public class ProcessGoal {
                     float distance = precon.timeOffset - nal.time.time();
                     float urgency = 2.0f + 1.0f/distance;
 
-                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, urgency, precon.substitution);
+                    ProcessAnticipation.anticipate(nal, precon.prediction_stamp, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, urgency, precon.substitution);
                 }
                 return; //don't try the other table as a specific solution was already used
             }
@@ -419,6 +420,7 @@ public class ProcessGoal {
                 result.mintime = mintime;
                 result.maxtime = maxtime;
                 result.timeOffset = timeOffset;
+                result.prediction_stamp = new Stamp(new Stamp(projectedGoal.stamp, t.sentence.stamp, nal.time.time(), nal.narParameters),bestsofar.sentence.stamp, nal.time.time(), nal.narParameters);
                 if(anticipationsToMake.get(result.bestop) == null) {
                     anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
                 }

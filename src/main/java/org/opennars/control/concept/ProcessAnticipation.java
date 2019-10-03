@@ -54,7 +54,7 @@ import static org.opennars.inference.UtilityFunctions.w2c;
  */
 public class ProcessAnticipation {
 
-    public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, 
+    public static void anticipate(final DerivationContext nal, Stamp predictionStamp, final Sentence mainSentence, final BudgetValue budget, 
             final long mintime, final long maxtime, final float urgency, Map<Term,Term> substitution) {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
@@ -68,10 +68,10 @@ public class ProcessAnticipation {
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
         Term specificAnticipationTerm = ((CompoundTerm)((Statement) mainSentence.term).getPredicate()).applySubstitute(substitution);
         final Concept c = nal.memory.concept(specificAnticipationTerm); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
+        if(c != null /*&& mintime > nal.memory.time() && c.observable*/ && (mainSentence.getTerm() instanceof Implication || mainSentence.getTerm() instanceof Equivalence) && 
                 mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             Concept.AnticipationEntry toDelete = null;
-            Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(urgency, t, mintime, maxtime);
+            Concept.AnticipationEntry toInsert = new Concept.AnticipationEntry(urgency, t, mintime, maxtime, predictionStamp);
             boolean fullCapacity = c.anticipations.size() >= nal.narParameters.ANTICIPATIONS_PER_CONCEPT_MAX;
             //choose an element to replace with the new, in case that we are already at full capacity
             if(fullCapacity) {
@@ -213,11 +213,11 @@ public class ProcessAnticipation {
      * @param nal The derivation context
      */
     public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
-        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal();
+        final boolean satisfiesAnticipation = /*task.isInput() && */!task.sentence.isEternal();
         final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
-            if(satisfiesAnticipation && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
+            if(satisfiesAnticipation && !Stamp.baseOverlap(entry.predictionStamp, task.sentence.stamp) && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
                 confirmed.add(entry);
             }
         }
