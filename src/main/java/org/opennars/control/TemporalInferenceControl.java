@@ -43,7 +43,7 @@ import java.util.Set;
  * @author Patrick Hammer
  */
 public class TemporalInferenceControl {
-    public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, boolean addToSequenceTasks) {
         
         if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return null;
@@ -67,7 +67,7 @@ public class TemporalInferenceControl {
         final Sentence currentBelief = newEvent;
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
+        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence, addToSequenceTasks);
     }
 
     public static boolean eventInference(final Task newEvent, final DerivationContext nal) {
@@ -98,7 +98,7 @@ public class TemporalInferenceControl {
                     continue;
                 }
                 already_attempted.add(takeout);
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
+                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, false, true, true);
                 nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
         }
@@ -140,10 +140,10 @@ public class TemporalInferenceControl {
                             System.out.println("analyze case in TemporalInferenceControl!");
                             continue;
                         }
-                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
+                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true, false);
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
-                                final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
+                                final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false, false); //only =/> </> ..
                                 /*DEBUG: for(Task seq_op_cons : res) {
                                     System.out.println(seq_op_cons.toString());
                                 }*/

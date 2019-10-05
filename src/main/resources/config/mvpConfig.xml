@@ -91,7 +91,7 @@
     <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
     <conf name="ANTICIPATION_CONFIDENCE" value="0.1"/>
-    <conf name="ANTICIPATION_TOLERANCE" value="100.0"/>
+    <conf name="ANTICIPATION_TOLERANCE" value="2.0"/>
     <conf name="RETROSPECTIVE_ANTICIPATIONS" value="false"/>
     
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
@@ -120,6 +120,7 @@
 
     <!-- plugins -->
     <plugins>
+        <plugin classpath="org.opennars.operator.misc.System"/>
     </plugins>
 </config>
 

@@ -236,7 +236,7 @@ public class Parameters implements Serializable {
     /** eternalized induction confidence to revise A =/&gt; B beliefs */
     public volatile float ANTICIPATION_CONFIDENCE = 0.1f;
 
-    public volatile float ANTICIPATION_TOLERANCE = 100.0f;
+    public volatile float ANTICIPATION_TOLERANCE = 2.0f;
     
     /** Retrospective anticipation, allow to check memory for content in case of anticipation (potential issue with forgetting) */
     public boolean RETROSPECTIVE_ANTICIPATIONS = false;

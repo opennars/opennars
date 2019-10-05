@@ -118,6 +118,8 @@ public class Concept extends Item<Term> implements Serializable {
     //so that revision can decide whether to use the new or old term
     //based on which intervals are closer to the average
     public final List<Float> recent_intervals = new ArrayList<>();
+
+    public boolean observable = false; //whether it received a "native" input task
     public boolean allowBabbling = true; //for operations, becomes false if sufficiently
                                          //confident, used procedure knowledge  exists.
 
@@ -301,15 +303,13 @@ public class Concept extends Item<Term> implements Serializable {
     public static class AnticipationEntry implements Serializable {
         public float negConfirmationPriority = 0.0f;
         public Task negConfirmation = null;
-        public Stamp predictionStamp = null;
         public long negConfirm_abort_mintime = 0;
         public long negConfirm_abort_maxtime = 0;
-        public AnticipationEntry(float negConfirmationPriority, Task negConfirmation, long negConfirm_abort_mintime, long negConfirm_abort_maxtime, Stamp predictionStamp) {
+        public AnticipationEntry(float negConfirmationPriority, Task negConfirmation, long negConfirm_abort_mintime, long negConfirm_abort_maxtime) {
             this.negConfirmationPriority = negConfirmationPriority;
             this.negConfirmation = negConfirmation;
             this.negConfirm_abort_mintime = negConfirm_abort_mintime;
             this.negConfirm_abort_maxtime = negConfirm_abort_maxtime;
-            this.predictionStamp = predictionStamp;
         }
     }
     public List<AnticipationEntry> anticipations = new ArrayList<>();

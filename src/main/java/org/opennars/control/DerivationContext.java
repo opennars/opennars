@@ -219,7 +219,7 @@ public class DerivationContext {
             newSentence.producedByTemporalInduction=temporalInduction;
             Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
-            if (newTask!=null) {
+            if (newTask!=null && !(!newTask.sentence.isEternal() && (newTask.sentence.term instanceof Implication || newTask.sentence.term instanceof Equivalence))) {
                 final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                 if(added) {
                     ret.add(newTask);

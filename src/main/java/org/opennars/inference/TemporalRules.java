@@ -142,7 +142,7 @@ public class TemporalRules {
     }
     
     //TODO maybe split &/ case into own function
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, final boolean addToSequenceTasks) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -151,7 +151,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
+        final boolean deriveSequenceOnly = (!addToMemory && !addToSequenceTasks) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
@@ -187,9 +187,9 @@ public class TemporalRules {
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
-        final Statement statement1 = Implication.make(t1, t2, order);
+        //final Statement statement1 = Implication.make(t1, t2, order);
         final Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
-        final Statement statement3 = Equivalence.make(t1, t2, order);
+        //final Statement statement3 = Equivalence.make(t1, t2, order);
         Term statement4 = null;
         switch (order) {
             case TemporalRules.ORDER_FORWARD:
@@ -208,7 +208,7 @@ public class TemporalRules {
         List<Float> penalties = new ArrayList<>();
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
         if(!deriveSequenceOnly && statement2!=null) {
-            for(boolean subjectIntro : new boolean[]{true, false}) {
+            for(boolean subjectIntro : new boolean[]{true /*, false*/}) {
                 Set<Pair<Term,Float>> ress = CompositionalRules.introduceVariables(nal, statement2, subjectIntro);
                 for(Pair<Term,Float> content_penalty : ress) { //ok we applied it, all we have to do now is to use it
                     t11s.add(((Statement)content_penalty.getLeft()).getPredicate());
@@ -224,17 +224,17 @@ public class TemporalRules {
                 Term t11 = t11s.get(i);
                 Term t22 = t22s.get(i);
                 Float penalty = penalties.get(i);
-                final Statement statement11 = Implication.make(t11, t22, order);
+                //final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
-                final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendConclusion(nal, truth1.clone().mulConfidence(penalty), budget1.clone(), statement11, derivations);
+                //final Statement statement33 = Equivalence.make(t11, t22, order);
+                //appendConclusion(nal, truth1.clone().mulConfidence(penalty), budget1.clone(), statement11, derivations);
                 appendConclusion(nal, truth2.clone().mulConfidence(penalty), budget2.clone(), statement22, derivations);
-                appendConclusion(nal, truth3.clone().mulConfidence(penalty), budget3.clone(), statement33, derivations);
+                //appendConclusion(nal, truth3.clone().mulConfidence(penalty), budget3.clone(), statement33, derivations);
             }
 
-            appendConclusion(nal, truth1, budget1, statement1, derivations);
+            //appendConclusion(nal, truth1, budget1, statement1, derivations);
             appendConclusion(nal, truth2, budget2, statement2, derivations);
-            appendConclusion(nal, truth3, budget3, statement3, derivations);
+            //appendConclusion(nal, truth3, budget3, statement3, derivations);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
@@ -245,7 +245,7 @@ public class TemporalRules {
             if(tl!=null) {
                 for(final Task t : tl) {
                     //fill sequenceTask buffer due to the new derived sequence
-                    if(addToMemory &&
+                    if(addToSequenceTasks &&
                             t.sentence.isJudgment() &&
                             !t.sentence.isEternal() && 
                             t.sentence.term instanceof Conjunction && 

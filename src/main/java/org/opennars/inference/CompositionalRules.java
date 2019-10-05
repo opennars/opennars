@@ -753,8 +753,10 @@ public final class CompositionalRules {
             }
             i++;
         }
-        Set<Set<Term>> powerset = powerSet(selected);
-        for(Set<Term> combo : powerset) {
+        //
+        Set<Term> combo  = selected;
+        /*fSet<Set<Term>> powerset = powerSet(selected);
+        or(Set<Term> combo : powerset)*/ {
             Map<Term,Term> mapping = new LinkedHashMap<>();
             for(Term vIntro : combo) {
                 mapping.put(vIntro, app.get(vIntro));
@@ -786,6 +788,9 @@ public final class CompositionalRules {
                 } else {
                     t = side;
                 }
+            }
+            if(!(t instanceof CompoundTerm)) {
+                candidates.add(t);
             }
             if(t instanceof Conjunction || t instanceof Disjunction || t instanceof Negation) { //component itself is a conjunction/disjunction
                 addVariableCandidates(candidates, t, subject);

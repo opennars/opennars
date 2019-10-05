@@ -24,13 +24,11 @@
 package org.opennars.control;
 
 import org.opennars.control.concept.ProcessAnticipation;
-import org.opennars.control.concept.ProcessGoal;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
-import org.opennars.interfaces.Timable;
 import org.opennars.io.events.Events;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
@@ -115,10 +113,10 @@ public class GeneralInferenceControl {
         }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
-            //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
-            //if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.memory.time(), true)) { //then record yourself, but also here novelty counts
+            TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
+            if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.time.time(), nal.narParameters)) { //then record yourself, but also here novelty counts
                 RuleTables.transformTask(nal.currentTaskLink, nal); // to turn this into structural inference as below?
-            //}
+            }
         } else {            
             while (termLinks > 0) {
                 final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.time.time(), nal.narParameters);

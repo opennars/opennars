@@ -615,8 +615,8 @@ public final class SyllogisticRules {
                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
                    float timeOffset = ((Interval) newCondition).time;
                    float timeWindowHalf = timeOffset * nal.narParameters.ANTICIPATION_TOLERANCE;
-                   mintime = (long) Math.max(taskSentence.getOccurenceTime(), (taskSentence.getOccurenceTime() + timeOffset - timeWindowHalf));
-                   maxtime = (long) (taskSentence.getOccurenceTime() + timeOffset + timeWindowHalf);
+                   mintime = (long) nal.time.time();
+                   maxtime = (long) (taskSentence.getOccurenceTime() + timeWindowHalf);
                    predictedEvent = nal.narParameters.RETROSPECTIVE_ANTICIPATIONS || (taskSentence.getOccurenceTime() >= nal.time.time());
                 }
              } else {
@@ -680,7 +680,7 @@ public final class SyllogisticRules {
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
             truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
             premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-            ProcessAnticipation.anticipate(nal, nal.getTheNewStamp(), premise1Sentence, budget, mintime, maxtime, 1, new LinkedHashMap<Term,Term>());
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1, new LinkedHashMap<Term,Term>());
         }
     }
 

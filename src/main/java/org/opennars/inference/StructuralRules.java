@@ -494,6 +494,9 @@ public final class StructuralRules {
         Inheritance inheritance;
         Term newSubj, newPred;
         if (subject instanceof Product) {
+            if(((Product) subject).term.length > 2) {
+                return;
+            }
             final Product product = (Product) subject;
             final short i = index;
             if( product.term.length >= i + 1) {
@@ -556,6 +559,9 @@ public final class StructuralRules {
         Inheritance inheritance;
         Term newSubj, newPred;
         if (predicate instanceof Product) {
+            if(((Product) subject).term.length > 2) {
+                return;
+            }
             final Product product = (Product) predicate;
             final short i = index;
             if (product.term.length >= i+1) {
@@ -845,7 +851,7 @@ public final class StructuralRules {
      */
     static boolean structuralCompound(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
         
-        if(compound instanceof Conjunction) {
+        /*if(compound instanceof Conjunction) {
             if(nal.getCurrentTask().getTerm() == compound) {
                 final Conjunction conj = (Conjunction) compound; //only for # for now, will be gradually applied to &/ later
                 if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD && conj.isSpatial) { //and some also to && &|
@@ -858,7 +864,7 @@ public final class StructuralRules {
                     seqToImage(conj, index, nal);
                 }
             }
-        }
+        }*/
         
         if (component.hasVarIndep()) { //moved down here since flattening also works when indep
             return false;
@@ -866,6 +872,11 @@ public final class StructuralRules {
         if ((compound instanceof Conjunction) && !compound.getIsSpatial() && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return false;
         } 
+        
+        //new control experiments without # operator takeout decomposition
+        if((compound instanceof Conjunction) && compound.getIsSpatial()) {
+            return false;
+        }
         
         final Term content = compoundTask ? component : compound;
         final Task task = nal.getCurrentTask();
