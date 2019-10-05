@@ -245,7 +245,9 @@ public class Parameters implements Serializable {
     
     public volatile float COMPLEXITY_UNIT=1.0f; //1.0 - oo
     
-    public volatile float INTERVAL_ADAPT_SPEED = 4.0f;
+    //faster increase than decrease
+    public volatile float INTERVAL_ADAPT_SPEED_INCREASE = 2.0f;
+    public volatile float INTERVAL_ADAPT_SPEED_DECREASE = 4.0f;
  
     public int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
     

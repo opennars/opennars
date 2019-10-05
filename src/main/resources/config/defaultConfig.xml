@@ -97,7 +97,8 @@
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
     <conf name="COMPLEXITY_UNIT" value="1.0"/>
     
-    <conf name="INTERVAL_ADAPT_SPEED" value="4.0"/>
+    <conf name="INTERVAL_ADAPT_SPEED_INCREASE" value="2.0"/>
+    <conf name="INTERVAL_ADAPT_SPEED_DECREASE" value="4.0"/>
     <conf name="TASKLINK_PER_CONTENT" value="4"/>
     
     <conf name="DEFAULT_FEEDBACK_PRIORITY" value="0.9"/>

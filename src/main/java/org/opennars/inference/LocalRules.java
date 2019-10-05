@@ -168,7 +168,11 @@ public class LocalRules {
                 }
                 for(int i=0;i<ivalNew.size();i++) {
                     final float Inbetween = (recent_ivals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                    final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
+                    float adapt = nal.narParameters.INTERVAL_ADAPT_SPEED_INCREASE;
+                    if(recent_ivals.get(i) > ivalNew.get(i)) {
+                        adapt = nal.narParameters.INTERVAL_ADAPT_SPEED_DECREASE;
+                    }
+                    final float speed = 1.0f / (adapt*(1.0f-newTruth.getExpectation())); //less truth expectation, slower
                     recent_ivals.set(i,recent_ivals.get(i)+speed*(Inbetween - recent_ivals.get(i)));
                 }
                 for(int i=0;i<ivalNew.size();i++) {
