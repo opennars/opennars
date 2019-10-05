@@ -217,7 +217,7 @@ public class ProcessAnticipation {
         final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
         List<Concept.AnticipationEntry> confirmed = new ArrayList<>();
         for(Concept.AnticipationEntry entry : concept.anticipations) {
-            if(satisfiesAnticipation && !Stamp.baseOverlap(entry.predictionStamp, task.sentence.stamp) && isExpectationAboveThreshold && task.sentence.getOccurenceTime() > entry.negConfirm_abort_mintime) {
+            if(satisfiesAnticipation && !Stamp.baseOverlap(entry.predictionStamp, task.sentence.stamp) && isExpectationAboveThreshold && task.sentence.getOccurenceTime() >= entry.negConfirm_abort_mintime && task.sentence.getOccurenceTime() <= entry.negConfirm_abort_maxtime) {
                 confirmed.add(entry);
             }
         }
