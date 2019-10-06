@@ -1,23 +1,22 @@
 package org.opennars.ops;
 
+import org.junit.Test;
 import org.opennars.entity.Sentence;
 import org.opennars.interfaces.NarseseConsumer;
-import org.opennars.io.Parser;
 import org.opennars.io.events.AnswerHandler;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
+import static org.junit.Assert.assertTrue;
 
 /**
  * (integration) testing of the ^system op
  */
 public class TestSystemOperator {
-    public static void main(String[] args) throws Exception {
+    public TestSystemOperator() {}
+
+    @Test
+    public void testOpCall() throws Exception {
         { // 0 parameters, boolean result
             Nar nar = new Nar();
             nar.addPlugin(new org.opennars.operator.misc.System());
@@ -28,9 +27,7 @@ public class TestSystemOperator {
             MyAnswerHandler handler = new MyAnswerHandler();
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
-            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
-                throw new Exception("test failed!");
-            }
+            assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
 
             int here = 6;
         }
@@ -45,9 +42,7 @@ public class TestSystemOperator {
             MyAnswerHandler handler = new MyAnswerHandler();
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
-            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
-                throw new Exception("test failed!");
-            }
+            assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
 
             int here = 6;
         }
@@ -62,9 +57,7 @@ public class TestSystemOperator {
             MyAnswerHandler handler = new MyAnswerHandler();
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
-            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
-                throw new Exception("test failed!");
-            }
+            assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
 
             int here = 6;
         }
@@ -79,9 +72,7 @@ public class TestSystemOperator {
             MyAnswerHandler handler = new MyAnswerHandler();
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(200);
-            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
-                throw new Exception("test failed!");
-            }
+            assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
 
             int here = 6;
         }
@@ -94,25 +85,25 @@ public class TestSystemOperator {
      */
     private static void test0Ret(NarseseConsumer consumer, String expectedResultType) {
         //consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ls, $ret)) =/> <{$ret}-->res>>.");
-        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./TestscriptRet"+expectedResultType+".sh, $ret)) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, $ret)) =/> <{$ret}-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
     }
 
     private static void test1Ret(NarseseConsumer consumer, String expectedResultType) {
-        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./TestscriptRet"+expectedResultType+".sh, Arg0, $ret)) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, Arg0, $ret)) =/> <{$ret}-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
     }
 
     private static void test2Ret(NarseseConsumer consumer, String expectedResultType) {
-        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./TestscriptRet"+expectedResultType+".sh, Arg0, Arg1, $ret)) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, Arg0, Arg1, $ret)) =/> <{$ret}-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
     }
 
     private static void test3Ret(NarseseConsumer consumer, String expectedResultType) {
-        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./TestscriptRet"+expectedResultType+".sh, Arg0, Arg1, Arg2, $ret)) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, Arg0, Arg1, Arg2, $ret)) =/> <{$ret}-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
     }
