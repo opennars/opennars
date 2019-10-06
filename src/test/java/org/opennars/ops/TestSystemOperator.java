@@ -1,6 +1,10 @@
 package org.opennars.ops;
 
+import org.opennars.entity.Sentence;
 import org.opennars.interfaces.NarseseConsumer;
+import org.opennars.io.Parser;
+import org.opennars.io.events.AnswerHandler;
+import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.xml.sax.SAXException;
 
@@ -13,14 +17,20 @@ import java.text.ParseException;
  * (integration) testing of the ^system op
  */
 public class TestSystemOperator {
-    public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    public static void main(String[] args) throws Exception {
         { // 0 parameters, boolean result
             Nar nar = new Nar();
             nar.addPlugin(new org.opennars.operator.misc.System());
             test0Ret(nar, "bool");
             nar.cycles(500);
 
-            // TODO< check result of call >
+            // check result of call
+            MyAnswerHandler handler = new MyAnswerHandler();
+            nar.ask("<{?0}-->res>",handler);
+            nar.cycles(100);
+            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
+                throw new Exception("test failed!");
+            }
 
             int here = 6;
         }
@@ -31,7 +41,13 @@ public class TestSystemOperator {
             test1Ret(nar, "bool");
             nar.cycles(500);
 
-            // TODO< check result of call >
+            // check result of call
+            MyAnswerHandler handler = new MyAnswerHandler();
+            nar.ask("<{?0}-->res>",handler);
+            nar.cycles(100);
+            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
+                throw new Exception("test failed!");
+            }
 
             int here = 6;
         }
@@ -42,7 +58,13 @@ public class TestSystemOperator {
             test2Ret(nar, "bool");
             nar.cycles(500);
 
-            // TODO< check result of call >
+            // check result of call
+            MyAnswerHandler handler = new MyAnswerHandler();
+            nar.ask("<{?0}-->res>",handler);
+            nar.cycles(100);
+            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
+                throw new Exception("test failed!");
+            }
 
             int here = 6;
         }
@@ -51,9 +73,15 @@ public class TestSystemOperator {
             Nar nar = new Nar();
             nar.addPlugin(new org.opennars.operator.misc.System());
             test3Ret(nar, "bool");
-            nar.cycles(500);
+            nar.cycles(700);
 
-            // TODO< check result of call >
+            // check result of call
+            MyAnswerHandler handler = new MyAnswerHandler();
+            nar.ask("<{?0}-->res>",handler);
+            nar.cycles(200);
+            if (!handler.lastAnswerTerm.toString().equals("<{true} --> res>")) {
+                throw new Exception("test failed!");
+            }
 
             int here = 6;
         }
@@ -87,5 +115,14 @@ public class TestSystemOperator {
         consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./TestscriptRet"+expectedResultType+".sh, Arg0, Arg1, Arg2, $ret)) =/> <{$ret}-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
+    }
+
+    static class MyAnswerHandler extends AnswerHandler {
+        public Term lastAnswerTerm = null;
+
+        @Override
+        public void onSolution(Sentence belief) {
+            lastAnswerTerm = belief.term;
+        }
     }
 }
