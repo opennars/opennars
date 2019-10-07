@@ -13,8 +13,6 @@ import static org.junit.Assert.assertTrue;
  * (integration) testing of the ^system op
  */
 public class TestSystemOperator {
-    public TestSystemOperator() {}
-
     @Test
     public void testOpCall() throws Exception {
         { // 0 parameters, boolean result
@@ -28,8 +26,6 @@ public class TestSystemOperator {
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
             assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
-
-            int here = 6;
         }
 
         { // 1 parameters, boolean result
@@ -43,8 +39,6 @@ public class TestSystemOperator {
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
             assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
-
-            int here = 6;
         }
 
         { // 2 parameters, boolean result
@@ -58,8 +52,6 @@ public class TestSystemOperator {
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(100);
             assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
-
-            int here = 6;
         }
 
         { // 3 parameters, boolean result
@@ -73,8 +65,6 @@ public class TestSystemOperator {
             nar.ask("<{?0}-->res>",handler);
             nar.cycles(200);
             assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
-
-            int here = 6;
         }
     }
 
