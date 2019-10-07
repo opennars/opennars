@@ -24,7 +24,6 @@
 package org.opennars.control.concept;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,7 +43,6 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
-import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
@@ -53,17 +51,14 @@ import org.opennars.language.Equivalence;
 import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
-import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
 import org.opennars.language.Variables;
 import org.opennars.main.MiscFlags;
-import org.opennars.main.Parameters;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
-import org.opennars.storage.Memory;
 
 /**
  *
@@ -265,7 +260,6 @@ public class ProcessGoal {
         public long maxtime = -1;
         public float timeOffset;
         public Map<Term,Term> substitution;
-        public Stamp prediction_stamp = null;
     }
 
     /**
@@ -325,7 +319,7 @@ public class ProcessGoal {
                     float distance = precon.timeOffset - nal.time.time();
                     float urgency = 2.0f + 1.0f/distance;
 
-                    ProcessAnticipation.anticipate(nal, precon.prediction_stamp, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, urgency, precon.substitution);
+                    ProcessAnticipation.anticipate(nal, precon.executable_precond.sentence, precon.executable_precond.budget, precon.mintime, precon.maxtime, urgency, precon.substitution);
                 }
                 return; //don't try the other table as a specific solution was already used
             }
@@ -420,7 +414,6 @@ public class ProcessGoal {
                 result.mintime = mintime;
                 result.maxtime = maxtime;
                 result.timeOffset = timeOffset;
-                result.prediction_stamp = new Stamp(new Stamp(projectedGoal.stamp, t.sentence.stamp, nal.time.time(), nal.narParameters),bestsofar.sentence.stamp, nal.time.time(), nal.narParameters);
                 if(anticipationsToMake.get(result.bestop) == null) {
                     anticipationsToMake.put(result.bestop, new ArrayList<ExecutablePrecondition>());
                 }
