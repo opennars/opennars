@@ -9,5 +9,5 @@
 <{light_1} --> (&,light,[red])>. 
 <{light_1} --> traffic_signal>.
 200000
-''outputMustContain('<(&,[red],light) --> traffic_signal>. %0.32;0.84%') 
+''outputMustContain('<(&,[red],light) --> traffic_signal>. %0.30;0.83%') 
 
