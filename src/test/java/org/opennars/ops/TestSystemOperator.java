@@ -86,7 +86,7 @@ public class TestSystemOperator {
 
     private static void test0Expected(NarseseConsumer consumer, String expectedResultType, String expected) {
         //consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ls, $ret)) =/> <{$ret}-->res>>.");
-        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, "+expected+")) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, "+expected+")) =/> <"+expected+"-->res>>.");
         consumer.addInput("<cond0-->Cond0>. :|:");
         consumer.addInput("<{#0}-->res>!");
     }
