@@ -68,6 +68,29 @@ public class TestSystemOperator {
         }
     }
 
+    @Test
+    public void testOpCallUnify() throws Exception {
+        { // 0 parameters, boolean result
+            Nar nar = new Nar();
+            nar.addPlugin(new org.opennars.operator.misc.System());
+            test0Expected(nar, "bool", "true");
+            nar.cycles(500);
+
+            // check result of call
+            MyAnswerHandler handler = new MyAnswerHandler();
+            nar.ask("<{?0}-->res>", handler);
+            nar.cycles(100);
+            assertTrue(handler.lastAnswerTerm.toString().equals("<{true} --> res>"));
+        }
+    }
+
+    private static void test0Expected(NarseseConsumer consumer, String expectedResultType, String expected) {
+        //consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ls, $ret)) =/> <{$ret}-->res>>.");
+        consumer.addInput("<(&/, <cond0-->Cond0>, (^system, {SELF}, ./src/main/resources/unittest/TestscriptRet"+expectedResultType+".sh, "+expected+")) =/> <{$ret}-->res>>.");
+        consumer.addInput("<cond0-->Cond0>. :|:");
+        consumer.addInput("<{#0}-->res>!");
+    }
+
     /**
      *
      * @param consumer
