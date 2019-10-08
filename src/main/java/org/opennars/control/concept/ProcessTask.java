@@ -55,6 +55,7 @@ public class ProcessTask {
     // called in Memory.localInference only, for both derived and input tasks
     public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task, Timable time) {
         synchronized(concept) {
+            concept.observable |= task.isInput();
             final char type = task.sentence.punctuation;
             switch (type) {
                 case Symbols.JUDGMENT_MARK:
