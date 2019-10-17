@@ -381,7 +381,7 @@ public class Terms {
             if (!(t1 instanceof Variable)) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
-            if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
+            if ((tEquivalence || (tImplication && (i == 0))) || ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
                 prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
