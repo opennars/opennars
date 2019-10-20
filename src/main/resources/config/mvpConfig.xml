@@ -124,9 +124,6 @@
             <arg type="String.class" value="^say"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="String.class" value="^throw"/>
-        </plugin>
-                <plugin classpath="org.opennars.operator.NullOperator">
             <arg type="String.class" value="^system"/>
         </plugin>
     </plugins>
