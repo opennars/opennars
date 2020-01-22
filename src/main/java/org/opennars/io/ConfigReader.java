@@ -152,7 +152,7 @@ public class ConfigReader {
 
                         wasConfigValueAssigned = true;
                     } catch (NoSuchFieldException e) {
-                        System.out.println(propertyName + " is not a valid NARS config field");
+                        // ignore
                     }
                 }
             }
