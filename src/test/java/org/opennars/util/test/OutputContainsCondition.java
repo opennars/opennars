@@ -37,6 +37,7 @@ import java.util.*;
  * 
  */
 public class OutputContainsCondition extends OutputCondition<Task> {
+    public double confOfBestAnswer = 0.0;
     
     public final List<Task> exact = new ArrayList();
     
@@ -122,11 +123,11 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 final int cost_replace = cost[i - 1] + match;
                 final int cost_insert = cost[i] + 1;
                 final int cost_delete = newcost[i - 1] + 1;
-                
+
                 int c = cost_insert;
                 if (cost_delete < c) c = cost_delete;
                 if (cost_replace < c) c = cost_replace;
-                
+
                 newcost[i] = c;
             }
             final int[] swap = cost;
@@ -146,6 +147,8 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 final Sentence s = t.sentence;
                 o = s.toString(nar, false).toString();
                 if (o.contains(containing)) {
+                    // store confidence of best answer
+
                     if (saveSimilar) {
                         exact.add(t);
                     }
@@ -155,22 +158,22 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 Task t = null;
                 if (signal instanceof ExecutionResult)
                     t = ((ExecutionResult)signal).getTask();
-                
+
                 o = TextOutputHandler.getOutputString(channel, signal, false, false, nar).toString();
-                
+
                 if (o.contains(containing)) {
-                    if ((saveSimilar) && (t!=null)) {                        
+                    if ((saveSimilar) && (t!=null)) {
                         exact.add(t);
                     }
                     return true;
-                }                
+                }
             }
             if (saveSimilar) {
                 final int dist = levenshteinDistance(o, containing);
-                
+
                 if (almost.size() >= maxSimilars) {
                     final SimilarOutput last = almost.last();
-                    
+
                     if (dist < last.distance) {
                         almost.remove(last);
                         almost.add(new SimilarOutput(o, dist));
@@ -189,16 +192,72 @@ public class OutputContainsCondition extends OutputCondition<Task> {
 
     @Override
     public boolean condition(final Class channel, final Object signal) {
-        if (succeeded) {
-            return true;
+        if ((channel == OUT.class) || (channel == EXE.class)) {
+            final String o;
+            if (signal instanceof Task) {
+                //only compare for Sentence string, faster than TextOutput.getOutputString
+                //which also does unescaping, etc..
+                final Task t = (Task)signal;
+                final Sentence s = t.sentence;
+                o = s.toString(nar, false).toString();
+                if (o.contains(containing)) {
+                    // store confidence of best answer
+                    confOfBestAnswer = Math.max(confOfBestAnswer, s.truth.getConfidence());
+
+                    if (succeeded) {
+                        return true;
+                    }
+
+                    if (saveSimilar) {
+                        exact.add(t);
+                    }
+                    return true;
+                }
+            } else  {
+                if (succeeded) {
+                    return true;
+                }
+
+                Task t = null;
+                if (signal instanceof ExecutionResult)
+                    t = ((ExecutionResult)signal).getTask();
+
+                o = TextOutputHandler.getOutputString(channel, signal, false, false, nar).toString();
+
+                if (o.contains(containing)) {
+                    if ((saveSimilar) && (t!=null)) {
+                        exact.add(t);
+                    }
+                    return true;
+                }
+            }
+
+            if (saveSimilar) {
+                final int dist = levenshteinDistance(o, containing);
+
+                if (almost.size() >= maxSimilars) {
+                    final SimilarOutput last = almost.last();
+
+                    if (dist < last.distance) {
+                        almost.remove(last);
+                        almost.add(new SimilarOutput(o, dist));
+                    }
+                }
+                else {
+                    almost.add(new SimilarOutput(o, dist));
+                }
+            }
         }
-        return cond(channel, signal);
+        /*if (channel == ERR.class) {
+            Assert.assertTrue(signal.toString(), false);
+        }*/
+        return false;
     }
 
     @Override
     public List<Task> getTrueReasons() {
         return exact;
     }
-    
-    
+
+
 }

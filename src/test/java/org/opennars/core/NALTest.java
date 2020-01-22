@@ -35,6 +35,7 @@ import org.opennars.main.Nar;
 import org.opennars.main.MiscFlags;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
+import org.opennars.util.test.OutputContainsCondition;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -195,41 +196,22 @@ public class NALTest  {
             }
         }
 
-        double score = Double.POSITIVE_INFINITY;
-        if (success) {
-            long lastSuccess = -1;
-            for (final OutputCondition e: expects) {
-                if (e.getTrueTime()!=-1) {
-                    if (lastSuccess < e.getTrueTime()) {
-                        lastSuccess = e.getTrueTime();
-                    }
-                }
-            }
-            if (lastSuccess!=-1) {
-                //score = 1.0 + 1.0 / (1+lastSuccess);
-                score = lastSuccess;
+        double score = 0.0;
 
-                if (scores.containsKey(path)) {
-                    scores.get(path).add(score);
-                }
-                else {
-                    List<Double> scoresList = new ArrayList<>();
-                    scoresList.add(score);
-                    scores.put(path, scoresList);
-                }
+        for (final OutputCondition e: expects) {
+            if ((OutputContainsCondition)e != null) {
+                OutputContainsCondition occ = (OutputContainsCondition)e;
+                score += occ.confOfBestAnswer;
             }
         }
-        else {
-            if (scores.containsKey(path)) {
-                scores.get(path).add(Double.POSITIVE_INFINITY);
-            }
-            else {
-                List<Double> scoresList = new ArrayList<>();
-                scoresList.add(Double.POSITIVE_INFINITY);
-                scores.put(path, scoresList);
-            }
-        }
-        
+
+
+        List<Double> scoresList = new ArrayList<>();
+        scoresList.add(score);
+        scores.put(path, scoresList);
+
+        System.out.println(path + " " + score);
+
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
         if ((!success & showFail) || (success && showSuccess)) {
