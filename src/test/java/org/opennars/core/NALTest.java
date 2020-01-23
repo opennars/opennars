@@ -201,9 +201,9 @@ public class NALTest  {
 
         double score = 0.0;
         if (success) {
-            long lastSuccess = -1;
+            //long lastSuccess = -1;
             for (final OutputCondition e: expects) {
-                /*
+/*
                 if (e.getTrueTime()!=-1) {
                     if (lastSuccess < e.getTrueTime()) {
                         lastSuccess = e.getTrueTime();
@@ -214,9 +214,10 @@ public class NALTest  {
                     score += occ.confOfBestAnswer;
                 }
             }
-            if (lastSuccess!=-1) {
+
+            //if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
-                score = lastSuccess;
+                //score = lastSuccess;
 
                 if (scores.containsKey(path)) {
                     scores.get(path).add(score);
@@ -226,7 +227,7 @@ public class NALTest  {
                     scoresList.add(score);
                     scores.put(path, scoresList);
                 }
-            }
+            //}
         }
         else {
             if (scores.containsKey(path)) {
@@ -238,6 +239,9 @@ public class NALTest  {
                 scores.put(path, scoresList);
             }
         }
+
+        System.out.println(path + " score = " + score);
+        scoreSum += score; // accumulate score
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
