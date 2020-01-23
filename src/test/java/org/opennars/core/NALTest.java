@@ -23,6 +23,7 @@
  */
 package org.opennars.core;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -35,6 +36,7 @@ import org.opennars.main.Nar;
 import org.opennars.main.MiscFlags;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
+import org.opennars.util.test.OutputContainsCondition;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,6 +72,8 @@ public class NALTest  {
 
     // exposed to be able to change it from the outside
     public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
+
+    public static double scoreSum = 0.0; // sum of all scores
 
     public static String getExample(final String path) {
         try {
@@ -195,14 +199,19 @@ public class NALTest  {
             }
         }
 
-        double score = Double.POSITIVE_INFINITY;
+        double score = 0.0;
         if (success) {
             long lastSuccess = -1;
             for (final OutputCondition e: expects) {
+                /*
                 if (e.getTrueTime()!=-1) {
                     if (lastSuccess < e.getTrueTime()) {
                         lastSuccess = e.getTrueTime();
                     }
+                }*/
+                if (e instanceof OutputContainsCondition) {
+                    OutputContainsCondition occ = (OutputContainsCondition)e;
+                    score += occ.confOfBestAnswer;
                 }
             }
             if (lastSuccess!=-1) {
@@ -221,11 +230,11 @@ public class NALTest  {
         }
         else {
             if (scores.containsKey(path)) {
-                scores.get(path).add(Double.POSITIVE_INFINITY);
+                scores.get(path).add(0.0);
             }
             else {
                 List<Double> scoresList = new ArrayList<>();
-                scoresList.add(Double.POSITIVE_INFINITY);
+                scoresList.add(0.0);
                 scores.put(path, scoresList);
             }
         }
@@ -249,6 +258,11 @@ public class NALTest  {
     @Test
     public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
+    }
+
+    @AfterClass
+    public static void doYourOneTimeTeardown() {
+        System.out.println("score sum = "+scoreSum);
     }
 
     public static void main(final String[] args) {
