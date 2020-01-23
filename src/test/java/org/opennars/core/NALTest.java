@@ -23,6 +23,7 @@
  */
 package org.opennars.core;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -71,6 +72,8 @@ public class NALTest  {
 
     // exposed to be able to change it from the outside
     public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
+
+    public static double scoreSum = 0.0; // sum of all scores
 
     public static String getExample(final String path) {
         try {
@@ -211,6 +214,7 @@ public class NALTest  {
         scores.put(path, scoresList);
 
         System.out.println(path + " " + score);
+        scoreSum += score; // we need to accumate a global score of all tests
 
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
@@ -231,6 +235,11 @@ public class NALTest  {
     @Test
     public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
+    }
+
+    @AfterClass
+    public static void doYourOneTimeTeardown() {
+        System.out.println("score sum = "+scoreSum);
     }
 
     public static void main(final String[] args) {
