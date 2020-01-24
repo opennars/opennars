@@ -80,12 +80,6 @@
     <conf name="CURIOSITY_DESIRE_DURABILITY_MUL" value="0.3"/>
     <conf name="CURIOSITY_FOR_OPERATOR_ONLY" value="false"/>
     
-    <!--  NOT YET IMPLEMENTED  -->
-    <!--conf name="HAPPY_EVENT_HIGHER_THRESHOLD" value="0.75"/-->
-    <!--conf name="HAPPY_EVENT_LOWER_THRESHOLD" value="0.25"/-->
-    <!--conf name="BUSY_EVENT_HIGHER_THRESHOLD" value="0.9"/-->
-    <!--conf name="BUSY_EVENT_LOWER_THRESHOLD" value="0.1"/--> 
-
     <conf name="BREAK_NAL_HOL_BOUNDARY" value="false"/>
     
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
