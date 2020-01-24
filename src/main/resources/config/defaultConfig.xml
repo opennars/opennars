@@ -205,6 +205,9 @@
         <plugin classpath="org.opennars.operator.NullOperator">
             <arg type="String.class" value="^feel"/>
         </plugin>
+        <plugin classpath="org.opennars.operator.NullOperator">
+            <arg type="String.class" value="^system"/>
+        </plugin>
 
         <plugin classpath="org.opennars.operator.NullOperator"/>
         
