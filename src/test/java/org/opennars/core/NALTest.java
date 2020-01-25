@@ -74,6 +74,9 @@ public class NALTest  {
     public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
 
     public static double scoreSum = 0.0; // sum of all scores
+    public static double scoreSumWithTime = 0.0; // sum of all scores
+
+    public static double qaScoreDecayFactor = 0.001; // how fast does the score decay? - later answers get less score
 
     public static String getExample(final String path) {
         try {
@@ -200,6 +203,8 @@ public class NALTest  {
         }
 
         double score = 0.0;
+        double scoreWithTime = 0.0;
+
         if (success) {
             //long lastSuccess = -1;
             for (final OutputCondition e: expects) {
@@ -212,6 +217,7 @@ public class NALTest  {
                 if (e instanceof OutputContainsCondition) {
                     OutputContainsCondition occ = (OutputContainsCondition)e;
                     score += occ.confOfBestAnswer;
+                    scoreWithTime += ((Math.exp(-occ.timeOfBestAnswer * qaScoreDecayFactor)) * occ.confOfBestAnswer);
                 }
             }
 
@@ -241,7 +247,9 @@ public class NALTest  {
         }
 
         System.out.println(path + " score = " + score);
+        System.out.println(path + " score with time = " + scoreWithTime);
         scoreSum += score; // accumulate score
+        scoreSumWithTime += scoreWithTime;
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
@@ -267,6 +275,7 @@ public class NALTest  {
     @AfterClass
     public static void doYourOneTimeTeardown() {
         System.out.println("score sum = "+scoreSum);
+        System.out.println("score sum with time = "+scoreSumWithTime);
     }
 
     public static void main(final String[] args) {
