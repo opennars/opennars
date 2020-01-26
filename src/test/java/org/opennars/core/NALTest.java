@@ -23,6 +23,7 @@
  */
 package org.opennars.core;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -35,6 +36,7 @@ import org.opennars.main.Nar;
 import org.opennars.main.MiscFlags;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
+import org.opennars.util.test.OutputContainsCondition;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,6 +72,16 @@ public class NALTest  {
 
     // exposed to be able to change it from the outside
     public static String[] directories = new String[] {"/nal/single_step/", "/nal/multi_step/", "/nal/application/"};
+
+    public static double scoreSum = 0.0; // sum of all scores
+    public static double scoreSumWithTime = 0.0; // sum of all scores
+
+    public static double qaScoreDecayFactor = 0.001; // how fast does the score decay? - later answers get less score
+
+
+    public static double timeSum = 0.0;
+    public static double bestAnswerConfSum = 0.0;
+    public static long samplesCnt = 0;
 
     public static String getExample(final String path) {
         try {
@@ -195,19 +207,37 @@ public class NALTest  {
             }
         }
 
-        double score = Double.POSITIVE_INFINITY;
+        double score = 0.0;
+        double scoreWithTime = 0.0;
+
         if (success) {
-            long lastSuccess = -1;
+            //long lastSuccess = -1;
             for (final OutputCondition e: expects) {
+/*
                 if (e.getTrueTime()!=-1) {
                     if (lastSuccess < e.getTrueTime()) {
                         lastSuccess = e.getTrueTime();
                     }
+                }*/
+                if (e instanceof OutputContainsCondition) {
+                    OutputContainsCondition occ = (OutputContainsCondition)e;
+
+                    score += occ.confOfBestAnswer;
+                    scoreWithTime += ((Math.exp(-occ.timeOfBestAnswer * qaScoreDecayFactor)) * occ.confOfBestAnswer);
+
+                    // special handling, because occ.timeOfBestAnswer is set to max if no answer was given
+                    if (occ.timeOfBestAnswer != 0) { // was answer recorded?
+                        timeSum += occ.timeOfBestAnswer;
+                    }
+
+                    bestAnswerConfSum += occ.confOfBestAnswer;
+                    samplesCnt++;
                 }
             }
-            if (lastSuccess!=-1) {
+
+            //if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
-                score = lastSuccess;
+                //score = lastSuccess;
 
                 if (scores.containsKey(path)) {
                     scores.get(path).add(score);
@@ -217,18 +247,23 @@ public class NALTest  {
                     scoresList.add(score);
                     scores.put(path, scoresList);
                 }
-            }
+            //}
         }
         else {
             if (scores.containsKey(path)) {
-                scores.get(path).add(Double.POSITIVE_INFINITY);
+                scores.get(path).add(0.0);
             }
             else {
                 List<Double> scoresList = new ArrayList<>();
-                scoresList.add(Double.POSITIVE_INFINITY);
+                scoresList.add(0.0);
                 scores.put(path, scoresList);
             }
         }
+
+        System.out.println(path + " score = " + score);
+        System.out.println(path + " score with time = " + scoreWithTime);
+        scoreSum += score; // accumulate score
+        scoreSumWithTime += scoreWithTime;
         
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
@@ -249,6 +284,24 @@ public class NALTest  {
     @Test
     public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
+    }
+
+    @AfterClass
+    public static void doYourOneTimeTeardown() {
+        System.out.println("");
+        System.out.println("=======");
+        System.out.println("RESULTS");
+        System.out.println("=======");
+        System.out.println("");
+
+        System.out.println("score sum = "+scoreSum);
+        System.out.println("score sum with time = "+scoreSumWithTime);
+
+        System.out.println("---");
+
+        // average time and conf of best answers
+        System.out.println("avg best time = " + (timeSum / samplesCnt));
+        System.out.println("avg best conf = " + (bestAnswerConfSum / samplesCnt));
     }
 
     public static void main(final String[] args) {
