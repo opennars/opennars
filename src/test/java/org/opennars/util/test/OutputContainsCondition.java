@@ -38,7 +38,7 @@ import java.util.*;
  */
 public class OutputContainsCondition extends OutputCondition<Task> {
     public double confOfBestAnswer = 0.0;
-    public long timeOfBestAnswer = Long.MAX_VALUE;
+    public long timeOfBestAnswer = 0;
     
     public final List<Task> exact = new ArrayList();
     
@@ -196,8 +196,10 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 final Task t = (Task) signal;
                 final Sentence s = t.sentence;
                 if (s.truth != null) {
+                    if (s.truth.getConfidence() > confOfBestAnswer) {
+                        timeOfBestAnswer = nar.time();
+                    }
                     confOfBestAnswer = Math.max(confOfBestAnswer, s.truth.getConfidence());
-                    timeOfBestAnswer = nar.time();
                 }
             }
         }

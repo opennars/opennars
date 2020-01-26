@@ -78,6 +78,11 @@ public class NALTest  {
 
     public static double qaScoreDecayFactor = 0.001; // how fast does the score decay? - later answers get less score
 
+
+    public static double timeSum = 0.0;
+    public static double bestAnswerConfSum = 0.0;
+    public static long samplesCnt = 0;
+
     public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
@@ -216,8 +221,17 @@ public class NALTest  {
                 }*/
                 if (e instanceof OutputContainsCondition) {
                     OutputContainsCondition occ = (OutputContainsCondition)e;
+
                     score += occ.confOfBestAnswer;
                     scoreWithTime += ((Math.exp(-occ.timeOfBestAnswer * qaScoreDecayFactor)) * occ.confOfBestAnswer);
+
+                    // special handling, because occ.timeOfBestAnswer is set to max if no answer was given
+                    if (occ.timeOfBestAnswer != 0) { // was answer recorded?
+                        timeSum += occ.timeOfBestAnswer;
+                    }
+
+                    bestAnswerConfSum += occ.confOfBestAnswer;
+                    samplesCnt++;
                 }
             }
 
@@ -274,8 +288,20 @@ public class NALTest  {
 
     @AfterClass
     public static void doYourOneTimeTeardown() {
+        System.out.println("");
+        System.out.println("=======");
+        System.out.println("RESULTS");
+        System.out.println("=======");
+        System.out.println("");
+
         System.out.println("score sum = "+scoreSum);
         System.out.println("score sum with time = "+scoreSumWithTime);
+
+        System.out.println("---");
+
+        // average time and conf of best answers
+        System.out.println("avg best time = " + (timeSum / samplesCnt));
+        System.out.println("avg best conf = " + (bestAnswerConfSum / samplesCnt));
     }
 
     public static void main(final String[] args) {
