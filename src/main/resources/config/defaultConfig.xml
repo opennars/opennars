@@ -80,12 +80,6 @@
     <conf name="CURIOSITY_DESIRE_DURABILITY_MUL" value="0.3"/>
     <conf name="CURIOSITY_FOR_OPERATOR_ONLY" value="false"/>
     
-    <conf name="HAPPY_EVENT_HIGHER_THRESHOLD" value="0.75"/>
-    <conf name="HAPPY_EVENT_LOWER_THRESHOLD" value="0.25"/>
-    
-    <conf name="BUSY_EVENT_HIGHER_THRESHOLD" value="0.9"/>
-    <conf name="BUSY_EVENT_LOWER_THRESHOLD" value="0.1"/>
-    
     <conf name="BREAK_NAL_HOL_BOUNDARY" value="false"/>
     
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
@@ -118,6 +112,9 @@
     <conf name="VOLUME" value="100"/>
     <conf name="MILLISECONDS_PER_STEP" value="0"/>
     <conf name="STEPS_CLOCK" value="true"/>
+
+    <conf name="DERIVATION_DURABILITY_LEAK" value="0.4"/>
+    <conf name="DERIVATION_PRIORITY_LEAK" value="0.4"/>
     
     <!-- plugins -->
     <plugins>
@@ -207,6 +204,9 @@
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
             <arg type="String.class" value="^feel"/>
+        </plugin>
+        <plugin classpath="org.opennars.operator.NullOperator">
+            <arg type="String.class" value="^system"/>
         </plugin>
 
         <plugin classpath="org.opennars.operator.NullOperator"/>
