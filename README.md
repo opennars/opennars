@@ -129,11 +129,11 @@ At the current time, the most comprehensive description of NARS are the books [R
 
 Beginners can start at the following online materials:
 
- * The basic ideas behind the project: [The Logic of Intelligence](http://sites.google.com/site/narswang/publications/wang.logic_intelligence.pdf)
- * The high-level engineering plan: [From NARS to a Thinking Machine](http://sites.google.com/site/narswang/publications/wang.roadmap.pdf)
- * The core logic: [From Inheritance Relation to Non-Axiomatic Logic](http://sites.google.com/site/narswang/publications/wang.inheritance_nal.pdf)
- * The semantics: [Experience-Grounded Semantics: A theory for intelligent systems](http://sites.google.com/site/narswang/publications/wang.semantics.pdf)
- * The memory and control: [Computation and Intelligence in Problem Solving](http://sites.google.com/site/narswang/publications/wang.computation.pdf)
+ * The basic ideas behind the project: [The Logic of Intelligence](http://www.cis.temple.edu/~pwang/Publication/logic_intelligence.pdf)
+ * The high-level engineering plan: [From NARS to a Thinking Machine](http://www.cis.temple.edu/~pwang/Publication/roadmap.pdf)
+ * The core logic: [From Inheritance Relation to Non-Axiomatic Logic](https://cis.temple.edu/~pwang/Publication/inheritance_nal.pdf)
+ * The semantics: [Experience-Grounded Semantics: A theory for intelligent systems](https://cis.temple.edu/~pwang/Publication/semantics.pdf)
+ * The memory and control: [Computation and Intelligence in Problem Solving](https://cis.temple.edu/~pwang/Writing/computation.pdf)
 
 
 Contents
