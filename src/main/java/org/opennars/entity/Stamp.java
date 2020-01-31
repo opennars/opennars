@@ -27,7 +27,7 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Tense;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.storage.Memory;
 
 import java.io.Serializable;
@@ -227,7 +227,7 @@ public class Stamp implements Cloneable, Serializable {
     public boolean isEternal() {
         final boolean eternalOccurrence = occurrenceTime == ETERNAL;
         
-        if (MiscFlags.DEBUG) {
+        if (Debug.DEBUG) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
                 throw new IllegalStateException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
             }

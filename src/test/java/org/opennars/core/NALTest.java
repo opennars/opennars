@@ -33,7 +33,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.opennars.io.events.TextOutputHandler;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
 import org.opennars.util.test.OutputContainsCondition;
@@ -309,7 +309,7 @@ public class NALTest  {
     }
 
     static {
-        MiscFlags.DEBUG = false;
-        MiscFlags.TEST = true;
+        Debug.DEBUG = false;
+        Debug.TEST = true;
     }
 }

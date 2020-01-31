@@ -33,7 +33,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.opennars.io.events.TextOutputHandler;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.storage.Memory;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
@@ -50,8 +50,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class StabilityTest {
     static {
-        MiscFlags.DEBUG = false;
-        MiscFlags.TEST = true;
+        Debug.DEBUG = false;
+        Debug.TEST = true;
     }
 
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests

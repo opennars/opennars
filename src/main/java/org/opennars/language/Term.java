@@ -28,7 +28,7 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -405,7 +405,7 @@ public class Term implements AbstractTerm, Serializable {
                 final Term b = arg[1];
                 final int c = a.compareTo(b);
 
-                if (MiscFlags.DEBUG) {
+                if (Debug.DEBUG) {
                     //verify consistency of compareTo() and equals()
                     final boolean equal = a.equals(b);
                     if ((equal && (c!=0)) || (!equal && (c==0))) {

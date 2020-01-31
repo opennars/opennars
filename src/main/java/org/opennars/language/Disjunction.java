@@ -24,7 +24,7 @@
 package org.opennars.language;
 
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class Disjunction extends CompoundTerm {
     private Disjunction(final Term[] arg) {
         super(arg);
         
-        if (MiscFlags.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }        
+        if (Debug.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }        
         
         init(arg);
     }
