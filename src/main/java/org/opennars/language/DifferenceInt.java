@@ -53,7 +53,7 @@ public class DifferenceInt extends CompoundTerm {
         if (arg.length!=2)
             throw new IllegalStateException("Requires 2 components");
         
-        if (Debug.DEBUG) {
+        if (Debug.DETAILED) {
             if (arg[0].equals(arg[1]))
                 throw new IllegalStateException("Equal arguments invalid");
         }                

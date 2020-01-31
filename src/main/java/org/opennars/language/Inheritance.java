@@ -92,7 +92,7 @@ public class Inheritance extends Statement {
         final boolean subjectProduct = subject instanceof Product;
         final boolean predicateOperator = predicate instanceof Operator;
         
-        if (Debug.DEBUG) {
+        if (Debug.DETAILED) {
             if (!predicateOperator && predicate.toString().startsWith("^")) {
                 throw new IllegalStateException("operator term detected but is not an operator: " + predicate);
             }

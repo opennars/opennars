@@ -309,7 +309,7 @@ public class NALTest  {
     }
 
     static {
-        Debug.DEBUG = false;
+        Debug.DETAILED = false;
         Debug.TEST = true;
     }
 }

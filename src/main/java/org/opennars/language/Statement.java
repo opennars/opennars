@@ -61,7 +61,7 @@ public abstract class Statement extends CompoundTerm {
             throw new IllegalStateException("Null subject: " + this);
         if (t[1]==null)
             throw new IllegalStateException("Null predicate: " + this);
-        if (Debug.DEBUG) {                
+        if (Debug.DETAILED) {                
             if (isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
                     throw new IllegalStateException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));

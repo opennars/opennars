@@ -143,7 +143,7 @@ public class Shell {
                         try {
                             nar.addInput(line);
                         } catch (Exception ex) {
-                            if (Debug.DEBUG) {
+                            if (Debug.DETAILED) {
                                 throw new IllegalStateException("error parsing:" + line, ex);
                             }
                             System.out.println("parsing error");

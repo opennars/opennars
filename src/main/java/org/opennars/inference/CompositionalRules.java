@@ -370,7 +370,7 @@ public final class CompositionalRules {
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
         if ((truthT == null) || (truthB == null)) {
-            if(Debug.DEBUG) {
+            if(Debug.DETAILED) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
             return;

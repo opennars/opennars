@@ -48,7 +48,7 @@ public class NullOperator extends Operator {
     /** called from Operator */
     @Override 
     protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
-        if (Debug.DEBUG) {
+        if (Debug.DETAILED) {
             memory.emit(getClass(), args);
         }
         return null;

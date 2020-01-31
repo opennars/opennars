@@ -235,7 +235,7 @@ public class Conjunction extends CompoundTerm {
         return make(argList, temporalOrder, false);
     }
     final public static Term make(final Term[] argList, final int temporalOrder, final boolean spatial) {
-        if (Debug.DEBUG) {  Terms.verifyNonNull(argList);}
+        if (Debug.DETAILED) {  Terms.verifyNonNull(argList);}
         
         if (argList == null || argList.length == 0) {
             return null;

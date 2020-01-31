@@ -50,7 +50,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class StabilityTest {
     static {
-        Debug.DEBUG = false;
+        Debug.DETAILED = false;
         Debug.TEST = true;
     }
 

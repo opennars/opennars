@@ -153,7 +153,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     truth.setConfidence(0.0f); //TODO:
             } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Debug.DEBUG && Debug.DEBUG_SENTENCES)
+                if (Debug.DETAILED && Debug.DETAILED_SENTENCES)
                     throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
 
@@ -163,11 +163,11 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Debug.DEBUG && Debug.DEBUG_SENTENCES)
+                if (Debug.DETAILED && Debug.DETAILED_SENTENCES)
                     throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
             }
 
-            if (Debug.DEBUG && Debug.DEBUG_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+            if (Debug.DETAILED && Debug.DETAILED_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 if (!Term.valid(_content)) {
                     final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered " + _content);
                     ntc.printStackTrace();
@@ -225,7 +225,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             if (renamed) {
                 c.invalidateName();
 
-                if (Debug.DEBUG && Debug.DEBUG_SENTENCES) {
+                if (Debug.DETAILED && Debug.DETAILED_SENTENCES) {
                     if (!Term.valid(c)) {
                         final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
                         ntc.printStackTrace();

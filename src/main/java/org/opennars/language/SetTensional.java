@@ -44,7 +44,7 @@ abstract public class SetTensional extends CompoundTerm {
         if (arg.length == 0)
             throw new IllegalStateException("0-arg empty set");
         
-        if (Debug.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
+        if (Debug.DETAILED) { Terms.verifySortedAndUnique(arg, true); }
         
         init(arg);
     }

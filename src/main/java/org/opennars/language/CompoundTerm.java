@@ -191,7 +191,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         final Term c = clone(cloneTermsDeep());
         if (c == null)
             return null;
-        if (Debug.DEBUG && c.getClass()!=getClass()) //debug relevant, while it is natural due to interval 
+        if (Debug.DETAILED && c.getClass()!=getClass()) //debug relevant, while it is natural due to interval 
                                                           //simplification to reduce to other term type,
                                                           //other cases should not appear
             System.out.println("cloneDeep resulted in different class: " + c + " from " + this);
@@ -279,7 +279,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
         @Override
         public synchronized Throwable fillInStackTrace() {
-            if (Debug.DEBUG) {
+            if (Debug.DETAILED) {
                 return super.fillInStackTrace();
             }
             else {
@@ -297,7 +297,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (c == null)
             return null;
         
-        if (Debug.DEBUG && c.getClass()!=getClass())
+        if (Debug.DETAILED && c.getClass()!=getClass())
             System.out.println("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
         final CompoundTerm cc = (CompoundTerm)c;

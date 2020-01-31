@@ -489,7 +489,7 @@ public class ProcessGoal {
         if(!oper.call(op, nal.memory, nal.time)) {
             return false;
         }
-        if (Debug.DEBUG) {
+        if (Debug.DETAILED) {
             System.out.println(t.toStringLong());
         }
         return true;

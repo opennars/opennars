@@ -55,7 +55,7 @@ public class NALPerfLoop {
         while (true) {
             for (final Object o : c) {
                 final String examplePath = (String)((Object[])o)[0];
-                Debug.DEBUG = false;
+                Debug.DETAILED = false;
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
             }

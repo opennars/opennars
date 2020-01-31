@@ -405,7 +405,7 @@ public class Term implements AbstractTerm, Serializable {
                 final Term b = arg[1];
                 final int c = a.compareTo(b);
 
-                if (Debug.DEBUG) {
+                if (Debug.DETAILED) {
                     //verify consistency of compareTo() and equals()
                     final boolean equal = a.equals(b);
                     if ((equal && (c!=0)) || (!equal && (c==0))) {

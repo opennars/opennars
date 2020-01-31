@@ -227,7 +227,7 @@ public class Stamp implements Cloneable, Serializable {
     public boolean isEternal() {
         final boolean eternalOccurrence = occurrenceTime == ETERNAL;
         
-        if (Debug.DEBUG) {
+        if (Debug.DETAILED) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
                 throw new IllegalStateException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
             }

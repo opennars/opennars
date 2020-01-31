@@ -48,6 +48,7 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.Emotions;
+import org.opennars.main.Debug;
 
 import java.io.Serializable;
 import java.util.*;
@@ -325,6 +326,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             emit(OUT.class, t);
+            if (Debug.PARENTS) {
+                System.out.println("    Belief Parent: " + t.parentBelief);
+                System.out.println("    Tasklink Parent: " + t.parentTask + "\n\n");
+            }
         }        
     }
     
