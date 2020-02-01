@@ -42,7 +42,7 @@ public class Debug {
     /** Show input errors, not recommended as the program that uses NARS should handle them by itself */
     public static boolean SHOW_INPUT_ERRORS = false;
     /** Show premises (parents) of statements */
-    public static final boolean PARENTS = true;
+    public static boolean PARENTS = false;
 
 
 

@@ -46,6 +46,9 @@ public abstract class OutputHandler extends EventHandler {
     /** explicitly repeated input (repetition of the content of input ECHO commands) */
     public interface ECHO  { }
     
+    /** debug statements, enabled through Debug.java */
+    public interface DEBUG  { }
+
     /** operation execution */
     public interface EXE  { }
     
@@ -56,7 +59,7 @@ public abstract class OutputHandler extends EventHandler {
     
     public static class DISAPPOINT {}
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class, DEBUG.class};
             
     public OutputHandler(final EventEmitter source, final boolean active) {
         super(source, active, DefaultOutputEvents );

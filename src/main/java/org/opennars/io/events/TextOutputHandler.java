@@ -55,7 +55,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     }
 
     /**
-     * Default constructor; adds the reasoner to a Nar's outptu channels
+     * Default constructor; adds the reasoner to a Nar's output channels
      *
      * @param n
      */
@@ -185,7 +185,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
             
         }        
         else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Answer.class)
-                || (channel == ANTICIPATE.class) || (channel == DISAPPOINT.class) || (channel == CONFIRM.class))  {
+                || (channel == ANTICIPATE.class) || (channel == DISAPPOINT.class) || (channel == CONFIRM.class) || (channel == DEBUG.class))  {
 
             if(channel == CONFIRM.class) {
                 buffer.append(signal.toString());  

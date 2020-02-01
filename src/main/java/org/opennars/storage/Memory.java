@@ -39,6 +39,7 @@ import org.opennars.io.events.Events.ResetStart;
 import org.opennars.io.events.Events.TaskRemove;
 import org.opennars.io.events.OutputHandler.IN;
 import org.opennars.io.events.OutputHandler.OUT;
+import org.opennars.io.events.OutputHandler.DEBUG;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Interval;
 import org.opennars.language.Tense;
@@ -327,8 +328,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             emit(OUT.class, t);
             if (Debug.PARENTS) {
-                System.out.println("    Belief Parent: " + t.parentBelief);
-                System.out.println("    Tasklink Parent: " + t.parentTask + "\n\n");
+                emit(DEBUG.class, "Parent Belief\t" + t.parentBelief);
+                emit(DEBUG.class, "Parent Task\t" + t.parentTask + "\n\n");
             }
         }        
     }
