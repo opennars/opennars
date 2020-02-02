@@ -33,7 +33,7 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.operator.Operation;
 import org.xml.sax.SAXException;
 

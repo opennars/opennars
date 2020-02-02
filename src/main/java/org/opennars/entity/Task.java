@@ -44,7 +44,9 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     /* The sentence of the Task*/
     public final Sentence<T> sentence;
     /* Belief from which the Task is derived, or null if derived from a theorem*/
-    public final  Sentence parentBelief;
+    public final Sentence parentBelief;
+    /* Tasklink from which the Task is derived, null unless Debug.PARENTS is turned on*/
+    public Sentence parentTask;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
     /* Whether the task should go into event bag or not*/

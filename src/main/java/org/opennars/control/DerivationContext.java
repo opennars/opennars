@@ -31,6 +31,7 @@ import org.opennars.main.Parameters;
 import org.opennars.language.*;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
+import org.opennars.main.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,9 @@ public class DerivationContext {
         return derivedTask(task, revised, single, overlapAllowed, true);
     }
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, final boolean overlapAllowed, final boolean addToMemory) {
+        if (Debug.PARENTS) {
+            task.parentTask = getCurrentTask().sentence;
+        }
 
         if((task.sentence.isGoal() || task.sentence.isQuest()) && (task.sentence.term instanceof Implication ||
                                       task.sentence.term instanceof Equivalence)) {

@@ -29,7 +29,7 @@ import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -370,7 +370,7 @@ public final class CompositionalRules {
         final TruthValue truthT = nal.getCurrentTask().sentence.truth;
         final TruthValue truthB = nal.getCurrentBelief().truth;
         if ((truthT == null) || (truthB == null)) {
-            if(MiscFlags.DEBUG) {
+            if(Debug.DETAILED) {
                 System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
             }
             return;

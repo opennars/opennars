@@ -38,7 +38,7 @@ import org.opennars.storage.Memory;
 import java.util.Arrays;
 import java.util.List;
 import org.opennars.io.events.OutputHandler.ERR;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -89,10 +89,10 @@ public abstract class Operator extends Term implements Plugin {
             feedback = execute(operation, args, memory, time);
         }
         catch(Exception ex) {//peripherie, maybe used incorrectly, failure is unavoidable
-            if(MiscFlags.SHOW_EXECUTION_ERRORS) {
+            if(Debug.SHOW_EXECUTION_ERRORS) {
                 memory.event.emit(ERR.class, ex);
             }
-            if(!MiscFlags.EXECUTION_ERRORS_CONTINUE) {
+            if(!Debug.EXECUTION_ERRORS_CONTINUE) {
                 throw new IllegalStateException("Execution error:\n", ex);
             } else {
                 return false; //failure on execution

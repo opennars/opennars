@@ -378,10 +378,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         try {
             task = narsese.parseTask(text);
         } catch (final Parser.InvalidInputException e) {
-            if(MiscFlags.SHOW_INPUT_ERRORS) {
+            if(Debug.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
             }
-            if(!MiscFlags.INPUT_ERRORS_CONTINUE) {
+            if(!Debug.INPUT_ERRORS_CONTINUE) {
                 throw new IllegalStateException("Invalid input: " + text, e);
             }
             return;
@@ -662,10 +662,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             }
         }
         catch (final Exception e) {
-            if(MiscFlags.SHOW_REASONING_ERRORS) {
+            if(Debug.SHOW_REASONING_ERRORS) {
                 emit(ERR.class, e);
             }
-            if(!MiscFlags.REASONING_ERRORS_CONTINUE) {
+            if(!Debug.REASONING_ERRORS_CONTINUE) {
                 throw new IllegalStateException("Reasoning error:\n", e);
             }
         }

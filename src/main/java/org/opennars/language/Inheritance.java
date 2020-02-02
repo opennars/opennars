@@ -24,7 +24,7 @@
 package org.opennars.language;
 
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 
@@ -92,7 +92,7 @@ public class Inheritance extends Statement {
         final boolean subjectProduct = subject instanceof Product;
         final boolean predicateOperator = predicate instanceof Operator;
         
-        if (MiscFlags.DEBUG) {
+        if (Debug.DETAILED) {
             if (!predicateOperator && predicate.toString().startsWith("^")) {
                 throw new IllegalStateException("operator term detected but is not an operator: " + predicate);
             }

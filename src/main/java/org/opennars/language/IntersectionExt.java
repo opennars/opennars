@@ -25,7 +25,7 @@ package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class IntersectionExt extends CompoundTerm {
     private IntersectionExt(final Term[] arg) {
         super(arg);
         
-        if (MiscFlags.DEBUG) { Terms.verifySortedAndUnique(arg, false); }
+        if (Debug.DETAILED) { Terms.verifySortedAndUnique(arg, false); }
         
         init(arg);
         

@@ -26,7 +26,7 @@ package org.opennars.io;
 import com.google.common.io.Resources;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Parameters;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.plugin.Plugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -140,7 +140,7 @@ public class ConfigReader {
 
                 if (!wasConfigValueAssigned) {
                     try {
-                        final Field fieldOfProperty = MiscFlags.class.getDeclaredField(propertyName);
+                        final Field fieldOfProperty = Debug.class.getDeclaredField(propertyName);
 
                         if (fieldOfProperty.getType() == int.class) {
                             fieldOfProperty.set(null, Integer.parseInt(propertyValueAsString));

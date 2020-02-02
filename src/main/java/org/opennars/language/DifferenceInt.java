@@ -24,7 +24,7 @@
 package org.opennars.language;
 
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -53,7 +53,7 @@ public class DifferenceInt extends CompoundTerm {
         if (arg.length!=2)
             throw new IllegalStateException("Requires 2 components");
         
-        if (MiscFlags.DEBUG) {
+        if (Debug.DETAILED) {
             if (arg[0].equals(arg[1]))
                 throw new IllegalStateException("Equal arguments invalid");
         }                

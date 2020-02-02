@@ -144,7 +144,7 @@ public class TemporalInferenceControl {
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
-                                /*DEBUG: for(Task seq_op_cons : res) {
+                                /*DETAILED: for(Task seq_op_cons : res) {
                                     System.out.println(seq_op_cons.toString());
                                 }*/
                             }

@@ -25,7 +25,7 @@ package org.opennars.language;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 
 import java.util.*;
 
@@ -235,7 +235,7 @@ public class Conjunction extends CompoundTerm {
         return make(argList, temporalOrder, false);
     }
     final public static Term make(final Term[] argList, final int temporalOrder, final boolean spatial) {
-        if (MiscFlags.DEBUG) {  Terms.verifyNonNull(argList);}
+        if (Debug.DETAILED) {  Terms.verifyNonNull(argList);}
         
         if (argList == null || argList.length == 0) {
             return null;

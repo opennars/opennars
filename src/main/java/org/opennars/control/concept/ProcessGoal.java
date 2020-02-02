@@ -54,7 +54,7 @@ import org.opennars.language.Product;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
 import org.opennars.language.Variables;
-import org.opennars.main.MiscFlags;
+import org.opennars.main.Debug;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -489,7 +489,7 @@ public class ProcessGoal {
         if(!oper.call(op, nal.memory, nal.time)) {
             return false;
         }
-        if (MiscFlags.DEBUG) {
+        if (Debug.DETAILED) {
             System.out.println(t.toStringLong());
         }
         return true;
