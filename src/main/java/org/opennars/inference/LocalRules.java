@@ -205,6 +205,13 @@ public class LocalRules {
         final Memory memory = nal.mem();
         final Sentence oldBest = task.getBestSolution();
         
+        double achievement = Math.abs(task.sentence.truth.getExpectation() - belief.truth.getExpectation());
+        //TODO replace with expDif
+        task.setAchievement(achievement);
+  
+        //task.achieved = //difference in truth expectation between task and belief
+        
+        
         if (oldBest != null) {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
