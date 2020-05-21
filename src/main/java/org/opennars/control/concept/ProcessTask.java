@@ -71,7 +71,9 @@ public class ProcessTask {
                 default:
                     return false;
             }
-            
+            //reduce priority by achievement:
+            task.setPriority(task.getPriority() * task.getAchievement());
+            //now process
             if (task.aboveThreshold()) {    // still need to be processed
                 TaskLink taskl = concept.linkToTask(task,nal);               
                 if(task.sentence.isJudgment() && ProcessJudgment.isExecutableHypothesis(task,nal)) { //after linkToTask

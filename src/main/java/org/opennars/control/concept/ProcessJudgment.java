@@ -39,6 +39,7 @@ import java.util.Set;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
+import static org.opennars.inference.LocalRules.calcTaskAchievement;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.events.Events;
@@ -87,6 +88,7 @@ public class ProcessJudgment {
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, concept, false, nal);
+                    task.setAchievement(calcTaskAchievement(task.sentence.truth, projectedBelief.truth));
                 }
             }
         }

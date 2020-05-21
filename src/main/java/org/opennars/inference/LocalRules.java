@@ -191,8 +191,12 @@ public class LocalRules {
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         return useNewBeliefTerm;
-}
+    }
 
+    public static double calcTaskAchievement(TruthValue t1, TruthValue t2)
+    {
+        return Math.abs(t1.getExpectation() - t2.getExpectation());
+    }
 
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
@@ -204,14 +208,7 @@ public class LocalRules {
         final Sentence problem = task.sentence;
         final Memory memory = nal.mem();
         final Sentence oldBest = task.getBestSolution();
-        
-        double achievement = Math.abs(task.sentence.truth.getExpectation() - belief.truth.getExpectation());
-        //TODO replace with expDif
-        task.setAchievement(achievement);
-  
-        //task.achieved = //difference in truth expectation between task and belief
-        
-        
+        task.setAchievement(calcTaskAchievement(task.sentence.truth, belief.truth));
         if (oldBest != null) {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
