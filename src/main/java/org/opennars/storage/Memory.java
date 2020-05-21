@@ -100,7 +100,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Bag<Task<Term>,Sentence<Term>> seq_current;
+    public final Buffer seq_current;
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
     
     //Boolean localInferenceMutex = false;
@@ -114,7 +114,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * Create a new memory
      */
     public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
-                  final Bag<Task<Term>,Sentence<Term>> seq_current,
+                  final Buffer seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
         this.narParameters = narParameters;
         this.event = new EventEmitter();
@@ -349,10 +349,15 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void cycle(final Nar nar) {
     
         event.emit(Events.CycleStart.class);
+        //TODO: Allow flexible resource allocation between
+        //channel operations and general inference
+        //instead of this fixed treatment
+        //channels (channel priority for instance as moving avg of the items for resource alloc)
+        //novel tasks
         for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
             this.processNovelTask(nar.narParameters, nar);
         }
-    //if(noResult()) //newTasks empty
+        //general inference step
         GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
         
         event.emit(Events.CycleEnd.class);

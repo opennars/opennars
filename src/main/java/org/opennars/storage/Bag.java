@@ -26,6 +26,7 @@ package org.opennars.storage;
 import org.opennars.entity.Item;
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.entity.Task;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.main.Parameters;
 
@@ -150,6 +151,10 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         BudgetFunctions.applyForgetting(oldItem.budget, forgetCycles, relativeThreshold);
         return putIn(oldItem);
     }
+    
+    public boolean expired(long creationTime) {
+        return false;
+    }
 
     /**
      * Choose an Item according to priority distribution and take it out of the Bag
@@ -180,6 +185,14 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         }
         currentCounter--;
         nameTable.remove(selected.name());
+        long creationTime = 0;
+        if(selected instanceof Task) {
+            creationTime = ((Task) selected).sentence.stamp.getCreationTime();
+        }
+        if(expired(creationTime))
+        {
+            return takeOut();
+        }
         return selected;
     }
 
