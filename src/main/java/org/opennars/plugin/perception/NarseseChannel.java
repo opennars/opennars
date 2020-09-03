@@ -43,7 +43,9 @@ import org.opennars.operator.Operator;
 
 public class NarseseChannel extends SensoryChannel  {
  
- public NarseseChannel(){} //todo register same way as others
+ public NarseseChannel(){
+     super(null, 0, 0, null);
+ } //todo register same way as others
  
  Task task = null;
  public void putIn(Task task)

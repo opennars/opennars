@@ -97,7 +97,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     private final Boolean tasksMutex = Boolean.TRUE;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
-    public final Bag<Task<Term>,Sentence<Term>> novelTasks;
+    public final Buffer<Task<Term>,Sentence<Term>> globalBuffer;
+    private final Buffer internalExperienceBuffer;
     
     /* Input event tasks that were either input events or derived sequences*/
     public final Buffer seq_current;
@@ -113,13 +114,13 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /**
      * Create a new memory
      */
-    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> globalBuffer,
                   final Buffer seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
         this.narParameters = narParameters;
         this.event = new EventEmitter();
         this.concepts = concepts;
-        this.novelTasks = novelTasks;                
+        this.globalBuffer = globalBuffer; 
         this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
@@ -132,13 +133,17 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             concepts.clear();
         }
         synchronized (tasksMutex) {
-            novelTasks.clear();
+            globalBuffer.clear();
         }
         synchronized(this.seq_current) {
             this.seq_current.clear();
         }
         if(emotion != null) {
             emotion.resetEmotions();
+        }
+        if(internalExperienceBuffer != null)
+        {
+            internalExperienceBuffer.clear();
         }
         this.lastDecision = null;
         randomNumber.setSeed(randomSeed);
@@ -228,7 +233,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      */
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
-            novelTasks.putIn(t);
+            globalBuffer.putIn(t);
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
@@ -355,7 +360,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         //channels (channel priority for instance as moving avg of the items for resource alloc)
         //novel tasks
         for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
-            this.processNovelTask(nar.narParameters, nar);
+            this.processGlobalBufferTask(nar.narParameters, nar);
         }
         //general inference step
         GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
@@ -398,9 +403,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param narParameters parameters for the Reasoner instance
      * @param time indirection to retrieve time
      */
-    public void processNovelTask(Parameters narParameters, final Timable time) {
+    public void processGlobalBufferTask(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
-            final Task task = novelTasks.takeOut();
+            final Task task = globalBuffer.takeOut();
             if (task != null) {            
                 localInference(task, narParameters, time);
             }

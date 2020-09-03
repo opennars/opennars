@@ -24,9 +24,15 @@
 package org.opennars.storage;
 
 import org.opennars.storage.Buffer;
+import org.opennars.main.Nar;
+import org.opennars.main.Parameters;
 
 
 public class InternalExperience extends Buffer{
 
+    public InternalExperience(Nar nar, int levels, int capacity, Parameters narParameters)
+    {
+        super(nar, levels, capacity, narParameters);
+    }
 
 }

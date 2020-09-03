@@ -80,12 +80,6 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         clearExpiredItem();
         return super.takeOut();
     }
-
-    @Override
-    protected int forgetRate() {
-        return Parameters.NEW_TASK_FORGETTING_CYCLE;
-    }
     
-    //TODO move event bag inference code over here (sequences, implications, equivalences=
-    //remove event bag, use the Buffer instead
+    //TODO move event bag inference code over here (sequences, implications, equivalences)
 }

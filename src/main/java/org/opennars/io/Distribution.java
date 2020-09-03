@@ -11,6 +11,7 @@ import org.opennars.storage.Buffer;
 import org.opennars.storage.InternalExperience;
 import org.opennars.storage.Memory;
 import org.opennars.main.Nar;
+import org.opennars.plugin.perception.NarseseChannel;
 
 /**
  *
@@ -24,25 +25,20 @@ public class Distribution {
     private ArrayList<Buffer> runTable;
         
     protected Nar reasoner;
-    
-    protected Memory memory;
-    
+
     private final InternalExperience internalExperience;
     private final Buffer internalBuffer;
     private final Buffer overallBuffer;
+    private final NarseseChannel narseseChannel = new NarseseChannel();
     
-    public Distribution(Nar reasoner, Memory memory){
+    public Distribution(Nar reasoner){
         
         this.reasoner = reasoner;
-        this.memory = memory;
         System.out.println(duration);
-        internalExperience = new InternalExperience(memory, duration);
-        sensorimotor_Experience = new Experience_From_Sensorimotor(memory, duration);
-        knowledge_Experience = new Experience_From_Knowledge(memory, duration);
-        
-        internalBuffer = new Buffer(memory, duration, "internal");
-        overallBuffer = new Buffer(memory, duration, "overall");
-        
+        int levels = 10;
+        int capacity = 50;
+        internalBuffer = new InternalExperience(nar, levels, capacity, reasoner.narParameters);
+        overallBuffer = new Buffer(nar, levels, capacity, reasoner.narParameters);
         initRunTable();
     }
     
@@ -63,11 +59,8 @@ public class Distribution {
     }
     
     public void init(){
-        overallBuffer.init();
-        internalBuffer.init();
-        narsese_Experience.init();
-        sensorimotor_Experience.init();
-        knowledge_Experience.init();
+        internalBuffer = new InternalExperience(nar, levels, capacity, reasoner.narParameters);
+        overallBuffer = new Buffer(nar, levels, capacity, reasoner.narParameters);
     }
     
     public void distributeWorkCycle(){

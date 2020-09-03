@@ -10,6 +10,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Buffer;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -17,12 +18,9 @@ import org.opennars.storage.Buffer;
  */
 public class Channel extends Buffer {
     
-    public Channel(Timable timable, int levels, int capacity, Parameters narParameters) {
-        super(timable, levels, capacity, narParameters);
+    public Channel(Nar nar, int levels, int capacity, Parameters narParameters) {
+        super(nar, levels, capacity, narParameters);
     }
     
-    //TODO add the 4 subclasses
-    //KnowledgeChannel, SensorimotorChannel, NarseseChannel
-
     public HashMap<String,Operation> operations;   
 }

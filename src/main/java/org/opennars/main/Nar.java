@@ -190,6 +190,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(narId, DEFAULTCONFIG_FILEPATH);
     }
+    
+    public void initInternalExperience() { //TODo put into constructor
+        int levesls = 10;
+        int capacity = 50;
+        this.memory.internalExperienceBuffer = new InternalExperience(this, levels, capacity, reasoner.narParameters);
+    }
 
     public String usedConfigFilePath = "";
     /** constructs the NAR and loads a config from the filepath
@@ -207,6 +213,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                 new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
+        initInternalExperience();
         this.usedConfigFilePath = relativeConfigFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);
@@ -230,6 +237,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
+        initInternalExperience();
         this.usedConfigFilePath = relativeConfigFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);

@@ -73,8 +73,9 @@ public abstract class SensoryChannel extends Channel implements Plugin, Serializ
         this.duration = (int) val;
     }
     
-    public SensoryChannel(){}
+    public SensoryChannel(){ super(null, 0, 0, null); }
     public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
+        this();
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
         this.width = width;
