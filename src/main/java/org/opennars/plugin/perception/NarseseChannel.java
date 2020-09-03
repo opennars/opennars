@@ -40,20 +40,25 @@ import org.opennars.io.events.Events.ResetEnd;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
 import org.opennars.operator.Operator;
+import org.opennars.io.Narsese;
+import org.opennars.io.Parser;
 
 public class NarseseChannel extends SensoryChannel  {
  
  public NarseseChannel(){
-     super(null, 0, 0, null);
- } //todo register same way as others
+     super();
+ }
  
  Task task = null;
- public void putIn(Task task)
+ public void putIn(Nar nar, String text)
  {
-     this.task = task;
+     final Parser narsese = new Narsese(nar);
+     this.task = narsese.parseTask(text);
  }
- public Task retrieve() //todo use channel method
+ 
+ public Task takeOut() //todo use channel method
  {
      return this.task;
  }
+
 }

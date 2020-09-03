@@ -41,6 +41,7 @@ import java.io.Serializable;
  */
 public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 
+    public boolean sequenceTask = false;
     public double achieved; //between 0 and 1, 1 meaning fully achieved
     public double getAchievement() {
         return achieved;

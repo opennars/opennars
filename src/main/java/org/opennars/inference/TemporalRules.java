@@ -251,7 +251,8 @@ public class TemporalRules {
                             t.sentence.term instanceof Conjunction && 
                             t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
                             t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-                        TemporalInferenceControl.addToSequenceTasks(nal, t);
+                        t.sequenceTask = true;
+                        nal.memory.globalBuffer.putIn(t);
                     }
 
                     derivations.add(t);

@@ -357,10 +357,10 @@ public class ProcessGoal {
                             CompoundTerm.replaceIntervals(((Implication) t.getTerm()).getPredicate()),
                             CompoundTerm.replaceIntervals(projectedGoal.getTerm()), subsconc, new LinkedHashMap<>());
             //ok we can look now how much it is fullfilled
-            //check recent events in event bag
+            //check recent events in event bag of global buffer as well
             Map<Term,Term> subsBest = new LinkedHashMap<>();
-            synchronized(concept.memory.seq_current) {
-                for(final Task p : concept.memory.seq_current) {
+            synchronized(concept.memory.globalBuffer.seq_current) {
+                for(final Task p : concept.memory.globalBuffer.seq_current) {
                     if(p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= nal.time.time()) {
                         Map<Term,Term> subs = new LinkedHashMap<>(subsconc);
                         boolean preconditionMatches = Variables.findSubstitute(nal.memory.randomNumber, Symbols.VAR_INDEPENDENT,

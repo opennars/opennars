@@ -48,6 +48,8 @@ import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.InternalExperienceBuffer;
+import org.opennars.storage.NarseseChannel;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.main.Debug;
 
@@ -76,10 +78,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      /* Nar parameters */
     public final Parameters narParameters;
     
+    public InternalExperience internalExperience = null;
     public long narId = 0;
     //emotion meter keeping track of global emotion
-    public Emotions emotion = null;   
-    public InternalExperience internalExperience = null;
+    public Emotions emotion = null;  
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
@@ -97,8 +99,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     private final Boolean tasksMutex = Boolean.TRUE;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
-    public final Buffer<Task<Term>,Sentence<Term>> globalBuffer;
-    private final Buffer internalExperienceBuffer;
+    public final Buffer/*<Task<Term>,Sentence<Term>>*/ globalBuffer;
+    public InternalExperienceBuffer internalExperienceBuffer;
+    public NarseseChannel narseseChannel = new NarseseChannel();
     
     /* Input event tasks that were either input events or derived sequences*/
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
@@ -113,7 +116,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /**
      * Create a new memory
      */
-    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> globalBuffer,
+    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Buffer globalBuffer,
                   final Buffer seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
         this.narParameters = narParameters;
@@ -123,6 +126,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.recent_operations = recent_operations;
         this.globalBuffer.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
+        this.internalExperienceBuffer = null; //overwritten
         reset();
     }
     
@@ -134,8 +138,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         synchronized (tasksMutex) {
             globalBuffer.clear();
         }
-        synchronized(this.seq_current) {
-            this.seq_current.clear();
+        synchronized(this.globalBuffer.seq_current) {
+            this.globalBuffer.seq_current.clear();
         }
         if(emotion != null) {
             emotion.resetEmotions();
@@ -236,8 +240,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             if(reason.equals("Executed") || reason.equals("Derived"))
             {
                 //these go to internal experience first, and only after go to global buffer:
-                internalExperience.putIn(t);
-                Task t_internal = internalExperience.takeOut(); //might have more than 1 item to take out
+                internalExperienceBuffer.putIn(t);
+                Task t_internal = internalExperienceBuffer.takeOut(); //might have more than 1 item to take out
                 globalBuffer.putIn(t_internal);
             }
             else
@@ -399,7 +403,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                TemporalInferenceControl.eventInference(task, cont);
+                globalBuffer.eventInference(task, cont); //can be triggered by Buffer itself in the future
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
