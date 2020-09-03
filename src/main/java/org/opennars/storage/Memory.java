@@ -101,7 +101,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     private final Buffer internalExperienceBuffer;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Buffer seq_current;
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
     
     //Boolean localInferenceMutex = false;
@@ -122,7 +121,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         this.concepts = concepts;
         this.globalBuffer = globalBuffer; 
         this.recent_operations = recent_operations;
-        this.seq_current = seq_current;
+        this.globalBuffer.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
         reset();
     }
@@ -233,7 +232,18 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      */
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
-            globalBuffer.putIn(t);
+            
+            if(reason.equals("Executed") || reason.equals("Derived"))
+            {
+                //these go to internal experience first, and only after go to global buffer:
+                internalExperience.putIn(t);
+                Task t_internal = internalExperience.takeOut(); //might have more than 1 item to take out
+                globalBuffer.putIn(t_internal);
+            }
+            else
+            {
+                globalBuffer.putIn(t);
+            }
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);

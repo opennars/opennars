@@ -38,6 +38,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     Parameters narParameters;
     long max_duration;
     static int duration = 100; //buffer duration, TODO make a param
+    Buffer seq_current; //for temporal inference support via BufferInference.java
     
     public Buffer(Nar nar, int levels, int capacity, Parameters narParameters) {
         super(levels, capacity, narParameters);

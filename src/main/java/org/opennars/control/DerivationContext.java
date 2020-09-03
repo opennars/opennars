@@ -464,13 +464,6 @@ public class DerivationContext {
         if(t.sentence.term==null) {
             return;
         }
-        if(reason.equals("Executed") || reason.equals("Derived"))
-        {
-            //these go to internal experience first, and only after go to global buffer:
-            
-            //TODO add to cycle
-            
-        }
         memory.addNewTask(t, reason);
     }
     
