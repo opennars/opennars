@@ -43,7 +43,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
     /** shared DISTRIBUTOR that produce the probability distribution */
     private final Distributor DISTRIBUTOR;
     /** mapping from key to item */
-    private HashMap<K, Type> nameTable;
+    protected HashMap<K, Type> nameTable;
     /** array of lists of items, for items on different level */
     private ArrayList<ArrayList<Type>> itemTable;
     /** defined in different bags */

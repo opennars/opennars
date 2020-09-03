@@ -29,23 +29,25 @@ import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
 import org.opennars.interfaces.Timable;
+import org.opennars.main.Nar;
+import java.util.ArrayList; 
 
 public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
-    Timable timable;
+    Nar nar;
     Parameters narParameters;
     long max_duration;
     static int duration = 100; //buffer duration, TODO make a param
     
-    public Buffer(Timable timable, int levels, int capacity, Parameters narParameters) {
+    public Buffer(Nar nar, int levels, int capacity, Parameters narParameters) {
         super(levels, capacity, narParameters);
-        this.timable = timable;
+        this.nar = nar;
         this.narParameters = narParameters;
     }
     
     @Override
     public boolean expired(long creationTime) {
-        long currentTime = timable.time();
+        long currentTime = nar.time();
         long delta = currentTime - creationTime;
         long maxDuration = narParameters.DURATION * narParameters.MAX_BUFFER_DURATION_FACTOR;
         return delta > maxDuration;
@@ -53,36 +55,30 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     public void clearExpiredItem(){
 
-        ArrayList<String> expiredKey = new ArrayList<String>();
+        ArrayList<Sentence> expiredKey = new ArrayList<Sentence>();
 
         nameTable.forEach((key, task) -> {
-            if((memory.getTime() - task.getSentence().getStamp().getPutInTime()) > duration){
+            if((nar.time() - task.sentence.stamp.getPutInTime()) > duration){
                 expiredKey.add(key);
             }
         });
 
         for (int i = 0; i < expiredKey.size(); i++) {
             Task task = nameTable.get(expiredKey.get(i));
-            super.pickOut(task.getKey());
+            super.pickOut(task.sentence); //task.getKey()
         }
 
     }
     
-    @Override
-    public boolean putIn(Task task){
-        task.getSentence().getStamp().setPutInTime(time.getTime());
-        return super.putIn(task);
+    public Task putIn(Task task){
+        task.sentence.stamp.setPutInTime(nar.time());
+        return (Task) super.putIn(task);
     } 
     
     @Override
     public Task takeOut(){
         clearExpiredItem();
         return super.takeOut();
-    }
-    
-    @Override
-    protected int capacity() {
-        return Parameters.TASK_BUFFER_SIZE;
     }
 
     @Override
