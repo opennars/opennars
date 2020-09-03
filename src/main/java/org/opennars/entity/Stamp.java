@@ -58,6 +58,9 @@ public class Stamp implements Cloneable, Serializable {
 
     /** estimated occurrence time of the event */
     private long occurrenceTime;
+    
+    /** When was put into buffer */
+    private long putInTime;
 
     /** default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
     public static final long ETERNAL = Integer.MIN_VALUE;
@@ -512,5 +515,13 @@ public class Stamp implements Cloneable, Serializable {
         public int compareTo(Object o) {
             return Comparator.comparing(BaseEntry::getNarId).thenComparing(BaseEntry::getInputId).compare(this, (BaseEntry) o);
         }
+    }
+    
+    public long getPutInTime(){
+        return putInTime;
+    }
+
+    public void setPutInTime(long time){
+        putInTime = time;
     }
 }
