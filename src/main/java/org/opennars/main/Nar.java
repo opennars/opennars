@@ -45,6 +45,7 @@ import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
+import org.opennars.plugin.perception.NarseseChannel;
 import org.opennars.storage.Bag;
 import org.opennars.storage.InternalExperienceBuffer;
 import org.opennars.storage.Memory;
@@ -195,7 +196,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void initInternalExperience() { //TODo put into constructor
         int levels = 10;
         int capacity = 50;
-        this.memory.internalExperienceBuffer = new InternalExperienceBuffer(this, levels, capacity, reasoner.narParameters);
+        this.memory.internalExperienceBuffer = new InternalExperienceBuffer(this, levels, capacity, nar.narParameters);
     }
 
     public String usedConfigFilePath = "";
@@ -385,6 +386,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         Task task = null;
         try {
+            if(memory.narseseChannel == null) //not all NAR's will need it!
+            {
+                memory.narseseChannel = new NarseseChannel(this);
+            }
             memory.narseseChannel.putIn(this, text);
             task = memory.narseseChannel.takeOut(); //retrieve an item from the Narsese channel
         } catch (final Parser.InvalidInputException e) {

@@ -42,23 +42,30 @@ import org.opennars.main.Nar;
 import org.opennars.operator.Operator;
 import org.opennars.io.Narsese;
 import org.opennars.io.Parser;
+import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 
 public class NarseseChannel extends SensoryChannel  {
  
- public NarseseChannel(){
-     super();
- }
+    Nar nar;
+    public NarseseChannel(Nar nar){
+        super();
+        this.nar = nar;
+    }
  
- Task task = null;
- public void putIn(Nar nar, String text)
- {
+    @Override
+    public Nar addInput(final Task t, final Timable time){ return nar; } //this channel can't receive re-routed tasks
+
+    Task task = null;
+    public void putIn(Nar nar, String text) throws Parser.InvalidInputException
+    {
      final Parser narsese = new Narsese(nar);
      this.task = narsese.parseTask(text);
- }
- 
- public Task takeOut() //todo use channel method
- {
+    }
+
+    public Task takeOut() //todo use channel method
+    {
      return this.task;
- }
+    }
 
 }

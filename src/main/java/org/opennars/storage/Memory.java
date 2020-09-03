@@ -49,7 +49,7 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.InternalExperienceBuffer;
-import org.opennars.storage.NarseseChannel;
+import org.opennars.plugin.perception.NarseseChannel;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.main.Debug;
 
@@ -101,7 +101,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Buffer/*<Task<Term>,Sentence<Term>>*/ globalBuffer;
     public InternalExperienceBuffer internalExperienceBuffer;
-    public NarseseChannel narseseChannel = new NarseseChannel();
+    public NarseseChannel narseseChannel = null;
     
     /* Input event tasks that were either input events or derived sequences*/
     public final Bag<Task<Term>,Sentence<Term>> recent_operations;
