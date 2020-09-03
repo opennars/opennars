@@ -152,7 +152,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         return putIn(oldItem);
     }
     
-    public boolean expired(long creationTime) {
+    public boolean expired(long insertionTime) {
         return false;
     }
 
@@ -185,11 +185,11 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         }
         currentCounter--;
         nameTable.remove(selected.name());
-        long creationTime = 0;
+        long putInTime = 0;
         if(selected instanceof Task) {
-            creationTime = ((Task) selected).sentence.stamp.getCreationTime();
+            putInTime = ((Task) selected).sentence.stamp.getPutInTime();
         }
-        if(expired(creationTime))
+        if(expired(putInTime))
         {
             return takeOut();
         }

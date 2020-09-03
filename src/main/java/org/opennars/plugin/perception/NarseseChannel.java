@@ -45,11 +45,16 @@ import org.opennars.io.Parser;
 import org.opennars.entity.Task;
 import org.opennars.interfaces.Timable;
 
+/**
+ *
+ * @author Patrick
+ */
+
 public class NarseseChannel extends SensoryChannel  {
  
     Nar nar;
     public NarseseChannel(Nar nar){
-        super();
+        super(nar);
         this.nar = nar;
     }
  

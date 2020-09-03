@@ -37,6 +37,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennars.plugin.Plugin;
 
+/**
+ *
+ * @author Patrick
+ */
+
 public abstract class SensoryChannel extends Channel implements Plugin, Serializable {
     private Collection<SensoryChannel> reportResultsTo;
     public Nar nar; //for top-down influence of concept budgets
@@ -73,9 +78,10 @@ public abstract class SensoryChannel extends Channel implements Plugin, Serializ
         this.duration = (int) val;
     }
     
-    public SensoryChannel(){ super(null, 0, 0, null); }
+    public SensoryChannel() { super(1, 1); }
+    public SensoryChannel(final Nar nar){ super(nar, 1, 1); }
     public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
-        this();
+        this(nar);
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
         this.width = width;

@@ -45,12 +45,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ *
+ * @author Xiang, Peter, Patrick
+ */
+
 public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     Nar nar;
     Parameters narParameters;
-    long max_duration;
-    static int duration = 100; //buffer duration, TODO make a param
+    static long maxDuration = 10000; //buffer duration in cycles, TODO make a param
     public Buffer seq_current; //for temporal inference support via BufferInference.java
     
     public Buffer(Nar nar, int levels, int capacity, Parameters narParameters) {
@@ -60,10 +64,9 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     }
     
     @Override
-    public boolean expired(long creationTime) {
+    public boolean expired(long putInTime) {
         long currentTime = nar.time();
-        long delta = currentTime - creationTime;
-        long maxDuration = narParameters.DURATION * narParameters.MAX_BUFFER_DURATION_FACTOR;
+        long delta = currentTime - putInTime;
         return delta > maxDuration;
     }
     
@@ -72,7 +75,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         ArrayList<Sentence> expiredKey = new ArrayList<Sentence>();
 
         nameTable.forEach((key, task) -> {
-            if((nar.time() - task.sentence.stamp.getPutInTime()) > duration){
+            if(expired(task.sentence.stamp.getPutInTime())){
                 expiredKey.add(key);
             }
         });

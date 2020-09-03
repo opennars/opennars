@@ -63,6 +63,11 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
+/**
+ *
+ * @author Peter
+ */
+
 public class InternalExperienceBuffer extends Buffer{
 
     public InternalExperienceBuffer(Nar nar, int levels, int capacity, Parameters narParameters)
