@@ -154,7 +154,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
            //DerivationContext cont = DerivationContext(final Memory mem, final Parameters narParameters, final Timable time)
            for(Task lastEvent : this) { //inference with all events in buffer
                
-               final DerivationContext cont = new DerivationContext(this, nar.narParameters, time);
+               final DerivationContext cont = new DerivationContext(this, nar.narParameters, nar);
                cont.setCurrentTask(newEvent);
                cont.setCurrentTerm(newEvent.getTerm());
                cont.setCurrentConcept(nar.memory.conceptualize(newEvent.budget, cont.getCurrentTerm()));
