@@ -403,7 +403,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                globalBuffer.eventInference(task, false); //can be triggered by Buffer itself in the future
+                globalBuffer.eventInference(task, cont, false); //can be triggered by Buffer itself in the future
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();

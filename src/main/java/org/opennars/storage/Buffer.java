@@ -105,7 +105,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         Task task = super.takeOut();
         if(task != null)
         {
-            eventInference(task, true);
+            eventInference(task, null, true);
         }
         return task;
     }
@@ -137,32 +137,32 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
     }
 
-    public boolean eventInference(final Task newEvent, boolean bufferInduction) {
+    public boolean eventInference(final Task newEvent, DerivationContext nal, boolean bufferInduction) {
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
        }
 
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
+        //nal.emit(Events.InduceSucceedingEvent.class, newEvent); //would generate too much messages now
 
         if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInput()) {
             return false;
        }
 
-        if(bufferInduction || !nal.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) 
+        if(bufferInduction || !nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) 
         {
            //DerivationContext cont = DerivationContext(final Memory mem, final Parameters narParameters, final Timable time)
            for(Task lastEvent : this) { //inference with all events in buffer
                
-               final DerivationContext cont = new DerivationContext(this, nal.narParameters, time);
+               final DerivationContext cont = new DerivationContext(this, nar.narParameters, time);
                cont.setCurrentTask(newEvent);
                cont.setCurrentTerm(newEvent.getTerm());
                cont.setCurrentConcept(nar.memory.conceptualize(newEvent.budget, cont.getCurrentTerm()));
-               if(lastEvent.isEternal())
+               if(lastEvent.sentence.isEternal())
                {
                    continue;
                }
-               final List<Task> res = null;
+               List<Task> res = null;
                if(newEvent.sentence.stamp.getOccurrenceTime() > lastEvent.sentence.stamp.getOccurrenceTime()) {
                    res = proceedWithTemporalInduction(newEvent.sentence, lastEvent.sentence, newEvent, cont, true, false, true);
                }
@@ -180,7 +180,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         final Set<Task> already_attempted = new LinkedHashSet<>();
         final Set<Task> already_attempted_ops = new LinkedHashSet<>();
         //Sequence formation:
-        for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
+        for(int i =0; i<nar.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             synchronized(seq_current) {
                 final Task takeout = seq_current.takeOut();
                 if(takeout == null) {
@@ -189,43 +189,43 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
 
                 if(already_attempted.contains(takeout) || 
                         Stamp.baseOverlap(newEvent.sentence.stamp, takeout.sentence.stamp)) {
-                    seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                    seq_current.putBack(takeout, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
                     continue;
                 }
                 already_attempted.add(takeout);
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-                seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                seq_current.putBack(takeout, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
             }
         }
 
         //Conditioning:
-        if(nal.memory.lastDecision != null && newEvent != nal.memory.lastDecision) {
+        if(nar.memory.lastDecision != null && newEvent != nar.memory.lastDecision) {
             already_attempted_ops.clear();
-            for(int k = 0; k<nal.narParameters.OPERATION_SAMPLES;k++) {
+            for(int k = 0; k<nar.narParameters.OPERATION_SAMPLES;k++) {
                 already_attempted.clear(); //todo move into k loop
-                final Task Toperation = k == 0 ? nal.memory.lastDecision : nal.memory.recent_operations.takeOut();
+                final Task Toperation = k == 0 ? nar.memory.lastDecision : nar.memory.recent_operations.takeOut();
                 if(Toperation == null) {
                     break; //there were no elements in the bag to try
                 }
                 if(already_attempted_ops.contains(Toperation)) {
                     //put opc back into bag
                     //(k>0 holds here):
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                    nar.memory.recent_operations.putBack(Toperation, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
                     continue;
                 }
                 already_attempted_ops.add(Toperation);
-                final Concept opc = nal.memory.concept(Toperation.getTerm());
+                final Concept opc = nar.memory.concept(Toperation.getTerm());
                 if(opc != null) {
                     if(opc.seq_before == null) {
-                        opc.seq_before = new Bag<>(nal.narParameters.SEQUENCE_BAG_LEVELS, nal.narParameters.SEQUENCE_BAG_SIZE, nal.narParameters);
+                        opc.seq_before = new Bag<>(nar.narParameters.SEQUENCE_BAG_LEVELS, nar.narParameters.SEQUENCE_BAG_SIZE, nar.narParameters);
                     }
-                    for(int i = 0; i<nal.narParameters.CONDITION_BAG_ATTEMPTS; i++) {
+                    for(int i = 0; i<nar.narParameters.CONDITION_BAG_ATTEMPTS; i++) {
                         final Task takeout = opc.seq_before.takeOut();
                         if(takeout == null) {
                             break; //there were no elements in the bag to try
                         }
                         if(already_attempted.contains(takeout)) {
-                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                            opc.seq_before.putBack(takeout, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
                             continue;
                         }
                         already_attempted.add(takeout);
@@ -235,7 +235,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                             System.out.println("analyze case in TemporalInferenceControl!");
                             continue;
                         }
-                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
+                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nar.memory.lastDecision, nal, true, false, true);
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
                                 final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
@@ -245,12 +245,12 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                             }
                         }
 
-                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                        opc.seq_before.putBack(takeout, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
                     }
                 }
                 //put Toperation back into bag if it was taken out
                 if(k > 0) {
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
+                    nar.memory.recent_operations.putBack(Toperation, nar.memory.cycles(nar.memory.narParameters.EVENT_FORGET_DURATIONS), nar.memory);
                 }
             }
         }
