@@ -237,7 +237,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
             
-            if(reason.equals("Executed") || reason.equals("Derived"))
+            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("Emotion"))
             {
                 //these go to internal experience first, and only after go to global buffer:
                 internalExperienceBuffer.putIn(t);
@@ -403,7 +403,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                globalBuffer.eventInference(task, cont); //can be triggered by Buffer itself in the future
+                globalBuffer.eventInference(task, false); //can be triggered by Buffer itself in the future
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();

@@ -297,4 +297,7 @@ public class Parameters implements Serializable {
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
     
+    /**Allow legacy event bag-like handling for comparison?*/
+    public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true;
+    
 }

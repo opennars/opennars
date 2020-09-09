@@ -88,10 +88,13 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     }
     
     public Task putIn(Task task){
-        if(task.sequenceTask) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
+        if(task.sequenceTask && nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
         {
-            addToSequenceTasks(task);
-            return task;
+            if(this == nar.memory.globalBuffer) //but only for global buffer this handling is allowed for comparison purposes, if it's more powerful we might want to consider making it default for buffer in general
+            {
+                addToSequenceTasks(task);
+                return task;
+            }
         }
         task.sentence.stamp.setPutInTime(nar.time());
         return (Task) super.putIn(task);
@@ -99,7 +102,12 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     public Task takeOut(){
         clearExpiredItem();
-        return super.takeOut();
+        Task task = super.takeOut();
+        if(task != null)
+        {
+            eventInference(task, true);
+        }
+        return task;
     }
     
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
@@ -129,7 +137,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
     }
 
-    public boolean eventInference(final Task newEvent, final DerivationContext nal) {
+    public boolean eventInference(final Task newEvent, boolean bufferInduction) {
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
@@ -140,6 +148,34 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInput()) {
             return false;
        }
+
+        if(bufferInduction || !nal.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) 
+        {
+           //DerivationContext cont = DerivationContext(final Memory mem, final Parameters narParameters, final Timable time)
+           for(Task lastEvent : this) { //inference with all events in buffer
+               
+               final DerivationContext cont = new DerivationContext(this, nal.narParameters, time);
+               cont.setCurrentTask(newEvent);
+               cont.setCurrentTerm(newEvent.getTerm());
+               cont.setCurrentConcept(nar.memory.conceptualize(newEvent.budget, cont.getCurrentTerm()));
+               if(lastEvent.isEternal())
+               {
+                   continue;
+               }
+               final List<Task> res = null;
+               if(newEvent.sentence.stamp.getOccurrenceTime() > lastEvent.sentence.stamp.getOccurrenceTime()) {
+                   res = proceedWithTemporalInduction(newEvent.sentence, lastEvent.sentence, newEvent, cont, true, false, true);
+               }
+               else {
+                   res = proceedWithTemporalInduction(lastEvent.sentence, newEvent.sentence, lastEvent, cont, true, false, true);
+               }
+               for(Task t : res) {
+                   t.sequenceTask = false;
+                   this.putIn(t);
+               }
+            }
+           return true;
+        }
 
         final Set<Task> already_attempted = new LinkedHashSet<>();
         final Set<Task> already_attempted_ops = new LinkedHashSet<>();
