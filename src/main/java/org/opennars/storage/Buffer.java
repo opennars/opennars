@@ -54,13 +54,15 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     Nar nar;
     Parameters narParameters;
-    static long maxDuration = 10000; //buffer duration in cycles, TODO make a param
+    long maxDuration = 10000; //buffer duration in cycles, TODO make a param
     public Buffer seq_current; //for temporal inference support via BufferInference.java
     
     public Buffer(Nar nar, int levels, int capacity, Parameters narParameters) {
         super(levels, capacity, narParameters);
         this.nar = nar;
         this.narParameters = narParameters;
+        this.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true; //can be commented out
+        this.maxDuration = (long) this.narParameters.BUFFER_MAX_DURATION;
     }
     
     @Override
