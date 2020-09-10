@@ -103,6 +103,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         return (Task) super.putIn(task);
     } 
     
+    @Override
     public Task takeOut(){
         clearExpiredItem();
         Task task = super.takeOut();

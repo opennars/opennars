@@ -378,7 +378,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                     }
                 }
                 //if it's not meant to enter another channel just put into global buffer
-                this.addNewTask(task, "Input"); //goes to global buffer, but printing it
+                this.addNewTask(task, "Perceived"); //goes to global buffer, but printing it
             }
         }
         //2. Internal experience buffer to global buffer

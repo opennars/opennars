@@ -66,7 +66,6 @@ public class NarseseChannel extends SensoryChannel  {
     {
      final Parser narsese = new Narsese(nar);
      this.task = narsese.parseTask(text);
-     this.task.isInput = true;
     }
 
     public Task takeOut() //todo use channel method
