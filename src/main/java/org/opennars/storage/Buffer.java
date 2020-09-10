@@ -61,7 +61,6 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         super(levels, capacity, narParameters);
         this.nar = nar;
         this.narParameters = narParameters;
-        this.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true; //can be commented out
         this.maxDuration = (long) this.narParameters.BUFFER_MAX_DURATION;
     }
     
