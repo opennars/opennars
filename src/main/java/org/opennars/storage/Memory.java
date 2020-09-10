@@ -104,7 +104,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public NarseseChannel narseseChannel = null;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Bag<Task<Term>,Sentence<Term>> recent_operations;
+    public final Bag<Task<Term>,Sentence<Term>> recent_operations;  //only used for the optional legacy handling for comparison purposes
     
     //Boolean localInferenceMutex = false;
 
