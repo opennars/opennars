@@ -402,12 +402,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             }
             return;
         }
-        // check if it should go to a sensory channel and dispatch to it instead
-        if (dispatchToSensoryChannel(task)) {
-            return;
-        }
-
-        
     }
 
     /**
@@ -415,7 +409,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * @param task dispatched task
      * @return was it dispatched to a sensory channel?
      */
-    private boolean dispatchToSensoryChannel(Task task) {
+    public boolean dispatchToSensoryChannel(Task task) {
         final Term t = task.getTerm();
         if(t != null) {
             Term predicate = null;

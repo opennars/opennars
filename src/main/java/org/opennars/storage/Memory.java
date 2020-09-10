@@ -238,7 +238,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
             
-            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("emotion"))
+            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("emotion")  || reason.equals("Internal"))
             {
                 //these go to internal experience first, and only after go to global buffer:
                 internalExperienceBuffer.putIn(t);
@@ -371,13 +371,21 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         for(Channel c : nar.sensoryChannels.values()) {
             Task task = c.takeOut(); //retrieve an item from the Narsese channel
             if(task != null) {
-                globalBuffer.putIn(task);
+                //optional: re-routing feature for "vision Narsese". not necessary but nice
+                if(c == this.narseseChannel) {
+                    if(nar.dispatchToSensoryChannel(task)) {
+                        continue; //commented
+                    }
+                }
+                //if it's not meant to enter another channel just put into global buffer
+                this.addNewTask(task, "Input"); //goes to global buffer, but printing it
             }
         }
         //2. Internal experience buffer to global buffer
         Task t_internal = internalExperienceBuffer.takeOut(); //might have more than 1 item to take out
         if(t_internal != null) {
             globalBuffer.putIn(t_internal);
+            internalExperienceBuffer.putBack(t_internal, narParameters.INTERNAL_BUFFER_FORGET_DURATIONS, this);
         }
         //3. process a task of global buffer
         this.processGlobalBufferTask(nar.narParameters, nar);
@@ -424,9 +432,12 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void processGlobalBufferTask(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
             final Task task = globalBuffer.takeOut();
-            if (task != null && !task.processed) {            
-                localInference(task, narParameters, time);
-                task.processed = true;
+            if (task != null) {
+                if(!task.processed) {
+                    task.processed = true;
+                    localInference(task, narParameters, time);
+                }
+                globalBuffer.putBack(task, narParameters.GLOBAL_BUFFER_FORGET_DURATIONS, this);
             }
         }
     }

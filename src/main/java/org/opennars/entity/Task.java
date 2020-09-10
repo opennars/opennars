@@ -61,7 +61,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     /* Whether the task should go into event bag or not*/
     private boolean partOfSequenceBuffer = false;
     /* Whether it is an input task or not */
-    private boolean isInput = false;
+    public boolean isInput = false;
 
     /**
      * Constructor for input task and single premise derived task

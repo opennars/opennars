@@ -263,7 +263,17 @@ public class Parameters implements Serializable {
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.*/
     public volatile float CONCEPT_FORGET_DURATIONS = 2.0f;
-
+    
+    /**
+     *  global buffer forget durations
+     */
+    public volatile float GLOBAL_BUFFER_FORGET_DURATIONS = 1.0f;
+    
+    /**
+     *  internal buffer forget durations
+     */
+    public volatile float INTERNAL_BUFFER_FORGET_DURATIONS = 1.0f;
+    
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     public volatile float TERMLINK_FORGET_DURATIONS = 10.0f;
 
@@ -301,6 +311,6 @@ public class Parameters implements Serializable {
     public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true;
     
     /**Buffer max duration*/
-    public volatile int BUFFER_MAX_DURATION = 10000;
+    public volatile int BUFFER_MAX_DURATION = 100;
     
 }

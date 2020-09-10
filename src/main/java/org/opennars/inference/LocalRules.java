@@ -195,6 +195,9 @@ public class LocalRules {
 
     public static double calcTaskAchievement(TruthValue t1, TruthValue t2)
     {
+        if(t1 == null) {
+            return t2.getExpectation();
+        }
         return Math.abs(t1.getExpectation() - t2.getExpectation());
     }
 

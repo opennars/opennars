@@ -54,9 +54,9 @@ public class Debug {
      */
 
     /** Whether the system tries to continue after occurrence of a reasoning error, recommended as not all cases may be tested */
-    public static boolean REASONING_ERRORS_CONTINUE = true;
+    public static boolean REASONING_ERRORS_CONTINUE = false;
     /** Whether the system tries to continue after occurrence of an execution error, recommended as these are not always avoidable */
-    public static boolean EXECUTION_ERRORS_CONTINUE = true;
+    public static boolean EXECUTION_ERRORS_CONTINUE = false;
     /** Whether the system should continue after an input error, not recommended as it should be handled externally */
     public static boolean INPUT_ERRORS_CONTINUE = false;
     /** Use this for advanced error checking, at the expense of lower performance. */

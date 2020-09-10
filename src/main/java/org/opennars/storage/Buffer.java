@@ -91,7 +91,9 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     public Task putIn(Task task){
         if((task.parentTask == null || task.sequenceTask) && nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
         {
-            if(this == nar.memory.globalBuffer) //but only for global buffer this handling is allowed for comparison purposes, if it's more powerful we might want to consider making it default for buffer in general
+            if(this == nar.memory.globalBuffer &&
+                    task.sentence.getOccurenceTime() != Stamp.ETERNAL &&
+                    task.sentence.isJudgment()) //but only for global buffer this handling is allowed for comparison purposes, if it's more powerful we might want to consider making it default for buffer in general
             {
                 addToSequenceTasks(task);
                 return task;
