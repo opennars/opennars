@@ -89,7 +89,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     }
     
     public Task putIn(Task task){
-        if(task.sequenceTask && nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
+        if((task.parentTask == null || task.sequenceTask) && nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
         {
             if(this == nar.memory.globalBuffer) //but only for global buffer this handling is allowed for comparison purposes, if it's more powerful we might want to consider making it default for buffer in general
             {

@@ -58,6 +58,7 @@ import java.util.*;
 import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.io.Channel;
 import org.opennars.plugin.mental.InternalExperience;
 
 
@@ -241,8 +242,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             {
                 //these go to internal experience first, and only after go to global buffer:
                 internalExperienceBuffer.putIn(t);
-                Task t_internal = internalExperienceBuffer.takeOut(); //might have more than 1 item to take out
-                globalBuffer.putIn(t_internal);
             }
             else
             {
@@ -368,17 +367,22 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void cycle(final Nar nar) {
     
         event.emit(Events.CycleStart.class);
-        //TODO: Allow flexible resource allocation between
-        //channel operations and general inference
-        //instead of this fixed treatment
-        //channels (channel priority for instance as moving avg of the items for resource alloc)
-        //novel tasks
-        for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
-            this.processGlobalBufferTask(nar.narParameters, nar);
+        //1. Channels to global buffer
+        for(Channel c : nar.sensoryChannels.values()) {
+            Task task = c.takeOut(); //retrieve an item from the Narsese channel
+            if(task != null) {
+                globalBuffer.putIn(task);
+            }
         }
-        //general inference step
+        //2. Internal experience buffer to global buffer
+        Task t_internal = internalExperienceBuffer.takeOut(); //might have more than 1 item to take out
+        if(t_internal != null) {
+            globalBuffer.putIn(t_internal);
+        }
+        //3. process a task of global buffer
+        this.processGlobalBufferTask(nar.narParameters, nar);
+        //4. apply general inference step
         GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
-        
         event.emit(Events.CycleEnd.class);
         event.synch();
     }
@@ -420,8 +424,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void processGlobalBufferTask(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
             final Task task = globalBuffer.takeOut();
-            if (task != null) {            
+            if (task != null && !task.processed) {            
                 localInference(task, narParameters, time);
+                task.processed = true;
             }
         }
     }

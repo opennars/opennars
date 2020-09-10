@@ -104,7 +104,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
     private transient Thread[] threads = null;
-    protected transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
+    public transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
@@ -389,9 +389,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             if(memory.narseseChannel == null) //not all NAR's will need it!
             {
                 memory.narseseChannel = new NarseseChannel(this);
+                sensoryChannels.put(new Term("__NARSESE__"), memory.narseseChannel);
             }
             memory.narseseChannel.putIn(this, text);
-            task = memory.narseseChannel.takeOut(); //retrieve an item from the Narsese channel
+            
         } catch (final Parser.InvalidInputException e) {
             if(Debug.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
@@ -406,8 +407,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             return;
         }
 
-        //else input into NARS directly:
-        this.memory.inputTask(this, task);
+        
     }
 
     /**
