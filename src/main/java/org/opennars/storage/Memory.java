@@ -237,7 +237,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
             
-            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("Emotion"))
+            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("emotion"))
             {
                 //these go to internal experience first, and only after go to global buffer:
                 internalExperienceBuffer.putIn(t);

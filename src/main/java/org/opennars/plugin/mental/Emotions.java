@@ -234,7 +234,7 @@ public class Emotions implements Plugin, Serializable {
                 nal.narParameters.DEFAULT_JUDGMENT_DURABILITY,
                 BudgetFunctions.truthToQuality(truth), nal.narParameters);
             final Task t = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
-            nal.addTask(t, "Emotion");
+            nal.addTask(t, "emotion");
         }
     }
 
