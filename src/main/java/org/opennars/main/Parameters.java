@@ -301,6 +301,6 @@ public class Parameters implements Serializable {
     public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true;
     
     /**Buffer max duration*/
-    public volatile int BUFFER_MAX_DURATION = true;
+    public volatile int BUFFER_MAX_DURATION = 10000;
     
 }
