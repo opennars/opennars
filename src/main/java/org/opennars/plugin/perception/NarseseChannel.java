@@ -44,6 +44,8 @@ import org.opennars.io.Narsese;
 import org.opennars.io.Parser;
 import org.opennars.entity.Task;
 import org.opennars.interfaces.Timable;
+import org.opennars.io.events.OutputHandler;
+import static org.opennars.storage.Memory.isJUnitTest;
 
 /**
  *
@@ -68,9 +70,14 @@ public class NarseseChannel extends SensoryChannel  {
      Task t = narsese.parseTask(text);
      if(!t.sentence.isEternal()) {
          t.sentence.stamp.setOccurrenceTime(nar.time());
-         t.sentence.stamp.setCreationTime(nar.time(), nar.narParameters.DURATION);
+         
      }
-     nar.memory.emit(Events.TaskAdd.class, t, "Perceived");
+     t.sentence.stamp.setCreationTime(nar.time(), nar.narParameters.DURATION);
+     nar.memory.emit(OutputHandler.IN.class, t);
+     if(!nar.memory.checked) {
+        nar.memory.checked=true;
+        nar.memory.isjUnit=isJUnitTest();
+     }
      this.putIn(t);
     }
 }

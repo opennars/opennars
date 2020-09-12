@@ -108,8 +108,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     //Boolean localInferenceMutex = false;
 
 
-    boolean checked=false;
-    boolean isjUnit=false;
+    public boolean checked=false;
+    public boolean isjUnit=false;
     
     /* ---------- Constructor ---------- */
     /**
@@ -289,12 +289,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
             if(emitIn) {
                 emit(IN.class, task);
-            }
-
-            if (task.budget.aboveThreshold()) {
-                addNewTask(task, "Perceived");
-            } else {
-                removeTask(task, "Neglected");
             }
         }
     }
