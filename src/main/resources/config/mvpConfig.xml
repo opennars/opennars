@@ -43,8 +43,10 @@
     <conf name="TERM_LINK_BAG_LEVELS" value="10"/>
     <conf name="TERM_LINK_MAX_MATCHED" value="10"/>
     
-    <conf name="GLOBAL_TASK_BAG_SIZE" value="50"/>
-    <conf name="GLOBAL_TASK_BAG_LEVELS" value="10"/>
+    <conf name="GLOBAL_BUFFER_SIZE" value="30"/>
+    <conf name="GLOBAL_BUFFER_LEVELS" value="10"/>
+    <conf name="INTERNAL_BUFFER_SIZE" value="30"/>
+    <conf name="INTERNAL_BUFFER_LEVELS" value="10"/>
     
     <conf name="SEQUENCE_BAG_SIZE" value="30"/>
     <conf name="SEQUENCE_BAG_LEVELS" value="10"/>
