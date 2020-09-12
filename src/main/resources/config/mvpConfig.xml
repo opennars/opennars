@@ -115,6 +115,8 @@
 
     <conf name="DERIVATION_DURABILITY_LEAK" value="0.4"/>
     <conf name="DERIVATION_PRIORITY_LEAK" value="0.4"/>
+    
+    <conf name="ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO" value="false"/>
 
     <!-- plugins -->
     <plugins>

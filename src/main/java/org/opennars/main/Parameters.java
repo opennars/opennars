@@ -307,10 +307,10 @@ public class Parameters implements Serializable {
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
     
-    /**Allow legacy event bag-like handling for comparison?*/
-    public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = true;
-    
     /**Buffer max duration*/
     public volatile int BUFFER_MAX_DURATION = 100;
+    
+    /**Allow legacy event bag-like handling for comparison?*/
+    public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = false;
     
 }
