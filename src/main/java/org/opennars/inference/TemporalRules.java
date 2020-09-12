@@ -24,7 +24,6 @@
 package org.opennars.inference;
 
 import org.opennars.control.DerivationContext;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;

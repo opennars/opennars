@@ -24,7 +24,7 @@
 package org.opennars.io.events;
 
 import org.opennars.control.DerivationContext;
-import org.opennars.control.GeneralInferenceControl;
+import org.opennars.control.InferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
@@ -135,10 +135,10 @@ public class Events {
          * Concept n.getCurrentConcept()
          * TaskLink n.getCurrentTaskLink()
          */
-        abstract public void onFire(GeneralInferenceControl n);
+        abstract public void onFire(InferenceControl n);
         
         @Override public void event(final Class event, final Object[] args) {
-            onFire((GeneralInferenceControl)args[0]);
+            onFire((InferenceControl)args[0]);
         }
         
     }

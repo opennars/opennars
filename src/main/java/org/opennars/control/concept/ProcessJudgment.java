@@ -25,7 +25,6 @@ package org.opennars.control.concept;
 
 import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;

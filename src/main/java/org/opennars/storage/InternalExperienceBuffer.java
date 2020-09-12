@@ -23,38 +23,16 @@
  */
 package org.opennars.storage;
 
-import org.opennars.storage.Buffer;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 
-import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
-import org.opennars.storage.Memory;
 import org.opennars.inference.BudgetFunctions;
 
-import static com.google.common.collect.Iterables.tryFind;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import static org.opennars.inference.LocalRules.revisible;
-import static org.opennars.inference.LocalRules.revision;
-import static org.opennars.inference.LocalRules.trySolution;
-import static org.opennars.inference.LocalRules.calcTaskAchievement;
-
-import org.opennars.inference.TemporalRules;
-import org.opennars.io.events.Events;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;

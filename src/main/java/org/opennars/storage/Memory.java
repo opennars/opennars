@@ -25,8 +25,7 @@ package org.opennars.storage;
  
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
-import org.opennars.control.GeneralInferenceControl;
-import org.opennars.control.TemporalInferenceControl;
+import org.opennars.control.InferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.interfaces.Resettable;
@@ -48,7 +47,6 @@ import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-import org.opennars.storage.InternalExperienceBuffer;
 import org.opennars.plugin.perception.NarseseChannel;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.main.Debug;
@@ -390,7 +388,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         //3. process a task of global buffer
         this.processGlobalBufferTask(nar.narParameters, nar);
         //4. apply general inference step
-        GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
+        InferenceControl.selectConceptForInference(this, nar.narParameters, nar);
         event.emit(Events.CycleEnd.class);
         event.synch();
     }

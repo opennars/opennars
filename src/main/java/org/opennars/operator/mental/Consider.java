@@ -24,7 +24,7 @@
 package org.opennars.operator.mental;
 
 import org.opennars.control.DerivationContext;
-import org.opennars.control.GeneralInferenceControl;
+import org.opennars.control.InferenceControl;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
@@ -64,7 +64,7 @@ public class Consider extends Operator {
         
         final DerivationContext cont = new DerivationContext(memory, memory.narParameters, time);
         cont.setCurrentConcept(concept);
-        GeneralInferenceControl.fireConcept(cont, 1);
+        InferenceControl.fireConcept(cont, 1);
         
         return null;
     }

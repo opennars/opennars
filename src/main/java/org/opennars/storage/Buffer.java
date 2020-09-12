@@ -114,12 +114,12 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         return task;
     }
     
-    public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, final boolean bufferInduction) {
         
         if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return null;
         }
-        if (newEvent.isEternal() || !controllerTask.isInput()) {
+        if (newEvent.isEternal() || (!bufferInduction && !controllerTask.isInput())) {
             return null;
         }
         /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
@@ -143,13 +143,13 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
 
     public boolean eventInference(final Task newEvent, DerivationContext nal, boolean bufferInduction) {
 
-        if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
+        if(newEvent.getTerm() == null || newEvent.budget==null || (!bufferInduction && !newEvent.isElemOfSequenceBuffer())) { //todo refine, add directbool in task
             return false;
        }
 
         //nal.emit(Events.InduceSucceedingEvent.class, newEvent); //would generate too much messages now
 
-        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInput()) {
+        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || (!bufferInduction && !newEvent.isInput())) {
             return false;
        }
 
@@ -168,10 +168,10 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                }
                List<Task> res = null;
                if(newEvent.sentence.stamp.getOccurrenceTime() > lastEvent.sentence.stamp.getOccurrenceTime()) {
-                   res = proceedWithTemporalInduction(newEvent.sentence, lastEvent.sentence, newEvent, cont, true, false, true);
+                   res = proceedWithTemporalInduction(newEvent.sentence, lastEvent.sentence, newEvent, cont, true, false, true, bufferInduction);
                }
                else {
-                   res = proceedWithTemporalInduction(lastEvent.sentence, newEvent.sentence, lastEvent, cont, true, false, true);
+                   res = proceedWithTemporalInduction(lastEvent.sentence, newEvent.sentence, lastEvent, cont, true, false, true, bufferInduction);
                }
                for(Task t : res) {
                    t.sequenceTask = false;
@@ -197,7 +197,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                     continue;
                 }
                 already_attempted.add(takeout);
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
+                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true, bufferInduction);
                 seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
         }
@@ -239,10 +239,10 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                             System.out.println("analyze case in TemporalInferenceControl!");
                             continue;
                         }
-                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
+                        final List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true, bufferInduction);
                         for(final Task t : seq_op) {
                             if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
-                                final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
+                                final List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false, bufferInduction); //only =/> </> ..
                                 /*DETAILED: for(Task seq_op_cons : res) {
                                     System.out.println(seq_op_cons.toString());
                                 }*/
