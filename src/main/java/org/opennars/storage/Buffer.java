@@ -96,7 +96,6 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                     task.sentence.isJudgment()) //but only for global buffer this handling is allowed for comparison purposes, if it's more powerful we might want to consider making it default for buffer in general
             {
                 addToSequenceTasks(task);
-                return task;
             }
         }
         task.sentence.stamp.setPutInTime(nar.time());
@@ -116,18 +115,18 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     public static List<Task> proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, final Task controllerTask, final DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, final boolean bufferInduction) {
         
-        if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
-            return null;
+        if(SucceedingEventsInduction && !bufferInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
+            return new ArrayList<Task>();
         }
         if (newEvent.isEternal() || (!bufferInduction && !controllerTask.isInput())) {
-            return null;
+            return new ArrayList<Task>();
         }
         /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
         }*/
         
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
-            return null; //temporal inductions for judgements only
+            return new ArrayList<Task>(); //temporal inductions for judgements only
         
         nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.time.time());
         nal.setCurrentTask(controllerTask);
@@ -156,7 +155,8 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         if(bufferInduction || !nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) 
         {
            //DerivationContext cont = DerivationContext(final Memory mem, final Parameters narParameters, final Timable time)
-           for(Task lastEvent : this) { //inference with all events in buffer
+            List<Task> resAll = new ArrayList<Task>();
+            for(Task lastEvent : this) { //inference with all events in buffer
                
                final DerivationContext cont = new DerivationContext(nar.memory, nar.narParameters, nar);
                cont.setCurrentTask(newEvent);
@@ -173,18 +173,19 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
                else {
                    res = proceedWithTemporalInduction(lastEvent.sentence, newEvent.sentence, lastEvent, cont, true, false, true, bufferInduction);
                }
-               for(Task t : res) {
-                   t.sequenceTask = false;
-                   this.putIn(t);
-               }
+               resAll.addAll(res);
             }
-           return true;
+            for(Task t : resAll) {
+                t.sequenceTask = false;
+                this.putIn(t);
+            }
+            return true;
         }
 
         final Set<Task> already_attempted = new LinkedHashSet<>();
         final Set<Task> already_attempted_ops = new LinkedHashSet<>();
         //Sequence formation:
-        for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
+        for(int i=0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             synchronized(seq_current) {
                 final Task takeout = seq_current.takeOut();
                 if(takeout == null) {

@@ -61,18 +61,10 @@ public class NarseseChannel extends SensoryChannel  {
     @Override
     public Nar addInput(final Task t, final Timable time){ return nar; } //this channel can't receive re-routed tasks
 
-    Task task = null;
+    //special put in here since it's about String and not task and can throw a parsing exception
     public void putIn(Nar nar, String text) throws Parser.InvalidInputException
     {
      final Parser narsese = new Narsese(nar);
-     this.task = narsese.parseTask(text);
+     this.putIn(narsese.parseTask(text));
     }
-
-    public Task takeOut() //todo use channel method
-    {
-      Task ret = this.task;
-      task = null;
-      return ret;
-    }
-
 }

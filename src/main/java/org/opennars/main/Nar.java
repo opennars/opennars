@@ -83,6 +83,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     /* System clock, relatively defined to guarantee the repeatability of behaviors */
     private Long cycle = new Long(0);
+    private final Object CycleMutex = new Object();
 
     /**
      * The information about the version of the project
@@ -392,7 +393,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                 sensoryChannels.put(new Term("__NARSESE__"), memory.narseseChannel);
             }
             memory.narseseChannel.putIn(this, text);
-            
         } catch (final Parser.InvalidInputException e) {
             if(Debug.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
@@ -635,6 +635,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     /** Main loop executed by the Thread.  Should not be called directly. */
+    final Object Cycle_Mutex = new Object(); //multithreading will be added with care again
     @Override public void run() {
         stopped = false;
 
@@ -664,9 +665,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public void cycle() {
         try {
-            memory.cycle(this);
-
-            synchronized (cycle) {
+            synchronized (CycleMutex) {
+                memory.cycle(this);
                 cycle++;
             }
         }
