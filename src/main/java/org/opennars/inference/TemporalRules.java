@@ -141,7 +141,7 @@ public class TemporalRules {
     }
     
     //TODO maybe split &/ case into own function
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, boolean bufferInduction) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -150,7 +150,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
+        final boolean deriveSequenceOnly = (!addToMemory && !bufferInduction) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         

@@ -71,23 +71,6 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         return delta > maxDuration;
     }
     
-    public void clearExpiredItem(){
-
-        ArrayList<Sentence> expiredKey = new ArrayList<Sentence>();
-
-        nameTable.forEach((key, task) -> {
-            if(expired(task.sentence.stamp.getPutInTime())){
-                expiredKey.add(key);
-            }
-        });
-
-        for (int i = 0; i < expiredKey.size(); i++) {
-            Task task = nameTable.get(expiredKey.get(i));
-            super.pickOut(task.sentence); //task.getKey()
-        }
-
-    }
-    
     public Task putIn(Task task){
         if((task.parentTask == null || task.sequenceTask) && nar.narParameters.ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO) //essentially marked as relevant for temporal reasoning by being input event or temporal rule
         {
@@ -104,11 +87,13 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
     
     @Override
     public Task takeOut(){
-        clearExpiredItem();
         Task task = super.takeOut();
         if(task != null)
         {
-            eventInference(task, null, true);
+            if(this == nar.memory.globalBuffer) {
+                boolean debug = true;
+            }
+             eventInference(task, null, true);
         }
         return task;
     }
@@ -137,7 +122,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
         final Sentence currentBelief = newEvent;
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence);
+        return TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction, addToMemory, allowSequence, bufferInduction);
     }
 
     public boolean eventInference(final Task newEvent, DerivationContext nal, boolean bufferInduction) {
@@ -177,6 +162,7 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
             }
             for(Task t : resAll) {
                 t.sequenceTask = false;
+                nar.memory.emit(Events.TaskAdd.class, t, "Derived");
                 this.putIn(t);
             }
             return true;

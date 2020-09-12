@@ -108,7 +108,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
-            sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
+            synchronized(Cycle_Mutex) {
+                sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
+            }
         } catch (final Parser.InvalidInputException ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
@@ -387,12 +389,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         Task task = null;
         try {
-            if(memory.narseseChannel == null) //not all NAR's will need it!
-            {
-                memory.narseseChannel = new NarseseChannel(this);
-                sensoryChannels.put(new Term("__NARSESE__"), memory.narseseChannel);
+            synchronized (CycleMutex) {
+                if(memory.narseseChannel == null) //not all NAR's will need it!
+                {
+                    memory.narseseChannel = new NarseseChannel(this);
+                    sensoryChannels.put(new Term("__NARSESE__"), memory.narseseChannel);
+                }
+                memory.narseseChannel.putIn(this, text);
             }
-            memory.narseseChannel.putIn(this, text);
         } catch (final Parser.InvalidInputException e) {
             if(Debug.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);

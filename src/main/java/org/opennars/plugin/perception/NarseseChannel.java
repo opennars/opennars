@@ -65,6 +65,12 @@ public class NarseseChannel extends SensoryChannel  {
     public void putIn(Nar nar, String text) throws Parser.InvalidInputException
     {
      final Parser narsese = new Narsese(nar);
-     this.putIn(narsese.parseTask(text));
+     Task t = narsese.parseTask(text);
+     if(!t.sentence.isEternal()) {
+         t.sentence.stamp.setOccurrenceTime(nar.time());
+         t.sentence.stamp.setCreationTime(nar.time(), nar.narParameters.DURATION);
+     }
+     nar.memory.emit(Events.TaskAdd.class, t, "Perceived");
+     this.putIn(t);
     }
 }
