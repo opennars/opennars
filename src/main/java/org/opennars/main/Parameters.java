@@ -129,9 +129,8 @@ public class Parameters implements Serializable {
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public volatile int TERM_LINK_MAX_MATCHED = 10;
     /** Size of Novel Task Buffer */
-    public int NOVEL_TASK_BAG_SIZE = 1000;
-    public int NOVEL_TASK_BAG_LEVELS = 100;
-    public volatile int NOVEL_TASK_BAG_SELECTIONS = 100;
+    public int GLOBAL_TASK_BAG_SIZE = 50;
+    public int GLOBAL_TASK_BAG_LEVELS = 10;
     /**  Size of derived sequence and input event bag */
     public int SEQUENCE_BAG_SIZE = 30;
     public int SEQUENCE_BAG_LEVELS = 10;

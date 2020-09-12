@@ -213,7 +213,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         final Memory m = new Memory(this.narParameters,
                 new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-                new Buffer(this, narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+                new Buffer(this, narParameters.GLOBAL_TASK_BAG_LEVELS, narParameters.GLOBAL_TASK_BAG_SIZE, this.narParameters),
                 new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
                 new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
@@ -237,7 +237,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         overrideParameters(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
             new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-            new Buffer(this, narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+            new Buffer(this, narParameters.GLOBAL_TASK_BAG_LEVELS, narParameters.GLOBAL_TASK_BAG_SIZE, this.narParameters),
             new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
             new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
