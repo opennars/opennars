@@ -25,11 +25,13 @@ package org.opennars.control.concept;
 
 import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+import org.opennars.storage.Memory;
+import org.opennars.storage.InternalExperienceBuffer;
+import org.opennars.inference.BudgetFunctions;
 
 import static com.google.common.collect.Iterables.tryFind;
 import java.util.LinkedHashSet;
@@ -39,6 +41,7 @@ import java.util.Set;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
+import static org.opennars.inference.LocalRules.calcTaskAchievement;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.events.Events;
@@ -69,7 +72,7 @@ public class ProcessJudgment {
      * @param nal The derivation context
      */
     public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
-        handleOperationFeedback(task, nal);
+        InternalExperienceBuffer.handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, nal.time);   // only revise with the strongest -- how about projection?
@@ -87,6 +90,7 @@ public class ProcessJudgment {
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, concept, false, nal);
+                    task.setAchievement(calcTaskAchievement(task.sentence.truth, projectedBelief.truth));
                 }
             }
         }
@@ -102,27 +106,6 @@ public class ProcessJudgment {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
         concept.addToTable(task, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
-    }
-
-    /**
-     * Handle the feedback of the operation that was processed as a judgment.
-     * <br>
-     * The purpose is to start a new operation frame which makes the operation concept 
-     * interpret current events as preconditions and future events as post-conditions to the invoked operation.
-     * 
-     * @param task The judgement task be checked
-     * @param nal The derivation context
-     */
-    public static void handleOperationFeedback(Task task, DerivationContext nal) {
-        if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-            final Operation op = (Operation) task.sentence.term;
-            final Operator o = (Operator) op.getPredicate();
-            //only consider these mental ops an operation to track when executed not already when generated as internal event
-            if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
-                    && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
-                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
-            }
-        }
     }
     
     /**

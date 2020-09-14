@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @author Patrick Hammer
  */
 // TODO< rename this after MVP0 to "ReasonerArguments" >
-public class Parameters implements Serializable {
+public class Parameters implements Serializable {    
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public volatile int NOVELTY_HORIZON = 100000;
 
@@ -51,6 +51,11 @@ public class Parameters implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     
     public volatile int DURATION = 5;
+    
+    /****
+     * This value multiplied with DURATION gives the time a buffer element can stay in a buffer
+     */
+    public volatile long MAX_BUFFER_DURATION_FACTOR = 2;
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered.
@@ -124,9 +129,10 @@ public class Parameters implements Serializable {
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public volatile int TERM_LINK_MAX_MATCHED = 10;
     /** Size of Novel Task Buffer */
-    public int NOVEL_TASK_BAG_SIZE = 1000;
-    public int NOVEL_TASK_BAG_LEVELS = 100;
-    public volatile int NOVEL_TASK_BAG_SELECTIONS = 100;
+    public int GLOBAL_BUFFER_SIZE = 30;
+    public int GLOBAL_BUFFER_LEVELS = 10;
+    public int INTERNAL_BUFFER_SIZE = 30;
+    public int INTERNAL_BUFFER_LEVELS = 10;
     /**  Size of derived sequence and input event bag */
     public int SEQUENCE_BAG_SIZE = 30;
     public int SEQUENCE_BAG_LEVELS = 10;
@@ -258,7 +264,17 @@ public class Parameters implements Serializable {
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.*/
     public volatile float CONCEPT_FORGET_DURATIONS = 2.0f;
-
+    
+    /**
+     *  global buffer forget durations
+     */
+    public volatile float GLOBAL_BUFFER_FORGET_DURATIONS = 1.0f;
+    
+    /**
+     *  internal buffer forget durations
+     */
+    public volatile float INTERNAL_BUFFER_FORGET_DURATIONS = 1.0f;
+    
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     public volatile float TERMLINK_FORGET_DURATIONS = 10.0f;
 
@@ -291,5 +307,11 @@ public class Parameters implements Serializable {
     
     /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
+    
+    /**Buffer max duration*/
+    public volatile int BUFFER_MAX_DURATION = 100;
+    
+    /**Allow legacy event bag-like handling for comparison?*/
+    public volatile boolean ALLOW_LEGACY_EVENT_BAG_HANDLING_TOO = false;
     
 }

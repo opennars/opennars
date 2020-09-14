@@ -26,6 +26,7 @@ package org.opennars.storage;
 import org.opennars.entity.Item;
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.entity.Task;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.main.Parameters;
 
@@ -42,7 +43,7 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
     /** shared DISTRIBUTOR that produce the probability distribution */
     private final Distributor DISTRIBUTOR;
     /** mapping from key to item */
-    private HashMap<K, Type> nameTable;
+    protected HashMap<K, Type> nameTable;
     /** array of lists of items, for items on different level */
     private ArrayList<ArrayList<Type>> itemTable;
     /** defined in different bags */
@@ -150,6 +151,10 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         BudgetFunctions.applyForgetting(oldItem.budget, forgetCycles, relativeThreshold);
         return putIn(oldItem);
     }
+    
+    public boolean expired(long insertionTime) {
+        return false;
+    }
 
     /**
      * Choose an Item according to priority distribution and take it out of the Bag
@@ -180,6 +185,14 @@ public class Bag<Type extends Item<K>,K> implements Serializable, Iterable<Type>
         }
         currentCounter--;
         nameTable.remove(selected.name());
+        long putInTime = 0;
+        if(selected instanceof Task) {
+            putInTime = ((Task) selected).sentence.stamp.getPutInTime();
+        }
+        if(expired(putInTime))
+        {
+            return takeOut();
+        }
         return selected;
     }
 

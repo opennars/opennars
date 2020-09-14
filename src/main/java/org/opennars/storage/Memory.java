@@ -25,8 +25,7 @@ package org.opennars.storage;
  
 import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
-import org.opennars.control.GeneralInferenceControl;
-import org.opennars.control.TemporalInferenceControl;
+import org.opennars.control.InferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.interfaces.Resettable;
@@ -48,6 +47,7 @@ import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.plugin.perception.NarseseChannel;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.main.Debug;
 
@@ -56,6 +56,7 @@ import java.util.*;
 import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.io.Channel;
 import org.opennars.plugin.mental.InternalExperience;
 
 
@@ -76,10 +77,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      /* Nar parameters */
     public final Parameters narParameters;
     
+    public InternalExperience internalExperience = null;
     public long narId = 0;
     //emotion meter keeping track of global emotion
-    public Emotions emotion = null;   
-    public InternalExperience internalExperience = null;
+    public Emotions emotion = null;  
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
@@ -97,32 +98,34 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     private final Boolean tasksMutex = Boolean.TRUE;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
-    public final Bag<Task<Term>,Sentence<Term>> novelTasks;
+    public final Buffer/*<Task<Term>,Sentence<Term>>*/ globalBuffer;
+    public InternalExperienceBuffer internalExperienceBuffer;
+    public NarseseChannel narseseChannel = null;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Bag<Task<Term>,Sentence<Term>> seq_current;
-    public final Bag<Task<Term>,Sentence<Term>> recent_operations;
+    public final Bag<Task<Term>,Sentence<Term>> recent_operations;  //only used for the optional legacy handling for comparison purposes
     
     //Boolean localInferenceMutex = false;
 
 
-    boolean checked=false;
-    boolean isjUnit=false;
+    public boolean checked=false;
+    public boolean isjUnit=false;
     
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
      */
-    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
-                  final Bag<Task<Term>,Sentence<Term>> seq_current,
+    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Buffer globalBuffer,
+                  final Buffer seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
         this.narParameters = narParameters;
         this.event = new EventEmitter();
         this.concepts = concepts;
-        this.novelTasks = novelTasks;                
+        this.globalBuffer = globalBuffer; 
         this.recent_operations = recent_operations;
-        this.seq_current = seq_current;
+        this.globalBuffer.seq_current = seq_current;
         this.operators = new LinkedHashMap<>();
+        this.internalExperienceBuffer = null; //overwritten
         reset();
     }
     
@@ -132,13 +135,17 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             concepts.clear();
         }
         synchronized (tasksMutex) {
-            novelTasks.clear();
+            globalBuffer.clear();
         }
-        synchronized(this.seq_current) {
-            this.seq_current.clear();
+        synchronized(this.globalBuffer.seq_current) {
+            this.globalBuffer.seq_current.clear();
         }
         if(emotion != null) {
             emotion.resetEmotions();
+        }
+        if(internalExperienceBuffer != null)
+        {
+            internalExperienceBuffer.clear();
         }
         this.lastDecision = null;
         randomNumber.setSeed(randomSeed);
@@ -228,7 +235,16 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      */
     public void addNewTask(final Task t, final String reason) {
         synchronized (tasksMutex) {
-            novelTasks.putIn(t);
+            
+            if(reason.equals("Executed") || reason.equals("Derived") || reason.equals("emotion")  || reason.equals("Internal"))
+            {
+                //these go to internal experience first, and only after go to global buffer:
+                internalExperienceBuffer.putIn(t);
+            }
+            else
+            {
+                globalBuffer.putIn(t);
+            }
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
@@ -273,12 +289,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
             if(emitIn) {
                 emit(IN.class, task);
-            }
-
-            if (task.budget.aboveThreshold()) {
-                addNewTask(task, "Perceived");
-            } else {
-                removeTask(task, "Neglected");
             }
         }
     }
@@ -349,12 +359,30 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void cycle(final Nar nar) {
     
         event.emit(Events.CycleStart.class);
-        for(int i=0; i<nar.narParameters.NOVEL_TASK_BAG_SELECTIONS; i++) {
-            this.processNovelTask(nar.narParameters, nar);
+        //1. Channels to global buffer
+        for(Channel c : nar.sensoryChannels.values()) {
+            Task task = c.takeOut(); //retrieve an item from the Narsese channel
+            if(task != null) {
+                //optional: re-routing feature for "vision Narsese". not necessary but nice
+                if(c == this.narseseChannel) {
+                    if(nar.dispatchToSensoryChannel(task)) {
+                        continue; //commented
+                    }
+                }
+                //if it's not meant to enter another channel just put into global buffer
+                this.addNewTask(task, "Perceived"); //goes to global buffer, but printing it
+            }
         }
-    //if(noResult()) //newTasks empty
-        GeneralInferenceControl.selectConceptForInference(this, nar.narParameters, nar);
-        
+        //2. Internal experience buffer to global buffer
+        Task t_internal = internalExperienceBuffer.takeOut(); //might have more than 1 item to take out
+        if(t_internal != null) {
+            globalBuffer.putIn(t_internal);
+            internalExperienceBuffer.putBack(t_internal, narParameters.INTERNAL_BUFFER_FORGET_DURATIONS, this);
+        }
+        //3. process a task of global buffer
+        this.processGlobalBufferTask(nar.narParameters, nar);
+        //4. apply general inference step
+        InferenceControl.selectConceptForInference(this, nar.narParameters, nar);
         event.emit(Events.CycleEnd.class);
         event.synch();
     }
@@ -379,7 +407,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-                TemporalInferenceControl.eventInference(task, cont);
+                globalBuffer.eventInference(task, cont, false); //can be triggered by Buffer itself in the future
             }
 
             //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
@@ -393,11 +421,15 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @param narParameters parameters for the Reasoner instance
      * @param time indirection to retrieve time
      */
-    public void processNovelTask(Parameters narParameters, final Timable time) {
+    public void processGlobalBufferTask(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
-            final Task task = novelTasks.takeOut();
-            if (task != null) {            
-                localInference(task, narParameters, time);
+            final Task task = globalBuffer.takeOut();
+            if (task != null) {
+                if(!task.processed) {
+                    task.processed = true;
+                    localInference(task, narParameters, time);
+                }
+                globalBuffer.putBack(task, narParameters.GLOBAL_BUFFER_FORGET_DURATIONS, this);
             }
         }
     }

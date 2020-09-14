@@ -29,6 +29,7 @@ import org.opennars.interfaces.Timable;
 import org.opennars.io.Narsese;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
+import org.opennars.io.Channel;
 
 import java.io.Serializable;
 import java.util.*;
@@ -36,7 +37,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennars.plugin.Plugin;
 
-public abstract class SensoryChannel implements Plugin, Serializable {
+/**
+ *
+ * @author Patrick
+ */
+
+public abstract class SensoryChannel extends Channel implements Plugin, Serializable {
     private Collection<SensoryChannel> reportResultsTo;
     public Nar nar; //for top-down influence of concept budgets
     public final List<Task> results = new ArrayList<>();
@@ -72,8 +78,10 @@ public abstract class SensoryChannel implements Plugin, Serializable {
         this.duration = (int) val;
     }
     
-    public SensoryChannel(){}
+    public SensoryChannel() { super(1, 1); }
+    public SensoryChannel(final Nar nar){ super(nar, 1, 1); }
     public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
+        this(nar);
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
         this.width = width;

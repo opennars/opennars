@@ -24,7 +24,6 @@
 package org.opennars.inference;
 
 import org.opennars.control.DerivationContext;
-import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
@@ -142,7 +141,7 @@ public class TemporalRules {
     }
     
     //TODO maybe split &/ case into own function
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence, boolean bufferInduction) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -151,7 +150,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
+        final boolean deriveSequenceOnly = (!addToMemory && !bufferInduction) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
@@ -227,14 +226,14 @@ public class TemporalRules {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendConclusion(nal, truth1.clone().mulConfidence(penalty), budget1.clone(), statement11, derivations);
-                appendConclusion(nal, truth2.clone().mulConfidence(penalty), budget2.clone(), statement22, derivations);
-                appendConclusion(nal, truth3.clone().mulConfidence(penalty), budget3.clone(), statement33, derivations);
+                appendConclusion(nal, truth1.clone().mulConfidence(penalty), budget1.clone(), statement11, derivations, addToMemory);
+                appendConclusion(nal, truth2.clone().mulConfidence(penalty), budget2.clone(), statement22, derivations, addToMemory);
+                appendConclusion(nal, truth3.clone().mulConfidence(penalty), budget3.clone(), statement33, derivations, addToMemory);
             }
 
-            appendConclusion(nal, truth1, budget1, statement1, derivations);
-            appendConclusion(nal, truth2, budget2, statement2, derivations);
-            appendConclusion(nal, truth3, budget3, statement3, derivations);
+            appendConclusion(nal, truth1, budget1, statement1, derivations, addToMemory);
+            appendConclusion(nal, truth2, budget2, statement2, derivations, addToMemory);
+            appendConclusion(nal, truth3, budget3, statement3, derivations, addToMemory);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
@@ -251,7 +250,8 @@ public class TemporalRules {
                             t.sentence.term instanceof Conjunction && 
                             t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
                             t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-                        TemporalInferenceControl.addToSequenceTasks(nal, t);
+                        t.sequenceTask = true;
+                        nal.memory.globalBuffer.putIn(t);
                     }
 
                     derivations.add(t);
@@ -262,9 +262,9 @@ public class TemporalRules {
         return derivations;
     }
 
-    private static void appendConclusion(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
+    private static void appendConclusion(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean addToMemory) {
         if(!tooMuchTemporalStatements(statement1)) {
-            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1, true, false);
+            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1, true, false, addToMemory);
             if(t!=null) {
                 success.addAll(t);
             }

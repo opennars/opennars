@@ -45,7 +45,9 @@ import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
+import org.opennars.plugin.perception.NarseseChannel;
 import org.opennars.storage.Bag;
+import org.opennars.storage.InternalExperienceBuffer;
 import org.opennars.storage.Memory;
 import org.xml.sax.SAXException;
 
@@ -60,6 +62,7 @@ import java.util.logging.Logger;
 import org.opennars.language.SetInt;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Buffer;
 
 
 /**
@@ -80,11 +83,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     /* System clock, relatively defined to guarantee the repeatability of behaviors */
     private Long cycle = new Long(0);
+    private final Object CycleMutex = new Object();
 
     /**
      * The information about the version of the project
      */
-    public static final String VERSION = "v3.0.4";
+    public static final String VERSION = "v3.1.0";
 
     /**
      * Name of the reasoner of the project
@@ -101,10 +105,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
     private transient Thread[] threads = null;
-    protected transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
+    public transient Map<Term,SensoryChannel> sensoryChannels = new LinkedHashMap<>();
+    public Object sensoryChannelsMutex = new Object();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
-            sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
+            synchronized(sensoryChannelsMutex) {
+                sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
+            }
         } catch (final Parser.InvalidInputException ex) {
             Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
@@ -126,7 +133,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
-        ret.sensoryChannels = new LinkedHashMap<>();
+        synchronized(ret.sensoryChannelsMutex) {
+            ret.sensoryChannels = new LinkedHashMap<>();
+        }
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
         for(Plugin p : pluginsToAdd) {
             ret.addPlugin(p);
@@ -189,6 +198,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(narId, DEFAULTCONFIG_FILEPATH);
     }
+    
+    public void initInternalExperience() { //TODo put into constructor
+        int levels = narParameters.INTERNAL_BUFFER_LEVELS;
+        int capacity = narParameters.INTERNAL_BUFFER_SIZE;
+        this.memory.internalExperienceBuffer = new InternalExperienceBuffer(this, levels, capacity, narParameters);
+    }
 
     public String usedConfigFilePath = "";
     /** constructs the NAR and loads a config from the filepath
@@ -201,11 +216,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(relativeConfigFilePath, this, this.narParameters);
         final Memory m = new Memory(this.narParameters,
                 new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-                new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-                new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new Buffer(this, narParameters.GLOBAL_BUFFER_LEVELS, narParameters.GLOBAL_BUFFER_SIZE, this.narParameters),
+                new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
                 new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
+        initInternalExperience();
         this.usedConfigFilePath = relativeConfigFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);
@@ -224,11 +240,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         overrideParameters(narParameters, parameterOverrides);
         final Memory m = new Memory(this.narParameters,
             new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
-            new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-            new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+            new Buffer(this, narParameters.GLOBAL_BUFFER_LEVELS, narParameters.GLOBAL_BUFFER_SIZE, this.narParameters),
+            new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
             new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
+        initInternalExperience();
         this.usedConfigFilePath = relativeConfigFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);
@@ -356,7 +373,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     
     public void addInput(String text) {
         text = text.trim();
-        final Parser narsese = new Narsese(this);
         if (text.contains("\n") && addMultiLineInput(text)) {
             return;
         }
@@ -376,7 +392,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         Task task = null;
         try {
-            task = narsese.parseTask(text);
+            synchronized (sensoryChannelsMutex) {
+                if(memory.narseseChannel == null) //not all NAR's will need it!
+                {
+                    memory.narseseChannel = new NarseseChannel(this);
+                    sensoryChannels.put(new Term("__NARSESE__"), memory.narseseChannel);
+                }
+                memory.narseseChannel.putIn(this, text);
+            }
         } catch (final Parser.InvalidInputException e) {
             if(Debug.SHOW_INPUT_ERRORS) {
                 emit(ERR.class, e);
@@ -386,13 +409,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             }
             return;
         }
-        // check if it should go to a sensory channel and dispatch to it instead
-        if (dispatchToSensoryChannel(task)) {
-            return;
-        }
-
-        //else input into NARS directly:
-        this.memory.inputTask(this, task);
     }
 
     /**
@@ -400,7 +416,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * @param task dispatched task
      * @return was it dispatched to a sensory channel?
      */
-    private boolean dispatchToSensoryChannel(Task task) {
+    public boolean dispatchToSensoryChannel(Task task) {
         final Term t = task.getTerm();
         if(t != null) {
             Term predicate = null;
@@ -409,31 +425,33 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             } else {
                 predicate = SetInt.make(new Term("OBSERVED"));
             }
-            if(this.sensoryChannels.containsKey(predicate)) {
-                // transform to channel-specific coordinate if available.
-                int channelWidth = this.sensoryChannels.get(predicate).width;
-                int channelHeight = this.sensoryChannels.get(predicate).height;
-                if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) &&
-                        (((Inheritance )t).getSubject() instanceof SetExt)) {
-                    final SetExt subj = (SetExt) ((Inheritance) t).getSubject();
-                    // map to pei's -1 to 1 indexing schema
-                    if(subj.term[0].term_indices == null) {
-                        final String variable = subj.toString().split("\\[")[0];
-                        final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
-                        final double height = Double.parseDouble(vals[0]);
-                        final double width = Double.parseDouble(vals[1]);
-                        final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
-                        final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
-                        final String ev = task.sentence.isEternal() ? " " : " :|: ";
-                        final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
-                                          task.sentence.punctuation + ev + task.sentence.truth.toString();
-                        //this.emit(OutputHandler.IN.class, task); too expensive to print each input task, consider vision :)
-                        this.addInput(newInput);
-                        return true;
+            synchronized(this.sensoryChannelsMutex) {
+                if(this.sensoryChannels.containsKey(predicate)) {
+                    // transform to channel-specific coordinate if available.
+                    int channelWidth = this.sensoryChannels.get(predicate).width;
+                    int channelHeight = this.sensoryChannels.get(predicate).height;
+                    if(channelWidth != 0 && channelHeight != 0 && (t instanceof Inheritance) &&
+                            (((Inheritance )t).getSubject() instanceof SetExt)) {
+                        final SetExt subj = (SetExt) ((Inheritance) t).getSubject();
+                        // map to pei's -1 to 1 indexing schema
+                        if(subj.term[0].term_indices == null) {
+                            final String variable = subj.toString().split("\\[")[0];
+                            final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
+                            final double height = Double.parseDouble(vals[0]);
+                            final double width = Double.parseDouble(vals[1]);
+                            final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
+                            final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
+                            final String ev = task.sentence.isEternal() ? " " : " :|: ";
+                            final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
+                                              task.sentence.punctuation + ev + task.sentence.truth.toString();
+                            //this.emit(OutputHandler.IN.class, task); too expensive to print each input task, consider vision :)
+                            this.addInput(newInput);
+                            return true;
+                        }
                     }
+                    this.sensoryChannels.get(predicate).addInput(task, this);
+                    return true;
                 }
-                this.sensoryChannels.get(predicate).addInput(task, this);
-                return true;
             }
         }
         return false;
@@ -656,8 +674,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void cycle() {
         try {
             memory.cycle(this);
-
-            synchronized (cycle) {
+            synchronized (CycleMutex) {
                 cycle++;
             }
         }
