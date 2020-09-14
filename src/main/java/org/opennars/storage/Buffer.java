@@ -163,6 +163,8 @@ public class Buffer extends Bag<Task<Term>,Sentence<Term>> {
             for(Task t : resAll) {
                 t.sequenceTask = false;
                 nar.memory.emit(Events.TaskAdd.class, t, "Derived");
+                nar.memory.emit(Events.TaskDerive.class, t, false, false);
+                nar.memory.output(t);
                 this.putIn(t);
             }
             return true;
