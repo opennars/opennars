@@ -140,6 +140,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         if(emotion != null) {
             emotion.resetEmotions();
         }
+        recent_operations.clear();
         this.lastDecision = null;
         randomNumber.setSeed(randomSeed);
         event.emit(ResetEnd.class);
