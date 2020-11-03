@@ -41,7 +41,7 @@ import java.util.List;
 public class Name extends Operator {
 
     public Name() {
-        super("^name");
+        super("^name", true);
     }
 
     /**

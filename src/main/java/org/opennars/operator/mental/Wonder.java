@@ -43,7 +43,7 @@ import java.util.List;
 public class Wonder extends Operator {
 
     public Wonder() {
-        super("^wonder");
+        super("^wonder", true);
     }
 
     /**

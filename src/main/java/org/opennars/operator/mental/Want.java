@@ -40,7 +40,7 @@ import java.util.List;
 public class Want extends Operator {
 
     public Want() {
-        super("^want");
+        super("^want", true);
     }
 
     /**

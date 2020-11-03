@@ -39,7 +39,7 @@ import java.util.List;
 public class Hesitate extends Operator {
 
     public Hesitate() {
-        super("^hesitate");
+        super("^hesitate", true);
     }
 
     /**

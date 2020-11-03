@@ -46,7 +46,7 @@ public class Consider extends Operator {
     }
     
     public Consider() {
-        super("^consider");
+        super("^consider", true);
     }
 
     /**

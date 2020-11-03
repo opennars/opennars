@@ -42,7 +42,7 @@ import java.util.List;
 public class Remind extends Operator {
 
     public Remind() {
-        super("^remind");
+        super("^remind", true);
     }
     
     public void activate(final Memory memory, final Concept c, final BudgetValue b, final Activating mode) {

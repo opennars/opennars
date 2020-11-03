@@ -44,7 +44,7 @@ public abstract class Feel extends Operator {
     private final Term feelingTerm;
 
     public Feel(final String name) {
-        super(name);
+        super(name, true);
         
         // remove the "^feel" prefix from name
         this.feelingTerm = Term.get(((String)name()).substring(5).toLowerCase());
