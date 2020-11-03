@@ -1,0 +1,153 @@
+***
+
+(^register,{SELF},^queryNextGoal)!
+**
+// * decide about design choices
+
+// table use to find fastest datastructure
+
+//  linked list is the fastest for iteration without skipping
+< {linkedlist} --> opt-datastructure_access---iteration >. %1.0;0.98%
+//  and slow on random access and skipping access
+< {linkedlist} --> opt-datastructure_access---random >. %1.0;0.1%
+//  skipping access is rated to be a bit faster because it could be that the patter iterates for some elements
+< {linkedlist} --> opt-datastructure_access---random-skip >. %1.0;0.13%
+//  and if iteration dominates but elements are skipped it's a bit slow
+< {linkedlist} --> opt-datastructure_access---iteration-skip >. %1.0;0.6%
+
+//  linked list are slow for random insertion/removal but fast for iteration insertion/removal
+< {linkedlist} --> opt-datastructure_insertion---random >. %1.0;0.1%
+< {linkedlist} --> opt-datastructure_removal---random >. %1.0;0.1%
+< {linkedlist} --> opt-datastructure_insertion---iteration >. %1.0;0.98%
+< {linkedlist}  --> opt-datastructure_removal---iteration >. %1.0;0.98%
+
+< {linkedlist} --> opt-datastructure_storage-type---ordered >.
+
+
+
+//  arrays are fast for random access and sequential access
+< {array} --> opt-datastructure_access---iteration >. %1.0;0.98%
+< {array} --> opt-datastructure_access---random >. %1.0;0.98%
+//  skipping behaviour doesn't influence performance
+< {array} --> opt-datastructure_access---iteration-skip >. %1.0;0.98%
+< {array} --> opt-datastructure_access---random-skip >. %1.0;0.98%
+
+// arrays are slow for insertion and removal
+// TODO< make dependent on expected size or even provide an operator to calculate slowness >
+< {array} --> opt-datastructure_insertion---random >. %1.0;0.2%
+< {array} --> opt-datastructure_removal---random >. %1.0;0.2%
+< {array} --> opt-datastructure_insertion---iteration >. %1.0;0.2%
+< {array} --> opt-datastructure_removal---iteration >. %1.0;0.2%
+
+< {array} --> opt-datastructure_storage-type---ordered >.
+
+
+// TODO< insertion behaviour for array and linkedlist and skiplist >
+
+
+// skiplists have similar characteristics to an linkedlist but they have better skipping performance
+// disabled because it seems to overwhelm NARS with the standard settings
+< {skiplist} --> opt-datastructure_access---iteration >. %1.0;0.98%
+< {skiplist} --> opt-datastructure_access---random >. %1.0;0.3%
+< {skiplist} --> opt-datastructure_access---random-skip >. %1.0;0.6%
+< {skiplist} --> opt-datastructure_access---iteration-skip >. %1.0;0.7%
+
+< {skiplist} --> opt-datastructure_insertion---random >. %1.0;0.2%
+< {skiplist} --> opt-datastructure_removal---random >. %1.0;0.2%
+< {skiplist} --> opt-datastructure_insertion---iteration >. %1.0;0.98%
+< {skiplist} --> opt-datastructure_removal---iteration >. %1.0;0.98%
+
+< {skiplist} --> opt-datastructure_storage-type---ordered >.
+
+
+// hashlist
+//  a bit slower than array due to overhead
+< {hashlist} --> opt-datastructure_access---iteration >. %1.0;0.96%
+< {hashlist} --> opt-datastructure_access---random >. %1.0;0.96%
+//  skipping behaviour doesn't influence performance
+< {hashlist} --> opt-datastructure_access---iteration-skip >. %1.0;0.96%
+< {hashlist} --> opt-datastructure_access---random-skip >. %1.0;0.96%
+
+// hashlists are slow for insertion and removal, but not as slow as arrays
+// TODO< make dependent on expected size or even provide an operator to calculate slowness >
+< {hashlist} --> opt-datastructure_insertion---random >. %1.0;0.25%
+< {hashlist} --> opt-datastructure_removal---random >. %1.0;0.25%
+< {hashlist} --> opt-datastructure_insertion---iteration >. %1.0;0.25%
+< {hashlist} --> opt-datastructure_removal---iteration >. %1.0;0.25%
+
+< {hashlist} --> opt-datastructure_storage-type---unordered >. %1.0;0.0%
+
+
+
+// algorithm properties
+// insertion-sort
+// (type of algorithm, insertion behaviour, removal behaviour, access dominated, access minority, )
+//OLD DEPRECATED < {(*, insertionSort, random, $0, random, $1)} --> database-algorithm-data_access >.
+
+
+<{(*, insertionSort, random)} --> database-algorithm---insertion-behaviour>. %1.0;0.98%
+<{(*, insertionSort, disabled)} --> database-algorithm---removal-behaviour>. %1.0;0.98%
+<{(*, insertionSort, random)} --> database-algorithm---access>. %1.0;0.98%
+<{(*, insertionSort, ordered)} --> database-algorithm---storage-type>. %1.0;0.98%
+
+// TODO< add doesn't matter >
+//<{(*, quickSort, disabled)} --> database-algorithm---insertion-behaviour>. %1.0;0.98%
+//<{(*, quickSort, disabled)} --> database-algorithm---removal-behaviour>. %1.0;0.98%
+//<{(*, quickSort, random)} --> database-algorithm---access>. %1.0;0.98%
+//<{(*, quickSort, ordered)} --> database-algorithm---storage-type>. %1.0;0.98%
+
+
+
+// TESTING
+// algorithm to store numbers in a hashtable
+
+<{(*, hashStore, random)} --> database-algorithm---insertion-behaviour>. %1.0;0.98%
+<{(*, hashStore, disabled)} --> database-algorithm---removal-behaviour>. %1.0;0.98%
+<{(*, hashStore, random)} --> database-algorithm---access>. %1.0;0.98%
+<{(*, hashStore, unordered)} --> database-algorithm---storage-type>. %1.0;0.98%
+
+
+
+
+
+// which datastructure is the best for the algorithm with the properties
+// TODO< table of all possibilities >
+
+//<
+//(&&, 
+//	<{(*, $algo, random)} --> database-algorithm---insertion-behaviour>,
+//	<{(*, $algo, random)} --> database-algorithm---access>,
+//	<{(*, $algo, disabled)} --> database-algorithm---removal-behaviour>,
+//	<{(*, $algo, ordered)} --> database-algorithm---storage-type>,
+//
+//	<{$datastructure} --> opt-datastructure_insertion---random>,
+//	<{$datastructure} --> opt-datastructure_access---random>,
+//	<{$datastructure} --> opt-datastructure_storage-type---ordered>
+//)
+//	==>
+//	<{(*, $algo, $datastructure)} --> querySolution>
+//>.
+<(&&, 	<{(*, $algo, random)} --> database-algorithm---insertion-behaviour>,	<{(*, $algo, random)} --> database-algorithm---access>,<{(*, $algo, disabled)} --> database-algorithm---removal-behaviour>,	<{(*, $algo, ordered)} --> database-algorithm---storage-type>,	<{$datastructure} --> opt-datastructure_insertion---random>,	<{$datastructure} --> opt-datastructure_access---random>,	<{$datastructure} --> opt-datastructure_storage-type---ordered>)	==>	<{(*, $algo, $datastructure)} --> querySolution>>.
+
+// unordered
+<(&&, 	<{(*, $algo, random)} --> database-algorithm---insertion-behaviour>,	<{(*, $algo, random)} --> database-algorithm---access>,<{(*, $algo, disabled)} --> database-algorithm---removal-behaviour>,	<{(*, $algo, unordered)} --> database-algorithm---storage-type>,	<{$datastructure} --> opt-datastructure_insertion---random>,	<{$datastructure} --> opt-datastructure_access---random>,	<{$datastructure} --> opt-datastructure_storage-type---unordered>)	==>	<{(*, $algo, $datastructure)} --> querySolution>>.
+
+
+
+
+
+
+
+// which algorithm is best for insertionSort?
+<{(*,insertionSort,?1)} --> querySolution>?
+
+
+
+
+
+
+//<(^queryNextGoal, {SELF}) <-> (^wonder, {SELF}, <(*, a, design1) --> goal>)>.
+// TODO< activate and rewrite to use this after patrick patched ^wounder to handle escaped "" variables >
+///<(^queryNextGoal, {SELF}) --> (^wonder, {SELF}, <(*, "?1", design1) --> goal>)>.
+
+(^queryNextGoal, {SELF})!
