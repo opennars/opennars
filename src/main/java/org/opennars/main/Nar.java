@@ -60,6 +60,7 @@ import java.util.logging.Logger;
 import org.opennars.language.SetInt;
 import org.opennars.plugin.mental.Emotions;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Buffer;
 
 
 /**
@@ -202,7 +203,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Memory m = new Memory(this.narParameters,
                 new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
                 new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-                new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
                 new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
@@ -225,7 +226,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Memory m = new Memory(this.narParameters,
             new Bag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
             new Bag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
-            new Bag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+            new Buffer(this, narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
             new Bag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;

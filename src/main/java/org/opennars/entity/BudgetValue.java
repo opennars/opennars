@@ -243,7 +243,8 @@ public class BudgetValue implements Cloneable, Serializable {
      * @return The summary value
      */
     public float summary() {
-        return aveGeo(priority, durability, quality);
+        return durability*(priority+quality)/2.0f;
+//return aveGeo(priority, durability, quality);
     }
 
     

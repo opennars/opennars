@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @author Patrick Hammer
  */
 // TODO< rename this after MVP0 to "ReasonerArguments" >
-public class Parameters implements Serializable {
+public class Parameters implements Serializable {    
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public volatile int NOVELTY_HORIZON = 100000;
 
@@ -51,6 +51,11 @@ public class Parameters implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     
     public volatile int DURATION = 5;
+    
+    /****
+     * This value multiplied with DURATION gives the time a buffer element can stay in a buffer
+     */
+    public volatile long MAX_BUFFER_DURATION_FACTOR = 2;
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered.
