@@ -59,6 +59,7 @@ import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.util.Instrumentation;
 
 /**
  *
@@ -314,7 +315,7 @@ public class ProcessGoal {
                         op.allowBabbling = false;
                     }
                 }
-                System.out.println("Executed based on: " + bestOpWithMeta.executable_precond);
+                Instrumentation.trace("ProcessGoal", "Executed based on: " + bestOpWithMeta.executable_precond);
                 for(ExecutablePrecondition precon : anticipationsToMake.get(bestOpWithMeta.bestop)) {
                     float distance = precon.timeOffset - nal.time.time();
                     float urgency = 2.0f + 1.0f/distance;
