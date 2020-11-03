@@ -63,7 +63,7 @@ public class ConfigReader {
 
     public static List<Plugin> loadParamsFromFileAndReturnPlugins(final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         
-        System.out.println("Got relative path for loading the config: " + filepath);
+        System.out.println("[i ] got relative path for loading the config: " + filepath);
         List<Plugin> ret = new ArrayList<Plugin>();
         File file = new File(filepath);
 
@@ -75,9 +75,9 @@ public class ConfigReader {
             //System.out.println(n.toURI().toString());
             URLConnection connection = n.openConnection();
             stream = connection.getInputStream();
-            System.out.println("Loading config " + "config/defaultConfig.xml" +" from resources");
+            System.out.println("[i ] Loading config " + "config/defaultConfig.xml" +" from resources");
         } else {
-            System.out.println("Loading config " + file.getName() +" from file");
+            System.out.println("[i ] Loading config " + file.getName() +" from file");
         }
         
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
