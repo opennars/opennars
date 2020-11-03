@@ -141,6 +141,7 @@ public class ProcessGoal {
 
         double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet
         if (beliefT != null) {
+            // projection - see "The OpenNARS implementation of the Non-Axiomatic Reasoning System" chapter "5 Projection and Eternalization" 
             final Sentence belief = beliefT.sentence;
             final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
             AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
