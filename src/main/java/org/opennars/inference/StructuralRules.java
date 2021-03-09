@@ -193,7 +193,6 @@ public final class StructuralRules {
         if (component.equals(subj)) {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(compound, pred, order, truthDed, nal);
-            } else if (compound instanceof IntersectionInt) {
             } else if ((compound instanceof DifferenceExt) && (index == 0)) {
                 structuralStatement(compound, pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
@@ -203,8 +202,7 @@ public final class StructuralRules {
                 }
             }
         } else if (component.equals(pred)) {
-            if (compound instanceof IntersectionExt) {
-            } else if (compound instanceof IntersectionInt) {
+           if (compound instanceof IntersectionInt) {
                 structuralStatement(subj, compound, order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
